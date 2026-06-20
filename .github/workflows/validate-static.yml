@@ -1,0 +1,180 @@
+name: Validate and deploy static site (reusable)
+
+# Canonical static-site pipeline for Atlas Systems.
+#
+# Shape: validate -> deploy -> notify
+#   validate  runs html-validate and an offline (internal-link) lychee
+#             check. A broken tag or dead relative link fails the job, so
+#             nothing reaches Cloudflare Pages.
+#   deploy    uploads the directory to the existing Pages project with
+#             `wrangler pages deploy`. This is the hard gate: it only runs
+#             if validate passed. Requires native Git integration on the
+#             Pages project to be DISCONNECTED (see the implementation
+#             guide), otherwise Pages also deploys on push and the gate is
+#             bypassed.
+#   notify    posts the outcome to the deploy-log Discord channel.
+#
+# The deploy token here needs Cloudflare Pages:Edit, which is a different,
+# narrower scope than the Workers token. It is passed as CF_PAGES_DEPLOY_TOKEN.
+
+on:
+  workflow_call:
+    inputs:
+      project_name:
+        description: "Cloudflare Pages project name for `wrangler pages deploy`."
+        required: true
+        type: string
+      site_label:
+        description: "Site name, shown in the Discord embed."
+        required: true
+        type: string
+      html_glob:
+        description: "Glob passed to html-validate."
+        required: false
+        default: "**/*.html"
+        type: string
+      inject_build_meta:
+        description: "Insert build-commit and build-time meta tags into index.html before deploy."
+        required: false
+        default: false
+        type: boolean
+    secrets:
+      CF_PAGES_DEPLOY_TOKEN:
+        required: true
+      CF_ACCOUNT_ID:
+        required: true
+      DISCORD_DEPLOY_WEBHOOK:
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate HTML and links
+    runs-on: ubuntu-latest
+    env:
+      HTML_GLOB: ${{ inputs.html_glob }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Validate HTML
+        run: npx --yes html-validate@9 "$HTML_GLOB"
+
+      - name: Check internal links (offline)
+        uses: lycheeverse/lychee-action@v2
+        with:
+          # --offline skips all http(s) URLs, so a flaky external site never
+          # blocks a deploy; only relative and root-relative links are checked.
+          # --base . resolves root-relative links like /about/ against the repo root.
+          args: "--offline --no-progress --include-fragments --base . ."
+          fail: true
+
+  deploy:
+    name: Deploy to Cloudflare Pages
+    needs: validate
+    runs-on: ubuntu-latest
+    outputs:
+      deployed: ${{ steps.deploy_step.outputs.deployed }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Inject build metadata
+        if: ${{ inputs.inject_build_meta }}
+        env:
+          COMMIT_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          BUILT="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          # Insert two meta tags immediately before the first </head>.
+          # Every HTML document has a closing head tag, so this is robust to
+          # however the opening <head> is written.
+          sed -i "0,/<\/head>/s||  <meta name=\"build-commit\" content=\"${COMMIT_SHA}\">\n  <meta name=\"build-time\" content=\"${BUILT}\">\n|" index.html
+          echo "Injected build-commit=${COMMIT_SHA} build-time=${BUILT}"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Deploy with wrangler
+        id: deploy_step
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CF_PAGES_DEPLOY_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+          PROJECT_NAME: ${{ inputs.project_name }}
+        run: |
+          set -euo pipefail
+          npx --yes wrangler@4 pages deploy . \
+            --project-name "$PROJECT_NAME" \
+            --branch main \
+            --commit-dirty=true
+          echo "deployed=true" >> "$GITHUB_OUTPUT"
+
+  notify:
+    name: Report to Discord
+    needs: [validate, deploy]
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Compose and send embed
+        env:
+          VALIDATE_RESULT: ${{ needs.validate.result }}
+          DEPLOY_RESULT: ${{ needs.deploy.result }}
+          SITE_LABEL: ${{ inputs.site_label }}
+          WEBHOOK: ${{ secrets.DISCORD_DEPLOY_WEBHOOK }}
+          ACTOR: ${{ github.actor }}
+        run: |
+          set -euo pipefail
+          SHORT_SHA="${GITHUB_SHA:0:7}"
+          COMMIT_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA}"
+          RUN_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+
+          if [ "$DEPLOY_RESULT" = "success" ]; then
+            TITLE="Deployed: ${SITE_LABEL}"
+            DESC="Validated and published to Cloudflare Pages."
+            COLOR=4906624
+            STATUS="🟢 deployed"
+          elif [ "$VALIDATE_RESULT" != "success" ]; then
+            TITLE="Blocked: ${SITE_LABEL}"
+            DESC="HTML or link validation failed. Nothing was deployed."
+            COLOR=14830410
+            STATUS="🔴 validation failed"
+          else
+            TITLE="Failed: ${SITE_LABEL}"
+            DESC="Validation passed but the Pages deploy failed."
+            COLOR=14830410
+            STATUS="🔴 deploy failed"
+          fi
+
+          PAYLOAD=$(jq -n \
+            --arg title "$TITLE" \
+            --arg desc "$DESC" \
+            --argjson color "$COLOR" \
+            --arg status "$STATUS" \
+            --arg sha "$SHORT_SHA" \
+            --arg commit_url "$COMMIT_URL" \
+            --arg run_url "$RUN_URL" \
+            --arg actor "$ACTOR" \
+            '{
+              username: "deploy-log",
+              embeds: [{
+                title: $title,
+                description: $desc,
+                color: $color,
+                fields: [
+                  {name: "Status", value: $status, inline: true},
+                  {name: "Commit", value: ("[" + $sha + "](" + $commit_url + ")"), inline: true},
+                  {name: "Actor", value: $actor, inline: true},
+                  {name: "Run", value: ("[logs](" + $run_url + ")"), inline: false}
+                ],
+                footer: {text: "Atlas Systems — Pipeline"}
+              }]
+            }')
+
+          curl -fsS -X POST "$WEBHOOK" \
+            -H "Content-Type: application/json" \
+            -d "$PAYLOAD"

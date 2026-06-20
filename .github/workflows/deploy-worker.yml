@@ -1,0 +1,173 @@
+name: Deploy Worker (reusable)
+
+# Canonical Cloudflare Worker pipeline for Atlas Systems.
+#
+# Shape: validate -> deploy -> notify
+#   validate  bundles the Worker (wrangler dry-run) and runs optional
+#             lint/test gates. Nothing reaches Cloudflare if this fails.
+#   deploy    pushes to production on `main`, to the dev environment on
+#             any other branch. Uses wrangler directly (no marketplace
+#             action) so the version pinned in the caller repo is the one
+#             that runs, end to end.
+#   notify    posts the real outcome to the api-deploys Discord channel,
+#             green on success, red on a failed validate or deploy.
+#
+# Callers pass `secrets: inherit`, which forwards the three secrets below
+# by name. Every Worker repo already defines them under those exact names.
+
+on:
+  workflow_call:
+    inputs:
+      worker_name:
+        description: "Worker name, shown in the Discord embed."
+        required: true
+        type: string
+      run_lint:
+        description: "Run `npm run lint` in the validate job."
+        required: false
+        default: false
+        type: boolean
+      run_tests:
+        description: "Run `npm test` in the validate job."
+        required: false
+        default: false
+        type: boolean
+    secrets:
+      CF_WORKERS_DEPLOY_TOKEN:
+        required: true
+      CF_ACCOUNT_ID:
+        required: true
+      DISCORD_API_DEPLOYS_WEBHOOK:
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Bundle check (wrangler dry-run)
+        # Builds the Worker without publishing. Exits non-zero on an import
+        # error, a missing binding the bundler can see, or a syntax error,
+        # so a broken Worker never gets as far as the deploy job.
+        run: npx wrangler deploy --dry-run --outdir dist
+
+      - name: Lint
+        if: ${{ inputs.run_lint }}
+        run: npm run lint
+
+      - name: Test
+        if: ${{ inputs.run_tests }}
+        run: npm test
+
+  deploy:
+    name: Deploy
+    needs: validate
+    runs-on: ubuntu-latest
+    outputs:
+      target_env: ${{ steps.deploy_step.outputs.target_env }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Deploy with wrangler
+        id: deploy_step
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CF_WORKERS_DEPLOY_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          if [ "$REF_NAME" = "main" ]; then
+            echo "Deploying $REF_NAME to production"
+            npx wrangler deploy
+            echo "target_env=production" >> "$GITHUB_OUTPUT"
+          else
+            echo "Deploying $REF_NAME to the dev environment"
+            npx wrangler deploy --env dev
+            echo "target_env=dev" >> "$GITHUB_OUTPUT"
+          fi
+
+  notify:
+    name: Report to Discord
+    needs: [validate, deploy]
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Compose and send embed
+        env:
+          VALIDATE_RESULT: ${{ needs.validate.result }}
+          DEPLOY_RESULT: ${{ needs.deploy.result }}
+          TARGET_ENV: ${{ needs.deploy.outputs.target_env }}
+          WORKER_NAME: ${{ inputs.worker_name }}
+          WEBHOOK: ${{ secrets.DISCORD_API_DEPLOYS_WEBHOOK }}
+          ACTOR: ${{ github.actor }}
+        run: |
+          set -euo pipefail
+          SHORT_SHA="${GITHUB_SHA:0:7}"
+          COMMIT_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA}"
+          RUN_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+
+          if [ "$DEPLOY_RESULT" = "success" ]; then
+            TITLE="Deployed: ${WORKER_NAME}"
+            DESC="Deployed to ${TARGET_ENV:-production} after passing validation."
+            COLOR=4906624
+            STATUS="🟢 deployed"
+          elif [ "$VALIDATE_RESULT" != "success" ]; then
+            TITLE="Blocked: ${WORKER_NAME}"
+            DESC="Validation failed. Nothing was deployed."
+            COLOR=14830410
+            STATUS="🔴 validation failed"
+          else
+            TITLE="Failed: ${WORKER_NAME}"
+            DESC="Validation passed but the deploy step failed."
+            COLOR=14830410
+            STATUS="🔴 deploy failed"
+          fi
+
+          PAYLOAD=$(jq -n \
+            --arg title "$TITLE" \
+            --arg desc "$DESC" \
+            --argjson color "$COLOR" \
+            --arg status "$STATUS" \
+            --arg sha "$SHORT_SHA" \
+            --arg commit_url "$COMMIT_URL" \
+            --arg run_url "$RUN_URL" \
+            --arg actor "$ACTOR" \
+            '{
+              username: "api-deploys",
+              embeds: [{
+                title: $title,
+                description: $desc,
+                color: $color,
+                fields: [
+                  {name: "Status", value: $status, inline: true},
+                  {name: "Commit", value: ("[" + $sha + "](" + $commit_url + ")"), inline: true},
+                  {name: "Actor", value: $actor, inline: true},
+                  {name: "Run", value: ("[logs](" + $run_url + ")"), inline: false}
+                ],
+                footer: {text: "Atlas Systems — Pipeline"}
+              }]
+            }')
+
+          curl -fsS -X POST "$WEBHOOK" \
+            -H "Content-Type: application/json" \
+            -d "$PAYLOAD"
