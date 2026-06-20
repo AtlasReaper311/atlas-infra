@@ -1,0 +1,18 @@
+# Copy to .github/workflows/deploy.yml in a static-site repo.
+# Set project_name to the Cloudflare Pages project name and site_label
+# to the public hostname. Disconnect native Pages Git integration after
+# confirming this workflow deploys correctly (see implementation guide).
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    uses: AtlasReaper311/atlas-infra/.github/workflows/validate-static.yml@main
+    with:
+      project_name: REPLACE_ME
+      site_label: REPLACE_ME
+      inject_build_meta: false
+    secrets: inherit

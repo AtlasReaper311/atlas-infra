@@ -1,0 +1,16 @@
+# Copy to .github/workflows/deploy.yml in a Worker repo.
+# Change worker_name. Set run_lint / run_tests to match what the repo has.
+name: Deploy
+
+on:
+  push:
+    branches: [main, dev]
+
+jobs:
+  deploy:
+    uses: AtlasReaper311/atlas-infra/.github/workflows/deploy-worker.yml@main
+    with:
+      worker_name: REPLACE_ME
+      run_lint: true
+      run_tests: false
+    secrets: inherit
