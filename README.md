@@ -51,6 +51,46 @@ Expected response:
   "service": "hello-atlas"
 }
 ```
+## CI/CD
+
+This repo holds the reusable workflows every other Atlas Systems repo
+deploys through. The goal is one pipeline shape per kind of repo, defined
+once here, adopted by copying a short caller file.
+
+### Reusable workflows
+
+- `deploy-worker.yml` — Cloudflare Worker pipeline: validate (wrangler
+  dry-run, optional lint, optional test), deploy (production on `main`,
+  dev environment on any other branch), report to the api-deploys channel.
+- `validate-static.yml` — static-site pipeline: validate (html-validate
+  plus an offline link check), deploy with `wrangler pages deploy`, report
+  to the deploy-log channel.
+
+### Adopt a pipeline
+
+Copy the matching template from `templates/` into a repo as
+`.github/workflows/deploy.yml`, change the name and flags, and forward
+secrets with `secrets: inherit`. The repo needs the secrets named in
+`docs/CICD-DECISIONS.md`.
+
+A Worker caller is this short:
+
+```yaml
+name: Deploy
+on:
+  push:
+    branches: [main, dev]
+jobs:
+  deploy:
+    uses: AtlasReaper311/atlas-infra/.github/workflows/deploy-worker.yml@main
+    with:
+      worker_name: my-worker
+      run_lint: true
+    secrets: inherit
+```
+
+See `docs/CICD-DECISIONS.md` for the token model, Discord routing, and the
+two `wrangler.toml` rules that are easy to get wrong.
 
 ## CI/CD pattern
 
