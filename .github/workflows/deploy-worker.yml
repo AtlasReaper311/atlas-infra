@@ -11,9 +11,14 @@ name: Deploy Worker (reusable)
 #             that runs, end to end.
 #   notify    posts the real outcome to the api-deploys Discord channel,
 #             green on success, red on a failed validate or deploy.
+#             Also persists a summary to atlas-notify's ring buffer so
+#             the Lab Failure log shows pipeline events alongside runtime
+#             events. The persist step is fire-and-forget: if atlas-notify
+#             is down, Discord still gets the notification via direct curl.
 #
-# Callers pass `secrets: inherit`, which forwards the three secrets below
-# by name. Every Worker repo already defines them under those exact names.
+# Callers pass `secrets: inherit`, which forwards the secrets below by
+# name. Every Worker repo already defines the first three; NOTIFY_TOKEN
+# is optional so repos work before the secret is added.
 
 on:
   workflow_call:
@@ -39,6 +44,8 @@ on:
         required: true
       DISCORD_API_DEPLOYS_WEBHOOK:
         required: true
+      NOTIFY_TOKEN:
+        required: false
 
 permissions:
   contents: read
@@ -171,3 +178,54 @@ jobs:
           curl -fsS -X POST "$WEBHOOK" \
             -H "Content-Type: application/json" \
             -d "$PAYLOAD"
+
+      - name: Persist to Lab Failure log
+        if: always()
+        continue-on-error: true
+        env:
+          NOTIFY_TOKEN: ${{ secrets.NOTIFY_TOKEN }}
+          VALIDATE_RESULT: ${{ needs.validate.result }}
+          DEPLOY_RESULT: ${{ needs.deploy.result }}
+          WORKER_NAME: ${{ inputs.worker_name }}
+        run: |
+          set -euo pipefail
+
+          # Graceful skip if the secret is not set yet. Repos work
+          # before NOTIFY_TOKEN is added; once added, persistence
+          # starts automatically on the next run.
+          if [ -z "${NOTIFY_TOKEN:-}" ]; then
+            echo "NOTIFY_TOKEN not set, skipping Lab persist"
+            exit 0
+          fi
+
+          SHORT_SHA="${GITHUB_SHA:0:7}"
+          RUN_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+
+          if [ "$DEPLOY_RESULT" = "success" ]; then
+            LEVEL="success"
+            TITLE="Deployed: ${WORKER_NAME}"
+            MSG="Deployed to production [${SHORT_SHA}]"
+          elif [ "$DEPLOY_RESULT" = "cancelled" ] || [ "$VALIDATE_RESULT" = "cancelled" ]; then
+            LEVEL="warning"
+            TITLE="Cancelled: ${WORKER_NAME}"
+            MSG="Pipeline cancelled [${SHORT_SHA}]"
+          elif [ "$VALIDATE_RESULT" != "success" ]; then
+            LEVEL="failure"
+            TITLE="Blocked: ${WORKER_NAME}"
+            MSG="Validation failed, nothing deployed [${SHORT_SHA}]"
+          else
+            LEVEL="failure"
+            TITLE="Deploy failed: ${WORKER_NAME}"
+            MSG="Validation passed but deploy failed [${SHORT_SHA}]"
+          fi
+
+          curl -sS -f -X POST "https://api.atlas-systems.uk/notify" \
+            -H "Authorization: Bearer ${NOTIFY_TOKEN}" \
+            -H "Content-Type: application/json" \
+            --data "$(jq -n \
+              --arg source "alert" \
+              --arg level "$LEVEL" \
+              --arg title "$TITLE" \
+              --arg message "$MSG" \
+              --arg url "$RUN_URL" \
+              '{source:$source, level:$level, title:$title, message:$message, url:$url, persist_only:true}')"
