@@ -324,3 +324,72 @@ This file is appended to, never rewritten. A decision being overridden
 gets a follow-up entry citing the original. The history of why this
 estate is shaped the way it is should be reconstructible from this
 document.
+
+---
+
+## 2026-07 — Ramone uses Chroma-backed, reference-gated session memory
+
+**Decision.** Ramone's public Q&A flow now accepts a client-generated
+UUID v4 `session_id` and stores recent user/assistant turns in a
+dedicated Chroma collection, separate from the Atlas documentation
+collection. The standalone Ramone page and the Lab widget share the
+same browser key, `ramone:session_id`, so a visitor can continue a
+conversation across both public surfaces. Both surfaces also expose a
+visible "new conversation" control that clears that key and reloads.
+
+`ramone-edge` only validates and forwards the session id. It never
+reads, writes, logs, or stores raw conversation memory. Memory lives in
+`ollama-rag-kit` behind the existing `ATLAS_SECRET` boundary.
+
+**Ollama API choice.** The streaming path moved from Ollama's
+`/api/generate` endpoint to `/api/chat`. This was a deliberate
+architecture change, not incidental refactoring: `/api/generate` takes
+one prompt string, while `/api/chat` has a native `messages` shape that
+can carry system instructions, reference history, and the current
+RAG-grounded user prompt without manual prompt concatenation.
+
+**History injection rule.** Stored turns are not replayed blindly on
+every request. A small reference detector injects history only when the
+current question appears to depend on prior context, such as "it",
+"that", "your previous answer", "first", or "second". Standalone
+questions stay clean RAG calls even when the browser has an active
+session.
+
+When history is injected, it is transformed into a reference-only
+system block containing prior assistant answers only. Prior user turns
+are deliberately omitted because they often contain one-off formatting
+instructions or prompt-shaping requests. This prevents a past request
+like "answer as First: X. Second: Y." from becoming a standing rule on
+later unrelated questions.
+
+**Why.** Memory is useful for natural follow-ups ("what does it do?",
+"what was second?") but dangerous if prior instructions are given fresh
+authority. The chosen design gives Ramone continuity for references
+while preserving the RAG contract: factual answers still come from the
+numbered context blocks, and old formatting does not bleed into new
+questions.
+
+**Verification.**
+- `ramone-edge`: `npm run check`, `npm run lint`, and Vitest all pass
+  after adding the reset control and `has_memory` notification field.
+- `ollama-rag-kit`: the rebuilt Docker container passed 30 pytest tests
+  copied into `/tmp/tests`, including streaming/memory integration tests.
+- Live health check returned `status=ok`, Ollama reachable, Chroma
+  reachable, and 239 indexed chunks.
+- Live behavior check: after a forced `First:/Second:` answer, an
+  unrelated "How does the CI/CD pipeline work?" question answered in
+  normal prose instead of carrying the old format forward.
+- Live follow-up check: asking what was after `Second` in the previous
+  answer resolved to ChromaDB.
+
+**Consequences.**
+- `MEMORY_CONTEXT_TURNS=0` remains the kill switch for both reads and
+  writes.
+- The memory collection is `ramone_sessions`; document evidence remains
+  in `atlas_docs`.
+- Future tests should keep covering both failure modes: failed model
+  generations must not write memory, and standalone questions must not
+  receive history.
+- The Lab widget and standalone Ramone page intentionally share one
+  session key unless a future product decision makes separate
+  conversations more useful.
