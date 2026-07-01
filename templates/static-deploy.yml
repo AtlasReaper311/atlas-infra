@@ -15,4 +15,6 @@ jobs:
       project_name: REPLACE_ME
       site_label: REPLACE_ME
       inject_build_meta: false
+      # Optional: add CF_CACHE_PURGE_TOKEN and CF_ZONE_ID repo secrets to
+      # purge Cloudflare edge cache after a successful Pages deploy.
     secrets: inherit

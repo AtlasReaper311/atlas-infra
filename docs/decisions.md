@@ -94,16 +94,23 @@ deployment, never one account-wide token.
 |---|---|---|
 | `CF_WORKERS_DEPLOY_TOKEN` | Workers Scripts: Edit, Workers Routes: Edit | every Worker repo |
 | `CF_PAGES_DEPLOY_TOKEN` | Cloudflare Pages: Edit | every static-site repo |
+| `CF_CACHE_PURGE_TOKEN` | Zone cache purge only | optional post-deploy static-site cache invalidation |
 
-`CF_ACCOUNT_ID` accompanies both. Both tokens are stored as per-repo
-GitHub Actions secrets (no org-level secrets — AtlasReaper311 is a user
-account).
+`CF_ACCOUNT_ID` accompanies the deploy tokens. `CF_ZONE_ID` accompanies
+`CF_CACHE_PURGE_TOKEN`. Tokens are stored as per-repo GitHub Actions secrets
+(no org-level secrets — AtlasReaper311 is a user account).
 
 **Why.** A leaked Workers token can edit Worker scripts and routes, but
 not Pages projects, DNS, or anything else. A leaked Pages token can
 deploy Pages projects but cannot touch Workers. The blast radius of any
 single token leak is bounded by the token's permission class, not by
 the breadth of the account.
+
+**Cache purge is separate.** Static-site deploys may purge the Cloudflare
+edge cache after `wrangler pages deploy`, but that uses `CF_CACHE_PURGE_TOKEN`,
+not the Pages deploy token. This keeps deployment and cache invalidation as
+separate permissions while preventing stale JavaScript assets from lingering
+after a successful deploy.
 
 **Runtime secrets are separate.** Tokens that Workers themselves use at
 runtime (e.g. deploy-watch's Pages: Read token, site-pulse's Zone

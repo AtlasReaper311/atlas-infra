@@ -20,6 +20,10 @@ name: Validate and deploy static site (reusable)
 #
 # The deploy token here needs Cloudflare Pages:Edit, which is a different,
 # narrower scope than the Workers token. It is passed as CF_PAGES_DEPLOY_TOKEN.
+# If the caller also provides CF_CACHE_PURGE_TOKEN plus CF_ZONE_ID, the deploy
+# job purges the zone cache after a successful Pages upload. Keep that token
+# separate from the Pages deploy token so publishing and cache invalidation
+# remain independently scoped.
 
 on:
   workflow_call:
@@ -50,6 +54,10 @@ on:
       DISCORD_DEPLOY_WEBHOOK:
         required: true
       NOTIFY_TOKEN:
+        required: false
+      CF_CACHE_PURGE_TOKEN:
+        required: false
+      CF_ZONE_ID:
         required: false
 
 permissions:
@@ -119,6 +127,25 @@ jobs:
             --branch main \
             --commit-dirty=true
           echo "deployed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Purge Cloudflare edge cache
+        env:
+          CF_CACHE_PURGE_TOKEN: ${{ secrets.CF_CACHE_PURGE_TOKEN }}
+          CF_ZONE_ID: ${{ secrets.CF_ZONE_ID }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "${CF_CACHE_PURGE_TOKEN:-}" ] || [ -z "${CF_ZONE_ID:-}" ]; then
+            echo "CF_CACHE_PURGE_TOKEN or CF_ZONE_ID not set; skipping cache purge"
+            exit 0
+          fi
+
+          curl -fsS -X POST "https://api.cloudflare.com/client/v4/zones/${CF_ZONE_ID}/purge_cache" \
+            -H "Authorization: Bearer ${CF_CACHE_PURGE_TOKEN}" \
+            -H "Content-Type: application/json" \
+            --data '{"purge_everything":true}'
+
+          echo "Purged Cloudflare edge cache for zone ${CF_ZONE_ID}"
 
   notify:
     name: Report to Discord

@@ -32,6 +32,12 @@ are GitHub Actions secrets, used by the workflows to publish.
 `CF_ACCOUNT_ID` accompanies both. There is no account-wide token: a leak of
 either is limited to Workers or Pages, not both, and not the whole account.
 
+Static deploys may also set `CF_CACHE_PURGE_TOKEN` and `CF_ZONE_ID`. This is
+not a deploy token; it is a narrowly-scoped cache invalidation token used by
+`validate-static.yml` after a successful Pages deploy. The token needs only
+Cloudflare zone cache purge permission for the relevant zone. If either secret
+is absent, the workflow deploys normally and logs that cache purge was skipped.
+
 Runtime secrets are separate from deploy tokens. They are set on the Worker
 itself with `npx wrangler secret put NAME`, never in Actions, and each Worker
 needs its own:
@@ -47,6 +53,16 @@ needs its own:
 Note that deploy-watch's runtime `CLOUDFLARE_API_TOKEN` is a Pages: Read
 token, a different and narrower thing than the Workers deploy token that
 ships the code. They are intentionally distinct.
+
+## Static asset cache invalidation
+
+Static sites deploy through `validate-static.yml`, then optionally purge the
+Cloudflare zone cache when `CF_CACHE_PURGE_TOKEN` and `CF_ZONE_ID` are present.
+This exists because browser/CDN cache can otherwise keep serving an older
+JavaScript asset after the Pages deploy has succeeded. Cache-busting query
+strings are still acceptable for emergency one-off fixes, but the pipeline
+purge is the structural guardrail: a changed asset should not depend on a human
+remembering to change `/file.js?v=...`.
 
 ## Discord routing
 
