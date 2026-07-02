@@ -1,0 +1,12 @@
+name: Refresh Corpus
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  refresh-corpus:
+    uses: AtlasReaper311/atlas-corpus/.github/workflows/refresh-corpus.yml@main
+    secrets:
+      CORPUS_SECRET: ${{ secrets.CORPUS_SECRET }}
