@@ -11,6 +11,7 @@ jobs:
     uses: AtlasReaper311/atlas-infra/.github/workflows/deploy-worker.yml@main
     with:
       worker_name: REPLACE_ME
+      working_directory: "."
       run_lint: true
       run_tests: false
     secrets: inherit
