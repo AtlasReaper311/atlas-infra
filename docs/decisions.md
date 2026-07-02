@@ -1,402 +1,268 @@
-# Atlas Systems — decisions
+# Atlas Systems — Technical Decisions Log
 
-A record of architectural and operational choices made on this estate.
-Each entry says what was decided, why, and where the consequences live.
-Entries are dated and additive: if a later decision overrides an earlier
-one, the earlier one stays in place with a note.
+## Infrastructure
 
-The audience is a senior engineer joining this codebase six months from
-now and asking "why is it like this?" The answers here should mean they
-don't have to ask.
+### Hosting
 
----
+- **Decision:** Cloudflare Pages for static sites, Cloudflare Workers for the API surface
+- **Date:** May 2026 (Pages); progressively added Workers through May–June 2026
+- **Detail:** Three static sites on Pages — `atlas-systems` (atlas-systems.uk), `status` (status.atlas-systems.uk), `atlas-doc-viewer` (cv.atlas-systems.uk). Worker surface under `api.atlas-systems.uk/*` now spans eleven Workers (see Logic Lego Suite below for the six added 2026-07-02).
+- **Why:** Free tier covers everything at this scale (100k Worker requests/day per Worker, unlimited Pages bandwidth). No paid services anywhere on the stack — £0 budget is a hard requirement.
 
-## 2026-06 — Reusable workflows as the deployment standard
+### CI/CD
 
-**Decision.** All deployable repos use one of two reusable workflows
-defined in `atlas-infra/.github/workflows/`:
-- `deploy-worker.yml` for every Cloudflare Worker
-- `validate-static.yml` for every Cloudflare Pages static site
+- **Decision (June 2026):** GitHub Actions across every repo, with reusable workflows in `atlas-infra`. Cloudflare native Git integration disconnected on all three static sites — Actions is now the only path to production.
+- **Detail:** `atlas-infra/.github/workflows/deploy-worker.yml` and `validate-static.yml` are `workflow_call` reusables. Every other repo holds a 12-line caller. Validate (wrangler dry-run + lint, or html-validate + lychee) → deploy → notify Discord. atlas-notify deploys on `workflow_run` of its CI success, not push, so Vitest never runs twice.
+- **Why:** Five Worker repos with five hand-maintained deploy.yml files drift in days. One reusable workflow means one PR to change the pipeline shape everywhere. Hard gate over soft gate on static sites: a broken HTML tag literally cannot ship now.
+- **Supersedes:** The May 2026 entry that had Cloudflare native integration as the production path and Actions as dormant fallback. That decision was correct for May; superseded once there were enough deployable repos to justify the reusable-workflow investment.
+- **Extended 2026-07-02:** New-repo CI convention formalised for the Logic Lego build. Python service repos (ramone-memory, atlas-corpus) ship an inline `ci.yml` — `compileall`, `docker compose build`, direct curl notify to `#ci-cd`. Worker repos (ramone-voice-trigger, atlas-api-index) ship an inline parse-check `ci.yml` and copy the 12-line reusable deploy caller from `github-pulse` rather than guessing `atlas-infra`'s input interface fresh each time. Every new workflow declares `workflow_dispatch:` from day one, because `ramone-trigger` needs to be able to dispatch it without a follow-up patch — see Logic Lego Suite.
+- **Gotcha banked:** `npm ci` requires an existing lockfile. Two of the six new repos (`ramone-voice-trigger`, `atlas-api-index`) shipped without `package-lock.json`, so their documented `npm ci` step failed on first run. Fix is a one-time `npm install` to generate the lockfile before CI can use `npm ci`. Worth checking for on every new Worker repo template going forward.
 
-Each repo holds a thin caller workflow (~12 lines) that names the
-reusable workflow, passes a label and optional flags, and forwards
-secrets with `secrets: inherit`.
+### Token model
 
-**Why.** Before this, five Worker repos and three static sites each had
-their own deploy.yml. Five near-identical files meant five places to
-update on every change to the deploy shape; in practice that meant the
-files drifted, and changes to one rarely propagated to the others. The
-reusable workflow makes the pipeline definition canonical: a change to
-the template propagates everywhere by Git ref resolution at workflow
-queue time.
+- **Decision:** Narrowly-scoped Cloudflare tokens, never one account-wide token. Deploy-time and runtime credential paths never share secrets.
+- **Detail:** `CF_WORKERS_DEPLOY_TOKEN` (Workers Scripts:Edit + Workers Routes:Edit) for Worker repos. `CF_PAGES_DEPLOY_TOKEN` (Pages:Edit) for the three static-site repos. Runtime secrets that Workers themselves use (e.g. deploy-watch's Pages:Read token, site-pulse's Zone Analytics:Read token) are set with `wrangler secret put` and are entirely separate from deploy tokens.
+- **Why:** A leaked deploy token is bounded by its permission class.
+- **Extended 2026-07-02:** `atlas-api-index` introduced a third token class — a **read-only discovery token**. Its runtime `CF_API_TOKEN` is a user API token (not the Global API Key) scoped to `Account → Workers Scripts → Read` and `Zone → Workers Routes → Read` only. It cannot edit anything. This is the same logic as the deploy/runtime split, one level further: a Worker whose entire job is *reading* the estate's shape has no business holding write scope, even accidentally. Treat this as the default pattern for any future estate-introspection Worker.
 
-**Consequences.**
-- Worker repos: `github-pulse`, `site-pulse`, `deploy-watch`, `atlas-vault`,
-  `atlas-notify`.
-- Static repos: `atlas-systems`, `status`, `atlas-doc-viewer`.
-- Adding a new repo of either kind is a copy of a 12-line template.
-- A change to the pipeline shape (a new lint step, a different Node
-  version, a different Discord embed format) is one PR to atlas-infra.
+### Discord routing
 
-**Tradeoff acknowledged.** Reusable workflows pin to a Git ref. Caller
-repos that reference `@main` will pick up changes immediately, including
-breaking ones. The alternative — pinning to a tag like `@v1` — was not
-chosen because the rollout was small and same-day, but if breakage
-becomes a problem later, switching callers to a tag ref is a one-line
-change per repo.
+- **Decision:** Three narrow channels, one signal class per channel. CI/deploy notifications post directly via `curl` from inside the reusable workflows, not routed through atlas-notify.
+- **Detail:** `#api-deploys` for Worker deploy outcomes, `#deploy-log` for static-site deploy outcomes, `#ci-cd` for test/CI results. Also `#push-log`, `#weekly-digest`, `#vault-backups`.
+- **Why:** A single firehose channel buries useful signal. Direct curl over routing through atlas-notify because CI workflows are self-contained and shouldn't depend on the router being up to report their own outcomes.
+- **Clarified 2026-07-02 — two separate notification paths now coexist by design, not by accident:**
+  - **CI/deploy events** (GitHub Actions outcomes) → direct `curl` to a Discord webhook, as above. Unchanged.
+  - **Worker runtime events** (a Worker telling the world something happened while it was live — a trigger fired, telemetry flipped offline, a corpus refresh failed) → a fixed alert envelope, `{source: "alert", level, title, message, fields}`, sent with a Bearer `NOTIFY_TOKEN` over the `ATLAS_NOTIFY` **service binding**, with a URL fallback for local dev, and designed to never throw on failure. `ramone-trigger`, `specular-edge`, and `atlas-corpus` all consume this. `NOTIFY_SIGNAL_CLASS` rides along as a var so channel routing logic can be added inside atlas-notify later without touching any consumer.
+  - **Why the split holds:** a GitHub Actions job doesn't need a Worker in the loop to post its own result — direct curl is simpler and has one fewer moving part to be down. A *Worker* telling another Worker something, on the other hand, is already paying the cost of a network hop; routing that hop through a service binding to atlas-notify is strictly better than each Worker maintaining its own webhook logic, and avoids the 522s that public-URL Worker-to-Worker calls produce (see Logic Lego Suite → Problems encountered).
 
----
+### Docker
 
-## 2026-06 — atlas-notify deploys on workflow_run, not push
+- **Decision:** Local pipeline working; ollama-rag-kit was the first production-adjacent use, now joined by three more Docker/systemd-backed local services.
+- **Detail:** ollama-rag-kit, ramone-memory, and atlas-corpus all run as docker-compose stacks on SPECULAR-CORE (WSL2 Ubuntu, RTX 5070). specular-telemetry runs as a native WSL systemd unit rather than a container (it needs direct NVML access). The CI gate for Python service repos is `docker compose build`. `atlas-infra/docker/hello-atlas` remains the proven template.
+- **Status — milestone reached 2026-07-02:** "Public exposure via Cloudflare Tunnel," previously listed as the next step, is now live for two of the four local services. `specular-telemetry` (port 9000) and `atlas-corpus` (port 8092) are both tunnelled through the existing Cloudflared instance (`C:\ProgramData\cloudflared\config.yml`, ingress rules ordered above the catch-all) and fronted by Cloudflare Workers/routes at `api.atlas-systems.uk/specular` and `corpus.atlas-systems.uk` respectively. `ramone-memory` (port 8091) stays local-only by design — it's consumed by Home Assistant on the same LAN, not the public internet.
 
-**Decision.** Unlike the other four Workers, atlas-notify's deploy
-workflow triggers on `workflow_run` of its existing `ci.yml`
-(workflow name: "CI"), filtered to runs that concluded successfully on
-main.
+### Repo structure
 
-```yaml
-on:
-  workflow_run:
-    workflows: ["CI"]
-    types: [completed]
-    branches: [main]
-
-jobs:
-  deploy:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
-```
-
-**Why.** atlas-notify is the only Worker with a real test suite (Vitest,
-12 tests covering all three auth dialects). Running tests inside the
-deploy workflow would mean running them twice on every push — once in
-ci.yml, once in deploy.yml — and the two test runs would post to two
-different Discord channels (ci-cd and api-deploys), giving the
-impression of two independent gates when there's really one.
-
-`workflow_run` puts the CI suite in front of the deploy as a real gate,
-without duplication. The ci-cd channel stays the source of truth for
-test results; the api-deploys channel stays the source of truth for
-deploy outcomes.
-
-**Tradeoff.** `workflow_run` only fires after CI completes, so deploys
-are slightly slower than a direct push trigger (the CI run has to
-finish first). For atlas-notify specifically this is correct: never
-deploy a router that fails its own auth-dialect tests.
+- `atlas-systems` — main site, atlas-systems.uk
+- `atlas-doc-viewer` — CV gate + viewer, cv.atlas-systems.uk
+- `status` — live status page, status.atlas-systems.uk
+- `atlas-notify` — event router Worker, central Discord poster (curl-based for CI, service-binding envelope for Worker runtime alerts)
+- `github-pulse` — GitHub stats proxy Worker
+- `site-pulse` — Cloudflare Analytics proxy Worker
+- `deploy-watch` — Cloudflare Pages deploy poller Worker
+- `atlas-vault` — personal streaming-data backup vault Worker
+- `atlas-infra` — reusable workflows, Docker templates, decisions docs (this file)
+- `atlas-kit-python-rag` — Python RAG kit (FastAPI + ChromaDB + Ollama); currently has uncommitted local changes, left alone
+- `ollama-rag-kit` — docker-compose stack for local AI infrastructure
+- `atlas-article-gen` (private) — generates case study HTML from Markdown frontmatter, 76 pytest tests, 90% coverage
+- `atlas-scheduler` (private) — cron-publishes generated articles to atlas-systems, 50 pytest tests, 83% coverage
+- **`ramone-memory`** *(new 2026-07-02)* — local FastAPI + ChromaDB memory-injection proxy (port 8091) sitting in front of raw Ollama (11434), giving Ramone cross-session memory
+- **`specular-telemetry`** *(new 2026-07-02)* — local FastAPI hardware/service telemetry (WSL systemd, port 9000) + `specular-edge` Worker exposing it publicly
+- **`ramone-voice-trigger`** *(new 2026-07-02)* — Cloudflare Worker (`ramone-trigger`) that authenticates and dispatches allowlisted GitHub Actions workflows, enabling voice-triggered deploys
+- **`atlas-corpus`** *(new 2026-07-02)* — local FastAPI + ChromaDB + Ollama RAG search service (port 8092) over estate docs/repos, public at corpus.atlas-systems.uk, embedded in Lab
+- **`atlas-bootstrap`** *(new 2026-07-02)* — machine reconstruction/recovery repo: WSL health checks, Windows portproxy refresh, repo cloning, env seeding, service startup
+- **`atlas-api-index`** *(new 2026-07-02)* — Cloudflare Worker self-documenting registry at api.atlas-systems.uk/ (and /_meta): discovers and probes every estate Worker, caches in KV, rebuilds hourly
 
 ---
 
-## 2026-06 — Two Cloudflare deploy tokens, scoped narrowly
+## Logic Lego Suite (2026-07-02)
 
-**Decision.** The estate uses two separate Cloudflare API tokens for
-deployment, never one account-wide token.
+Six repos, installed and corrected in a single day, under the canonical estate root `L:\Atlas-Systems` (`/mnt/l/Atlas-Systems` in WSL2) — the layout is now fixed estate-wide; zip archives stay in Downloads, working trees live under the estate root. All six are live, deployed, and health-checked as of this entry. This section is Pillar 2 (modular library) and Pillar 3 (DevOps core) advancing together: each repo is a self-contained "Logic Lego" brick, but several of them only became load-bearing because of contracts introduced this session — the `/_meta` shape, the alert envelope, and the conditional-KV-write pattern all now apply estate-wide, not just to the repo that introduced them.
 
-| Secret name | Cloudflare permissions | Used by |
-|---|---|---|
-| `CF_WORKERS_DEPLOY_TOKEN` | Workers Scripts: Edit, Workers Routes: Edit | every Worker repo |
-| `CF_PAGES_DEPLOY_TOKEN` | Cloudflare Pages: Edit | every static-site repo |
-| `CF_CACHE_PURGE_TOKEN` | Zone cache purge only | optional post-deploy static-site cache invalidation |
+### The `/_meta` contract is fixed estate-wide
 
-`CF_ACCOUNT_ID` accompanies the deploy tokens. `CF_ZONE_ID` accompanies
-`CF_CACHE_PURGE_TOKEN`. Tokens are stored as per-repo GitHub Actions secrets
-(no org-level secrets — AtlasReaper311 is a user account).
+- **Decision:** `GET <route-prefix>/_meta` returns `{name, description, version, endpoints[], status, source}` on every Worker.
+- **Detail:** The module is a vendored ~40-line file, canonical copy at `atlas-api-index/shared/_meta.js`, copied into each Worker's `src/` rather than npm-published — one import line per Worker, no publish step, no registry dependency, £0. Suffix matching means the same file works behind any route prefix or a bare `workers.dev` host.
+- **Why:** `atlas-api-index` can only document what adopts the contract. A vendored file with no publish step keeps the £0 constraint intact while still giving every Worker a canonical, reusable implementation instead of eleven bespoke ones.
+- **Current adoption:** 3 of 11 discovered Workers are documented (`atlas-api-index`, `ramone-trigger`, `specular-edge`). 8 are not yet (`atlas-backend`, `atlas-notify`, `atlas-vault`, `deploy-watch`, `github-pulse`, `ramone-edge`, `simple-proxy`, `site-pulse`) — this is the single biggest open item from today's build (see Gaps).
 
-**Why.** A leaked Workers token can edit Worker scripts and routes, but
-not Pages projects, DNS, or anything else. A leaked Pages token can
-deploy Pages projects but cannot touch Workers. The blast radius of any
-single token leak is bounded by the token's permission class, not by
-the breadth of the account.
+### KV conditional-write rule now covers caching, not just polling
 
-**Cache purge is separate.** Static-site deploys may purge the Cloudflare
-edge cache after `wrangler pages deploy`, but that uses `CF_CACHE_PURGE_TOKEN`,
-not the Pages deploy token. This keeps deployment and cache invalidation as
-separate permissions while preventing stale JavaScript assets from lingering
-after a successful deploy.
+- **Decision:** Cache API for hot data, KV only for a last-known-good snapshot written on state change or staleness, never as a naive per-request cache.
+- **Detail:** `specular-edge` uses the Cache API as its 60-second hot cache (free, unlimited) and `TELEMETRY_KV` only for a last-known-good snapshot, written on an online/offline flip or when the stored copy is over ten minutes old — roughly 150 writes/day where a naive "cache in KV for 60s" design would cost up to 1,440 against the 1,000/day free-tier cap.
+- **Why:** Same shape as the `deploy-watch` fix banked earlier this year. Treat conditional-write-on-state-change as the default pattern for any edge cache going forward, not just for polling loops.
 
-**Runtime secrets are separate.** Tokens that Workers themselves use at
-runtime (e.g. deploy-watch's Pages: Read token, site-pulse's Zone
-Analytics: Read token) are set on the Worker with `wrangler secret put`,
-not in GitHub Actions, and have their own narrower scope. The
-deploy-time and runtime token paths never share credentials.
+### Worker naming and route layering
 
----
+- **Decision:** New Workers — `specular-edge` (mirrors `ramone-edge`'s naming), `ramone-trigger` (the deployed name of the `ramone-voice-trigger` repo), `atlas-api-index` (atlas-noun pattern). Route claims are ordered most-specific-first.
+- **Detail:** All three claim `api.atlas-systems.uk` paths more specific than `atlas-notify`'s `/*` wildcard. `atlas-api-index` claims exactly `/` and `/_meta`, which retires the hand-maintained root JSON list with no unwiring required elsewhere.
+- **Why:** Cloudflare route matching is most-specific-wins; keeping new routes deliberately narrower than the wildcard means new Workers can be added without ever touching `atlas-notify`'s catch-all.
+- **Note:** this is the first time a repo name (`ramone-voice-trigger`) and its deployed Worker name (`ramone-trigger`) have diverged for brevity. `specular-telemetry` → `specular-edge` is the same pattern. Worth formalising as a documented convention rather than an implicit one — see Decisions Pending.
 
-## 2026-06 — Routes use zone_id, never zone_name
+### `ramone-memory` is an Ollama-compatible proxy, not a custom integration
 
-**Decision.** Every `routes = [...]` entry in every `wrangler.toml` uses
-the literal Cloudflare zone ID, not the human-readable zone name.
+- **Decision:** `ramone-memory` speaks the exact Ollama API shape (`/api/chat`, streaming included) rather than inventing a new protocol.
+- **Detail:** Memory is injected into the system prompt server-side, so pointing Home Assistant at it is a URL swap (`:11434` → `:8091`) with zero HA-side protocol changes. Ollama has no end-of-conversation event, so sessions finalise by explicit `/sessions/{id}/end` call or a 300-second idle reaper with bounded retry. Sessions are fingerprinted from the first user message; an `X-Session-Id` header opts out of fingerprinting. Long-term memory lives in its own `ramone_memory` ChromaDB collection; `ollama-rag-kit`'s `ramone_sessions` collection stays the separate short-term rolling layer — the two never share data.
+- **Why:** An Ollama-compatible proxy is a drop-in for any existing Ollama client, not just Home Assistant, and costs nothing extra to build since the proxy has to parse the request anyway.
+- **Operational gotcha banked:** Home Assistant can have two valid-looking Ollama integrations configured (`Ollama (raw, no memory)` on `:11434` and `Ollama (Ramone memory)` on `:8091`) and still bypass memory entirely, because the thing that actually matters is which conversation entity the *Assist pipeline* has selected as `conversation_engine` — not which integrations exist in the list. This produced a real incident (Ramone was talking but not remembering) and is banked as a general principle below.
 
-Correct:
-```toml
-{ pattern = "api.atlas-systems.uk/notify*", zone_id = "8ba6350a..." }
-```
+### `atlas-notify` consumers standardise on the alert envelope over service bindings
 
-Wrong (will fail in CI):
-```toml
-{ pattern = "api.atlas-systems.uk/notify*", zone_name = "atlas-systems.uk" }
-```
+- Covered above under Discord routing; recorded here too because it's a Logic Lego-introduced contract, not a pre-existing one.
 
-**Why.** Resolving a zone name to a zone ID requires Account: Read
-permission on the token making the call. The narrowly-scoped
-`CF_WORKERS_DEPLOY_TOKEN` deliberately lacks that permission. Local
-`wrangler deploy` runs with a broader interactive token and resolves
-names fine; CI runs with a scoped token and silently fails with
-"Could not find zone." Using `zone_id` everywhere removes the asymmetry
-between local and CI deploys.
+### Voice deployment is a client of the pipeline, not a new capability
 
-**How this was caught.** atlas-notify's wildcard route was set to
-`zone_name`, the named route to `zone_id`. The named route deployed
-fine; the wildcard failed on every CI run. Fixed in the same commit
-that rewired atlas-notify to the reusable workflow.
+- **Decision:** `ramone-trigger`'s `REPO_ALLOWLIST` var (a JSON map of `repo → workflow file`) is the single source of truth for what voice can touch. All allowlisted callers now declare `workflow_dispatch:` in their own workflow files.
+- **Detail:** Home Assistant resolves a spoken phrase to a repo slug, sends it with `x-trigger-secret` to the Worker, the Worker checks the secret and the allowlist, then calls GitHub's `workflow_dispatch` API for the mapped workflow, then notifies via the `ATLAS_NOTIFY` envelope. `atlas-notify` itself is a special case in the allowlist because its deploy chains through `workflow_run` rather than a direct push-triggered workflow. HA's `rest_command` integration does not expose the HTTP response body back to the automation, so the spoken confirmation ("Deploy request sent...") only proves the request left Home Assistant — it cannot prove GitHub accepted or finished it. A 120-second completion watch runs in `waitUntil` as additive comfort; the pipeline's own Discord notify remains the guaranteed completion signal, not the spoken response.
+- **Why:** Voice is not a parallel deployment system with its own trust model — it's the exact same GitHub Actions pipeline everything else uses, gated by one more authenticated client. That keeps the attack surface and the mental model both small.
+- **Confirmed working end-to-end** via a live voice command ("Deploy GitHub Pulse") → Worker dispatch → GitHub Actions run → Discord notification, same day.
 
----
+### Public search endpoints carry edge protections in-app
 
-## 2026-06 — Named environments inherit nothing
+- **Decision:** `atlas-corpus`'s `/search` is browser-facing through the tunnel, so it holds its own per-IP sliding hourly rate limit (`CF-Connecting-IP`), a 500-character query cap, and a CORS allowlist — all inside the FastAPI service itself, not delegated to a Worker in front of it. `/refresh` is gated by `CORPUS_SECRET` and fail-closed at startup, the same precedent `ATLAS_SECRET` set earlier.
+- **Why:** `/search` is intentionally unauthenticated (it powers the public Lab widget), so the protections that would normally live at the edge have to live in-app instead, since there's no Worker sitting in front of this particular tunnel route doing that job.
 
-**Decision.** Every `[env.dev]` block in every `wrangler.toml`
-redeclares `vars`, `kv_namespaces`, and any other binding the Worker
-reads from. Dev environments deliberately omit `routes` and `triggers`.
+### Corpus re-ingest converges rather than accretes
 
-```toml
-[env.dev]
-workers_dev = true
+- **Decision:** Chunk IDs are deterministic — `sha1(repo:path:index)` — so a `/refresh` is an upsert-plus-prune of stale indexes, not an ever-growing pile of duplicate vectors.
+- **Detail:** Chunking is a word-window of 512 words with 64-word overlap, approximating a token-based spec without adding a tokenizer dependency. The brand and context docs ingest from a gitignored, read-only `./docs` mount populated from `atlas-brand.md` and `Atlas_Systems_-context.md`.
+- **Why:** Deterministic IDs make re-ingestion idempotent by construction — running `/refresh` twice in a row produces the same corpus state, not two overlapping ones.
 
-[env.dev.vars]
-CACHE_TTL_SECONDS = "60"
-# ... redeclared, not inherited from the top level
+### `atlas-bootstrap` owns the machine contracts
 
-[[env.dev.kv_namespaces]]
-binding = "PULSE_CACHE"
-id = "<dev-namespace-id>"  # separate from production
-```
+- **Decision:** Portproxy rules are delete-then-add and re-derived by a SYSTEM scheduled task at startup and logon — this supersedes the old `ATLAS_BOOTSTRAP.bat` script and **closes its long-standing documented portproxy-drift gap for good.**
+- **Detail:** Ollama's `0.0.0.0` binding is written as a systemd drop-in by bootstrap (drop-ins survive package upgrades; direct unit edits don't). Docker Desktop is skipped when native Docker Engine is already detected inside WSL2. Repos, services, health endpoints, and models are all `lib/*.json` configuration, not hardcoded into the script — so fixing a stale repo reference is a JSON edit, not a script edit.
+- **Why:** The previous state of this problem (WSL2 IP drifting on every reboot, portproxy silently going stale) was a recurring, self-inflicted outage. Making the refresh a boot/logon task rather than something remembered-and-run-manually removes the human from the failure path entirely.
+- **Health check hardening banked:** the `nomic-embed-text` vs `nomic-embed-text:latest` string-match bug (a present model reading as "missing") and the `HTTP 000` vs a real failure code bug (a dead connection reading as "up") were both fixed as part of this repo. Small, boring bugs, but exactly the kind that make a health check lie to you at 2am.
 
-**Why.** Wrangler's named environments do not inherit `vars`,
-`kv_namespaces`, `routes`, or `triggers` from the top level of the
-config. A dev environment that doesn't redeclare its bindings deploys
-with them empty — a silent failure that only shows up at runtime as
-missing environment variables or undefined KV namespaces.
+### Port allocations
 
-Dev environments must not declare production routes (`api.atlas-systems.uk/...`)
-or production triggers (`crons`) for safety: a dev Worker must not
-claim production traffic or run scheduled jobs against production
-state. `workers_dev = true` reaches the dev Worker at a separate
-`workers.dev` URL.
+- `8091` — `ramone-memory`
+- `8092` — `atlas-corpus`
+- `9000` — `specular-telemetry` (moved Portainer to `9001` to free this)
+- Joining the existing portproxy set: `8000`, `8080`, `8081`, `11434`
+
+### Registry discovery is read-only by construction
+
+- **Decision:** `atlas-api-index`'s runtime `CF_API_TOKEN` carries `Workers Scripts:Read` and `Workers Routes:Read` only, minted separately from any deploy token (see Token model).
+- **Detail:** Registry KV carries a 75-minute TTL against the hourly cron (`7 * * * *`), with on-demand rebuild on a cold read — so one missed cron degrades nothing and a genuinely dead cron surfaces within the hour rather than silently. New-worker notifications diff against the previous snapshot, so the first pass and any flapping worker stay silent instead of spamming Discord.
+- **Why:** A registry that can only read the estate is safe to run unattended on a cron with no write blast radius if it's ever compromised. The TTL-plus-cold-rebuild pattern means correctness never depends on the cron firing on schedule.
+
+### New-repo CI convention
+
+- Covered above under CI/CD; recorded here too as the Logic Lego-specific instance of the estate-wide rule.
+
+### Problems encountered and fixed (lessons banked)
+
+- **A healthy API can still fail in the browser.** `atlas-corpus`'s service and CLI checks were all green while the live Lab search failed with a `NetworkError`. Root cause was the site's Content-Security-Policy `connect-src` not allowlisting `https://corpus.atlas-systems.uk` — nothing to do with the API itself. Always test from the actual browser context, not just curl, before declaring a public-facing feature done.
+- **Worker-to-Worker calls through the public hostname return 522.** `atlas-api-index` probing other Workers' `/_meta` via `https://api.atlas-systems.uk/...` — the exact same URLs that work fine from outside — got `522`s internally. Fix is Cloudflare **service bindings** for known Workers; this is now the estate default for any Worker-to-Worker call, not just this one (`ramone-edge`'s notify calls hit the identical issue earlier this year).
+- **Route-metadata generation can double-append a suffix.** The registry was generating `.../ _meta/_meta` by blindly appending `/_meta` to every discovered route, including routes that already ended in `/_meta`. Fix: detect already-terminal routes before appending anything.
+- **Wrangler refuses an empty KV namespace ID in config.** `id = ""` in `wrangler.toml` blocks Wrangler from processing the file at all — including the command that would create the namespace. Workaround: `npx wrangler kv namespace create <NAME> --config /dev/null`, then patch the returned ID into `wrangler.toml` by hand.
+- **`wsl sudo <cmd>` can hang indefinitely from PowerShell** waiting for an interactive password prompt that never appears. `wsl -u root <cmd>` runs as root directly and doesn't hang.
+- **GitHub token *display* names are cosmetic.** A token labelled `RAMONE_TOKEN` in GitHub's UI is fine as long as its *value* is stored under the secret name the code actually reads (e.g. `GITHUB_TOKEN`). This caused real confusion twice in one day across two different repos.
+- **The Windows→WSL NVIDIA bridge can drop independently of both the Windows driver and the telemetry code.** Windows-side `nvidia-smi` working while `wsl nvidia-smi` fails with "GPU access blocked by the operating system" means neither the app nor the driver is broken — the WSL2/NVIDIA bridge is. Recovery order: `wsl nvidia-smi` → `wsl --shutdown` and retry → reboot Windows if still failing. **Do not** install a Linux-native NVIDIA driver inside WSL; GPU support there comes from the Windows driver being projected in via `/usr/lib/wsl/lib/libnvidia-ml.so.1`.
 
 ---
 
-## 2026-06 — html-validate ruleset relaxed for portfolio style
+## Site Design
 
-**Decision.** Across all three static-site repos, the html-validate
-config extends `html-validate:recommended` but disables three rules and
-demotes one to a warning:
+### Aesthetic
 
-```json
-{
-  "extends": ["html-validate:recommended"],
-  "rules": {
-    "no-implicit-button-type": "off",
-    "no-trailing-whitespace": "off",
-    "no-raw-characters": "warn",
-    "void-style": "off",
-    "attribute-boolean-style": "off",
-    "no-inline-style": "off",
-    "long-title": "off"
-  }
-}
-```
+- **Decision:** Dark/terminal aesthetic
+- **Why:** Matches the technical identity of Atlas Systems, signals intentionality to senior engineers.
 
-**Why.** The recommended ruleset surfaced ~67 violations across the
-seven HTML files on first run. Each was reviewed:
-- `no-implicit-button-type` — buttons outside a `<form>` default to
-  type="button" already; adding it is style preference, not a real
-  hazard. The site has no forms.
-- `no-trailing-whitespace` — invisible characters with no functional
-  impact; stylistic only.
-- `no-raw-characters` — most raw `&` characters were in Google Fonts
-  URLs and human-readable section titles ("Composition & Synthesis")
-  that all major browsers render correctly. Demoted to warning so they
-  show in logs without failing the build.
-- The four `style` rules were already off in the original config.
+### Brand specifics
 
-**What remained.** Genuine accessibility issues (bare `<nav>` landmarks
-needing aria-labels; gallery-dot buttons needing aria-labels; an `<img>`
-with no `src` attribute) were fixed in code, not relaxed away. The
-ruleset's job is to catch things users notice; cosmetic style
-preferences belong in code review, not in CI.
+- **Background:** `#0a0a0f` / `#111118`
+- **Accent:** amber `#f5a623`
+- **Text:** off-white `#e8e8e0`
+- **Typefaces:** IBM Plex Mono (body) + DM Serif Display (display)
+- **Logo:** node-network mark, sideways A-shape
+- **Contact:** atlas@atlas-systems.uk
 
-**Tradeoff acknowledged.** A future contributor might add a button
-inside a form expecting `type="button"` by default, when the actual
-default in a form is `type="submit"`. If the site ever grows forms,
-the rule should be re-enabled, and any existing buttons inside the new
-forms audited.
+### Stack
+
+- **Decision:** Static HTML/CSS/JS, hand-crafted
+- **Why:** Plugs directly into Cloudflare Pages pipeline; hand-crafted signals fundamentals over framework dependency. React components can be added selectively later — none added so far, none needed.
+
+### Case study voice rules
+
+- **Decision:** Direct, senior-engineer prose. No em dashes, no "leveraged / utilised / robust / seamless." Outcomes section closes with a transferable insight, not an achievements list.
+- **Detail:** Frontmatter is TOML with `+++` delimiters. `summary`, `w_number`, `slug` are never pre-filled (only Atlas knows them). `title`, `subtitle`, `tags` and most of `[work_card]` are decided by Claude during generation. `date_written`, `read_time`, `section_pills`, `project_number` are computed by the generator.
+
+### Published case studies
+
+- W-01: SONIN
+- W-02: SlamPunk
+- W-03: Ramone
+- W-04: Overclocking (published)
+- W-05: Pipeline Infrastructure (later this month)
+- W-06: CI-CD
+- **Correction from this audit, confirmed by Atlas 2026-07-02:** the previous version of this file had both "Overclocking" and "Pipeline Infrastructure" labelled `W-05`. Overclocking is actually `W-04` (already published); `W-05` belongs to Pipeline Infrastructure, scheduled later this month. Fixed here rather than left as a flag.
+
+### Lab page
+
+- **Decision:** The Lab page shows _historical_ signal the home page status dot cannot. Failure log panel reads from `atlas-notify`'s ring buffer (`KV NOTIFY_LOG`, key `notify:recent:v1`, last 200 events) via `GET /notify/recent`. Heatmap above it reads from a `/pulse/heatmap` endpoint.
+- **Why:** The previous "System log" duplicated home-page liveness signal and the status page.
+- **Extended 2026-07-02:** Lab gained two new panels this session. A **corpus search widget** calls `atlas-corpus`'s public `/search` endpoint (with a local-first fallback to `http://localhost:8092` when Lab is being previewed from `localhost`/`127.0.0.1`, falling through to the public tunnel, then a real error — never a silent failure). An **API registry panel** replaces the old hand-maintained endpoint list and now renders `atlas-api-index`'s live registry document. This required a follow-up fix (`atlas-systems` commit, same day): the API root's response shape changed from a flat `data.endpoints` array to a richer `data.workers[*].meta.endpoints` structure once `atlas-api-index` went live, and Lab's panel needed to normalise both shapes — otherwise a perfectly healthy backend rendered as "No endpoints reported." Banked as a general lesson: **when an API's response shape changes, check every consumer, even ones that look unrelated to the change you made.**
+- **Open question, still deferred (see Pending):** whether pipeline events should flow _through_ atlas-notify into the Failure log, or stay direct. New Worker runtime alerts (trigger, telemetry, corpus) already flow through atlas-notify via service binding as of this session — see Discord routing — which is a step in that direction, but doesn't resolve the original CI/deploy-event question.
 
 ---
 
-## 2026-06 — Hard gate on static sites, not soft monitoring
+## Operating principles
 
-**Decision.** All three static-site repos disconnected Cloudflare's
-native Git integration. The only path to production is now
-`wrangler pages deploy` from inside the validated GitHub Actions
-workflow. A failed validate job means a failed deploy job means
-nothing reaches production.
+### Full-file rewrites over partial edits
 
-**Why.** The alternative considered was keeping native Git integration
-on and running validation in parallel — a "soft gate" where a broken
-HTML tag would still ship and the GitHub status check would just go
-red afterwards. Soft gates report on harm after it lands; hard gates
-prevent it. The harm being prevented (a broken nav, a dead `<img>`, a
-malformed page) is exactly the kind of regression that's costly and
-embarrassing on a portfolio site whose purpose is to demonstrate
-production discipline.
+- **Decision:** When touching JSON, TOML, or YAML config files, replace the entire file rather than editing lines in place. Use heredocs (`cat > file <<'EOF' ... EOF`) so shell metacharacters in content don't get interpreted.
+- **Why:** Partial edits race other partial edits. Full-file rewrites eliminate the merge conflict surface for config files.
 
-**Cutover safety.** For each site, the Actions workflow ran in
-parallel with native integration for two to three pushes first, to
-confirm reliability before disconnecting native. The order was:
-1. Add the workflow.
-2. Let it run alongside native for several pushes.
-3. Disconnect native only after multiple green Actions runs.
-4. Verify by pushing once more and confirming only one new deployment
-   appeared in the Pages dashboard (from Wrangler, not from GitHub).
+### Verify locally before pushing
 
-This sequence meant at no point could a broken Actions run take the
-site down: until step 3, the native integration was still the real
-deploy path; after step 3, the Actions run was proven reliable.
+- **Decision:** Every commit that touches a gated file gets validated locally first. `node --check` for JS, `npm ci` for lockfile integrity, `npx html-validate` for HTML, `npx eslint .` for Worker source.
+- **Why:** GitHub Actions is the _enforcement_ of the gate; local validation is the _fast feedback loop_.
 
----
+### `git pull --rebase` before every push
 
-## 2026-06 — Three Discord channels, one signal per channel
+- **Decision:** Standard practice across all repos. `git config --global pull.rebase true` sets it as default.
+- **Why:** GitHub web UI edits race with local edits constantly.
 
-**Decision.** Pipeline outcomes route to three dedicated channels:
+### One command per state-changing step
 
-| Channel | Signal | Webhook secret |
-|---|---|---|
-| `#api-deploys` | every Worker deploy outcome | `DISCORD_API_DEPLOYS_WEBHOOK` |
-| `#deploy-log` | every static-site deploy outcome | `DISCORD_DEPLOY_WEBHOOK` |
-| `#ci-cd` | CI/test outcomes (atlas-notify, atlas-kit-python-rag) | `DISCORD_CICD_WEBHOOK` |
+- **Decision:** In complex git sequences, paste commands one at a time, not chained with `&&`. Read the output before running the next.
+- **Why:** Chained blocks have repeatedly run the second command before the first finished registering, producing false-positive failures.
 
-**Why.** A single firehose channel buries useful signal. Three
-narrow channels mean each one's silence is meaningful: if `#ci-cd` is
-quiet and `#api-deploys` is quiet, the day was uneventful. If
-`#api-deploys` has reds, you know exactly which class of deploy failed
-before reading the message.
+### Direct acknowledgement of mistakes
 
-Notifications are sent directly via `curl` from inside the reusable
-workflows, not routed through atlas-notify, because (a) the workflows
-are self-contained and don't depend on the router being up, and (b)
-the existing event-router envelope adds a layer of indirection that
-isn't useful for outcomes whose schema is already stable.
+- **Decision:** When something breaks — including a script Claude wrote — name what broke and why, no deflecting. Banked lessons go into this file.
+- **Why:** Pattern-matching against expected file contents is the failure mode; pulling and reading the real file is the working pattern.
 
-**Open question, deferred.** A future architecture flowing pipeline
-events *through* atlas-notify (so they also populate the Lab page
-Failure log) would unify the event bus but add a dependency. Not done
-in this rollout; revisit when the Failure log proves out.
+### Ask "who is making the request?" *(new 2026-07-02)*
+
+- **Decision:** Before writing any hostname into config, identify the caller's execution context explicitly, because the correct hostname is different for each one: a **browser on Windows** wants `localhost` or a public URL; a **container** wants `host.docker.internal` for host services; a **WSL-native service** wants `localhost` from inside WSL; a **Cloudflare Worker** wants a public URL or a service binding.
+- **Why:** Today's build repeatedly produced confusion from `host.docker.internal` being correct in one context and wrong in an adjacent one. Naming the caller before naming the host resolves it in one step instead of trial-and-error.
+
+### Trace the active path, not the visible option list *(new 2026-07-02)*
+
+- **Decision:** When a system offers multiple valid-looking configured options (e.g. two Ollama integrations in Home Assistant), don't assume the intended one is active. Find the specific field that actually selects runtime behaviour (here, the Assist pipeline's `conversation_engine`) and verify that, not the presence of the option in a list.
+- **Why:** Ramone had both the raw-Ollama and memory-proxy integrations configured correctly the whole time; the pipeline was simply still pointed at the old one. The bug wasn't a missing feature, it was an unverified assumption about which of several correct-looking things was actually wired in. This generalises well beyond Home Assistant — check route bindings, active feature flags, and selected entities the same way.
 
 ---
 
-## 2026-06 — Three pipeline shapes, no fourth
+## What Doesn't Exist Yet (known gaps)
 
-**Decision.** Every repo on the estate fits one of three shapes:
-
-| Shape | Validation | Deploy | Outcome notification |
-|---|---|---|---|
-| **Worker** | wrangler dry-run + ESLint (+ Vitest where present) | wrangler deploy | api-deploys |
-| **Static site** | html-validate + lychee | wrangler pages deploy | deploy-log |
-| **Library / Kit** | language-native (ruff/mypy/pytest, or docker compose build) | none — published as code | ci-cd |
-
-A repo that doesn't fit one of these shapes is treated as a signal that
-either the shape list is wrong (and needs extending deliberately, with
-its own reusable workflow) or the repo itself is doing too many things.
-
-**Why.** Three shapes are tractable to keep in your head; ten are not.
-The cost of forcing a fourth pattern into existence is the
-maintenance burden of a fourth template. Worth paying when justified;
-not worth paying for one-off needs that the existing shapes mostly
-cover.
+- **`/_meta` contract adoption for 8 legacy Workers** *(new gap, 2026-07-02)* — `atlas-backend`, `atlas-notify`, `atlas-vault`, `deploy-watch`, `github-pulse`, `ramone-edge`, `simple-proxy`, `site-pulse` are all discovered live by `atlas-api-index` but don't yet return a valid `/_meta`. The helper and adoption guide already exist (`atlas-api-index/shared/_meta.js`, `examples/adding-meta-to-existing-worker.md`) — this is now pure retrofit work, not design work. Known specific causes so far: some 404 at `/_meta` outright, `atlas-notify` 405s because that path currently expects POST, `site-pulse` responds but not in the expected contract shape, `github-pulse` 502s through its service binding during probing.
+- **Conversational "ask my infrastructure" interface** — partially delivered 2026-07-02: `specular-telemetry` (live hardware stats) and `atlas-corpus` (semantic search over estate docs) are both public via Cloudflare Tunnel and embedded in Lab. What's still open is a true chat-style interface over the corpus, rather than keyword/semantic search alone.
+- Environment promotion (dev / staging branches) per Worker — pattern is built into the reusable workflow, not yet adopted per-repo
+- Claude Code plugin `atlas-systems` with four skills: `atlas-ci-debug`, `atlas-worker-scaffold`, `atlas-case-study-writer`, `atlas-decisions-logger`
+- Homelab secondary build (SPECULAR-NODE) using a Ryzen 9 9900X + RTX 3060 — always-on Ollama inference node + Jellyfin media server, a separate physical machine from SPECULAR-CORE, not yet assembled
+- Ingesting real documents into `atlas-kit-python-rag` — note: `atlas-corpus` now performs a related role (ingestion + embedding + search) specifically over estate docs/repos, but `atlas-kit-python-rag` itself is untouched and currently carries uncommitted local changes that blocked bootstrap's fast-forward
+- AWS integration — still not done, still not blocking anything
+- Windows-native Node.js LTS install — `winget` install currently fails with exit code `1603`; non-blocking, WSL Node covers every current need
+- Ollama model directory ownership is mixed across `ollama` / `atlas` / `root` — not blocking today, but the next failed `ollama pull` should prompt a deliberate ownership fix rather than another workaround
 
 ---
 
-## 2026-06 — atlas-infra documents itself
+## Decisions Pending
 
-**Decision.** atlas-infra is not just a folder of reusable workflows;
-it carries `docs/CICD-DECISIONS.md` (the reference index of patterns)
-and `docs/decisions.md` (this file). A new repo's owner can copy a
-template, read the docs, and have working CI/CD without anyone
-explaining anything.
-
-**Why.** Tribal knowledge dies. Infrastructure that documents itself
-survives. The `decisions.md` model — what was decided, why, what
-consequences flow from it — works because the audience is a future
-engineer, who may be future-you with no memory of tonight's session.
-
-This file is appended to, never rewritten. A decision being overridden
-gets a follow-up entry citing the original. The history of why this
-estate is shaped the way it is should be reconstructible from this
-document.
+- **Lab + atlas-notify pipeline events** — should CI/deploy events flow _through_ atlas-notify (populating the Lab Failure log organically, single event bus) or stay as direct `curl` posts from inside the reusable workflows? Still undecided. Note: new Worker *runtime* alerts (trigger, telemetry, corpus) already flow through atlas-notify via service binding as of 2026-07-02 — a partial, organic move in that direction — but that's a different event source (Worker runtime, not CI/deploy) and doesn't resolve the original question.
+- **Knowledge Base framework** — Hugo / Docusaurus / hand-crafted? No movement since May; not blocking.
+- **Logic Lego naming convention** — the repo count crossed 19 with today's build, past the "15+ repos" threshold set as the original revisit trigger. The pattern that's actually emerged: `<subsystem>-<noun>`, where subsystem is `ramone` / `specular` / `atlas` (`ramone-memory`, `ramone-voice-trigger`, `specular-telemetry`, `atlas-corpus`, `atlas-bootstrap`, `atlas-api-index`). New this session: repo name and deployed Worker name have started deliberately diverging for brevity (`ramone-voice-trigger` deploys as `ramone-trigger`; `specular-telemetry`'s Worker is `specular-edge`). Formalising "repo name" and "deployed service name" as two intentionally-different, documented fields is now due.
+- **dev environments per Worker** — every Worker has its `[env.dev]` block sketched in `wrangler.toml`. Adoption is per-Worker, when staging is actually wanted for that one. Not a single estate-wide decision.
 
 ---
 
-## 2026-07 — Ramone uses Chroma-backed, reference-gated session memory
+## Update Log
 
-**Decision.** Ramone's public Q&A flow now accepts a client-generated
-UUID v4 `session_id` and stores recent user/assistant turns in a
-dedicated Chroma collection, separate from the Atlas documentation
-collection. The standalone Ramone page and the Lab widget share the
-same browser key, `ramone:session_id`, so a visitor can continue a
-conversation across both public surfaces. Both surfaces also expose a
-visible "new conversation" control that clears that key and reloads.
-
-`ramone-edge` only validates and forwards the session id. It never
-reads, writes, logs, or stores raw conversation memory. Memory lives in
-`ollama-rag-kit` behind the existing `ATLAS_SECRET` boundary.
-
-**Ollama API choice.** The streaming path moved from Ollama's
-`/api/generate` endpoint to `/api/chat`. This was a deliberate
-architecture change, not incidental refactoring: `/api/generate` takes
-one prompt string, while `/api/chat` has a native `messages` shape that
-can carry system instructions, reference history, and the current
-RAG-grounded user prompt without manual prompt concatenation.
-
-**History injection rule.** Stored turns are not replayed blindly on
-every request. A small reference detector injects history only when the
-current question appears to depend on prior context, such as "it",
-"that", "your previous answer", "first", or "second". Standalone
-questions stay clean RAG calls even when the browser has an active
-session.
-
-When history is injected, it is transformed into a reference-only
-system block containing prior assistant answers only. Prior user turns
-are deliberately omitted because they often contain one-off formatting
-instructions or prompt-shaping requests. This prevents a past request
-like "answer as First: X. Second: Y." from becoming a standing rule on
-later unrelated questions.
-
-**Why.** Memory is useful for natural follow-ups ("what does it do?",
-"what was second?") but dangerous if prior instructions are given fresh
-authority. The chosen design gives Ramone continuity for references
-while preserving the RAG contract: factual answers still come from the
-numbered context blocks, and old formatting does not bleed into new
-questions.
-
-**Verification.**
-- `ramone-edge`: `npm run check`, `npm run lint`, and Vitest all pass
-  after adding the reset control and `has_memory` notification field.
-- `ollama-rag-kit`: the rebuilt Docker container passed 30 pytest tests
-  copied into `/tmp/tests`, including streaming/memory integration tests.
-- Live health check returned `status=ok`, Ollama reachable, Chroma
-  reachable, and 239 indexed chunks.
-- Live behavior check: after a forced `First:/Second:` answer, an
-  unrelated "How does the CI/CD pipeline work?" question answered in
-  normal prose instead of carrying the old format forward.
-- Live follow-up check: asking what was after `Second` in the previous
-  answer resolved to ChromaDB.
-
-**Consequences.**
-- `MEMORY_CONTEXT_TURNS=0` remains the kill switch for both reads and
-  writes.
-- The memory collection is `ramone_sessions`; document evidence remains
-  in `atlas_docs`.
-- Future tests should keep covering both failure modes: failed model
-  generations must not write memory, and standalone questions must not
-  receive history.
-- The Lab widget and standalone Ramone page intentionally share one
-  session key unless a future product decision makes separate
-  conversations more useful.
+- 2026-05-28: Document created, Pillars 1 and 3 complete
+- 2026-06-21: Major update reflecting six weeks of build-out — full CI/CD rollout, reusable workflows in atlas-infra as canonical source, hard-gate cutover on all three static sites, Discord routing across three channels, atlas-notify ring buffer + Lab Failure log, brand spec captured, case study voice rules captured, operating principles section added.
+- 2026-07-02: **Logic Lego six-repo build shipped.** `ramone-memory` (cross-session memory proxy for Ramone), `specular-telemetry` (public live hardware telemetry), `ramone-voice-trigger` (voice-triggered GitHub Actions dispatch), `atlas-corpus` (public RAG search over estate docs, embedded in Lab), `atlas-bootstrap` (machine reconstruction/recovery, closes the long-standing portproxy-drift gap for good), `atlas-api-index` (self-documenting Worker registry at api.atlas-systems.uk/). New estate-wide contracts introduced: fixed `/_meta` shape, alert envelope over service bindings for Worker runtime notifications, conditional-KV-write-on-state-change generalised to caching. Fixed: Worker-to-Worker 522s (service bindings), corpus CSP block, doubled `/_meta` route bug, Lab API panel registry-shape mismatch, two health-check false-negatives in atlas-bootstrap. Voice deploy and memory routing both confirmed working end-to-end (Discord notification + Home Assistant, respectively) same day. Repo count crossed 19 — Logic Lego naming convention formalisation now due. Two new operating principles banked. Cloudflare account_id confirmed as `49e221b7e55a9e5c45b88d08efca5771` (corrects the value previously on record — see Key infrastructure constants). W-04/W-05 case study numbering corrected (Overclocking is W-04, published; Pipeline Infrastructure is W-05).
