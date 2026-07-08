@@ -64,6 +64,14 @@ jobs:
         working-directory: ${{ inputs.working_directory }}
     steps:
       - uses: actions/checkout@v4
+      - name: Check README style
+        run: |
+          set -euo pipefail
+          test -s README.md
+          grep -q "ATLAS SYSTEMS //" README.md
+          grep -q "## How it fits into Atlas Systems" README.md
+          grep -q "Part of \[atlas-systems.uk\](https://atlas-systems.uk)" README.md
+          grep -q "labelColor=0a0a0f" README.md
 
       - uses: actions/setup-node@v4
         with:
