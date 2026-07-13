@@ -105,7 +105,7 @@ def audit_repository(reader: GitHubReader, full_name: str, policy: dict[str, Any
         ref = metadata.get("default_branch") or "main"
         tree = reader.tree(full_name, ref)
     except (urllib.error.URLError, urllib.error.HTTPError, ValueError) as error:
-        return [Finding(full_name, "error", "repository-read", "", f"Could not read repository: {error}")]
+        return [Finding(full_name, "warning", "repository-read", "", f"Could not read repository: {error}")]
 
     paths = {item.get("path", "") for item in tree if item.get("type") == "blob"}
     lower_paths = {path.lower(): path for path in paths}
@@ -124,7 +124,7 @@ def audit_repository(reader: GitHubReader, full_name: str, policy: dict[str, Any
         try:
             text = reader.text(full_name, path, ref)
         except (urllib.error.URLError, urllib.error.HTTPError, ValueError) as error:
-            findings.append(Finding(full_name, "error", "workflow-read", path, f"Could not read workflow: {error}"))
+            findings.append(Finding(full_name, "warning", "workflow-read", path, f"Could not read workflow: {error}"))
             continue
         if not re.search(r"^permissions:\s*$", text, re.MULTILINE):
             findings.append(Finding(full_name, "warning", "workflow-permissions", path, "Workflow has no explicit top-level permissions block"))
