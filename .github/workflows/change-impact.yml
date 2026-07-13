@@ -1,0 +1,85 @@
+name: Change impact (reusable)
+
+on:
+  workflow_call:
+    inputs:
+      repository:
+        required: true
+        type: string
+      base_sha:
+        required: true
+        type: string
+      head_sha:
+        required: true
+        type: string
+      manifest_url:
+        required: false
+        type: string
+        default: https://raw.githubusercontent.com/AtlasReaper311/atlas-api-public/main/data/estate.manifest.json
+  workflow_dispatch:
+    inputs:
+      repository:
+        description: Repository in owner/name form
+        required: true
+        default: AtlasReaper311/atlas-infra
+      base_sha:
+        description: Base commit SHA
+        required: true
+      head_sha:
+        description: Head commit SHA
+        required: true
+      manifest_url:
+        description: Canonical manifest URL
+        required: true
+        default: https://raw.githubusercontent.com/AtlasReaper311/atlas-api-public/main/data/estate.manifest.json
+
+permissions:
+  contents: read
+
+concurrency:
+  group: change-impact-${{ inputs.repository }}-${{ inputs.head_sha }}
+  cancel-in-progress: true
+
+jobs:
+  impact:
+    name: Calculate blast radius
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out changed repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: ${{ inputs.repository }}
+          ref: ${{ inputs.head_sha }}
+          fetch-depth: 0
+
+      - name: Check out assurance scripts
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: AtlasReaper311/atlas-infra
+          path: .atlas-infra
+
+      - name: Calculate changed paths
+        env:
+          BASE_SHA: ${{ inputs.base_sha }}
+          HEAD_SHA: ${{ inputs.head_sha }}
+        run: git diff --name-only "${BASE_SHA}...${HEAD_SHA}" > changed-files.txt
+
+      - name: Render impact report
+        id: impact
+        env:
+          REPOSITORY: ${{ inputs.repository }}
+          MANIFEST_URL: ${{ inputs.manifest_url }}
+        run: |
+          python3 .atlas-infra/scripts/change_impact.py             --manifest "$MANIFEST_URL"             --repository "$REPOSITORY"             --changed-files changed-files.txt             --output change-impact.md
+          cat change-impact.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload impact report
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: change-impact-${{ github.run_id }}
+          path: |
+            change-impact.md
+            changed-files.txt
+          if-no-files-found: error
+          retention-days: 30

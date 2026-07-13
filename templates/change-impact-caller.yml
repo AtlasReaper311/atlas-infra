@@ -1,0 +1,20 @@
+name: Change impact
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: change-impact-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  impact:
+    uses: AtlasReaper311/atlas-infra/.github/workflows/change-impact.yml@main
+    with:
+      repository: ${{ github.repository }}
+      base_sha: ${{ github.event.pull_request.base.sha }}
+      head_sha: ${{ github.event.pull_request.head.sha }}

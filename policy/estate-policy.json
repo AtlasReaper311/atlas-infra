@@ -1,0 +1,10 @@
+{
+  "schema": "atlas-estate-policy/v1",
+  "banned_words": [
+    "le\u0076eraged",
+    "util\u0069sed",
+    "ro\u0062ust",
+    "sea\u006dless"
+  ],
+  "failure_rule": "Errors fail the workflow. Warnings remain visible without blocking existing repositories during adoption."
+}

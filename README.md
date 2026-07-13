@@ -1,4 +1,4 @@
- <div align="center">
+<div align="center">
   <img src="https://raw.githubusercontent.com/AtlasReaper311/AtlasReaper311/main/atlas-icon-dark-256.png" width="88" alt="Atlas Systems"/>
 </div>
 
@@ -8,7 +8,7 @@
 ┌─────────────────────────────────────────────┐
 │  ATLAS SYSTEMS // atlas-infra               │
 │  the deployment backbone:                   │
-│  containers, CI/CD, and ops scripts          │
+│  containers, CI/CD, and ops scripts         │
 └─────────────────────────────────────────────┘
 ```
 
@@ -22,9 +22,12 @@ Container patterns, CI/CD definitions, and deployment infrastructure for the Atl
 ## Structure
 
 ```
-.github/workflows/   CI/CD pipeline definitions
+.github/workflows/   CI/CD and estate assurance definitions
 docker/              Container images and compose configs
-scripts/             Dev and ops utilities (cross-platform)
+scripts/             Dev, ops, and assurance utilities
+templates/           Copyable workflow callers
+policy/              Estate conformance rules
+docs/                Decisions and operating guidance
 ```
 
 ## Services
@@ -51,27 +54,28 @@ Expected response:
   "service": "hello-atlas"
 }
 ```
+
 ## CI/CD
 
-This repo holds the reusable workflows every other Atlas Systems repo
-deploys through. The goal is one pipeline shape per kind of repo, defined
-once here, adopted by copying a short caller file.
+This repo holds the reusable workflows every other Atlas Systems repo deploys through. The goal is one pipeline shape per kind of repo, defined once here, adopted by copying a short caller file.
 
 ### Reusable workflows
 
-- `deploy-worker.yml` — Cloudflare Worker pipeline: validate (wrangler
-  dry-run, optional lint, optional test), deploy (production on `main`,
-  dev environment on any other branch), report to the api-deploys channel.
-- `validate-static.yml` — static-site pipeline: validate (html-validate
-  plus an offline link check), deploy with `wrangler pages deploy`, report
-  to the deploy-log channel.
+- `deploy-worker.yml`: Cloudflare Worker pipeline. Validate, deploy, and report.
+- `validate-static.yml`: static-site pipeline. Validate, publish, and report.
+- `change-impact.yml`: read-only pull request blast-radius report derived from `estate.manifest.json`.
 
-### Adopt a pipeline
+### Scheduled assurance
 
-Copy the matching template from `templates/` into a repo as
-`.github/workflows/deploy.yml`, change the name and flags, and forward
-secrets with `secrets: inherit`. The repo needs the secrets named in
-`docs/CICD-DECISIONS.md`.
+- `estate-policy.yml`: weekly repository conformance audit across the declared estate.
+- [`atlas-dep-audit`](https://github.com/AtlasReaper311/atlas-dep-audit): weekly SBOM, OSV, action pin, and provenance audit.
+- [`atlas-journey-watch`](https://github.com/AtlasReaper311/atlas-journey-watch): six-hourly synthetic user journeys across public estate surfaces.
+
+The implementation and adoption rules live in [`docs/ESTATE-ASSURANCE.md`](docs/ESTATE-ASSURANCE.md).
+
+### Adopt a deployment pipeline
+
+Copy the matching template from `templates/` into a repo as `.github/workflows/deploy.yml`, change the name and flags, and forward secrets with `secrets: inherit`. The repo needs the secrets named in `docs/CICD-DECISIONS.md`.
 
 A Worker caller is this short:
 
@@ -89,8 +93,9 @@ jobs:
     secrets: inherit
 ```
 
-See `docs/CICD-DECISIONS.md` for the token model, Discord routing, and the
-two `wrangler.toml` rules that are easy to get wrong.
+### Adopt change impact
+
+Copy `templates/change-impact-caller.yml` into a repository as `.github/workflows/change-impact.yml`. The caller grants only `contents: read`. Reports stay in the workflow summary and artifact; the central workflow never edits the pull request.
 
 ## CI/CD pattern
 
@@ -98,15 +103,21 @@ two `wrangler.toml` rules that are easy to get wrong.
 
 - `CLOUDFLARE_API_TOKEN`, a repo secret
 - `CLOUDFLARE_ACCOUNT_ID`, a repo secret
-- `CF_PROJECT_NAME`, a repo variable (not a secret)
+- `CF_PROJECT_NAME`, a repo variable
 
-The production site deploys through Cloudflare's native Git integration rather than this workflow; the workflow is kept as a documented, reusable fallback for repos that need Actions-driven deploys. Keeping the pattern here means a new repo inherits a working pipeline by copying one file rather than rediscovering the config.
+The production site deploys through Cloudflare's native Git integration rather than this workflow. The workflow remains a documented fallback for repos that need Actions-driven deploys.
+
+## Assurance security boundary
+
+Change impact and policy checks read repositories and the canonical manifest. They do not deploy, edit repositories, open issues, or post pull request comments. The optional outbound write is one consolidated event to `atlas-notify`.
+
+`GH_DIGEST_PAT` is reused for cross-repository reads. No new GitHub credential is required.
 
 ## How it fits into Atlas Systems
 
-This repo is the foundation the rest of the stack assumes: the container conventions, the deploy workflow, and the cross-platform scripts that the Worker repos and kits lean on. It is deliberately the least glamorous repo in the system and the one everything else depends on.
+This repo is the foundation the rest of the stack assumes: container conventions, deployment workflows, change-impact analysis, conformance checks, and cross-platform scripts that the Worker repos and kits lean on. It is deliberately the least glamorous repo in the system and the one everything else depends on.
 
-The transferable pattern is making infrastructure copyable: a deploy workflow that lives in one place and drops into any repo is the difference between a pipeline and a habit.
+The transferable pattern is making infrastructure copyable: a workflow that lives in one place and drops into any repo is the difference between a pipeline and a habit.
 
 ---
 
