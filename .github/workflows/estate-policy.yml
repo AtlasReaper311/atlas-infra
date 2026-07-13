@@ -1,0 +1,70 @@
+name: Estate policy
+
+on:
+  schedule:
+    - cron: "23 7 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: estate-policy
+  cancel-in-progress: false
+
+jobs:
+  policy:
+    name: Audit repository conformance
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Check out atlas-infra
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+      - name: Validate assurance scripts
+        run: |
+          python3 -m py_compile scripts/change_impact.py
+          python3 -m py_compile scripts/estate_policy.py
+          python3 -m py_compile scripts/notify_assurance.py
+          python3 -m unittest discover -s scripts/tests -v
+
+      - name: Audit estate policy
+        id: policy
+        continue-on-error: true
+        env:
+          GH_DIGEST_PAT: ${{ secrets.GH_DIGEST_PAT }}
+        run: |
+          python3 scripts/estate_policy.py             --manifest https://raw.githubusercontent.com/AtlasReaper311/atlas-api-public/main/data/estate.manifest.json             --policy policy/estate-policy.json             --markdown reports/estate-policy.md             --json reports/estate-policy.json
+          cat reports/estate-policy.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload policy report
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: estate-policy-${{ github.run_id }}
+          path: reports
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Report consolidated findings
+        if: always() && (steps.policy.outputs.errors != '0' || steps.policy.outputs.warnings != '0')
+        continue-on-error: true
+        env:
+          NOTIFY_TOKEN: ${{ secrets.NOTIFY_TOKEN }}
+          ERRORS: ${{ steps.policy.outputs.errors }}
+          WARNINGS: ${{ steps.policy.outputs.warnings }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          LEVEL="warning"
+          if [ "${ERRORS:-0}" != "0" ]; then
+            LEVEL="failure"
+          fi
+          python3 scripts/notify_assurance.py             --title "Estate policy findings"             --level "$LEVEL"             --message "${ERRORS:-0} errors and ${WARNINGS:-0} warnings across the declared repository estate."             --url "$RUN_URL"
+
+      - name: Fail on policy errors
+        if: steps.policy.outputs.errors != '0'
+        env:
+          ERRORS: ${{ steps.policy.outputs.errors }}
+        run: |
+          echo "Estate policy found ${ERRORS} blocking errors."
+          exit 1
