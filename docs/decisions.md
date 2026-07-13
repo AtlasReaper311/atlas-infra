@@ -283,6 +283,114 @@ Six repos, installed and corrected in a single day, under the canonical estate r
 
 ## Update Log
 
+## 2026-07 — atlas-cli reads the estate from the terminal, argparse over click
+
+**Decision.** A pip/pipx-installable Python CLI, `atlas`, wraps the estate's
+public read endpoints: `ask` (corpus search), `recent` (notify ring buffer),
+`incidents` (blackbox), `status` (cross-service health with exit code 1 on
+any DOWN). Built on argparse plus httpx plus rich, src layout, tests over
+httpx's MockTransport with fixtures trimmed from live responses captured
+2026-07-13.
+
+**Why.** The estate's read surface existed but only through curl and the Lab
+page. A CLI makes it ambient: `atlas status` in any terminal on any box, and
+an exit code scripts can gate on. argparse over click or typer because four
+subcommands is stdlib territory and a dependency-light tool reads end to
+end; the parser is one file, so outgrowing that line costs a cheap swap. The
+`ask` command reuses the estate's fallback convention verbatim: local corpus
+first with a 1.5s budget, public second, both failures reported in one
+error, never a silent empty result.
+
+**Consequences.**
+- The two originally open upstream shapes were confirmed during integration
+  on 2026-07-13: blackbox detail returns `frames: [{ts, telemetry, events}]`,
+  and corpus POST `/search` accepts `query` plus `top_k` and returns `hits`.
+  Tests now pin both contracts.
+- All field access goes through a `pick()` helper carrying plausible
+  spellings, so an upstream rename costs a visible gap in output, not a
+  traceback in four tools.
+- The live notify endpoint reported total=200, returned=1 on 2026-07-13:
+  the server appears to cap the default page. The CLI sends `?limit=` as a
+  hint and slices client side; if the cap is hard, the fix belongs in
+  atlas-notify, and the comment in `fetch_recent` is the breadcrumb.
+
+## 2026-07 — atlas-postmortem drafts incidents with local Ollama, never publishes
+
+**Decision.** A local tool on SPECULAR-CORE polls `/blackbox/incidents`
+every 10 minutes, and for each newly sealed incident queries atlas-corpus
+for history and prompts local Ollama (qwen2.5:32b via `/api/chat`) to draft
+a five-section postmortem into `~/atlas-postmortems/<id>.md`, frontmatter
+stamped `DRAFT - NEEDS HUMAN REVIEW`. State in
+`~/.atlas-postmortem/processed.json`, written atomically, marked only after
+the draft is safely on disk. Scheduled as `once` under a systemd --user
+timer on WSL2 and a launchd agent on macOS. It has no publish path: no
+commits, no pushes, no notifications.
+
+**Why.** The blackbox seals a 14-frame flight-recorder window per incident,
+and assembling a timeline from that is mechanical work a local model does
+well; deciding what the incident meant is not, so the human/machine
+boundary is physical, not procedural. Oneshot under a timer over a daemon
+because a process that exits every run cannot leak for a week and its
+failure state is a red unit with the reason in the journal. The prompt
+sends telemetry as per-frame deltas (changed numeric keys only, capped)
+because raw frames drown the trigger in unchanged numbers; the full window
+stays in the blackbox. The Likely cause section is forced to open by
+declaring itself a draft inference, and Relevant history may cite only the
+numbered excerpts the tool actually retrieved, checked after generation by
+a lint that fixes dashes mechanically and reports banned words in a
+reviewer-notes block rather than rewriting meaning.
+
+**Consequences.**
+- Corpus down degrades to a draft with an explicit "history unavailable"
+  note; Ollama down fails that incident loudly and retries next run;
+  unsealed incidents wait; a corrupt state file is quarantined with a
+  warning, and because drafts are never overwritten, the worst outcome of
+  lost state is suffixed duplicate drafts, not lost edits.
+- Requires user systemd on WSL2; the installer detects its absence and
+  prints the `/etc/wsl.conf` fix instead of half-installing.
+- The Mac agent needs its own pulled model; `ATLAS_PM_MODEL` exists for
+  exactly that.
+
+## 2026-07 — atlas-dora computes DORA metrics from the estate's own endpoints
+
+**Decision.** A Worker, atlas-dora, computes deployment frequency, change
+failure rate, and MTTR from `/notify/recent`, `/blackbox/incidents`, and
+`/deploy-watch/latest`, cached in KV for 5 minutes with an `x-dora-cache:
+HIT|MISS` header, serving `/dora/metrics`, `/dora/health` (self only), and
+the estate `/_meta` contract. Pure downstream consumer: no secrets, no
+writes beyond its own cache. A vanilla-JS panel with trend arrows drops
+into the Lab page from a marked copy region.
+
+**Why.** The estate already emits every event needed to measure its own
+delivery performance; wiring a consumer over them turns the portfolio claim
+"observable pipeline" into numbers on the Lab page. The honesty constraint
+shaped every heuristic, because the data has no explicit deploy->incident
+or incident->recovery links: CFR attributes a non-drill incident triggering
+within 30 minutes after a successful deploy (correlation, stated in the
+response), MTTR matches recovery by token overlap between trigger and later
+success events and reports "n of m measured" with reasons for the rest, the
+window is the ring buffer's real span rather than a round 30 days that
+would undercount, drill incidents are excluded and counted, and zero
+deploys yields a null rate, never a fake 0%. Upstreams are fetched with
+individual 5s budgets under `Promise.allSettled`: partial estate, partial
+metrics plus a `degraded` list; only a fully dark estate returns 503, and
+errors are never cached.
+
+**Consequences.**
+- Deploy frequency depends on the notify title convention
+  (`Deployed: <repo>`); renaming that convention silently changes the
+  metric, so the detector and its test fixture are the canonical statement
+  of it.
+- CI is inline (ESLint, Vitest, wrangler dry run) with a marked swap point
+  for the reusable `deploy-worker.yml` once the repo has proven itself.
+- Writing a `dora_summary` event back into atlas-notify was considered and
+  dropped: posting needs a secret, and this Worker's value is holding none.
+  If wanted later, it belongs in a separate minimal producer.
+- KV id and zone_id are deliberate placeholders filled at deploy time;
+  route uses zone_id, never zone_name, per the banked lesson.
+
+---
+
 - 2026-05-28: Document created, Pillars 1 and 3 complete
 - 2026-06-21: Major update reflecting six weeks of build-out — full CI/CD rollout, reusable workflows in atlas-infra as canonical source, hard-gate cutover on all three static sites, Discord routing across three channels, atlas-notify ring buffer + Lab Failure log, brand spec captured, case study voice rules captured, operating principles section added.
 - 2026-07-02: **Logic Lego six-repo build shipped.** `ramone-memory` (cross-session memory proxy for Ramone), `specular-telemetry` (public live hardware telemetry), `ramone-voice-trigger` (voice-triggered GitHub Actions dispatch), `atlas-corpus` (public RAG search over estate docs, embedded in Lab), `atlas-bootstrap` (machine reconstruction/recovery, closes the long-standing portproxy-drift gap for good), `atlas-api-index` (self-documenting Worker registry at api.atlas-systems.uk/). New estate-wide contracts introduced: fixed `/_meta` shape, alert envelope over service bindings for Worker runtime notifications, conditional-KV-write-on-state-change generalised to caching. Fixed: Worker-to-Worker 522s (service bindings), corpus CSP block, doubled `/_meta` route bug, Lab API panel registry-shape mismatch, two health-check false-negatives in atlas-bootstrap. Voice deploy and memory routing both confirmed working end-to-end (Discord notification + Home Assistant, respectively) same day. Repo count crossed 19 — Logic Lego naming convention formalisation now due. Two new operating principles banked. Cloudflare account_id confirmed as `49e221b7e55a9e5c45b88d08efca5771` (corrects the value previously on record — see Key infrastructure constants). W-04/W-05 case study numbering corrected (Overclocking is W-04, published; Pipeline Infrastructure is W-05).
