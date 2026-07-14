@@ -1,0 +1,27 @@
+{
+  "schema_version": "atlas-control-plane/compatibility-policy/v1",
+  "major_version_path": "contracts/v{major}",
+  "minor_compatible_changes": [
+    "add an optional property",
+    "relax a numeric or length bound without changing meaning",
+    "add an example or description"
+  ],
+  "major_breaking_changes": [
+    "add a required property",
+    "remove or rename a property",
+    "remove a vocabulary value",
+    "change a property type or semantic meaning",
+    "change a fingerprint input, canonicalisation rule, or stable identifier rule"
+  ],
+  "reader_policy": {
+    "unknown_optional_properties": "ignore after validating the known major version",
+    "unknown_major_versions": "reject",
+    "unknown_vocabulary_values": "reject unless that field explicitly declares an open vocabulary"
+  },
+  "writer_policy": {
+    "schema_version": "required in every instance",
+    "timestamps": "UTC RFC 3339 ending in Z",
+    "identifiers": "stable lower-case kebab-case values",
+    "secrets": "values and token-bearing URLs are prohibited"
+  }
+}

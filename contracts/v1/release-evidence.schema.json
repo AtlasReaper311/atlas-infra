@@ -1,0 +1,117 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.atlas-systems.uk/control-plane/v1/release-evidence.schema.json",
+  "title": "Atlas Systems ReleaseEvidence v1",
+  "description": "Evidence for one bounded deployment and its verification checks.",
+  "type": "object",
+  "additionalProperties": false,
+  "x-owner": {
+    "repository": "AtlasReaper311/atlas-infra",
+    "consumer": "future release-watch implementation after the Phase 3 gate"
+  },
+  "required": [
+    "schema_version",
+    "repository",
+    "commit",
+    "deployment_id",
+    "environment",
+    "started_at",
+    "completed_at",
+    "checks",
+    "journey_result",
+    "live_identity",
+    "rollback_ref",
+    "status"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "atlas-control-plane/release-evidence/v1"
+    },
+    "repository": {
+      "type": "string",
+      "pattern": "^AtlasReaper311/[A-Za-z0-9._-]+$",
+      "maxLength": 128
+    },
+    "commit": {
+      "type": "string",
+      "pattern": "^(?:[0-9a-f]{40}|[0-9a-f]{64})$"
+    },
+    "deployment_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+    },
+    "environment": {
+      "enum": ["development", "preview", "production"]
+    },
+    "started_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "completed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "checks": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 50,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["check_id", "status", "evidence_ref"],
+        "properties": {
+          "check_id": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+            "maxLength": 96
+          },
+          "status": {
+            "enum": ["passed", "failed", "skipped", "unknown"]
+          },
+          "evidence_ref": {
+            "type": "string",
+            "format": "uri",
+            "pattern": "^https://[^?#]+(?:#[A-Za-z0-9._/-]+)?$",
+            "maxLength": 500
+          }
+        }
+      }
+    },
+    "journey_result": {
+      "enum": ["passed", "failed", "skipped", "unknown"]
+    },
+    "live_identity": {
+      "enum": ["matched", "mismatched", "unavailable", "unknown"]
+    },
+    "rollback_ref": {
+      "type": "string",
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))[A-Za-z0-9._/-]+\\.md$",
+      "maxLength": 240
+    },
+    "status": {
+      "enum": ["pending", "live", "mismatch", "degraded", "failed", "rolled-back", "unknown"]
+    }
+  },
+  "examples": [
+    {
+      "schema_version": "atlas-control-plane/release-evidence/v1",
+      "repository": "AtlasReaper311/atlas-infra",
+      "commit": "1111111111111111111111111111111111111111",
+      "deployment_id": "github-run:100",
+      "environment": "production",
+      "started_at": "2026-07-14T10:00:00Z",
+      "completed_at": "2026-07-14T10:05:00Z",
+      "checks": [
+        {
+          "check_id": "repository-tests",
+          "status": "passed",
+          "evidence_ref": "https://github.com/AtlasReaper311/atlas-infra/actions/runs/100"
+        }
+      ],
+      "journey_result": "skipped",
+      "live_identity": "unknown",
+      "rollback_ref": "docs/runbooks/control-plane-contract-validation.md",
+      "status": "unknown"
+    }
+  ]
+}

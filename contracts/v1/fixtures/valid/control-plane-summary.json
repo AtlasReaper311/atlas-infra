@@ -1,0 +1,71 @@
+{
+  "schema_version": "atlas-control-plane/control-plane-summary/v1",
+  "generated_at": "2026-07-14T10:00:00Z",
+  "stale_after": "2026-07-14T10:10:00Z",
+  "request_id": "phase1-example-001",
+  "state": "unknown",
+  "health": {
+    "state": "unknown",
+    "components_total": 0,
+    "components_healthy": 0,
+    "active_incidents": 0
+  },
+  "release": {
+    "state": "unknown",
+    "repository": null,
+    "environment": null,
+    "commit": null,
+    "completed_at": null,
+    "evidence_ref": null
+  },
+  "quota": {
+    "state": "unknown",
+    "used_percent": null,
+    "projected_percent": null,
+    "highest_meter": null,
+    "period_ends_at": null
+  },
+  "findings": {
+    "state": "unknown",
+    "total": 0,
+    "by_severity": {
+      "info": 0,
+      "warning": 0,
+      "failure": 0,
+      "critical": 0
+    },
+    "oldest_detected_at": null
+  },
+  "gardener_proposals": {
+    "state": "unknown",
+    "total": 0,
+    "validation_failed": 0
+  },
+  "secret_hygiene": {
+    "state": "unknown",
+    "required": 0,
+    "present": 0,
+    "stale": 0,
+    "unknown": 0
+  },
+  "backups": {
+    "state": "unknown",
+    "total": 0,
+    "healthy": 0,
+    "stale": 0,
+    "failed": 0,
+    "unknown": 0
+  },
+  "runbooks": {
+    "state": "unknown",
+    "valid": 0,
+    "invalid": 0,
+    "stale": 0
+  },
+  "evidence": {
+    "state": "unknown",
+    "searchable_records": 0,
+    "newest_record_at": null,
+    "expiring_soon": 0
+  }
+}

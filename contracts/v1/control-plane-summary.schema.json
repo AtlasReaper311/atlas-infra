@@ -1,0 +1,271 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.atlas-systems.uk/control-plane/v1/control-plane-summary.schema.json",
+  "title": "Atlas Systems ControlPlaneSummary v1",
+  "description": "A bounded, redacted aggregate for future read-only consumers.",
+  "type": "object",
+  "additionalProperties": false,
+  "x-owner": {
+    "repository": "AtlasReaper311/atlas-infra",
+    "consumer": "future public summary and cockpit implementations after their phase gates"
+  },
+  "$defs": {
+    "ControlPlaneState": {
+      "enum": ["healthy", "warning", "failed", "stale", "unavailable", "unknown"]
+    }
+  },
+  "required": [
+    "schema_version",
+    "generated_at",
+    "stale_after",
+    "request_id",
+    "state",
+    "health",
+    "release",
+    "quota",
+    "findings",
+    "gardener_proposals",
+    "secret_hygiene",
+    "backups",
+    "runbooks",
+    "evidence"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "atlas-control-plane/control-plane-summary/v1"
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "stale_after": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "request_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{7,63}$"
+    },
+    "state": {
+      "$ref": "#/$defs/ControlPlaneState"
+    },
+    "health": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "components_total", "components_healthy", "active_incidents"],
+      "properties": {
+        "state": {"$ref": "#/$defs/ControlPlaneState"},
+        "components_total": {"type": "integer", "minimum": 0, "maximum": 1000},
+        "components_healthy": {"type": "integer", "minimum": 0, "maximum": 1000},
+        "active_incidents": {"type": "integer", "minimum": 0, "maximum": 1000}
+      }
+    },
+    "release": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "repository", "environment", "commit", "completed_at", "evidence_ref"],
+      "properties": {
+        "state": {"$ref": "#/$defs/ControlPlaneState"},
+        "repository": {
+          "type": ["string", "null"],
+          "pattern": "^AtlasReaper311/[A-Za-z0-9._-]+$",
+          "maxLength": 128
+        },
+        "environment": {
+          "type": ["string", "null"],
+          "enum": ["development", "preview", "production", null]
+        },
+        "commit": {
+          "type": ["string", "null"],
+          "pattern": "^(?:[0-9a-f]{40}|[0-9a-f]{64})$"
+        },
+        "completed_at": {
+          "type": ["string", "null"],
+          "format": "date-time"
+        },
+        "evidence_ref": {
+          "type": ["string", "null"],
+          "format": "uri",
+          "pattern": "^https://[^?#]+(?:#[A-Za-z0-9._/-]+)?$",
+          "maxLength": 500
+        }
+      }
+    },
+    "quota": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "used_percent", "projected_percent", "highest_meter", "period_ends_at"],
+      "properties": {
+        "state": {"$ref": "#/$defs/ControlPlaneState"},
+        "used_percent": {"type": ["number", "null"], "minimum": 0, "maximum": 100000},
+        "projected_percent": {"type": ["number", "null"], "minimum": 0, "maximum": 100000},
+        "highest_meter": {
+          "type": ["string", "null"],
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+          "maxLength": 64
+        },
+        "period_ends_at": {
+          "type": ["string", "null"],
+          "format": "date-time"
+        }
+      }
+    },
+    "findings": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "total", "by_severity", "oldest_detected_at"],
+      "properties": {
+        "state": {"$ref": "#/$defs/ControlPlaneState"},
+        "total": {"type": "integer", "minimum": 0, "maximum": 100000},
+        "by_severity": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["info", "warning", "failure", "critical"],
+          "properties": {
+            "info": {"type": "integer", "minimum": 0, "maximum": 100000},
+            "warning": {"type": "integer", "minimum": 0, "maximum": 100000},
+            "failure": {"type": "integer", "minimum": 0, "maximum": 100000},
+            "critical": {"type": "integer", "minimum": 0, "maximum": 100000}
+          }
+        },
+        "oldest_detected_at": {
+          "type": ["string", "null"],
+          "format": "date-time"
+        }
+      }
+    },
+    "gardener_proposals": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "total", "validation_failed"],
+      "properties": {
+        "state": {"$ref": "#/$defs/ControlPlaneState"},
+        "total": {"type": "integer", "minimum": 0, "maximum": 10000},
+        "validation_failed": {"type": "integer", "minimum": 0, "maximum": 10000}
+      }
+    },
+    "secret_hygiene": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "required", "present", "stale", "unknown"],
+      "properties": {
+        "state": {"$ref": "#/$defs/ControlPlaneState"},
+        "required": {"type": "integer", "minimum": 0, "maximum": 10000},
+        "present": {"type": "integer", "minimum": 0, "maximum": 10000},
+        "stale": {"type": "integer", "minimum": 0, "maximum": 10000},
+        "unknown": {"type": "integer", "minimum": 0, "maximum": 10000}
+      }
+    },
+    "backups": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "total", "healthy", "stale", "failed", "unknown"],
+      "properties": {
+        "state": {"$ref": "#/$defs/ControlPlaneState"},
+        "total": {"type": "integer", "minimum": 0, "maximum": 10000},
+        "healthy": {"type": "integer", "minimum": 0, "maximum": 10000},
+        "stale": {"type": "integer", "minimum": 0, "maximum": 10000},
+        "failed": {"type": "integer", "minimum": 0, "maximum": 10000},
+        "unknown": {"type": "integer", "minimum": 0, "maximum": 10000}
+      }
+    },
+    "runbooks": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "valid", "invalid", "stale"],
+      "properties": {
+        "state": {"$ref": "#/$defs/ControlPlaneState"},
+        "valid": {"type": "integer", "minimum": 0, "maximum": 100000},
+        "invalid": {"type": "integer", "minimum": 0, "maximum": 100000},
+        "stale": {"type": "integer", "minimum": 0, "maximum": 100000}
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "searchable_records", "newest_record_at", "expiring_soon"],
+      "properties": {
+        "state": {"$ref": "#/$defs/ControlPlaneState"},
+        "searchable_records": {"type": "integer", "minimum": 0, "maximum": 1000000},
+        "newest_record_at": {
+          "type": ["string", "null"],
+          "format": "date-time"
+        },
+        "expiring_soon": {"type": "integer", "minimum": 0, "maximum": 1000000}
+      }
+    }
+  },
+  "examples": [
+    {
+      "schema_version": "atlas-control-plane/control-plane-summary/v1",
+      "generated_at": "2026-07-14T10:00:00Z",
+      "stale_after": "2026-07-14T10:10:00Z",
+      "request_id": "phase1-example-001",
+      "state": "unknown",
+      "health": {
+        "state": "unknown",
+        "components_total": 0,
+        "components_healthy": 0,
+        "active_incidents": 0
+      },
+      "release": {
+        "state": "unknown",
+        "repository": null,
+        "environment": null,
+        "commit": null,
+        "completed_at": null,
+        "evidence_ref": null
+      },
+      "quota": {
+        "state": "unknown",
+        "used_percent": null,
+        "projected_percent": null,
+        "highest_meter": null,
+        "period_ends_at": null
+      },
+      "findings": {
+        "state": "unknown",
+        "total": 0,
+        "by_severity": {
+          "info": 0,
+          "warning": 0,
+          "failure": 0,
+          "critical": 0
+        },
+        "oldest_detected_at": null
+      },
+      "gardener_proposals": {
+        "state": "unknown",
+        "total": 0,
+        "validation_failed": 0
+      },
+      "secret_hygiene": {
+        "state": "unknown",
+        "required": 0,
+        "present": 0,
+        "stale": 0,
+        "unknown": 0
+      },
+      "backups": {
+        "state": "unknown",
+        "total": 0,
+        "healthy": 0,
+        "stale": 0,
+        "failed": 0,
+        "unknown": 0
+      },
+      "runbooks": {
+        "state": "unknown",
+        "valid": 0,
+        "invalid": 0,
+        "stale": 0
+      },
+      "evidence": {
+        "state": "unknown",
+        "searchable_records": 0,
+        "newest_record_at": null,
+        "expiring_soon": 0
+      }
+    }
+  ]
+}

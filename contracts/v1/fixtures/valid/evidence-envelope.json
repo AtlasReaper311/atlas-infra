@@ -1,0 +1,20 @@
+{
+  "schema_version": "atlas-control-plane/evidence-envelope/v1",
+  "producer": "atlas-infra",
+  "subject": {
+    "repository": "AtlasReaper311/atlas-infra",
+    "service_id": "atlas-infra",
+    "evidence_type": "contract-validation"
+  },
+  "timestamp": "2026-07-14T10:00:00Z",
+  "digest": {
+    "algorithm": "sha-256",
+    "value": "e37f263e2d2446a098d3f960939b15e2a88022c2a632e9416774e932d045c7ea"
+  },
+  "payload": {
+    "schemas_checked": 8,
+    "status": "passed"
+  },
+  "sensitivity": "internal",
+  "expires_at": "2026-10-12T10:00:00Z"
+}

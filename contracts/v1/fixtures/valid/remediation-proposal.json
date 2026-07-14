@@ -1,0 +1,25 @@
+{
+  "schema_version": "atlas-control-plane/remediation-proposal/v1",
+  "proposal_id": "proposal:sha256:7f4b0b3abed2ee3bd7b3a291155aad38df2539d648394bd74ca704324b837ec5",
+  "finding_fingerprint": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+  "fixer": {
+    "id": "add-ds-store-ignore",
+    "version": "1.0.0"
+  },
+  "files_affected": [
+    ".gitignore"
+  ],
+  "risk_class": "low",
+  "patch_digest": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+  "validation_plan": [
+    {
+      "check_id": "repository-tests",
+      "command": "python3 -m unittest discover -s tests -v",
+      "expected": "All repository tests pass."
+    }
+  ],
+  "rollback_plan": [
+    "Close the unmerged review branch and leave main unchanged."
+  ],
+  "expires_at": "2026-07-21T10:00:00Z"
+}

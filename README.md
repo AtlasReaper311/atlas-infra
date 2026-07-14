@@ -27,6 +27,7 @@ docker/              Container images and compose configs
 scripts/             Dev, ops, and assurance utilities
 templates/           Copyable workflow callers
 policy/              Estate conformance rules
+contracts/           Versioned cross-estate data contracts and fixtures
 docs/                Decisions and operating guidance
 ```
 
@@ -72,6 +73,20 @@ This repo holds the reusable workflows every other Atlas Systems repo deploys th
 - [`atlas-journey-watch`](https://github.com/AtlasReaper311/atlas-journey-watch): six-hourly synthetic user journeys across public estate surfaces.
 
 The implementation and adoption rules live in [`docs/ESTATE-ASSURANCE.md`](docs/ESTATE-ASSURANCE.md).
+
+### Shared control-plane contracts
+
+`contracts/v1/` contains the eight Phase 1 JSON Schema contracts, positive and
+negative fixtures, ownership, compatibility, and deterministic fingerprint
+rules. Validate them without installing dependencies:
+
+```bash
+python3 scripts/validate_control_plane_contracts.py
+python3 -m unittest discover -s scripts/tests -v
+```
+
+The contracts are governance artifacts only. They add no route, runtime,
+storage, deployment, or secret.
 
 ### Adopt a deployment pipeline
 

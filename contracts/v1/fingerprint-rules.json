@@ -1,0 +1,49 @@
+{
+  "schema_version": "atlas-control-plane/fingerprint-rules/v1",
+  "canonicalization": {
+    "encoding": "UTF-8",
+    "json": "RFC 8259 object with lexicographically sorted keys and compact separators",
+    "unicode": "preserved without ASCII escaping",
+    "digest": "SHA-256 lowercase hexadecimal"
+  },
+  "rules": {
+    "evidence-envelope": {
+      "kind": "payload-digest",
+      "schema": "evidence-envelope.schema.json",
+      "content_path": "payload",
+      "output_path": "digest.value"
+    },
+    "finding": {
+      "kind": "selected-fields",
+      "schema": "finding.schema.json",
+      "fields": [
+        "source.producer",
+        "source.check_id",
+        "subject.repository",
+        "subject.service_id",
+        "category",
+        "rule_id",
+        "location"
+      ],
+      "sort_arrays": [],
+      "prefix": "sha256:",
+      "output_path": "fingerprint"
+    },
+    "remediation-proposal": {
+      "kind": "selected-fields",
+      "schema": "remediation-proposal.schema.json",
+      "fields": [
+        "finding_fingerprint",
+        "fixer.id",
+        "fixer.version",
+        "files_affected",
+        "patch_digest"
+      ],
+      "sort_arrays": [
+        "files_affected"
+      ],
+      "prefix": "proposal:sha256:",
+      "output_path": "proposal_id"
+    }
+  }
+}

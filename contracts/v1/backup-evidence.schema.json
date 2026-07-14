@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.atlas-systems.uk/control-plane/v1/backup-evidence.schema.json",
+  "title": "Atlas Systems BackupEvidence v1",
+  "description": "Freshness and restore-test evidence without backup contents.",
+  "type": "object",
+  "additionalProperties": false,
+  "x-owner": {
+    "repository": "AtlasReaper311/atlas-infra",
+    "consumer": "future backup assurance after the Phase 8 gate"
+  },
+  "required": [
+    "schema_version",
+    "target_id",
+    "method",
+    "last_successful_backup_at",
+    "restore_tested_at",
+    "retention_days",
+    "rpo_hours",
+    "evidence_ref",
+    "status"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "atlas-control-plane/backup-evidence/v1"
+    },
+    "target_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+      "maxLength": 96
+    },
+    "method": {
+      "enum": [
+        "database-snapshot",
+        "filesystem-copy",
+        "github-artifact",
+        "kv-export",
+        "repository-mirror"
+      ]
+    },
+    "last_successful_backup_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "restore_tested_at": {
+      "type": ["string", "null"],
+      "format": "date-time"
+    },
+    "retention_days": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 3650
+    },
+    "rpo_hours": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 8760
+    },
+    "evidence_ref": {
+      "type": "string",
+      "format": "uri",
+      "pattern": "^https://[^?#]+(?:#[A-Za-z0-9._/-]+)?$",
+      "maxLength": 500
+    },
+    "status": {
+      "enum": ["healthy", "warning", "failed", "stale", "unknown"]
+    }
+  },
+  "examples": [
+    {
+      "schema_version": "atlas-control-plane/backup-evidence/v1",
+      "target_id": "atlas-infra-workflow-evidence",
+      "method": "github-artifact",
+      "last_successful_backup_at": "2026-07-14T09:00:00Z",
+      "restore_tested_at": null,
+      "retention_days": 90,
+      "rpo_hours": 168,
+      "evidence_ref": "https://github.com/AtlasReaper311/atlas-infra/actions/runs/100",
+      "status": "unknown"
+    }
+  ]
+}

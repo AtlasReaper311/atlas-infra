@@ -1,0 +1,11 @@
+{
+  "schema_version": "atlas-control-plane/backup-evidence/v1",
+  "target_id": "atlas-infra-workflow-evidence",
+  "method": "github-artifact",
+  "last_successful_backup_at": "2026-07-14T09:00:00Z",
+  "restore_tested_at": null,
+  "retention_days": 90,
+  "rpo_hours": 168,
+  "evidence_ref": "https://github.com/AtlasReaper311/atlas-infra/actions/runs/100",
+  "status": "unknown"
+}

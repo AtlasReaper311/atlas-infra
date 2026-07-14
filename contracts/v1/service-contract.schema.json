@@ -1,0 +1,259 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.atlas-systems.uk/control-plane/v1/service-contract.schema.json",
+  "title": "Atlas Systems ServiceContract v1",
+  "description": "A stable service or historical dependency declaration with separate classification axes.",
+  "type": "object",
+  "additionalProperties": false,
+  "x-owner": {
+    "repository": "AtlasReaper311/atlas-infra",
+    "consumer": "canonical registry and assurance tooling"
+  },
+  "required": [
+    "schema_version",
+    "service_id",
+    "display_name",
+    "owner",
+    "source_repository",
+    "classification",
+    "registry_visibility",
+    "runtime",
+    "routes",
+    "metadata_route",
+    "dependencies",
+    "slo_refs",
+    "runbooks",
+    "control_plane_policy"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "atlas-control-plane/service-contract/v1"
+    },
+    "service_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+      "maxLength": 64
+    },
+    "display_name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 120
+    },
+    "owner": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["github", "responsibility"],
+      "properties": {
+        "github": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9-]{1,39}$"
+        },
+        "responsibility": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 240
+        }
+      }
+    },
+    "source_repository": {
+      "type": "string",
+      "pattern": "^AtlasReaper311/[A-Za-z0-9._-]+$",
+      "maxLength": 128
+    },
+    "classification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["lifecycle", "scope", "provenance"],
+      "properties": {
+        "lifecycle": {
+          "enum": ["production", "active", "experimental", "deprecated", "archived"]
+        },
+        "scope": {
+          "enum": ["public", "internal"]
+        },
+        "provenance": {
+          "enum": ["original", "external-derived"]
+        }
+      }
+    },
+    "registry_visibility": {
+      "enum": ["current", "historical"]
+    },
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "deployment_target", "release_identity_supported"],
+      "properties": {
+        "kind": {
+          "enum": [
+            "cloudflare-worker",
+            "cloudflare-pages",
+            "local-service",
+            "library",
+            "tool",
+            "external-derived"
+          ]
+        },
+        "deployment_target": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:[a-z0-9 .:/_-]*[a-z0-9])?$",
+          "maxLength": 160
+        },
+        "release_identity_supported": {
+          "type": "boolean"
+        }
+      }
+    },
+    "routes": {
+      "type": "array",
+      "maxItems": 50,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "methods", "visibility"],
+        "properties": {
+          "path": {
+            "type": "string",
+            "pattern": "^/[A-Za-z0-9._~!$&'()*+,;=:@%/-]*$",
+            "maxLength": 200
+          },
+          "methods": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 7,
+            "uniqueItems": true,
+            "items": {
+              "enum": ["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"]
+            }
+          },
+          "visibility": {
+            "enum": ["public", "authenticated", "internal"]
+          }
+        }
+      }
+    },
+    "metadata_route": {
+      "type": ["string", "null"],
+      "pattern": "^/(?:[A-Za-z0-9._~!$&'()*+,;=:@%/-]+/)?_meta$",
+      "maxLength": 200
+    },
+    "dependencies": {
+      "type": "array",
+      "maxItems": 50,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+        "maxLength": 64
+      }
+    },
+    "slo_refs": {
+      "type": "array",
+      "maxItems": 20,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))[A-Za-z0-9._/-]+$",
+        "maxLength": 240
+      }
+    },
+    "runbooks": {
+      "type": "array",
+      "maxItems": 20,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))[A-Za-z0-9._/-]+\\.md$",
+        "maxLength": 240
+      }
+    },
+    "control_plane_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "new_features",
+        "route_ownership",
+        "default_assurance",
+        "gardener_remediation",
+        "deployment_orchestration"
+      ],
+      "properties": {
+        "new_features": {"type": "boolean"},
+        "route_ownership": {"type": "boolean"},
+        "default_assurance": {"type": "boolean"},
+        "gardener_remediation": {"type": "boolean"},
+        "deployment_orchestration": {"type": "boolean"}
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "required": ["source_repository"],
+        "properties": {
+          "source_repository": {"const": "AtlasReaper311/simple-proxy"}
+        }
+      },
+      "then": {
+        "properties": {
+          "service_id": {"const": "simple-proxy"},
+          "classification": {
+            "properties": {
+              "lifecycle": {"const": "deprecated"},
+              "scope": {"const": "internal"},
+              "provenance": {"const": "external-derived"}
+            }
+          },
+          "registry_visibility": {"const": "historical"},
+          "routes": {"maxItems": 0},
+          "metadata_route": {"const": null},
+          "control_plane_policy": {
+            "properties": {
+              "new_features": {"const": false},
+              "route_ownership": {"const": false},
+              "default_assurance": {"const": false},
+              "gardener_remediation": {"const": false},
+              "deployment_orchestration": {"const": false}
+            }
+          }
+        }
+      }
+    }
+  ],
+  "examples": [
+    {
+      "schema_version": "atlas-control-plane/service-contract/v1",
+      "service_id": "simple-proxy",
+      "display_name": "simple-proxy historical dependency",
+      "owner": {
+        "github": "AtlasReaper311",
+        "responsibility": "Retain attribution and dependency history only."
+      },
+      "source_repository": "AtlasReaper311/simple-proxy",
+      "classification": {
+        "lifecycle": "deprecated",
+        "scope": "internal",
+        "provenance": "external-derived"
+      },
+      "registry_visibility": "historical",
+      "runtime": {
+        "kind": "external-derived",
+        "deployment_target": "historical-only",
+        "release_identity_supported": false
+      },
+      "routes": [],
+      "metadata_route": null,
+      "dependencies": [],
+      "slo_refs": [],
+      "runbooks": [],
+      "control_plane_policy": {
+        "new_features": false,
+        "route_ownership": false,
+        "default_assurance": false,
+        "gardener_remediation": false,
+        "deployment_orchestration": false
+      }
+    }
+  ]
+}

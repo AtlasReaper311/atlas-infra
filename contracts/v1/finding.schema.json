@@ -1,0 +1,184 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.atlas-systems.uk/control-plane/v1/finding.schema.json",
+  "title": "Atlas Systems Finding v1",
+  "description": "A redacted, deduplicated assurance finding.",
+  "type": "object",
+  "additionalProperties": false,
+  "x-owner": {
+    "repository": "AtlasReaper311/atlas-infra",
+    "consumer": "AtlasReaper311/atlas-dep-audit"
+  },
+  "required": [
+    "schema_version",
+    "source",
+    "subject",
+    "category",
+    "severity",
+    "rule_id",
+    "location",
+    "evidence",
+    "detected_at",
+    "fingerprint",
+    "remediation"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "atlas-control-plane/finding/v1"
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["producer", "check_id", "producer_version"],
+      "properties": {
+        "producer": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+          "maxLength": 64
+        },
+        "check_id": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+          "maxLength": 96
+        },
+        "producer_version": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        }
+      }
+    },
+    "subject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repository"],
+      "properties": {
+        "repository": {
+          "type": "string",
+          "pattern": "^AtlasReaper311/[A-Za-z0-9._-]+$",
+          "maxLength": 128
+        },
+        "service_id": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+          "maxLength": 64
+        }
+      }
+    },
+    "category": {
+      "enum": [
+        "availability",
+        "backup",
+        "contract",
+        "cost",
+        "dependency",
+        "documentation",
+        "evidence",
+        "journey",
+        "policy",
+        "release",
+        "runbook",
+        "secret-hygiene",
+        "security"
+      ]
+    },
+    "severity": {
+      "enum": ["info", "warning", "failure", "critical"]
+    },
+    "rule_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+      "maxLength": 96
+    },
+    "location": {
+      "type": "string",
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))[A-Za-z0-9._/-]+(?::[1-9][0-9]*)?$",
+      "maxLength": 240
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["summary", "references", "redacted"],
+      "properties": {
+        "summary": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "references": {
+          "type": "array",
+          "maxItems": 10,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "format": "uri",
+            "pattern": "^https://[^?#]+(?:#[A-Za-z0-9._/-]+)?$",
+            "maxLength": 500
+          }
+        },
+        "redacted": {
+          "type": "boolean"
+        }
+      }
+    },
+    "detected_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "fingerprint": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "remediation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["eligible", "reason"],
+      "properties": {
+        "eligible": {
+          "type": "boolean"
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 240
+        }
+      }
+    },
+    "runbook_ref": {
+      "type": "string",
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))[A-Za-z0-9._/-]+\\.md$",
+      "maxLength": 240
+    }
+  },
+  "examples": [
+    {
+      "schema_version": "atlas-control-plane/finding/v1",
+      "source": {
+        "producer": "atlas-dep-audit",
+        "check_id": "contract-schema-invalid",
+        "producer_version": "1.0.0"
+      },
+      "subject": {
+        "repository": "AtlasReaper311/atlas-infra",
+        "service_id": "atlas-infra"
+      },
+      "category": "contract",
+      "severity": "failure",
+      "rule_id": "schema-validation",
+      "location": "contracts/v1/finding.schema.json",
+      "evidence": {
+        "summary": "A contract fixture failed validation.",
+        "references": [
+          "https://github.com/AtlasReaper311/atlas-infra/actions/runs/100"
+        ],
+        "redacted": true
+      },
+      "detected_at": "2026-07-14T10:00:00Z",
+      "fingerprint": "sha256:195f317331e98e586d17af0766b7096cd28262805db932538f3870dc5e73c25a",
+      "remediation": {
+        "eligible": false,
+        "reason": "Schema governance changes require owner review."
+      },
+      "runbook_ref": "docs/runbooks/control-plane-contract-validation.md"
+    }
+  ]
+}
