@@ -96,6 +96,16 @@ guidance live in [`docs/release-watch.md`](docs/release-watch.md) and the
 [`release-watch` runbook](docs/runbooks/release-watch.md). Verification runs in
 `atlas-journey-watch`; this repository remains the contract and policy owner.
 
+### Secret-watch policy
+
+[`policy/secret-watch.json`](policy/secret-watch.json) is the names-only
+declaration consumed by `atlas-dep-audit`. It records repository and
+environment scopes, required/optional/deprecated names, ownership, purpose,
+classification, provenance, and owner-attested rotation policy without
+containing a secret value. The format, threat model, suppression rules, and
+emergency procedure are documented in
+[`docs/secret-watch.md`](docs/secret-watch.md).
+
 ### Adopt a deployment pipeline
 
 Copy the matching template from `templates/` into a repo as `.github/workflows/deploy.yml`, change the name and flags, and forward secrets with `secrets: inherit`. The repo needs the secrets named in `docs/CICD-DECISIONS.md`.
