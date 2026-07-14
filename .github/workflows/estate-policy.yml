@@ -26,18 +26,30 @@ jobs:
           python3 -m py_compile scripts/change_impact.py
           python3 -m py_compile scripts/contract_registry.py
           python3 -m py_compile scripts/control_plane_contracts.py
+          python3 -m py_compile scripts/deploy_orchestrator.py
           python3 -m py_compile scripts/estate_policy.py
           python3 -m py_compile scripts/notify_assurance.py
           python3 -m py_compile scripts/validate_contract_registry.py
           python3 -m py_compile scripts/validate_control_plane_contracts.py
           python3 -m unittest discover -s scripts/tests -v
           python3 scripts/validate_control_plane_contracts.py
+          python3 scripts/deploy_orchestrator.py validate \
+            --output reports/deploy-policy-validation.json \
+            --markdown reports/deploy-policy-validation.md \
+            --quiet
+          python3 scripts/deploy_orchestrator.py plan \
+            --service atlas-api-public \
+            --environment production \
+            --output reports/deploy-plan.json \
+            --markdown reports/deploy-plan.md \
+            --quiet
           python3 scripts/validate_contract_registry.py \
             --report reports/contract-registry.json \
             --markdown reports/contract-registry.md \
             --graph reports/service-dependency-graph.json \
             --catalog reports/service-catalog.json
           cat reports/contract-registry.md >> "$GITHUB_STEP_SUMMARY"
+          cat reports/deploy-plan.md >> "$GITHUB_STEP_SUMMARY"
 
       - name: Audit estate policy
         id: policy

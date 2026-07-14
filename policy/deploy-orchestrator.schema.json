@@ -1,0 +1,292 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.atlas-systems.uk/policy/v1/deploy-orchestrator.schema.json",
+  "title": "Atlas Systems deploy orchestrator policy v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "owner",
+    "reviewed_at",
+    "eligibility",
+    "approval_model",
+    "guardrails",
+    "execution",
+    "targets"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "atlas-deploy-orchestrator/policy/v1"
+    },
+    "owner": {
+      "const": "AtlasReaper311/atlas-infra"
+    },
+    "reviewed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "eligibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "excluded_lifecycles",
+        "excluded_provenance",
+        "excluded_services"
+      ],
+      "properties": {
+        "excluded_lifecycles": {
+          "type": "array",
+          "minItems": 3,
+          "uniqueItems": true,
+          "items": {
+            "enum": ["archived", "deprecated", "experimental"]
+          }
+        },
+        "excluded_provenance": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "const": "external-derived"
+          }
+        },
+        "excluded_services": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "const": "simple-proxy"
+          }
+        }
+      }
+    },
+    "approval_model": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "dry_run_default",
+        "production_human_approval_required",
+        "protected_environment",
+        "two_owner_fallback"
+      ],
+      "properties": {
+        "dry_run_default": {"const": true},
+        "production_human_approval_required": {"const": true},
+        "protected_environment": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["preferred", "bypass_allowed"],
+          "properties": {
+            "preferred": {"const": true},
+            "bypass_allowed": {"const": false}
+          }
+        },
+        "two_owner_fallback": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["mode", "documentation_only", "implemented"],
+          "properties": {
+            "mode": {"const": "two-owner-dispatch"},
+            "documentation_only": {"const": true},
+            "implemented": {"const": false}
+          }
+        }
+      }
+    },
+    "guardrails": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "automatic_merge",
+        "automatic_rollback",
+        "branch_protection_changes",
+        "direct_provider_writes",
+        "environment_protection_bypass",
+        "force_push",
+        "secret_access"
+      ],
+      "properties": {
+        "automatic_merge": {"const": false},
+        "automatic_rollback": {"const": false},
+        "branch_protection_changes": {"const": false},
+        "direct_provider_writes": {"const": false},
+        "environment_protection_bypass": {"const": false},
+        "force_push": {"const": false},
+        "secret_access": {"const": false}
+      }
+    },
+    "execution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["enabled", "executor", "require_execute_flag"],
+      "properties": {
+        "enabled": {"const": false},
+        "executor": {"const": "noop"},
+        "require_execute_flag": {"const": true}
+      }
+    },
+    "targets": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/target"}
+    }
+  },
+  "$defs": {
+    "service_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+      "maxLength": 64
+    },
+    "repository": {
+      "type": "string",
+      "pattern": "^AtlasReaper311/[A-Za-z0-9._-]+$",
+      "maxLength": 128
+    },
+    "relative_markdown": {
+      "type": "string",
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))[A-Za-z0-9._/-]+\\.md$",
+      "maxLength": 240
+    },
+    "dispatch": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "workflow",
+        "ref",
+        "inputs",
+        "required_token_capabilities",
+        "expected_evidence"
+      ],
+      "properties": {
+        "workflow": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._-]+\\.ya?ml$",
+          "maxLength": 120
+        },
+        "ref": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._/-]+$",
+          "maxLength": 120
+        },
+        "inputs": {
+          "type": "object",
+          "additionalProperties": {
+            "type": ["string", "boolean", "number"]
+          },
+          "maxProperties": 20
+        },
+        "required_token_capabilities": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 10,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1, "maxLength": 120}
+        },
+        "expected_evidence": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 10,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1, "maxLength": 160}
+        }
+      }
+    },
+    "preflight": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["check_id", "kind", "required", "description"],
+      "properties": {
+        "check_id": {"$ref": "#/$defs/service_id"},
+        "kind": {
+          "enum": [
+            "github-checks",
+            "github-workflow",
+            "registry-policy",
+            "target-ref"
+          ]
+        },
+        "required": {"type": "boolean"},
+        "description": {"type": "string", "minLength": 1, "maxLength": 300}
+      }
+    },
+    "release_watch": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "repository",
+        "workflow",
+        "ref",
+        "journey_target",
+        "timeout_minutes"
+      ],
+      "properties": {
+        "repository": {"$ref": "#/$defs/repository"},
+        "workflow": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._-]+\\.ya?ml$",
+          "maxLength": 120
+        },
+        "ref": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._/-]+$",
+          "maxLength": 120
+        },
+        "journey_target": {"$ref": "#/$defs/service_id"},
+        "timeout_minutes": {"type": "integer", "minimum": 1, "maximum": 60}
+      }
+    },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "service_id",
+        "repository",
+        "environment",
+        "dependencies",
+        "preflight_checks",
+        "required_approvals",
+        "timeout_minutes",
+        "rollback_runbook",
+        "owner",
+        "disabled",
+        "dry_run_only",
+        "dispatch",
+        "post_deploy_release_watch"
+      ],
+      "properties": {
+        "service_id": {"$ref": "#/$defs/service_id"},
+        "repository": {"$ref": "#/$defs/repository"},
+        "environment": {
+          "enum": ["development", "preview", "production"]
+        },
+        "dependencies": {
+          "type": "array",
+          "maxItems": 30,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/service_id"}
+        },
+        "preflight_checks": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 20,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/preflight"}
+        },
+        "required_approvals": {
+          "type": "array",
+          "maxItems": 10,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1, "maxLength": 120}
+        },
+        "timeout_minutes": {"type": "integer", "minimum": 1, "maximum": 120},
+        "rollback_runbook": {"$ref": "#/$defs/relative_markdown"},
+        "owner": {"type": "string", "minLength": 1, "maxLength": 120},
+        "disabled": {"type": "boolean"},
+        "dry_run_only": {"type": "boolean"},
+        "dispatch": {"$ref": "#/$defs/dispatch"},
+        "post_deploy_release_watch": {"$ref": "#/$defs/release_watch"}
+      }
+    }
+  }
+}

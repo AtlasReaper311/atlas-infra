@@ -136,6 +136,29 @@ python3 scripts/validate_contract_registry.py \
 Architecture, migration, live-read permissions, limitations, and rollback are
 documented in [`docs/contract-registry.md`](docs/contract-registry.md).
 
+### Deploy orchestrator
+
+Phase 7 adds a deterministic, dependency-aware deployment planner without a
+dispatcher. [`policy/deploy-orchestrator.json`](policy/deploy-orchestrator.json)
+declares existing target workflows, approvals, preflights, rollback guidance,
+and post-deploy release-watch plans. The executor is a disabled `noop`, and
+`--execute` fails closed.
+
+```bash
+python3 scripts/deploy_orchestrator.py validate
+python3 scripts/deploy_orchestrator.py plan \
+  --service atlas-api-public \
+  --environment production \
+  --output /tmp/deploy-plan.json \
+  --markdown /tmp/deploy-plan.md
+```
+
+The manual `deploy-orchestrator-dry-run.yml` workflow has read-only repository
+permission, no dispatch permission or secret, and retains plan artifacts for
+14 days. Architecture, onboarding, approval gates, partial-deployment recovery,
+and rollback limitations are documented in
+[`docs/deploy-orchestrator.md`](docs/deploy-orchestrator.md).
+
 ### Adopt a deployment pipeline
 
 Copy the matching template from `templates/` into a repo as `.github/workflows/deploy.yml`, change the name and flags, and forward secrets with `secrets: inherit`. The repo needs the secrets named in `docs/CICD-DECISIONS.md`.
