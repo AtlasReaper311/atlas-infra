@@ -1,0 +1,370 @@
+{
+  "schema_version": "atlas-backup-audit/policy/v1",
+  "owner": "AtlasReaper311/atlas-infra",
+  "reviewed_at": "2026-07-14T12:00:00Z",
+  "mode": "fixture-only",
+  "guardrails": {
+    "offline_only": true,
+    "provider_reads": false,
+    "provider_writes": false,
+    "live_restore": false,
+    "allow_policy_commands": false,
+    "allow_existing_restore_paths": false,
+    "cleanup_temporary_directories": true,
+    "maximum_archive_files": 1000,
+    "maximum_uncompressed_bytes": 10485760
+  },
+  "eligibility": {
+    "excluded_lifecycles": ["archived", "deprecated"],
+    "excluded_provenance": ["external-derived"],
+    "excluded_services": ["simple-proxy"]
+  },
+  "service_coverage": [
+    {
+      "service_id": "atlas-api-index",
+      "repository": "AtlasReaper311/atlas-api-index",
+      "state": "not-declared",
+      "target_ids": [],
+      "rationale": "No production backup target or no-backup decision is approved in Phase 8.",
+      "notes": "Current registry evidence is insufficient to assert recoverability."
+    },
+    {
+      "service_id": "atlas-api-public",
+      "repository": "AtlasReaper311/atlas-api-public",
+      "state": "not-declared",
+      "target_ids": [],
+      "rationale": "No production backup target or no-backup decision is approved in Phase 8.",
+      "notes": "Current registry evidence is insufficient to assert recoverability."
+    },
+    {
+      "service_id": "atlas-blackbox",
+      "repository": "AtlasReaper311/atlas-blackbox",
+      "state": "target",
+      "target_ids": ["github-workflow-artifact-fixture", "incident-export-fixture"],
+      "rationale": "Fixture targets exercise artifact metadata and incident export validation without production access.",
+      "notes": "Fixture evidence does not prove a live backup exists."
+    },
+    {
+      "service_id": "atlas-corpus",
+      "repository": "AtlasReaper311/atlas-corpus",
+      "state": "target",
+      "target_ids": ["chroma-vector-store-export-fixture"],
+      "rationale": "A disposable Chroma-shaped export validates local restore mechanics.",
+      "notes": "Fixture evidence does not prove the live corpus is backed up."
+    },
+    {
+      "service_id": "atlas-daily-digest",
+      "repository": "AtlasReaper311/atlas-daily-digest",
+      "state": "not-declared",
+      "target_ids": [],
+      "rationale": "No production backup target or no-backup decision is approved in Phase 8.",
+      "notes": "Current registry evidence is insufficient to assert recoverability."
+    },
+    {
+      "service_id": "atlas-dora",
+      "repository": "AtlasReaper311/atlas-dora",
+      "state": "not-declared",
+      "target_ids": [],
+      "rationale": "No production backup target or no-backup decision is approved in Phase 8.",
+      "notes": "Current registry evidence is insufficient to assert recoverability."
+    },
+    {
+      "service_id": "atlas-notify",
+      "repository": "AtlasReaper311/atlas-notify",
+      "state": "not-declared",
+      "target_ids": [],
+      "rationale": "No production backup target or no-backup decision is approved in Phase 8.",
+      "notes": "Current registry evidence is insufficient to assert recoverability."
+    },
+    {
+      "service_id": "atlas-postmortem",
+      "repository": "AtlasReaper311/atlas-postmortem",
+      "state": "not-declared",
+      "target_ids": [],
+      "rationale": "No production backup target or no-backup decision is approved in Phase 8.",
+      "notes": "Current registry evidence is insufficient to assert recoverability."
+    },
+    {
+      "service_id": "atlas-quota-watch",
+      "repository": "AtlasReaper311/atlas-quota-watch",
+      "state": "not-declared",
+      "target_ids": [],
+      "rationale": "No production backup target or no-backup decision is approved in Phase 8.",
+      "notes": "Current registry evidence is insufficient to assert recoverability."
+    },
+    {
+      "service_id": "atlas-systems",
+      "repository": "AtlasReaper311/atlas-systems",
+      "state": "no-backup-rationale",
+      "target_ids": [],
+      "rationale": "The static Pages output is deterministically rebuilt from reviewed Git source; mutable provider data is not part of the declared service contract.",
+      "notes": "Git history and deployment recovery remain outside this fixture audit."
+    },
+    {
+      "service_id": "atlas-vault",
+      "repository": "AtlasReaper311/atlas-vault",
+      "state": "target",
+      "target_ids": ["cloudflare-kv-export-fixture"],
+      "rationale": "A fixture KV export validates metadata, digest, retention, and disposable JSON restore behavior.",
+      "notes": "No live KV namespace is accessed."
+    },
+    {
+      "service_id": "deploy-watch",
+      "repository": "AtlasReaper311/deploy-watch",
+      "state": "not-declared",
+      "target_ids": [],
+      "rationale": "No production backup target or no-backup decision is approved in Phase 8.",
+      "notes": "Current registry evidence is insufficient to assert recoverability."
+    },
+    {
+      "service_id": "github-pulse",
+      "repository": "AtlasReaper311/github-pulse",
+      "state": "not-declared",
+      "target_ids": [],
+      "rationale": "No production backup target or no-backup decision is approved in Phase 8.",
+      "notes": "Current registry evidence is insufficient to assert recoverability."
+    },
+    {
+      "service_id": "ramone-edge",
+      "repository": "AtlasReaper311/ramone-edge",
+      "state": "no-backup-rationale",
+      "target_ids": [],
+      "rationale": "The edge gateway is stateless and rebuilt from reviewed Git source; private upstream state is owned outside this service.",
+      "notes": "Secret rotation and upstream recovery are separate runbooks."
+    },
+    {
+      "service_id": "ramone-memory",
+      "repository": "AtlasReaper311/ramone-memory",
+      "state": "not-declared",
+      "target_ids": [],
+      "rationale": "The registry marks memory data backup-relevant, but no approved production evidence source exists in Phase 8.",
+      "notes": "Do not infer a live Chroma backup from the atlas-corpus fixture."
+    },
+    {
+      "service_id": "ramone-trigger",
+      "repository": "AtlasReaper311/ramone-voice-trigger",
+      "state": "no-backup-rationale",
+      "target_ids": [],
+      "rationale": "The trigger Worker is stateless and rebuilt from reviewed Git source; workflow execution history is owned by GitHub.",
+      "notes": "No trigger secret or workflow state is read by this audit."
+    },
+    {
+      "service_id": "simple-proxy",
+      "repository": "AtlasReaper311/simple-proxy",
+      "state": "excluded",
+      "target_ids": [],
+      "rationale": "The repository is deprecated, internal, and external-derived and cannot receive active backup drills by default.",
+      "notes": "Historical visibility is retained without scheduled assurance."
+    },
+    {
+      "service_id": "site-pulse",
+      "repository": "AtlasReaper311/site-pulse",
+      "state": "not-declared",
+      "target_ids": [],
+      "rationale": "No production backup target or no-backup decision is approved in Phase 8.",
+      "notes": "Current registry evidence is insufficient to assert recoverability."
+    },
+    {
+      "service_id": "specular-edge",
+      "repository": "AtlasReaper311/specular-telemetry",
+      "state": "no-backup-rationale",
+      "target_ids": [],
+      "rationale": "The edge projection is stateless and rebuilt from reviewed Git source; telemetry history belongs to the local producer.",
+      "notes": "This rationale does not cover specular-telemetry local data."
+    },
+    {
+      "service_id": "specular-sentinel",
+      "repository": "AtlasReaper311/specular-sentinel",
+      "state": "not-declared",
+      "target_ids": [],
+      "rationale": "No production backup target or no-backup decision is approved in Phase 8.",
+      "notes": "Current registry evidence is insufficient to assert recoverability."
+    },
+    {
+      "service_id": "specular-sonify",
+      "repository": "AtlasReaper311/specular-sonify",
+      "state": "no-backup-rationale",
+      "target_ids": [],
+      "rationale": "The telemetry-to-audio Worker is stateless and rebuilt from reviewed Git source.",
+      "notes": "Its input telemetry is owned by the source service."
+    },
+    {
+      "service_id": "specular-telemetry",
+      "repository": "AtlasReaper311/specular-telemetry",
+      "state": "not-declared",
+      "target_ids": [],
+      "rationale": "No production backup target or no-backup decision is approved in Phase 8.",
+      "notes": "Current registry evidence is insufficient to assert recoverability."
+    },
+    {
+      "service_id": "status",
+      "repository": "AtlasReaper311/status",
+      "state": "no-backup-rationale",
+      "target_ids": [],
+      "rationale": "The status site is static and rebuilt from reviewed Git source; no mutable service-owned store is declared.",
+      "notes": "Provider deployment recovery remains separate from data backup."
+    }
+  ],
+  "targets": [
+    {
+      "target_id": "chroma-vector-store-export-fixture",
+      "service_id": "atlas-corpus",
+      "repository": "AtlasReaper311/atlas-corpus",
+      "data_type": "chroma-vector-store-export",
+      "storage_type": "chroma-vector-store",
+      "owner": "github:AtlasReaper311",
+      "classification": {
+        "lifecycle": "production",
+        "scope": "public",
+        "provenance": "original"
+      },
+      "backup_frequency_hours": 168,
+      "maximum_allowed_age_hours": 168,
+      "recovery_point_objective_hours": 168,
+      "recovery_time_objective_hours": 8,
+      "retention_expectation_days": 30,
+      "restore_drill_type": "chroma-fixture-validation",
+      "disposable_restore_location": "system-temporary-directory",
+      "evidence_source": "chroma-vector-store-export-fixture/backup-metadata.json",
+      "required_metadata_fields": [
+        "backup_at",
+        "digest",
+        "evidence_ref",
+        "expected_file_count",
+        "expected_total_size_bytes",
+        "observed_at",
+        "repository",
+        "restore_source",
+        "retention",
+        "service_id",
+        "source_type",
+        "target_id"
+      ],
+      "runbook_reference": "docs/runbooks/backup-audit-restore-drill-failed.md",
+      "criticality": "high",
+      "enabled": true,
+      "fixture_only": true,
+      "notes": "Validates a small Chroma-shaped export without reading atlas-corpus production data."
+    },
+    {
+      "target_id": "cloudflare-kv-export-fixture",
+      "service_id": "atlas-vault",
+      "repository": "AtlasReaper311/atlas-vault",
+      "data_type": "cloudflare-kv-export",
+      "storage_type": "cloudflare-kv",
+      "owner": "github:AtlasReaper311",
+      "classification": {
+        "lifecycle": "active",
+        "scope": "internal",
+        "provenance": "original"
+      },
+      "backup_frequency_hours": 24,
+      "maximum_allowed_age_hours": 24,
+      "recovery_point_objective_hours": 24,
+      "recovery_time_objective_hours": 4,
+      "retention_expectation_days": 30,
+      "restore_drill_type": "json-export-validation",
+      "disposable_restore_location": "system-temporary-directory",
+      "evidence_source": "cloudflare-kv-export-fixture/backup-metadata.json",
+      "required_metadata_fields": [
+        "backup_at",
+        "digest",
+        "evidence_ref",
+        "expected_file_count",
+        "expected_total_size_bytes",
+        "observed_at",
+        "repository",
+        "restore_source",
+        "retention",
+        "service_id",
+        "source_type",
+        "target_id"
+      ],
+      "runbook_reference": "docs/runbooks/backup-audit-restore-drill-failed.md",
+      "criticality": "high",
+      "enabled": true,
+      "fixture_only": true,
+      "notes": "Validates a local JSON fixture; it does not read or write a Cloudflare namespace."
+    },
+    {
+      "target_id": "github-workflow-artifact-fixture",
+      "service_id": "atlas-blackbox",
+      "repository": "AtlasReaper311/atlas-blackbox",
+      "data_type": "github-workflow-artifact",
+      "storage_type": "github-actions-artifact",
+      "owner": "github:AtlasReaper311",
+      "classification": {
+        "lifecycle": "production",
+        "scope": "public",
+        "provenance": "original"
+      },
+      "backup_frequency_hours": 24,
+      "maximum_allowed_age_hours": 24,
+      "recovery_point_objective_hours": 24,
+      "recovery_time_objective_hours": 4,
+      "retention_expectation_days": 90,
+      "restore_drill_type": "artifact-metadata-validation",
+      "disposable_restore_location": "system-temporary-directory",
+      "evidence_source": "github-workflow-artifact-fixture/backup-metadata.json",
+      "required_metadata_fields": [
+        "backup_at",
+        "digest",
+        "evidence_ref",
+        "expected_file_count",
+        "expected_total_size_bytes",
+        "observed_at",
+        "repository",
+        "restore_source",
+        "retention",
+        "service_id",
+        "source_type",
+        "target_id"
+      ],
+      "runbook_reference": "docs/runbooks/backup-audit-restore-drill-failed.md",
+      "criticality": "medium",
+      "enabled": true,
+      "fixture_only": true,
+      "notes": "Validates artifact metadata only; no GitHub artifact is downloaded."
+    },
+    {
+      "target_id": "incident-export-fixture",
+      "service_id": "atlas-blackbox",
+      "repository": "AtlasReaper311/atlas-blackbox",
+      "data_type": "incident-export",
+      "storage_type": "json-export",
+      "owner": "github:AtlasReaper311",
+      "classification": {
+        "lifecycle": "production",
+        "scope": "public",
+        "provenance": "original"
+      },
+      "backup_frequency_hours": 24,
+      "maximum_allowed_age_hours": 24,
+      "recovery_point_objective_hours": 24,
+      "recovery_time_objective_hours": 4,
+      "retention_expectation_days": 90,
+      "restore_drill_type": "json-export-validation",
+      "disposable_restore_location": "system-temporary-directory",
+      "evidence_source": "incident-export-fixture/backup-metadata.json",
+      "required_metadata_fields": [
+        "backup_at",
+        "digest",
+        "evidence_ref",
+        "expected_file_count",
+        "expected_total_size_bytes",
+        "observed_at",
+        "repository",
+        "restore_source",
+        "retention",
+        "service_id",
+        "source_type",
+        "target_id"
+      ],
+      "runbook_reference": "docs/runbooks/backup-audit-restore-drill-failed.md",
+      "criticality": "high",
+      "enabled": true,
+      "fixture_only": true,
+      "notes": "Validates a synthetic incident export without reading a Durable Object or private incident."
+    }
+  ]
+}

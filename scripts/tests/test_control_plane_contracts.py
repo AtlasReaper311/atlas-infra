@@ -166,6 +166,19 @@ class ControlPlaneContractTests(unittest.TestCase):
             ),
         )
 
+    def test_backup_evidence_accepts_phase8_optional_audit_fields(self) -> None:
+        evidence = self.fixture("valid/backup-evidence.json")
+        self.assertEqual("atlas-blackbox", evidence["service_id"])
+        self.assertEqual("fresh", evidence["freshness_state"])
+        self.assertEqual("passed", evidence["restore_drill_state"])
+        self.assertEqual("met", evidence["retention_state"])
+        self.assertEqual(
+            [],
+            contracts.validate_instance(
+                evidence, self.schema("backup-evidence.schema.json")
+            ),
+        )
+
     def test_optional_property_addition_is_minor_compatible(self) -> None:
         previous = {
             "type": "object",

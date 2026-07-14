@@ -72,3 +72,11 @@ under `policy/`, plus an offline validator and generated graph/catalogue. The
 v1 schema additions are optional and minor-compatible; the registry validator
 applies the stricter canonical-instance policy without breaking older v1
 producers.
+
+## Phase 8 follow-on
+
+Phase 8 adds optional BackupEvidence producer fields for service and repository
+identity, audit time, explicit freshness/retention/restore states, digest or
+redacted reference, source type, result, warnings/errors, and runbook. The
+backup-audit producer requires the full Phase 8 shape and validates every
+record against the shared v1 schema. Earlier v1 instances remain valid.

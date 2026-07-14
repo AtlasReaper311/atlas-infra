@@ -1,0 +1,25 @@
+{
+  "schema_version": "atlas-backup-audit/metadata/v1",
+  "target_id": "github-workflow-artifact-fixture",
+  "service_id": "atlas-blackbox",
+  "repository": "AtlasReaper311/atlas-blackbox",
+  "backup_at": "2026-07-14T10:00:00Z",
+  "observed_at": "2026-07-14T11:00:00Z",
+  "source_type": "local-fixture",
+  "evidence_ref": "https://github.com/AtlasReaper311/atlas-infra/blob/main/tests/fixtures/backup-audit/github-workflow-artifact-fixture/backup-metadata.json",
+  "digest": {
+    "algorithm": "sha-256",
+    "value": "0d979b69e4cfb0e0d56cd652c2c5ff9d4c5570f4319976d83043f9fbd2b67c3c",
+    "path": "artifact-manifest.json"
+  },
+  "retention": {
+    "expected_days": 90,
+    "retained_until": "2026-10-12T10:00:00Z"
+  },
+  "restore_source": {
+    "kind": "metadata-manifest",
+    "path": "artifact-manifest.json"
+  },
+  "expected_file_count": 1,
+  "expected_total_size_bytes": 452
+}

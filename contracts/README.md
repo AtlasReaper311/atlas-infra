@@ -15,7 +15,10 @@ service, route, deployment, storage layer, remediation agent, or secret.
   producers include the optional `service_id` and `deployment_target` fields;
   checks may include an optional shared `state`. These additions remain
   compatible within v1 so older v1 readers may ignore them.
-- `BackupEvidence`: backup freshness and restore-test metadata without content.
+- `BackupEvidence`: backup freshness, retention, and disposable restore-test
+  metadata without content. Phase 8 producers include optional service,
+  repository, audit-state, digest/reference, warning/error, and runbook fields;
+  missing timestamps or references may be explicit `null` and never healthy.
 - `RunbookIndexEntry`: deterministic failure-to-runbook metadata.
 - `EvidenceEnvelope`: one inline bounded payload or stable reference with a
   SHA-256 digest.

@@ -2,12 +2,12 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://schemas.atlas-systems.uk/control-plane/v1/backup-evidence.schema.json",
   "title": "Atlas Systems BackupEvidence v1",
-  "description": "Freshness and restore-test evidence without backup contents.",
+  "description": "Freshness, retention, and disposable restore-test evidence without backup contents.",
   "type": "object",
   "additionalProperties": false,
   "x-owner": {
     "repository": "AtlasReaper311/atlas-infra",
-    "consumer": "future backup assurance after the Phase 8 gate"
+    "consumer": "backup audit and control-plane backup consumers"
   },
   "required": [
     "schema_version",
@@ -34,12 +34,14 @@
         "database-snapshot",
         "filesystem-copy",
         "github-artifact",
+        "json-export",
         "kv-export",
-        "repository-mirror"
+        "repository-mirror",
+        "vector-store-export"
       ]
     },
     "last_successful_backup_at": {
-      "type": "string",
+      "type": ["string", "null"],
       "format": "date-time"
     },
     "restore_tested_at": {
@@ -57,13 +59,71 @@
       "maximum": 8760
     },
     "evidence_ref": {
-      "type": "string",
+      "type": ["string", "null"],
       "format": "uri",
       "pattern": "^https://[^?#]+(?:#[A-Za-z0-9._/-]+)?$",
       "maxLength": 500
     },
     "status": {
       "enum": ["healthy", "warning", "failed", "stale", "unknown"]
+    },
+    "service_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+      "maxLength": 64
+    },
+    "repository": {
+      "type": "string",
+      "pattern": "^AtlasReaper311/[A-Za-z0-9._-]+$",
+      "maxLength": 128
+    },
+    "backup_timestamp": {
+      "type": ["string", "null"],
+      "format": "date-time"
+    },
+    "audit_timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "freshness_state": {
+      "enum": ["fresh", "stale", "unknown", "unavailable"]
+    },
+    "restore_drill_state": {
+      "enum": ["passed", "failed", "unavailable", "not-run"]
+    },
+    "retention_state": {
+      "enum": ["met", "violated", "missing", "unknown"]
+    },
+    "evidence_digest": {
+      "type": ["string", "null"],
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "redacted_evidence_ref": {
+      "type": ["string", "null"],
+      "format": "uri",
+      "pattern": "^https://[^?#]+(?:#[A-Za-z0-9._/-]+)?$",
+      "maxLength": 500
+    },
+    "source_type": {
+      "enum": ["local-fixture", "provider-metadata", "redacted-manifest"]
+    },
+    "result_state": {
+      "enum": ["healthy", "warning", "failed", "stale", "unavailable", "unknown"]
+    },
+    "errors": {
+      "type": "array",
+      "maxItems": 20,
+      "items": {"type": "string", "minLength": 1, "maxLength": 500}
+    },
+    "warnings": {
+      "type": "array",
+      "maxItems": 20,
+      "items": {"type": "string", "minLength": 1, "maxLength": 500}
+    },
+    "runbook_reference": {
+      "type": "string",
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))[A-Za-z0-9._/-]+\\.md$",
+      "maxLength": 240
     }
   },
   "examples": [

@@ -1,0 +1,25 @@
+{
+  "schema_version": "atlas-backup-audit/metadata/v1",
+  "target_id": "chroma-vector-store-export-fixture",
+  "service_id": "atlas-corpus",
+  "repository": "AtlasReaper311/atlas-corpus",
+  "backup_at": "2026-07-14T08:30:00Z",
+  "observed_at": "2026-07-14T11:00:00Z",
+  "source_type": "local-fixture",
+  "evidence_ref": "https://github.com/AtlasReaper311/atlas-infra/blob/main/tests/fixtures/backup-audit/chroma-vector-store-export-fixture/backup-metadata.json",
+  "digest": {
+    "algorithm": "sha-256",
+    "value": "f8cee0c900bc57f2f8a6ae3be92d9889e12d6809a1b452b21f4a5479ca43254c",
+    "path": "chroma-export/manifest.json"
+  },
+  "retention": {
+    "expected_days": 30,
+    "retained_until": "2026-08-13T08:30:00Z"
+  },
+  "restore_source": {
+    "kind": "chroma-export",
+    "path": "chroma-export"
+  },
+  "expected_file_count": 3,
+  "expected_total_size_bytes": 1023
+}

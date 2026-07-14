@@ -19,6 +19,13 @@ The Phase 6 ServiceContract registry fields are additive optional properties.
 Canonical registry policy requires them for its own records, but generic v1
 readers and earlier producers are not required to emit them during migration.
 
+The Phase 8 BackupEvidence fields are additive and optional within v1. The
+Phase 8 producer requires them in its own output. `last_successful_backup_at`
+and `evidence_ref` also accept `null` so missing evidence can be represented
+honestly instead of fabricating a timestamp or URI. `json-export` and
+`vector-store-export` are additive method values; consumers must retain an
+unknown-method fallback during migration.
+
 ## Requires a new major path
 
 - Add a required property.

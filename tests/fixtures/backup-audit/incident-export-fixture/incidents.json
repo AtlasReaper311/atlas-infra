@@ -1,0 +1,12 @@
+{
+  "schema_version": "atlas-backup-fixture/incident-export/v1",
+  "exported_at": "2026-07-14T09:00:00Z",
+  "incidents": [
+    {
+      "id": "fixture-incident-001",
+      "occurred_at": "2026-07-14T08:45:00Z",
+      "status": "closed",
+      "summary": "Synthetic incident used only for an offline restore drill."
+    }
+  ]
+}

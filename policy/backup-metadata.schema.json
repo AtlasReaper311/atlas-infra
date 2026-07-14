@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.atlas-systems.uk/policy/v1/backup-metadata.schema.json",
+  "title": "Atlas Systems backup metadata fixture v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "target_id",
+    "service_id",
+    "repository",
+    "backup_at",
+    "observed_at",
+    "source_type",
+    "evidence_ref",
+    "digest",
+    "retention",
+    "restore_source",
+    "expected_file_count",
+    "expected_total_size_bytes"
+  ],
+  "properties": {
+    "schema_version": {"const": "atlas-backup-audit/metadata/v1"},
+    "target_id": {"$ref": "#/$defs/id"},
+    "service_id": {"$ref": "#/$defs/id"},
+    "repository": {"$ref": "#/$defs/repository"},
+    "backup_at": {"type": "string", "format": "date-time"},
+    "observed_at": {"type": "string", "format": "date-time"},
+    "source_type": {"const": "local-fixture"},
+    "evidence_ref": {
+      "type": "string",
+      "format": "uri",
+      "pattern": "^https://[^?#]+(?:#[A-Za-z0-9._/-]+)?$",
+      "maxLength": 500
+    },
+    "digest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["algorithm", "value", "path"],
+      "properties": {
+        "algorithm": {"const": "sha-256"},
+        "value": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "path": {"$ref": "#/$defs/relative_path"}
+      }
+    },
+    "retention": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["expected_days", "retained_until"],
+      "properties": {
+        "expected_days": {"type": "integer", "minimum": 1, "maximum": 3650},
+        "retained_until": {"type": "string", "format": "date-time"}
+      }
+    },
+    "restore_source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "path"],
+      "properties": {
+        "kind": {"enum": ["metadata-manifest", "json-export", "chroma-export", "zip-archive"]},
+        "path": {"$ref": "#/$defs/relative_path"}
+      }
+    },
+    "expected_file_count": {"type": "integer", "minimum": 1, "maximum": 10000},
+    "expected_total_size_bytes": {"type": "integer", "minimum": 1, "maximum": 1073741824}
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+      "maxLength": 96
+    },
+    "repository": {
+      "type": "string",
+      "pattern": "^AtlasReaper311/[A-Za-z0-9._-]+$",
+      "maxLength": 128
+    },
+    "relative_path": {
+      "type": "string",
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*\\\\)[A-Za-z0-9._/-]+$",
+      "maxLength": 240
+    }
+  }
+}
