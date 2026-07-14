@@ -15,6 +15,10 @@ the schema must first declare the additive field. Application readers then
 ignore that optional field if they do not use it. Writers continue emitting the
 oldest shape needed by active v1 consumers during a migration window.
 
+The Phase 6 ServiceContract registry fields are additive optional properties.
+Canonical registry policy requires them for its own records, but generic v1
+readers and earlier producers are not required to emit them during migration.
+
 ## Requires a new major path
 
 - Add a required property.

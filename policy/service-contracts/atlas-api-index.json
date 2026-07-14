@@ -1,0 +1,69 @@
+{
+  "schema_version": "atlas-control-plane/service-contract/v1",
+  "service_id": "atlas-api-index",
+  "display_name": "Atlas API index",
+  "owner": {
+    "github": "AtlasReaper311",
+    "responsibility": "Own live Worker discovery and observed metadata publication."
+  },
+  "source_repository": "AtlasReaper311/atlas-api-index",
+  "classification": {
+    "lifecycle": "production",
+    "scope": "public",
+    "provenance": "original"
+  },
+  "registry_visibility": "current",
+  "runtime": {
+    "kind": "cloudflare-worker",
+    "deployment_target": "api.atlas-systems.uk root routes",
+    "release_identity_supported": false
+  },
+  "environments": ["production"],
+  "routes": [
+    {
+      "origin": "https://api.atlas-systems.uk",
+      "path": "/",
+      "methods": ["GET"],
+      "visibility": "public"
+    },
+    {
+      "origin": "https://api.atlas-systems.uk",
+      "path": "/_meta",
+      "methods": ["GET"],
+      "visibility": "public"
+    }
+  ],
+  "health_endpoint": {
+    "state": "known",
+    "origin": "https://api.atlas-systems.uk",
+    "path": "/"
+  },
+  "metadata_route": "/_meta",
+  "metadata_endpoint": {
+    "state": "known",
+    "origin": "https://api.atlas-systems.uk",
+    "path": "/_meta",
+    "expected_shape": "worker-meta/v1"
+  },
+  "dependencies": [],
+  "slo_refs": [],
+  "runbooks": ["docs/runbooks/contract-registry-service-triage.md"],
+  "journey_coverage": {"state": "unknown", "references": []},
+  "quota_policy": {"state": "unknown", "reference": null},
+  "secret_declaration": {"state": "unknown", "reference": null},
+  "backup_relevance": {"state": "unknown", "reference": null},
+  "release_watch_eligible": false,
+  "escalation": {
+    "contact": "github:AtlasReaper311",
+    "policy": "Repository owner review through GitHub."
+  },
+  "route_exceptions": [],
+  "contract_notes": ["Observed discovery is not the source of route ownership truth."],
+  "control_plane_policy": {
+    "new_features": true,
+    "route_ownership": true,
+    "default_assurance": true,
+    "gardener_remediation": true,
+    "deployment_orchestration": true
+  }
+}

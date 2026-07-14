@@ -19,17 +19,25 @@ jobs:
     timeout-minutes: 25
     steps:
       - name: Check out atlas-infra
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - name: Validate assurance scripts
         run: |
           python3 -m py_compile scripts/change_impact.py
+          python3 -m py_compile scripts/contract_registry.py
           python3 -m py_compile scripts/control_plane_contracts.py
           python3 -m py_compile scripts/estate_policy.py
           python3 -m py_compile scripts/notify_assurance.py
+          python3 -m py_compile scripts/validate_contract_registry.py
           python3 -m py_compile scripts/validate_control_plane_contracts.py
           python3 -m unittest discover -s scripts/tests -v
           python3 scripts/validate_control_plane_contracts.py
+          python3 scripts/validate_contract_registry.py \
+            --report reports/contract-registry.json \
+            --markdown reports/contract-registry.md \
+            --graph reports/service-dependency-graph.json \
+            --catalog reports/service-catalog.json
+          cat reports/contract-registry.md >> "$GITHUB_STEP_SUMMARY"
 
       - name: Audit estate policy
         id: policy
@@ -37,12 +45,16 @@ jobs:
         env:
           GH_DIGEST_PAT: ${{ secrets.GH_DIGEST_PAT }}
         run: |
-          python3 scripts/estate_policy.py             --manifest https://raw.githubusercontent.com/AtlasReaper311/atlas-api-public/main/data/estate.manifest.json             --policy policy/estate-policy.json             --markdown reports/estate-policy.md             --json reports/estate-policy.json
+          python3 scripts/estate_policy.py \
+            --manifest policy/estate-registry.json \
+            --policy policy/estate-policy.json \
+            --markdown reports/estate-policy.md \
+            --json reports/estate-policy.json
           cat reports/estate-policy.md >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload policy report
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: estate-policy-${{ github.run_id }}
           path: reports

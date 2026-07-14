@@ -1,0 +1,44 @@
+{
+  "schema_version": "atlas-control-plane/service-contract/v1",
+  "service_id": "specular-sentinel",
+  "display_name": "SPECULAR sentinel",
+  "owner": {
+    "github": "AtlasReaper311",
+    "responsibility": "Own local SPECULAR-CORE health observation and bounded reporting."
+  },
+  "source_repository": "AtlasReaper311/specular-sentinel",
+  "classification": {
+    "lifecycle": "production",
+    "scope": "internal",
+    "provenance": "original"
+  },
+  "registry_visibility": "current",
+  "runtime": {
+    "kind": "local-service",
+    "deployment_target": "specular-core local timer",
+    "release_identity_supported": false
+  },
+  "environments": ["local"],
+  "routes": [],
+  "health_endpoint": {"state": "not-applicable", "origin": null, "path": null},
+  "metadata_route": null,
+  "metadata_endpoint": {"state": "not-applicable", "origin": null, "path": null, "expected_shape": "not-applicable"},
+  "dependencies": ["atlas-api-public", "atlas-corpus"],
+  "slo_refs": [],
+  "runbooks": ["docs/runbooks/contract-registry-service-triage.md"],
+  "journey_coverage": {"state": "not-applicable", "references": []},
+  "quota_policy": {"state": "not-applicable", "reference": null},
+  "secret_declaration": {"state": "unknown", "reference": null},
+  "backup_relevance": {"state": "unknown", "reference": null},
+  "release_watch_eligible": false,
+  "escalation": {"contact": "github:AtlasReaper311", "policy": "Repository owner review through GitHub."},
+  "route_exceptions": [],
+  "contract_notes": ["Local timer/service with no routed HTTP contract."],
+  "control_plane_policy": {
+    "new_features": true,
+    "route_ownership": true,
+    "default_assurance": true,
+    "gardener_remediation": true,
+    "deployment_orchestration": true
+  }
+}

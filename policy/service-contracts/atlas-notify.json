@@ -1,0 +1,64 @@
+{
+  "schema_version": "atlas-control-plane/service-contract/v1",
+  "service_id": "atlas-notify",
+  "display_name": "Atlas notify",
+  "owner": {
+    "github": "AtlasReaper311",
+    "responsibility": "Own operational event routing and the bounded recent-event read model."
+  },
+  "source_repository": "AtlasReaper311/atlas-notify",
+  "classification": {
+    "lifecycle": "production",
+    "scope": "internal",
+    "provenance": "original"
+  },
+  "registry_visibility": "current",
+  "runtime": {
+    "kind": "cloudflare-worker",
+    "deployment_target": "api.atlas-systems.uk/notify",
+    "release_identity_supported": false
+  },
+  "environments": ["production"],
+  "routes": [
+    {"origin": "https://api.atlas-systems.uk", "path": "/notify", "methods": ["POST"], "visibility": "authenticated"},
+    {"origin": "https://api.atlas-systems.uk", "path": "/notify/health", "methods": ["GET"], "visibility": "public"},
+    {"origin": "https://api.atlas-systems.uk", "path": "/notify/recent", "methods": ["GET"], "visibility": "public"}
+  ],
+  "health_endpoint": {"state": "known", "origin": "https://api.atlas-systems.uk", "path": "/notify/health"},
+  "metadata_route": null,
+  "metadata_endpoint": {"state": "unknown", "origin": null, "path": null, "expected_shape": "unknown"},
+  "dependencies": ["atlas-blackbox"],
+  "slo_refs": [],
+  "runbooks": ["docs/runbooks/contract-registry-service-triage.md"],
+  "journey_coverage": {
+    "state": "present",
+    "references": ["AtlasReaper311/atlas-journey-watch:recent-activity"]
+  },
+  "quota_policy": {"state": "unknown", "reference": null},
+  "secret_declaration": {"state": "unknown", "reference": null},
+  "backup_relevance": {"state": "unknown", "reference": null},
+  "release_watch_eligible": false,
+  "escalation": {"contact": "github:AtlasReaper311", "policy": "Repository owner review through GitHub."},
+  "route_exceptions": [
+    {
+      "origin": "https://api.atlas-systems.uk",
+      "path": "/notify/health",
+      "reason": "Bounded liveness required by public estate assurance.",
+      "approved_by": "AtlasReaper311"
+    },
+    {
+      "origin": "https://api.atlas-systems.uk",
+      "path": "/notify/recent",
+      "reason": "Bounded recent-event summaries are an approved public read surface.",
+      "approved_by": "AtlasReaper311"
+    }
+  ],
+  "contract_notes": ["No metadata endpoint is claimed because the committed router does not mount one."],
+  "control_plane_policy": {
+    "new_features": true,
+    "route_ownership": true,
+    "default_assurance": true,
+    "gardener_remediation": true,
+    "deployment_orchestration": true
+  }
+}

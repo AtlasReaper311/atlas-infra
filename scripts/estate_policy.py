@@ -82,6 +82,22 @@ def normalize_repo(url: str) -> str:
     return cleaned
 
 
+def manifest_repositories(manifest: dict[str, Any]) -> list[str]:
+    """Read legacy URL entries or canonical full repository names."""
+    repositories: set[str] = set()
+    for item in manifest.get("repositories", []):
+        if not isinstance(item, dict):
+            continue
+        full_name = item.get("repository")
+        if isinstance(full_name, str) and full_name:
+            repositories.add(full_name)
+            continue
+        url = item.get("url")
+        if isinstance(url, str) and url:
+            repositories.add(normalize_repo(url))
+    return sorted(repositories)
+
+
 def action_ref_findings(repo: str, path: str, text: str) -> list[Finding]:
     findings = []
     for value in USES_LINE.findall(text):
@@ -204,12 +220,7 @@ def main() -> int:
     token = os.getenv("GH_DIGEST_PAT") or os.getenv("GITHUB_TOKEN")
     reader = GitHubReader(token)
 
-    repos = []
-    for item in manifest.get("repositories", []):
-        url = item.get("url")
-        if url:
-            repos.append(normalize_repo(url))
-    repos = sorted(set(repos))
+    repos = manifest_repositories(manifest)
 
     findings: list[Finding] = []
     for repo in repos:

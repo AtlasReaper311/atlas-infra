@@ -1,0 +1,143 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.atlas-systems.uk/registry/v1/estate-registry.schema.json",
+  "title": "Atlas Systems estate registry v1",
+  "description": "The canonical repository catalogue and runtime contract index.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "owner",
+    "reviewed_at",
+    "approved_repository_count",
+    "classification_axes",
+    "repositories"
+  ],
+  "properties": {
+    "schema_version": {"const": "atlas-contract-registry/estate-registry/v1"},
+    "owner": {"const": "AtlasReaper311/atlas-infra"},
+    "reviewed_at": {"type": "string", "format": "date-time"},
+    "approved_repository_count": {"const": 34},
+    "classification_axes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["lifecycle", "scope", "provenance"],
+      "properties": {
+        "lifecycle": {
+          "type": "array",
+          "minItems": 5,
+          "maxItems": 5,
+          "uniqueItems": true,
+          "items": {
+            "enum": ["production", "active", "experimental", "deprecated", "archived"]
+          }
+        },
+        "scope": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "uniqueItems": true,
+          "items": {"enum": ["public", "internal"]}
+        },
+        "provenance": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "uniqueItems": true,
+          "items": {"enum": ["original", "external-derived"]}
+        }
+      }
+    },
+    "repositories": {
+      "type": "array",
+      "minItems": 34,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "repository",
+          "local_directory",
+          "lifecycle",
+          "scope",
+          "provenance",
+          "owner",
+          "purpose",
+          "runtime_service",
+          "contract_required",
+          "public_surface",
+          "service_ids",
+          "deployment_owner",
+          "evidence_owner",
+          "runbook_reference",
+          "contract_exception",
+          "notes",
+          "exclusions"
+        ],
+        "properties": {
+          "repository": {
+            "type": "string",
+            "pattern": "^AtlasReaper311/[A-Za-z0-9._-]+$",
+            "maxLength": 128
+          },
+          "local_directory": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9._-]+$",
+            "maxLength": 100
+          },
+          "lifecycle": {
+            "enum": ["production", "active", "experimental", "deprecated", "archived"]
+          },
+          "scope": {"enum": ["public", "internal"]},
+          "provenance": {"enum": ["original", "external-derived"]},
+          "owner": {"type": "string", "minLength": 1, "maxLength": 120},
+          "purpose": {"type": "string", "minLength": 1, "maxLength": 300},
+          "runtime_service": {"type": "boolean"},
+          "contract_required": {"type": "boolean"},
+          "public_surface": {"type": "boolean"},
+          "service_ids": {
+            "type": "array",
+            "maxItems": 10,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+              "maxLength": 64
+            }
+          },
+          "deployment_owner": {
+            "type": ["string", "null"],
+            "pattern": "^AtlasReaper311/[A-Za-z0-9._-]+$",
+            "maxLength": 128
+          },
+          "evidence_owner": {
+            "type": ["string", "null"],
+            "pattern": "^AtlasReaper311/[A-Za-z0-9._-]+$",
+            "maxLength": 128
+          },
+          "runbook_reference": {
+            "type": ["string", "null"],
+            "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))[A-Za-z0-9._/-]+\\.md$",
+            "maxLength": 240
+          },
+          "contract_exception": {
+            "type": ["string", "null"],
+            "minLength": 1,
+            "maxLength": 240
+          },
+          "notes": {"type": "string", "minLength": 1, "maxLength": 500},
+          "exclusions": {
+            "type": "array",
+            "maxItems": 20,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+              "maxLength": 80
+            }
+          }
+        }
+      }
+    }
+  }
+}

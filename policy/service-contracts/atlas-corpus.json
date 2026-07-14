@@ -1,0 +1,54 @@
+{
+  "schema_version": "atlas-control-plane/service-contract/v1",
+  "service_id": "atlas-corpus",
+  "display_name": "Atlas corpus",
+  "owner": {
+    "github": "AtlasReaper311",
+    "responsibility": "Own the local estate corpus, search, and grounded answer service."
+  },
+  "source_repository": "AtlasReaper311/atlas-corpus",
+  "classification": {
+    "lifecycle": "production",
+    "scope": "public",
+    "provenance": "original"
+  },
+  "registry_visibility": "current",
+  "runtime": {
+    "kind": "local-service",
+    "deployment_target": "specular-core via corpus.atlas-systems.uk tunnel",
+    "release_identity_supported": false
+  },
+  "environments": ["local", "production"],
+  "routes": [
+    {"origin": "https://corpus.atlas-systems.uk", "path": "/ask", "methods": ["GET", "POST"], "visibility": "public"},
+    {"origin": "https://corpus.atlas-systems.uk", "path": "/health", "methods": ["GET"], "visibility": "public"},
+    {"origin": "https://corpus.atlas-systems.uk", "path": "/index", "methods": ["GET"], "visibility": "public"},
+    {"origin": "https://corpus.atlas-systems.uk", "path": "/refresh", "methods": ["POST"], "visibility": "authenticated"},
+    {"origin": "https://corpus.atlas-systems.uk", "path": "/search", "methods": ["GET", "POST"], "visibility": "public"},
+    {"origin": "https://corpus.atlas-systems.uk", "path": "/stats", "methods": ["GET"], "visibility": "public"}
+  ],
+  "health_endpoint": {"state": "known", "origin": "https://corpus.atlas-systems.uk", "path": "/health"},
+  "metadata_route": null,
+  "metadata_endpoint": {"state": "unknown", "origin": null, "path": null, "expected_shape": "unknown"},
+  "dependencies": [],
+  "slo_refs": [],
+  "runbooks": ["docs/runbooks/contract-registry-service-triage.md"],
+  "journey_coverage": {
+    "state": "present",
+    "references": ["AtlasReaper311/atlas-journey-watch:local-ai-state"]
+  },
+  "quota_policy": {"state": "unknown", "reference": null},
+  "secret_declaration": {"state": "unknown", "reference": null},
+  "backup_relevance": {"state": "relevant", "reference": "docs/control-plane-expansion-plan.md"},
+  "release_watch_eligible": false,
+  "escalation": {"contact": "github:AtlasReaper311", "policy": "Repository owner review through GitHub."},
+  "route_exceptions": [],
+  "contract_notes": ["No metadata endpoint is declared by current committed service documentation."],
+  "control_plane_policy": {
+    "new_features": true,
+    "route_ownership": true,
+    "default_assurance": true,
+    "gardener_remediation": true,
+    "deployment_orchestration": true
+  }
+}

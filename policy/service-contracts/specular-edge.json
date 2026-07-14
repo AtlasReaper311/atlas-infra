@@ -1,0 +1,52 @@
+{
+  "schema_version": "atlas-control-plane/service-contract/v1",
+  "service_id": "specular-edge",
+  "display_name": "SPECULAR edge",
+  "owner": {
+    "github": "AtlasReaper311",
+    "responsibility": "Own the public edge projection of SPECULAR telemetry."
+  },
+  "source_repository": "AtlasReaper311/specular-telemetry",
+  "classification": {
+    "lifecycle": "production",
+    "scope": "public",
+    "provenance": "original"
+  },
+  "registry_visibility": "current",
+  "runtime": {
+    "kind": "cloudflare-worker",
+    "deployment_target": "api.atlas-systems.uk/specular",
+    "release_identity_supported": false
+  },
+  "environments": ["production"],
+  "routes": [
+    {"origin": "https://api.atlas-systems.uk", "path": "/specular", "methods": ["GET"], "visibility": "public"},
+    {"origin": "https://api.atlas-systems.uk", "path": "/specular/_meta", "methods": ["GET"], "visibility": "public"}
+  ],
+  "health_endpoint": {"state": "known", "origin": "https://api.atlas-systems.uk", "path": "/specular"},
+  "metadata_route": "/specular/_meta",
+  "metadata_endpoint": {
+    "state": "known",
+    "origin": "https://api.atlas-systems.uk",
+    "path": "/specular/_meta",
+    "expected_shape": "worker-meta/v1"
+  },
+  "dependencies": ["specular-telemetry"],
+  "slo_refs": [],
+  "runbooks": ["docs/runbooks/contract-registry-service-triage.md"],
+  "journey_coverage": {"state": "unknown", "references": []},
+  "quota_policy": {"state": "unknown", "reference": null},
+  "secret_declaration": {"state": "unknown", "reference": null},
+  "backup_relevance": {"state": "unknown", "reference": null},
+  "release_watch_eligible": false,
+  "escalation": {"contact": "github:AtlasReaper311", "policy": "Repository owner review through GitHub."},
+  "route_exceptions": [],
+  "contract_notes": ["The edge Worker and local telemetry producer are separate service IDs in one repository."],
+  "control_plane_policy": {
+    "new_features": true,
+    "route_ownership": true,
+    "default_assurance": true,
+    "gardener_remediation": true,
+    "deployment_orchestration": true
+  }
+}
