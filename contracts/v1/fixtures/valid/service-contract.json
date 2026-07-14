@@ -1,0 +1,33 @@
+{
+  "schema_version": "atlas-control-plane/service-contract/v1",
+  "service_id": "simple-proxy",
+  "display_name": "simple-proxy historical dependency",
+  "owner": {
+    "github": "AtlasReaper311",
+    "responsibility": "Retain attribution and dependency history only."
+  },
+  "source_repository": "AtlasReaper311/simple-proxy",
+  "classification": {
+    "lifecycle": "deprecated",
+    "scope": "internal",
+    "provenance": "external-derived"
+  },
+  "registry_visibility": "historical",
+  "runtime": {
+    "kind": "external-derived",
+    "deployment_target": "historical-only",
+    "release_identity_supported": false
+  },
+  "routes": [],
+  "metadata_route": null,
+  "dependencies": [],
+  "slo_refs": [],
+  "runbooks": [],
+  "control_plane_policy": {
+    "new_features": false,
+    "route_ownership": false,
+    "default_assurance": false,
+    "gardener_remediation": false,
+    "deployment_orchestration": false
+  }
+}

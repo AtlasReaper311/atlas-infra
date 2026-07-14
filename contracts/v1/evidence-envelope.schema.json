@@ -1,0 +1,125 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.atlas-systems.uk/control-plane/v1/evidence-envelope.schema.json",
+  "title": "Atlas Systems EvidenceEnvelope v1",
+  "description": "A digest-protected inline payload or stable evidence reference.",
+  "type": "object",
+  "additionalProperties": false,
+  "x-owner": {
+    "repository": "AtlasReaper311/atlas-infra",
+    "consumer": "assurance evidence producers and future indexers"
+  },
+  "required": [
+    "schema_version",
+    "producer",
+    "subject",
+    "timestamp",
+    "digest",
+    "sensitivity",
+    "expires_at"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "atlas-control-plane/evidence-envelope/v1"
+    },
+    "producer": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+      "maxLength": 64
+    },
+    "subject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repository", "evidence_type"],
+      "properties": {
+        "repository": {
+          "type": "string",
+          "pattern": "^AtlasReaper311/[A-Za-z0-9._-]+$",
+          "maxLength": 128
+        },
+        "service_id": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+          "maxLength": 64
+        },
+        "evidence_type": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+          "maxLength": 64
+        }
+      }
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "digest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["algorithm", "value"],
+      "properties": {
+        "algorithm": {
+          "const": "sha-256"
+        },
+        "value": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    },
+    "payload": {
+      "type": "object"
+    },
+    "reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["uri", "content_type"],
+      "properties": {
+        "uri": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^https://[^?#]+(?:#[A-Za-z0-9._/-]+)?$",
+          "maxLength": 500
+        },
+        "content_type": {
+          "type": "string",
+          "pattern": "^[a-z0-9.+-]+/[a-z0-9.+-]+$",
+          "maxLength": 120
+        }
+      }
+    },
+    "sensitivity": {
+      "enum": ["public", "internal", "restricted-metadata"]
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "oneOf": [
+    {"required": ["payload"]},
+    {"required": ["reference"]}
+  ],
+  "examples": [
+    {
+      "schema_version": "atlas-control-plane/evidence-envelope/v1",
+      "producer": "atlas-infra",
+      "subject": {
+        "repository": "AtlasReaper311/atlas-infra",
+        "service_id": "atlas-infra",
+        "evidence_type": "contract-validation"
+      },
+      "timestamp": "2026-07-14T10:00:00Z",
+      "digest": {
+        "algorithm": "sha-256",
+        "value": "e37f263e2d2446a098d3f960939b15e2a88022c2a632e9416774e932d045c7ea"
+      },
+      "payload": {
+        "schemas_checked": 8,
+        "status": "passed"
+      },
+      "sensitivity": "internal",
+      "expires_at": "2026-10-12T10:00:00Z"
+    }
+  ]
+}

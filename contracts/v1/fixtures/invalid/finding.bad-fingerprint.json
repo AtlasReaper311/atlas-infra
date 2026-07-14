@@ -1,0 +1,27 @@
+{
+  "schema_version": "atlas-control-plane/finding/v1",
+  "source": {
+    "producer": "atlas-dep-audit",
+    "check_id": "contract-schema-invalid",
+    "producer_version": "1.0.0"
+  },
+  "subject": {
+    "repository": "AtlasReaper311/atlas-infra",
+    "service_id": "atlas-infra"
+  },
+  "category": "contract",
+  "severity": "failure",
+  "rule_id": "schema-validation",
+  "location": "contracts/v1/finding.schema.json",
+  "evidence": {
+    "summary": "A contract fixture failed validation.",
+    "references": [],
+    "redacted": true
+  },
+  "detected_at": "2026-07-14T10:00:00Z",
+  "fingerprint": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+  "remediation": {
+    "eligible": false,
+    "reason": "Schema governance changes require owner review."
+  }
+}

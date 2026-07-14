@@ -1,0 +1,22 @@
+{
+  "schema_version": "atlas-control-plane/ownership/v1",
+  "owner": {
+    "github": "AtlasReaper311",
+    "repository": "AtlasReaper311/atlas-infra",
+    "responsibility": "schema governance, compatibility policy, canonical fixtures, and validator"
+  },
+  "assurance_consumer": {
+    "repository": "AtlasReaper311/atlas-dep-audit",
+    "responsibility": "independent scheduled invocation and provenance reporting"
+  },
+  "contracts": [
+    "backup-evidence.schema.json",
+    "control-plane-summary.schema.json",
+    "evidence-envelope.schema.json",
+    "finding.schema.json",
+    "release-evidence.schema.json",
+    "remediation-proposal.schema.json",
+    "runbook-index-entry.schema.json",
+    "service-contract.schema.json"
+  ]
+}

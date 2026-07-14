@@ -1,0 +1,131 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.atlas-systems.uk/control-plane/v1/runbook-index-entry.schema.json",
+  "title": "Atlas Systems RunbookIndexEntry v1",
+  "description": "A deterministic mapping from failures to inert diagnostic guidance.",
+  "type": "object",
+  "additionalProperties": false,
+  "x-owner": {
+    "repository": "AtlasReaper311/atlas-infra",
+    "consumer": "future deterministic runbook routing after the Phase 10 gate"
+  },
+  "required": [
+    "schema_version",
+    "entry_id",
+    "failure_fingerprints",
+    "categories",
+    "service_id",
+    "repository",
+    "runbook_path",
+    "diagnostic_commands",
+    "escalation",
+    "last_validated_at"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "atlas-control-plane/runbook-index-entry/v1"
+    },
+    "entry_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+      "maxLength": 96
+    },
+    "failure_fingerprints": {
+      "type": "array",
+      "maxItems": 50,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^sha256:[0-9a-f]{64}$"
+      }
+    },
+    "categories": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 20,
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "availability",
+          "backup",
+          "contract",
+          "cost",
+          "dependency",
+          "documentation",
+          "evidence",
+          "journey",
+          "policy",
+          "release",
+          "runbook",
+          "secret-hygiene",
+          "security"
+        ]
+      }
+    },
+    "service_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+      "maxLength": 64
+    },
+    "repository": {
+      "type": "string",
+      "pattern": "^AtlasReaper311/[A-Za-z0-9._-]+$",
+      "maxLength": 128
+    },
+    "runbook_path": {
+      "type": "string",
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))[A-Za-z0-9._/-]+\\.md$",
+      "maxLength": 240
+    },
+    "diagnostic_commands": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 20,
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Za-z0-9_./:= -]+$",
+        "minLength": 1,
+        "maxLength": 240
+      }
+    },
+    "escalation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["owner", "channel_ref"],
+      "properties": {
+        "owner": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9-]{1,39}$"
+        },
+        "channel_ref": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+          "maxLength": 64
+        }
+      }
+    },
+    "last_validated_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "examples": [
+    {
+      "schema_version": "atlas-control-plane/runbook-index-entry/v1",
+      "entry_id": "control-plane-contract-validation",
+      "failure_fingerprints": [],
+      "categories": ["contract"],
+      "service_id": "atlas-infra",
+      "repository": "AtlasReaper311/atlas-infra",
+      "runbook_path": "docs/runbooks/control-plane-contract-validation.md",
+      "diagnostic_commands": [
+        "python3 scripts/validate_control_plane_contracts.py"
+      ],
+      "escalation": {
+        "owner": "AtlasReaper311",
+        "channel_ref": "github-actions-run"
+      },
+      "last_validated_at": "2026-07-14T10:00:00Z"
+    }
+  ]
+}

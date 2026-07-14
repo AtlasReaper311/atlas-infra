@@ -1,0 +1,93 @@
+{
+  "schema_version": "atlas-control-plane/fixture-manifest/v1",
+  "fixtures": [
+    {
+      "schema": "backup-evidence.schema.json",
+      "path": "valid/backup-evidence.json",
+      "valid": true
+    },
+    {
+      "schema": "backup-evidence.schema.json",
+      "path": "invalid/backup-evidence.zero-retention.json",
+      "valid": false,
+      "expected_error": "below minimum"
+    },
+    {
+      "schema": "control-plane-summary.schema.json",
+      "path": "valid/control-plane-summary.json",
+      "valid": true
+    },
+    {
+      "schema": "control-plane-summary.schema.json",
+      "path": "invalid/control-plane-summary.invalid-state.json",
+      "valid": false,
+      "expected_error": "must be one of"
+    },
+    {
+      "schema": "evidence-envelope.schema.json",
+      "path": "valid/evidence-envelope.json",
+      "valid": true
+    },
+    {
+      "schema": "evidence-envelope.schema.json",
+      "path": "invalid/evidence-envelope.bad-digest.json",
+      "valid": false,
+      "expected_error": "deterministic evidence-envelope"
+    },
+    {
+      "schema": "finding.schema.json",
+      "path": "valid/finding.json",
+      "valid": true
+    },
+    {
+      "schema": "finding.schema.json",
+      "path": "invalid/finding.bad-fingerprint.json",
+      "valid": false,
+      "expected_error": "deterministic finding"
+    },
+    {
+      "schema": "release-evidence.schema.json",
+      "path": "valid/release-evidence.json",
+      "valid": true
+    },
+    {
+      "schema": "release-evidence.schema.json",
+      "path": "invalid/release-evidence.time-order.json",
+      "valid": false,
+      "expected_error": "must not precede"
+    },
+    {
+      "schema": "remediation-proposal.schema.json",
+      "path": "valid/remediation-proposal.json",
+      "valid": true
+    },
+    {
+      "schema": "remediation-proposal.schema.json",
+      "path": "invalid/remediation-proposal.unsafe-command.json",
+      "valid": false,
+      "expected_error": "does not match required pattern"
+    },
+    {
+      "schema": "runbook-index-entry.schema.json",
+      "path": "valid/runbook-index-entry.json",
+      "valid": true
+    },
+    {
+      "schema": "runbook-index-entry.schema.json",
+      "path": "invalid/runbook-index-entry.unsafe-command.json",
+      "valid": false,
+      "expected_error": "does not match required pattern"
+    },
+    {
+      "schema": "service-contract.schema.json",
+      "path": "valid/service-contract.json",
+      "valid": true
+    },
+    {
+      "schema": "service-contract.schema.json",
+      "path": "invalid/service-contract.simple-proxy-route-owner.json",
+      "valid": false,
+      "expected_error": "must equal False"
+    }
+  ]
+}
