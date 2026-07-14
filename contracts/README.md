@@ -11,7 +11,10 @@ service, route, deployment, storage layer, remediation agent, or secret.
   commands.
 - `ServiceContract`: ownership, routes, dependencies, and separate lifecycle,
   scope, and provenance axes.
-- `ReleaseEvidence`: bounded deployment and verification evidence.
+- `ReleaseEvidence`: bounded deployment and verification evidence. Phase 3
+  producers include the optional `service_id` and `deployment_target` fields;
+  checks may include an optional shared `state`. These additions remain
+  compatible within v1 so older v1 readers may ignore them.
 - `BackupEvidence`: backup freshness and restore-test metadata without content.
 - `RunbookIndexEntry`: deterministic failure-to-runbook metadata.
 - `EvidenceEnvelope`: one inline bounded payload or stable reference with a
@@ -38,6 +41,7 @@ implementation code from external-derived repositories.
 
 ```bash
 python3 scripts/validate_control_plane_contracts.py
+python3 scripts/validate_release_evidence.py --instance path/to/release-evidence.json
 python3 -m unittest discover -s scripts/tests -v
 ```
 

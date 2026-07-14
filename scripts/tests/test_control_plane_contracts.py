@@ -155,6 +155,17 @@ class ControlPlaneContractTests(unittest.TestCase):
         self.assertTrue(any("UTC RFC 3339" in item for item in schema_errors))
         self.assertEqual([], semantic_errors)
 
+    def test_release_evidence_accepts_phase3_optional_identity_fields(self) -> None:
+        release = self.fixture("valid/release-evidence.json")
+        self.assertEqual("atlas-infra", release["service_id"])
+        self.assertEqual("github-actions", release["deployment_target"])
+        self.assertEqual(
+            [],
+            contracts.validate_instance(
+                release, self.schema("release-evidence.schema.json")
+            ),
+        )
+
     def test_optional_property_addition_is_minor_compatible(self) -> None:
         previous = {
             "type": "object",

@@ -19,6 +19,12 @@ This phase adds contracts and validation only. It does not implement
 atlas-gardener, a gateway, a dashboard, orchestration, cost changes, backup
 drills, runbook matching, evidence storage, or any deployment behavior.
 
+Phase 3 adds optional, minor-compatible `ReleaseEvidence` properties:
+`service_id`, `deployment_target`, and a shared `state` on each check. The
+release-watch producer always emits them, while older v1 readers may continue
+to ignore them. The canonical single-instance validator remains in this
+repository.
+
 Classification is three-dimensional. Lifecycle, scope, and provenance are
 never inferred from one another. `simple-proxy` remains in the contract model
 for historical and dependency visibility, with every new-feature and automated

@@ -1,0 +1,52 @@
+{
+  "schema_version": "atlas-control-plane/release-watch-policy/v1",
+  "owner": "AtlasReaper311/atlas-infra",
+  "executor": "AtlasReaper311/atlas-journey-watch",
+  "release_states": [
+    "pending",
+    "live",
+    "mismatch",
+    "degraded",
+    "failed",
+    "rolled-back",
+    "unknown"
+  ],
+  "shared_states": [
+    "healthy",
+    "warning",
+    "failed",
+    "stale",
+    "unavailable",
+    "unknown"
+  ],
+  "required_live_identity_fields": [
+    "repository",
+    "commit",
+    "service_id",
+    "environment"
+  ],
+  "missing_identity_result": "unknown",
+  "baseline": {
+    "required": false,
+    "missing_state": "unavailable",
+    "missing_blocks_live": false,
+    "thresholds_must_be_supplied_by_producer": true
+  },
+  "automatic_rollback": false,
+  "evidence_artifact_retention_days": 30,
+  "dispatch": {
+    "preferred_interface": "workflow_dispatch",
+    "caller_secret_name": "RELEASE_WATCH_DISPATCH_TOKEN",
+    "workflow_dispatch_permissions": [
+      "Metadata: read",
+      "Actions: write"
+    ],
+    "repository_dispatch_permissions": [
+      "Metadata: read",
+      "Contents: write"
+    ]
+  },
+  "excluded_release_owners": [
+    "AtlasReaper311/simple-proxy"
+  ]
+}

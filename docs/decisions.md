@@ -25,6 +25,12 @@
 - **Extended 2026-07-02:** New-repo CI convention formalised for the Logic Lego build. Python service repos (ramone-memory, atlas-corpus) ship an inline `ci.yml` — `compileall`, `docker compose build`, direct curl notify to `#ci-cd`. Worker repos (ramone-voice-trigger, atlas-api-index) ship an inline parse-check `ci.yml` and copy the 12-line reusable deploy caller from `github-pulse` rather than guessing `atlas-infra`'s input interface fresh each time. Every new workflow declares `workflow_dispatch:` from day one, because `ramone-trigger` needs to be able to dispatch it without a follow-up patch — see Logic Lego Suite.
 - **Gotcha banked:** `npm ci` requires an existing lockfile. Two of the six new repos (`ramone-voice-trigger`, `atlas-api-index`) shipped without `package-lock.json`, so their documented `npm ci` step failed on first run. Fix is a one-time `npm install` to generate the lockfile before CI can use `npm ci`. Worth checking for on every new Worker repo template going forward.
 
+### Release assurance is stateless and journey-owned *(new 2026-07-14)*
+
+- **Decision:** `atlas-journey-watch` owns Phase 3 release verification execution and targeted journeys; `atlas-infra` owns the `ReleaseEvidence` contract, policy, calling example, and runbook. The first version is event-driven and stateless, with no automatic rollback.
+- **Why:** Release verification is an extension of the existing public-journey read boundary. Keeping it there avoids a second browser executor or a new repository, while central policy remains independent of one producer.
+- **Consequences:** A deploy caller provides explicit repository, full commit, service ID, environment, target, metadata URL, and rollback reference. Missing identity never becomes `live`. No manifest registration is needed because Phase 3 adds no service, public endpoint, storage layer, scheduled job, or deploy credential.
+
 ### Token model
 
 - **Decision:** Narrowly-scoped Cloudflare tokens, never one account-wide token. Deploy-time and runtime credential paths never share secrets.
