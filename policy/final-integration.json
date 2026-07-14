@@ -1,0 +1,55 @@
+{
+  "schema_version": "1.0.0",
+  "required_files": [
+    "contracts/v1/finding.schema.json",
+    "contracts/v1/release-evidence.schema.json",
+    "contracts/v1/backup-evidence.schema.json",
+    "contracts/v1/runbook-index-entry.schema.json",
+    "contracts/v1/evidence-envelope.schema.json",
+    "policy/estate-registry.json",
+    "policy/deploy-orchestrator.json",
+    "policy/backup-audit.json",
+    "policy/runbook-index.json",
+    "policy/runbook-routing.json",
+    "policy/evidence-ledger.json",
+    "scripts/validate_control_plane_contracts.py",
+    "scripts/validate_contract_registry.py",
+    "scripts/deploy_orchestrator.py",
+    "scripts/backup_audit.py",
+    "scripts/runbook_bot.py",
+    "scripts/evidence_ledger.py"
+  ],
+  "optional_files": [
+    "policy/ramone-control-plane-tools.json",
+    "scripts/control_plane_summary.py"
+  ],
+  "deferred_cutovers": [
+    {
+      "id": "phase9-atlas-api-public",
+      "state": "draft-only",
+      "reason": "The Phase 9 API PR deploys on push to main and remains intentionally unmerged pending read-model producer, bearer creation, and explicit cutover approval."
+    },
+    {
+      "id": "home-assistant-live-install",
+      "state": "not-enabled",
+      "reason": "The disabled sensor package has not been copied into the live Home Assistant configuration and the estate-health entity collision is unresolved."
+    },
+    {
+      "id": "openwebui-tool-assignment",
+      "state": "not-enabled",
+      "reason": "The Atlas external tool group has not been deployed, connected, or assigned to Ramone."
+    }
+  ],
+  "expected_warning_ids": [
+    "phase9-atlas-api-public",
+    "home-assistant-live-install",
+    "openwebui-tool-assignment",
+    "backup-coverage-not-declared"
+  ],
+  "allowed_action_permissions": [
+    "contents: read"
+  ],
+  "max_artifact_retention_days": 90,
+  "test_timeout_seconds": 420,
+  "execute_repository_tests": true
+}
