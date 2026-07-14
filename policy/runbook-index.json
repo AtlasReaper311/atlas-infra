@@ -1,0 +1,89 @@
+{
+  "schema_version": "1.0.0",
+  "entries": [
+    {
+      "schema_version": "atlas-control-plane/runbook-index-entry/v1",
+      "entry_id": "release-mismatch",
+      "failure_fingerprints": [],
+      "categories": ["release"],
+      "service_id": "atlas-api-public",
+      "repository": "AtlasReaper311/atlas-infra",
+      "runbook_path": "docs/runbooks/release-watch.md",
+      "diagnostic_commands": ["python3 scripts/validate_release_evidence.py"],
+      "escalation": {"owner": "AtlasReaper311", "channel_ref": "github-actions-run"},
+      "last_validated_at": "2026-07-14T16:00:00Z"
+    },
+    {
+      "schema_version": "atlas-control-plane/runbook-index-entry/v1",
+      "entry_id": "journey-failure",
+      "failure_fingerprints": [],
+      "categories": ["journey", "release"],
+      "service_id": "atlas-api-public",
+      "repository": "AtlasReaper311/atlas-infra",
+      "runbook_path": "docs/runbooks/deploy-orchestrator-post-deploy-journey-failure.md",
+      "diagnostic_commands": ["python3 scripts/deploy_orchestrator.py validate"],
+      "escalation": {"owner": "AtlasReaper311", "channel_ref": "github-actions-run"},
+      "last_validated_at": "2026-07-14T16:00:00Z"
+    },
+    {
+      "schema_version": "atlas-control-plane/runbook-index-entry/v1",
+      "entry_id": "backup-stale",
+      "failure_fingerprints": [],
+      "categories": ["backup"],
+      "service_id": "atlas-infra",
+      "repository": "AtlasReaper311/atlas-infra",
+      "runbook_path": "docs/runbooks/backup-audit-stale-backup.md",
+      "diagnostic_commands": ["python3 scripts/backup_audit.py --help"],
+      "escalation": {"owner": "AtlasReaper311", "channel_ref": "github-actions-run"},
+      "last_validated_at": "2026-07-14T16:00:00Z"
+    },
+    {
+      "schema_version": "atlas-control-plane/runbook-index-entry/v1",
+      "entry_id": "quota-critical",
+      "failure_fingerprints": [],
+      "categories": ["cost"],
+      "service_id": "atlas-quota-watch",
+      "repository": "AtlasReaper311/atlas-infra",
+      "runbook_path": "docs/runbooks/cost-guard-critical-threshold-exceeded.md",
+      "diagnostic_commands": ["python3 scripts/control_plane_summary.py --help"],
+      "escalation": {"owner": "AtlasReaper311", "channel_ref": "github-actions-run"},
+      "last_validated_at": "2026-07-14T16:00:00Z"
+    },
+    {
+      "schema_version": "atlas-control-plane/runbook-index-entry/v1",
+      "entry_id": "secret-plaintext",
+      "failure_fingerprints": [],
+      "categories": ["secret-hygiene", "security"],
+      "service_id": "atlas-dep-audit",
+      "repository": "AtlasReaper311/atlas-infra",
+      "runbook_path": "docs/runbooks/secret-watch-plaintext-pattern.md",
+      "diagnostic_commands": ["git grep secret-watch policy docs"],
+      "escalation": {"owner": "AtlasReaper311", "channel_ref": "github-actions-run"},
+      "last_validated_at": "2026-07-14T16:00:00Z"
+    },
+    {
+      "schema_version": "atlas-control-plane/runbook-index-entry/v1",
+      "entry_id": "registry-route-conflict",
+      "failure_fingerprints": [],
+      "categories": ["contract", "policy"],
+      "service_id": "atlas-infra",
+      "repository": "AtlasReaper311/atlas-infra",
+      "runbook_path": "docs/runbooks/contract-registry-duplicate-route-owner.md",
+      "diagnostic_commands": ["python3 scripts/validate_contract_registry.py"],
+      "escalation": {"owner": "AtlasReaper311", "channel_ref": "github-actions-run"},
+      "last_validated_at": "2026-07-14T16:00:00Z"
+    },
+    {
+      "schema_version": "atlas-control-plane/runbook-index-entry/v1",
+      "entry_id": "deploy-dependency-cycle",
+      "failure_fingerprints": [],
+      "categories": ["dependency", "policy"],
+      "service_id": "atlas-infra",
+      "repository": "AtlasReaper311/atlas-infra",
+      "runbook_path": "docs/runbooks/deploy-orchestrator-dependency-cycle.md",
+      "diagnostic_commands": ["python3 scripts/deploy_orchestrator.py validate"],
+      "escalation": {"owner": "AtlasReaper311", "channel_ref": "github-actions-run"},
+      "last_validated_at": "2026-07-14T16:00:00Z"
+    }
+  ]
+}

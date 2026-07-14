@@ -1,0 +1,98 @@
+{
+  "schema_version": "1.0.0",
+  "routes": {
+    "release-mismatch": {
+      "title": "Release identity mismatch",
+      "services": ["*"],
+      "repositories": ["AtlasReaper311/atlas-journey-watch"],
+      "states": ["mismatch", "failed", "warning"],
+      "severities": ["warning", "critical"],
+      "triggers": ["release.mismatch", "release-watch-mismatch", "metadata-mismatch"],
+      "diagnostics": [
+        "Compare the expected commit to the live metadata commit.",
+        "Inspect the latest release-watch evidence.",
+        "Check the service metadata endpoint without changing provider state."
+      ],
+      "blocked_actions": ["automatic rollback", "deployment", "provider mutation"]
+    },
+    "journey-failure": {
+      "title": "Post-deploy journey failure",
+      "services": ["*"],
+      "repositories": ["AtlasReaper311/atlas-journey-watch"],
+      "states": ["failed", "unavailable"],
+      "severities": ["warning", "critical"],
+      "triggers": ["journey.failed", "post-deploy-journey-failure"],
+      "diagnostics": [
+        "Inspect the failed journey name and bounded trace metadata.",
+        "Confirm whether the service metadata still reports the expected release."
+      ],
+      "blocked_actions": ["automatic rollback", "browser credential disclosure"]
+    },
+    "backup-stale": {
+      "title": "Backup evidence is stale or missing",
+      "services": ["*"],
+      "repositories": ["AtlasReaper311/atlas-infra"],
+      "states": ["stale", "unavailable", "unknown", "warning"],
+      "severities": ["warning", "critical"],
+      "triggers": ["backup.stale", "backup.missing", "backup-evidence-missing"],
+      "diagnostics": [
+        "Review the declared maximum backup age.",
+        "Confirm the evidence source is available without restoring live data.",
+        "Run only the approved disposable restore drill."
+      ],
+      "blocked_actions": ["live restore", "backup deletion", "provider write"]
+    },
+    "quota-critical": {
+      "title": "Quota critical or projected exhaustion",
+      "services": ["*"],
+      "repositories": ["AtlasReaper311/atlas-quota-watch"],
+      "states": ["failed", "warning", "stale", "unavailable"],
+      "severities": ["warning", "critical"],
+      "triggers": ["quota.critical", "quota.projected-exhaustion", "cost-guard-critical"],
+      "diagnostics": [
+        "Review the latest quota snapshot and projection confidence.",
+        "Confirm stale or unavailable data is not being treated as healthy."
+      ],
+      "blocked_actions": ["billing mutation", "automatic shutdown", "provider write"]
+    },
+    "secret-plaintext": {
+      "title": "Potential plaintext credential pattern",
+      "services": ["*"],
+      "repositories": ["AtlasReaper311/atlas-dep-audit"],
+      "states": ["failed", "warning"],
+      "severities": ["warning", "critical"],
+      "triggers": ["secret.plaintext-pattern", "plaintext-credential-pattern"],
+      "diagnostics": [
+        "Review the redacted file path, line number, and rule identifier.",
+        "Rotate credentials through the approved owner process only when confirmed."
+      ],
+      "blocked_actions": ["print matched value", "automatic secret rotation", "provider secret write"]
+    },
+    "registry-route-conflict": {
+      "title": "Contract registry route ownership conflict",
+      "services": ["*"],
+      "repositories": ["AtlasReaper311/atlas-infra"],
+      "states": ["failed", "warning"],
+      "severities": ["warning", "critical"],
+      "triggers": ["registry.duplicate-route", "duplicate-route-owner"],
+      "diagnostics": [
+        "Inspect the two ServiceContracts claiming the same origin, path, and method.",
+        "Resolve ownership in one focused registry pull request."
+      ],
+      "blocked_actions": ["route mutation", "provider write", "silent reclassification"]
+    },
+    "deploy-dependency-cycle": {
+      "title": "Deployment dependency cycle",
+      "services": ["*"],
+      "repositories": ["AtlasReaper311/atlas-infra"],
+      "states": ["failed", "warning"],
+      "severities": ["warning", "critical"],
+      "triggers": ["deploy.dependency-cycle", "dependency-cycle"],
+      "diagnostics": [
+        "Inspect the dry-run dependency graph.",
+        "Remove only the incorrect dependency edge through a reviewed policy change."
+      ],
+      "blocked_actions": ["workflow dispatch", "deployment", "environment protection bypass"]
+    }
+  }
+}
