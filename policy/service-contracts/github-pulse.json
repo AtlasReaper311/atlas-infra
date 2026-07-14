@@ -1,0 +1,48 @@
+{
+  "schema_version": "atlas-control-plane/service-contract/v1",
+  "service_id": "github-pulse",
+  "display_name": "GitHub pulse",
+  "owner": {
+    "github": "AtlasReaper311",
+    "responsibility": "Own the bounded public GitHub activity read model."
+  },
+  "source_repository": "AtlasReaper311/github-pulse",
+  "classification": {
+    "lifecycle": "production",
+    "scope": "public",
+    "provenance": "original"
+  },
+  "registry_visibility": "current",
+  "runtime": {
+    "kind": "cloudflare-worker",
+    "deployment_target": "api.atlas-systems.uk/pulse",
+    "release_identity_supported": false
+  },
+  "environments": ["production"],
+  "routes": [
+    {"origin": "https://api.atlas-systems.uk", "path": "/pulse", "methods": ["GET"], "visibility": "public"},
+    {"origin": "https://api.atlas-systems.uk", "path": "/pulse/heatmap", "methods": ["GET"], "visibility": "public"},
+    {"origin": "https://api.atlas-systems.uk", "path": "/pulse/purge", "methods": ["POST"], "visibility": "authenticated"}
+  ],
+  "health_endpoint": {"state": "known", "origin": "https://api.atlas-systems.uk", "path": "/pulse"},
+  "metadata_route": null,
+  "metadata_endpoint": {"state": "unknown", "origin": null, "path": null, "expected_shape": "unknown"},
+  "dependencies": [],
+  "slo_refs": [],
+  "runbooks": ["docs/runbooks/contract-registry-service-triage.md"],
+  "journey_coverage": {"state": "unknown", "references": []},
+  "quota_policy": {"state": "unknown", "reference": null},
+  "secret_declaration": {"state": "unknown", "reference": null},
+  "backup_relevance": {"state": "unknown", "reference": null},
+  "release_watch_eligible": false,
+  "escalation": {"contact": "github:AtlasReaper311", "policy": "Repository owner review through GitHub."},
+  "route_exceptions": [],
+  "contract_notes": ["No metadata endpoint is claimed because the committed router does not mount one."],
+  "control_plane_policy": {
+    "new_features": true,
+    "route_ownership": true,
+    "default_assurance": true,
+    "gardener_remediation": true,
+    "deployment_orchestration": true
+  }
+}

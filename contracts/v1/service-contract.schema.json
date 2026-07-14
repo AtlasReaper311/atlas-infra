@@ -113,6 +113,12 @@
         "additionalProperties": false,
         "required": ["path", "methods", "visibility"],
         "properties": {
+          "origin": {
+            "type": "string",
+            "format": "uri",
+            "pattern": "^https://[^/?#]+$",
+            "maxLength": 200
+          },
           "path": {
             "type": "string",
             "pattern": "^/[A-Za-z0-9._~!$&'()*+,;=:@%/-]*$",
@@ -185,6 +191,156 @@
         "gardener_remediation": {"type": "boolean"},
         "deployment_orchestration": {"type": "boolean"}
       }
+    },
+    "environments": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 5,
+      "uniqueItems": true,
+      "items": {
+        "enum": ["development", "preview", "production", "local", "unknown"]
+      }
+    },
+    "health_endpoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "origin", "path"],
+      "properties": {
+        "state": {"enum": ["known", "unknown", "not-applicable"]},
+        "origin": {
+          "type": ["string", "null"],
+          "format": "uri",
+          "pattern": "^https://[^/?#]+$",
+          "maxLength": 200
+        },
+        "path": {
+          "type": ["string", "null"],
+          "pattern": "^/[A-Za-z0-9._~!$&'()*+,;=:@%/-]*$",
+          "maxLength": 200
+        }
+      }
+    },
+    "metadata_endpoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "origin", "path", "expected_shape"],
+      "properties": {
+        "state": {"enum": ["known", "unknown", "not-applicable"]},
+        "origin": {
+          "type": ["string", "null"],
+          "format": "uri",
+          "pattern": "^https://[^/?#]+$",
+          "maxLength": 200
+        },
+        "path": {
+          "type": ["string", "null"],
+          "pattern": "^/[A-Za-z0-9._~!$&'()*+,;=:@%/-]*$",
+          "maxLength": 200
+        },
+        "expected_shape": {
+          "enum": [
+            "worker-meta/v1",
+            "html-build-meta/v1",
+            "service-specific",
+            "unknown",
+            "not-applicable"
+          ]
+        }
+      }
+    },
+    "journey_coverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "references"],
+      "properties": {
+        "state": {"enum": ["present", "absent", "unknown", "not-applicable"]},
+        "references": {
+          "type": "array",
+          "maxItems": 20,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1, "maxLength": 240}
+        }
+      }
+    },
+    "quota_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "reference"],
+      "properties": {
+        "state": {"enum": ["present", "absent", "unknown", "not-applicable"]},
+        "reference": {
+          "type": ["string", "null"],
+          "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))[A-Za-z0-9._/-]+$",
+          "maxLength": 240
+        }
+      }
+    },
+    "secret_declaration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "reference"],
+      "properties": {
+        "state": {"enum": ["present", "absent", "unknown", "not-applicable"]},
+        "reference": {
+          "type": ["string", "null"],
+          "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))[A-Za-z0-9._/-]+$",
+          "maxLength": 240
+        }
+      }
+    },
+    "backup_relevance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "reference"],
+      "properties": {
+        "state": {"enum": ["relevant", "not-relevant", "unknown"]},
+        "reference": {
+          "type": ["string", "null"],
+          "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))[A-Za-z0-9._/-]+$",
+          "maxLength": 240
+        }
+      }
+    },
+    "release_watch_eligible": {"type": "boolean"},
+    "escalation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["contact", "policy"],
+      "properties": {
+        "contact": {"type": "string", "minLength": 1, "maxLength": 120},
+        "policy": {"type": "string", "minLength": 1, "maxLength": 240}
+      }
+    },
+    "route_exceptions": {
+      "type": "array",
+      "maxItems": 20,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["origin", "path", "reason", "approved_by"],
+        "properties": {
+          "origin": {
+            "type": "string",
+            "format": "uri",
+            "pattern": "^https://[^/?#]+$",
+            "maxLength": 200
+          },
+          "path": {
+            "type": "string",
+            "pattern": "^/[A-Za-z0-9._~!$&'()*+,;=:@%/-]*$",
+            "maxLength": 200
+          },
+          "reason": {"type": "string", "minLength": 1, "maxLength": 240},
+          "approved_by": {"type": "string", "pattern": "^[A-Za-z0-9-]{1,39}$"}
+        }
+      }
+    },
+    "contract_notes": {
+      "type": "array",
+      "maxItems": 20,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1, "maxLength": 300}
     }
   },
   "allOf": [

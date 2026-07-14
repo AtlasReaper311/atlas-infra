@@ -14,8 +14,9 @@ idempotency failure.
 
 ```bash
 python3 scripts/validate_control_plane_contracts.py
+python3 scripts/validate_contract_registry.py
 python3 -m unittest discover -s scripts/tests -v
-git diff -- contracts scripts/control_plane_contracts.py scripts/validate_control_plane_contracts.py
+git diff -- contracts policy scripts docs
 ```
 
 Commands in `RunbookIndexEntry` and `RemediationProposal` are inert text. No

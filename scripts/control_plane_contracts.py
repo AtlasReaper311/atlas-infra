@@ -37,7 +37,7 @@ SENSITIVE_KEYS = {
     "secret",
     "token",
 }
-SAFE_AGGREGATE_KEYS = {"secret_hygiene"}
+SAFE_AGGREGATE_KEYS = {"secret_declaration", "secret_hygiene"}
 UTC_TIMESTAMP = re.compile(
     r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,6})?Z$"
 )
@@ -464,7 +464,7 @@ def validate_repository(root: Path) -> dict[str, Any]:
             errors.append(f"fixtures/manifest.json: invalid fixture entry {fixture!r}")
             continue
         if not isinstance(expected_valid, bool):
-            errors.append(f"fixtures/manifest.json: fixture validity must be boolean")
+            errors.append("fixtures/manifest.json: fixture validity must be boolean")
             continue
         fixture_coverage[schema_name].add(expected_valid)
         positive_count += int(expected_valid)

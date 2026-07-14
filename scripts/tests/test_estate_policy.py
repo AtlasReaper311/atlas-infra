@@ -19,6 +19,29 @@ class EstatePolicyTests(unittest.TestCase):
         self.assertEqual(1, len(findings))
         self.assertEqual("actions-pin", findings[0].rule)
 
+    def test_canonical_registry_repository_names_are_supported(self):
+        manifest = {
+            "repositories": [
+                {"repository": "AtlasReaper311/status"},
+                {"repository": "AtlasReaper311/atlas-infra"},
+            ]
+        }
+        self.assertEqual(
+            ["AtlasReaper311/atlas-infra", "AtlasReaper311/status"],
+            estate_policy.manifest_repositories(manifest),
+        )
+
+    def test_legacy_manifest_urls_remain_supported(self):
+        manifest = {
+            "repositories": [
+                {"url": "https://github.com/AtlasReaper311/status"},
+            ]
+        }
+        self.assertEqual(
+            ["AtlasReaper311/status"],
+            estate_policy.manifest_repositories(manifest),
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

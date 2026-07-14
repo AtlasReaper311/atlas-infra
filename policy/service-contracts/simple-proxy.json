@@ -1,0 +1,44 @@
+{
+  "schema_version": "atlas-control-plane/service-contract/v1",
+  "service_id": "simple-proxy",
+  "display_name": "simple-proxy historical dependency",
+  "owner": {
+    "github": "AtlasReaper311",
+    "responsibility": "Retain attribution and dependency history only."
+  },
+  "source_repository": "AtlasReaper311/simple-proxy",
+  "classification": {
+    "lifecycle": "deprecated",
+    "scope": "internal",
+    "provenance": "external-derived"
+  },
+  "registry_visibility": "historical",
+  "runtime": {
+    "kind": "external-derived",
+    "deployment_target": "historical-only",
+    "release_identity_supported": false
+  },
+  "environments": ["unknown"],
+  "routes": [],
+  "health_endpoint": {"state": "not-applicable", "origin": null, "path": null},
+  "metadata_route": null,
+  "metadata_endpoint": {"state": "not-applicable", "origin": null, "path": null, "expected_shape": "not-applicable"},
+  "dependencies": [],
+  "slo_refs": [],
+  "runbooks": ["docs/runbooks/contract-registry-deprecated-route-owner.md"],
+  "journey_coverage": {"state": "not-applicable", "references": []},
+  "quota_policy": {"state": "present", "reference": "policy/cost-guard.json"},
+  "secret_declaration": {"state": "present", "reference": "policy/secret-watch.json"},
+  "backup_relevance": {"state": "unknown", "reference": null},
+  "release_watch_eligible": false,
+  "escalation": {"contact": "github:AtlasReaper311", "policy": "Owner review is required for security, migration, or retirement work only."},
+  "route_exceptions": [],
+  "contract_notes": ["No active routes, assurance schedules, remediation, orchestration, or new features are permitted."],
+  "control_plane_policy": {
+    "new_features": false,
+    "route_ownership": false,
+    "default_assurance": false,
+    "gardener_remediation": false,
+    "deployment_orchestration": false
+  }
+}

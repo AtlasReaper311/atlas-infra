@@ -1,0 +1,49 @@
+{
+  "schema_version": "atlas-control-plane/service-contract/v1",
+  "service_id": "status",
+  "display_name": "Atlas public status",
+  "owner": {
+    "github": "AtlasReaper311",
+    "responsibility": "Own the public static estate status surface."
+  },
+  "source_repository": "AtlasReaper311/status",
+  "classification": {
+    "lifecycle": "production",
+    "scope": "public",
+    "provenance": "original"
+  },
+  "registry_visibility": "current",
+  "runtime": {
+    "kind": "cloudflare-pages",
+    "deployment_target": "status.atlas-systems.uk",
+    "release_identity_supported": false
+  },
+  "environments": ["production"],
+  "routes": [
+    {"origin": "https://status.atlas-systems.uk", "path": "/", "methods": ["GET"], "visibility": "public"}
+  ],
+  "health_endpoint": {"state": "known", "origin": "https://status.atlas-systems.uk", "path": "/"},
+  "metadata_route": null,
+  "metadata_endpoint": {"state": "unknown", "origin": null, "path": null, "expected_shape": "unknown"},
+  "dependencies": ["atlas-api-index", "atlas-api-public"],
+  "slo_refs": [],
+  "runbooks": ["docs/runbooks/contract-registry-service-triage.md"],
+  "journey_coverage": {
+    "state": "present",
+    "references": ["AtlasReaper311/atlas-journey-watch:status-surface"]
+  },
+  "quota_policy": {"state": "unknown", "reference": null},
+  "secret_declaration": {"state": "unknown", "reference": null},
+  "backup_relevance": {"state": "unknown", "reference": null},
+  "release_watch_eligible": false,
+  "escalation": {"contact": "github:AtlasReaper311", "policy": "Repository owner review through GitHub."},
+  "route_exceptions": [],
+  "contract_notes": ["No complete release metadata shape is claimed by the committed source."],
+  "control_plane_policy": {
+    "new_features": true,
+    "route_ownership": true,
+    "default_assurance": true,
+    "gardener_remediation": true,
+    "deployment_orchestration": true
+  }
+}

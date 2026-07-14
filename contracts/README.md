@@ -67,5 +67,12 @@ schema and fixtures: it remains historically visible as deprecated, internal,
 and external-derived, while route ownership, new features, default assurance,
 Gardener remediation, and deployment orchestration are all disabled.
 
+Phase 6 adds optional v1 fields for route origins, environments, explicit
+health/metadata endpoint state, expected metadata shape, journey/quota/secret
+links, backup relevance, release-watch eligibility, escalation, and approved
+internal/public route exceptions. Existing v1 instances remain valid. The
+canonical registry validator requires the extended fields only for records in
+`policy/service-contracts/`.
+
 See [COMPATIBILITY.md](COMPATIBILITY.md) and the validation
 [runbook](../docs/runbooks/control-plane-contract-validation.md).

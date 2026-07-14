@@ -64,3 +64,11 @@ validation report in provenance.
 
 No estate manifest registration is added in Phase 1 because this contract set
 does not introduce a deployed service or public endpoint.
+
+## Phase 6 follow-on
+
+Phase 6 adds the canonical repository catalogue and ServiceContract instances
+under `policy/`, plus an offline validator and generated graph/catalogue. The
+v1 schema additions are optional and minor-compatible; the registry validator
+applies the stricter canonical-instance policy without breaking older v1
+producers.

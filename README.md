@@ -115,6 +115,27 @@ freshness windows, ownership, classification, and notification/issue valves.
 The architecture, offline fixture workflow, limitations, and recovery guidance
 are documented in [`docs/cost-guard.md`](docs/cost-guard.md).
 
+### Contract registry
+
+[`policy/estate-registry.json`](policy/estate-registry.json) is the canonical
+34-repository catalogue. Runtime records under
+[`policy/service-contracts/`](policy/service-contracts/) conform to the shared
+ServiceContract v1 schema and declare exact route ownership, explicit unknowns,
+dependencies, runbooks, and assurance links. Validate and generate local JSON,
+Markdown, dependency graph, and service catalogue outputs without network
+access:
+
+```bash
+python3 scripts/validate_contract_registry.py \
+  --report /tmp/registry-report.json \
+  --markdown /tmp/registry-report.md \
+  --graph /tmp/service-dependency-graph.json \
+  --catalog /tmp/service-catalog.json
+```
+
+Architecture, migration, live-read permissions, limitations, and rollback are
+documented in [`docs/contract-registry.md`](docs/contract-registry.md).
+
 ### Adopt a deployment pipeline
 
 Copy the matching template from `templates/` into a repo as `.github/workflows/deploy.yml`, change the name and flags, and forward secrets with `secrets: inherit`. The repo needs the secrets named in `docs/CICD-DECISIONS.md`.

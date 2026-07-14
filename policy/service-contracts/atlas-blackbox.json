@@ -1,0 +1,57 @@
+{
+  "schema_version": "atlas-control-plane/service-contract/v1",
+  "service_id": "atlas-blackbox",
+  "display_name": "Atlas blackbox",
+  "owner": {
+    "github": "AtlasReaper311",
+    "responsibility": "Own bounded incident recording and incident evidence."
+  },
+  "source_repository": "AtlasReaper311/atlas-blackbox",
+  "classification": {
+    "lifecycle": "production",
+    "scope": "public",
+    "provenance": "original"
+  },
+  "registry_visibility": "current",
+  "runtime": {
+    "kind": "cloudflare-worker",
+    "deployment_target": "api.atlas-systems.uk/blackbox",
+    "release_identity_supported": false
+  },
+  "environments": ["production"],
+  "routes": [
+    {"origin": "https://api.atlas-systems.uk", "path": "/blackbox/_meta", "methods": ["GET"], "visibility": "public"},
+    {"origin": "https://api.atlas-systems.uk", "path": "/blackbox/health", "methods": ["GET"], "visibility": "public"},
+    {"origin": "https://api.atlas-systems.uk", "path": "/blackbox/incidents", "methods": ["GET"], "visibility": "public"},
+    {"origin": "https://api.atlas-systems.uk", "path": "/blackbox/incidents/:id", "methods": ["GET"], "visibility": "public"},
+    {"origin": "https://api.atlas-systems.uk", "path": "/blackbox/incidents/:id/postmortem", "methods": ["GET"], "visibility": "public"},
+    {"origin": "https://api.atlas-systems.uk", "path": "/blackbox/status", "methods": ["GET"], "visibility": "public"},
+    {"origin": "https://api.atlas-systems.uk", "path": "/blackbox/test-incident", "methods": ["POST"], "visibility": "authenticated"}
+  ],
+  "health_endpoint": {"state": "known", "origin": "https://api.atlas-systems.uk", "path": "/blackbox/health"},
+  "metadata_route": "/blackbox/_meta",
+  "metadata_endpoint": {
+    "state": "known",
+    "origin": "https://api.atlas-systems.uk",
+    "path": "/blackbox/_meta",
+    "expected_shape": "worker-meta/v1"
+  },
+  "dependencies": ["specular-telemetry"],
+  "slo_refs": [],
+  "runbooks": ["docs/runbooks/contract-registry-service-triage.md"],
+  "journey_coverage": {"state": "unknown", "references": []},
+  "quota_policy": {"state": "unknown", "reference": null},
+  "secret_declaration": {"state": "unknown", "reference": null},
+  "backup_relevance": {"state": "relevant", "reference": "docs/control-plane-expansion-plan.md"},
+  "release_watch_eligible": false,
+  "escalation": {"contact": "github:AtlasReaper311", "policy": "Repository owner review through GitHub."},
+  "route_exceptions": [],
+  "contract_notes": ["Backup relevance is declared; backup existence is not inferred."],
+  "control_plane_policy": {
+    "new_features": true,
+    "route_ownership": true,
+    "default_assurance": true,
+    "gardener_remediation": true,
+    "deployment_orchestration": true
+  }
+}

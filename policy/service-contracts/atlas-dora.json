@@ -1,0 +1,53 @@
+{
+  "schema_version": "atlas-control-plane/service-contract/v1",
+  "service_id": "atlas-dora",
+  "display_name": "Atlas DORA",
+  "owner": {
+    "github": "AtlasReaper311",
+    "responsibility": "Own read-only DORA metric computation and projection."
+  },
+  "source_repository": "AtlasReaper311/atlas-dora",
+  "classification": {
+    "lifecycle": "production",
+    "scope": "public",
+    "provenance": "original"
+  },
+  "registry_visibility": "current",
+  "runtime": {
+    "kind": "cloudflare-worker",
+    "deployment_target": "api.atlas-systems.uk/dora",
+    "release_identity_supported": false
+  },
+  "environments": ["production"],
+  "routes": [
+    {"origin": "https://api.atlas-systems.uk", "path": "/dora/_meta", "methods": ["GET"], "visibility": "public"},
+    {"origin": "https://api.atlas-systems.uk", "path": "/dora/health", "methods": ["GET"], "visibility": "public"},
+    {"origin": "https://api.atlas-systems.uk", "path": "/dora/metrics", "methods": ["GET"], "visibility": "public"}
+  ],
+  "health_endpoint": {"state": "known", "origin": "https://api.atlas-systems.uk", "path": "/dora/health"},
+  "metadata_route": "/dora/_meta",
+  "metadata_endpoint": {
+    "state": "known",
+    "origin": "https://api.atlas-systems.uk",
+    "path": "/dora/_meta",
+    "expected_shape": "service-specific"
+  },
+  "dependencies": ["atlas-blackbox", "atlas-notify", "deploy-watch"],
+  "slo_refs": [],
+  "runbooks": ["docs/runbooks/contract-registry-service-triage.md"],
+  "journey_coverage": {"state": "unknown", "references": []},
+  "quota_policy": {"state": "unknown", "reference": null},
+  "secret_declaration": {"state": "unknown", "reference": null},
+  "backup_relevance": {"state": "unknown", "reference": null},
+  "release_watch_eligible": false,
+  "escalation": {"contact": "github:AtlasReaper311", "policy": "Repository owner review through GitHub."},
+  "route_exceptions": [],
+  "contract_notes": ["Metadata is service-specific and is not represented as the shared worker-meta shape."],
+  "control_plane_policy": {
+    "new_features": true,
+    "route_ownership": true,
+    "default_assurance": true,
+    "gardener_remediation": true,
+    "deployment_orchestration": true
+  }
+}

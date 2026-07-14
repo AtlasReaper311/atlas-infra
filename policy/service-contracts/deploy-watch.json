@@ -1,0 +1,61 @@
+{
+  "schema_version": "atlas-control-plane/service-contract/v1",
+  "service_id": "deploy-watch",
+  "display_name": "Deploy watch",
+  "owner": {
+    "github": "AtlasReaper311",
+    "responsibility": "Own observed Cloudflare Pages deployment outcome state."
+  },
+  "source_repository": "AtlasReaper311/deploy-watch",
+  "classification": {
+    "lifecycle": "production",
+    "scope": "internal",
+    "provenance": "original"
+  },
+  "registry_visibility": "current",
+  "runtime": {
+    "kind": "cloudflare-worker",
+    "deployment_target": "api.atlas-systems.uk/deploy-watch",
+    "release_identity_supported": false
+  },
+  "environments": ["production"],
+  "routes": [
+    {"origin": "https://api.atlas-systems.uk", "path": "/deploy-watch/health", "methods": ["GET"], "visibility": "public"},
+    {"origin": "https://api.atlas-systems.uk", "path": "/deploy-watch/latest", "methods": ["GET"], "visibility": "public"},
+    {"origin": "https://api.atlas-systems.uk", "path": "/deploy-watch/run", "methods": ["GET"], "visibility": "authenticated"}
+  ],
+  "health_endpoint": {"state": "known", "origin": "https://api.atlas-systems.uk", "path": "/deploy-watch/health"},
+  "metadata_route": null,
+  "metadata_endpoint": {"state": "unknown", "origin": null, "path": null, "expected_shape": "unknown"},
+  "dependencies": ["atlas-notify"],
+  "slo_refs": [],
+  "runbooks": ["docs/runbooks/contract-registry-service-triage.md"],
+  "journey_coverage": {"state": "unknown", "references": []},
+  "quota_policy": {"state": "unknown", "reference": null},
+  "secret_declaration": {"state": "unknown", "reference": null},
+  "backup_relevance": {"state": "unknown", "reference": null},
+  "release_watch_eligible": false,
+  "escalation": {"contact": "github:AtlasReaper311", "policy": "Repository owner review through GitHub."},
+  "route_exceptions": [
+    {
+      "origin": "https://api.atlas-systems.uk",
+      "path": "/deploy-watch/health",
+      "reason": "Bounded liveness required by public estate assurance.",
+      "approved_by": "AtlasReaper311"
+    },
+    {
+      "origin": "https://api.atlas-systems.uk",
+      "path": "/deploy-watch/latest",
+      "reason": "Bounded latest-deployment state is an approved public read surface.",
+      "approved_by": "AtlasReaper311"
+    }
+  ],
+  "contract_notes": ["No metadata endpoint is claimed because the committed router does not mount one."],
+  "control_plane_policy": {
+    "new_features": true,
+    "route_ownership": true,
+    "default_assurance": true,
+    "gardener_remediation": true,
+    "deployment_orchestration": true
+  }
+}
