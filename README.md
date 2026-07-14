@@ -106,6 +106,15 @@ containing a secret value. The format, threat model, suppression rules, and
 emergency procedure are documented in
 [`docs/secret-watch.md`](docs/secret-watch.md).
 
+### Cost-guard policy
+
+[`policy/cost-guard.json`](policy/cost-guard.json) is the versioned,
+advisory-only quota and cost-risk policy consumed by `atlas-quota-watch`. It
+declares included allowances, warning and critical thresholds, projection and
+freshness windows, ownership, classification, and notification/issue valves.
+The architecture, offline fixture workflow, limitations, and recovery guidance
+are documented in [`docs/cost-guard.md`](docs/cost-guard.md).
+
 ### Adopt a deployment pipeline
 
 Copy the matching template from `templates/` into a repo as `.github/workflows/deploy.yml`, change the name and flags, and forward secrets with `secrets: inherit`. The repo needs the secrets named in `docs/CICD-DECISIONS.md`.
