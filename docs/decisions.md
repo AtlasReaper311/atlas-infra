@@ -31,6 +31,12 @@
 - **Why:** Release verification is an extension of the existing public-journey read boundary. Keeping it there avoids a second browser executor or a new repository, while central policy remains independent of one producer.
 - **Consequences:** A deploy caller provides explicit repository, full commit, service ID, environment, target, metadata URL, and rollback reference. Missing identity never becomes `live`. No manifest registration is needed because Phase 3 adds no service, public endpoint, storage layer, scheduled job, or deploy credential.
 
+### Secret assurance is declarations plus names-only enforcement *(new 2026-07-14)*
+
+- **Decision:** `atlas-infra` owns the versioned secret declaration and response runbooks; `atlas-dep-audit` owns policy validation, optional GitHub names-only comparison, tracked-file plaintext scanning, and Finding v1 output.
+- **Boundary:** No component requests a secret value or writes provider state. GitHub metadata is optional unless a repository declaration explicitly requires it. Missing or under-permissioned metadata is `unavailable`, never healthy. `simple-proxy` remains excluded because it is deprecated and external-derived.
+- **Why:** Secret meaning, lifecycle, and classification are estate policy, while detection belongs beside the existing read-only supply-chain assurance path. Keeping those responsibilities separate prevents policy from becoming an API client and prevents the scanner from inventing ownership.
+
 ### Token model
 
 - **Decision:** Narrowly-scoped Cloudflare tokens, never one account-wide token. Deploy-time and runtime credential paths never share secrets.
