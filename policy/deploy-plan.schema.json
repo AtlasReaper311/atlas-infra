@@ -1,0 +1,218 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.atlas-systems.uk/policy/v1/deploy-plan.schema.json",
+  "title": "Atlas Systems dry-run deployment plan v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "plan_id",
+    "generated_at",
+    "mode",
+    "status",
+    "request",
+    "sources",
+    "approval",
+    "execution",
+    "order",
+    "dispatches",
+    "aggregate_release_evidence",
+    "finding_count",
+    "finding_schema_errors",
+    "findings",
+    "plan_schema_errors"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "atlas-deploy-orchestrator/deployment-plan/v1"
+    },
+    "plan_id": {"$ref": "#/$defs/digest"},
+    "generated_at": {"type": "string", "format": "date-time"},
+    "mode": {"const": "dry-run"},
+    "status": {"enum": ["ready", "invalid"]},
+    "request": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["services", "environment", "expected_commit"],
+      "properties": {
+        "services": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/service_id"}
+        },
+        "environment": {
+          "enum": ["development", "preview", "production"]
+        },
+        "expected_commit": {
+          "type": ["string", "null"],
+          "pattern": "^(?:[0-9a-f]{40}|[0-9a-f]{64})$"
+        }
+      }
+    },
+    "sources": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["policy", "policy_digest", "registry", "registry_digest"],
+      "properties": {
+        "policy": {"const": "policy/deploy-orchestrator.json"},
+        "policy_digest": {"$ref": "#/$defs/digest"},
+        "registry": {"const": "policy/estate-registry.json"},
+        "registry_digest": {"$ref": "#/$defs/digest"}
+      }
+    },
+    "approval": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "required",
+        "status",
+        "gates",
+        "protected_environment",
+        "two_owner_fallback"
+      ],
+      "properties": {
+        "required": {"type": "boolean"},
+        "status": {"enum": ["missing", "not-required"]},
+        "gates": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string"}
+        },
+        "protected_environment": {"type": "object"},
+        "two_owner_fallback": {"type": "object"}
+      }
+    },
+    "execution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "requested",
+        "enabled_by_policy",
+        "executor",
+        "allowed",
+        "reason"
+      ],
+      "properties": {
+        "requested": {"type": "boolean"},
+        "enabled_by_policy": {"type": "boolean"},
+        "executor": {"const": "noop"},
+        "allowed": {"const": false},
+        "reason": {"type": "string", "minLength": 1, "maxLength": 240}
+      }
+    },
+    "order": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/service_id"}
+    },
+    "dispatches": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/planned_dispatch"}
+    },
+    "aggregate_release_evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "status",
+        "plan_id",
+        "release_evidence_contract",
+        "persistence",
+        "records"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "atlas-deploy-orchestrator/aggregate-release-evidence-reference/v1"
+        },
+        "status": {"enum": ["planned", "not-created"]},
+        "plan_id": {"$ref": "#/$defs/digest"},
+        "release_evidence_contract": {
+          "const": "contracts/v1/release-evidence.schema.json"
+        },
+        "persistence": {"const": "workflow-artifact-only"},
+        "records": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["service_id", "repository", "status", "expected_artifact"],
+            "properties": {
+              "service_id": {"$ref": "#/$defs/service_id"},
+              "repository": {"$ref": "#/$defs/repository"},
+              "status": {"const": "not-created"},
+              "expected_artifact": {"const": "release-evidence.json"}
+            }
+          }
+        }
+      }
+    },
+    "finding_count": {"type": "integer", "minimum": 0},
+    "finding_schema_errors": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "findings": {
+      "type": "array",
+      "items": {"type": "object"}
+    },
+    "plan_schema_errors": {
+      "type": "array",
+      "items": {"type": "string"}
+    }
+  },
+  "$defs": {
+    "digest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "service_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+      "maxLength": 64
+    },
+    "repository": {
+      "type": "string",
+      "pattern": "^AtlasReaper311/[A-Za-z0-9._-]+$",
+      "maxLength": 128
+    },
+    "planned_dispatch": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "service_id",
+        "repository",
+        "environment",
+        "classification",
+        "owner",
+        "dependencies",
+        "disabled",
+        "dry_run_only",
+        "preflight_checks",
+        "required_approvals",
+        "timeout_minutes",
+        "rollback_runbook",
+        "dispatch",
+        "post_deploy_release_watch"
+      ],
+      "properties": {
+        "service_id": {"$ref": "#/$defs/service_id"},
+        "repository": {"$ref": "#/$defs/repository"},
+        "environment": {"enum": ["development", "preview", "production"]},
+        "classification": {"type": "object"},
+        "owner": {"type": "string"},
+        "dependencies": {"type": "array"},
+        "disabled": {"type": "boolean"},
+        "dry_run_only": {"type": "boolean"},
+        "preflight_checks": {"type": "array", "minItems": 1},
+        "required_approvals": {"type": "array"},
+        "timeout_minutes": {"type": "integer", "minimum": 1},
+        "rollback_runbook": {"type": "string"},
+        "dispatch": {"type": "object"},
+        "post_deploy_release_watch": {"type": "object"}
+      }
+    }
+  }
+}

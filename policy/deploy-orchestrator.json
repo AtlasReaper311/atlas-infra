@@ -1,0 +1,85 @@
+{
+  "schema_version": "atlas-deploy-orchestrator/policy/v1",
+  "owner": "AtlasReaper311/atlas-infra",
+  "reviewed_at": "2026-07-14T00:00:00Z",
+  "eligibility": {
+    "excluded_lifecycles": ["archived", "deprecated", "experimental"],
+    "excluded_provenance": ["external-derived"],
+    "excluded_services": ["simple-proxy"]
+  },
+  "approval_model": {
+    "dry_run_default": true,
+    "production_human_approval_required": true,
+    "protected_environment": {
+      "preferred": true,
+      "bypass_allowed": false
+    },
+    "two_owner_fallback": {
+      "mode": "two-owner-dispatch",
+      "documentation_only": true,
+      "implemented": false
+    }
+  },
+  "guardrails": {
+    "automatic_merge": false,
+    "automatic_rollback": false,
+    "branch_protection_changes": false,
+    "direct_provider_writes": false,
+    "environment_protection_bypass": false,
+    "force_push": false,
+    "secret_access": false
+  },
+  "execution": {
+    "enabled": false,
+    "executor": "noop",
+    "require_execute_flag": true
+  },
+  "targets": [
+    {
+      "service_id": "atlas-api-public",
+      "repository": "AtlasReaper311/atlas-api-public",
+      "environment": "production",
+      "dependencies": [],
+      "preflight_checks": [
+        {
+          "check_id": "deploy-workflow-available",
+          "kind": "github-workflow",
+          "required": true,
+          "description": "Confirm .github/workflows/deploy.yml exists and still accepts workflow_dispatch."
+        },
+        {
+          "check_id": "target-commit-green",
+          "kind": "github-checks",
+          "required": true,
+          "description": "Confirm all required checks for the resolved full commit are successful."
+        },
+        {
+          "check_id": "target-ref-resolves",
+          "kind": "target-ref",
+          "required": true,
+          "description": "Resolve ref main to the exact full commit before any approved dispatch."
+        }
+      ],
+      "required_approvals": ["owner", "production-environment"],
+      "timeout_minutes": 30,
+      "rollback_runbook": "docs/runbooks/deploy-orchestrator-partial-deployment.md",
+      "owner": "github:AtlasReaper311",
+      "disabled": false,
+      "dry_run_only": true,
+      "dispatch": {
+        "workflow": "deploy.yml",
+        "ref": "main",
+        "inputs": {},
+        "required_token_capabilities": ["Actions: write", "Metadata: read"],
+        "expected_evidence": ["github-actions-run", "release-evidence.json"]
+      },
+      "post_deploy_release_watch": {
+        "repository": "AtlasReaper311/atlas-journey-watch",
+        "workflow": "release-watch.yml",
+        "ref": "main",
+        "journey_target": "api-contract",
+        "timeout_minutes": 25
+      }
+    }
+  ]
+}

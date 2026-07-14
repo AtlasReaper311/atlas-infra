@@ -37,6 +37,13 @@
 - **Boundary:** No component requests a secret value or writes provider state. GitHub metadata is optional unless a repository declaration explicitly requires it. Missing or under-permissioned metadata is `unavailable`, never healthy. `simple-proxy` remains excluded because it is deprecated and external-derived.
 - **Why:** Secret meaning, lifecycle, and classification are estate policy, while detection belongs beside the existing read-only supply-chain assurance path. Keeping those responsibilities separate prevents policy from becoming an API client and prevents the scanner from inventing ownership.
 
+### Deployment orchestration begins as a deterministic no-op planner *(new 2026-07-14)*
+
+- **Decision:** `atlas-infra` owns a Phase 7 deployment policy and standard-library planner that resolves deployment dependencies, validates targets against the Phase 6 registry, renders inert workflow-dispatch and release-watch plans, and emits Finding-compatible failures. The only executor is `noop`, execution is disabled in policy, and `--execute` is a tested refusal.
+- **Boundary:** Service repositories retain their current deployment workflows and Cloudflare credentials. `atlas-journey-watch` retains release verification through its existing manual workflow. Production requires a separate human gate, no approval boolean or protection bypass exists, and rollback remains a repository-owner decision.
+- **Why:** The estate needs one reviewable release order and recovery vocabulary before it needs cross-repository write authority. A stable dry-run proves graph, classification, approval, evidence, and failure behavior while leaving every production path unchanged and independently usable.
+- **Consequence:** `atlas-api-public` is the first policy target but remains `dry_run_only`. Its current ServiceContract does not yet prove release identity, so the plan records that readiness gap instead of reporting a verified deployment. Actual dispatch requires a later explicit owner decision and separate implementation phase.
+
 ### Token model
 
 - **Decision:** Narrowly-scoped Cloudflare tokens, never one account-wide token. Deploy-time and runtime credential paths never share secrets.

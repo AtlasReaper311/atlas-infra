@@ -1,0 +1,79 @@
+name: Deploy orchestrator dry run
+
+on:
+  workflow_dispatch:
+    inputs:
+      service:
+        description: Stable service ID to plan
+        required: true
+        default: atlas-api-public
+        type: string
+      environment:
+        description: Target environment to plan
+        required: true
+        default: production
+        type: choice
+        options:
+          - development
+          - preview
+          - production
+      expected_commit:
+        description: Optional full lowercase 40- or 64-character commit SHA
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-orchestrator-dry-run-${{ inputs.service }}-${{ inputs.environment }}
+  cancel-in-progress: false
+
+jobs:
+  plan:
+    name: Validate policy and render dry-run plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out atlas-infra
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Validate planner and policy
+        run: |
+          set -euo pipefail
+          python3 -m py_compile scripts/deploy_orchestrator.py
+          python3 -m unittest scripts.tests.test_deploy_orchestrator -v
+          python3 scripts/deploy_orchestrator.py validate \
+            --output reports/deploy-policy-validation.json \
+            --markdown reports/deploy-policy-validation.md \
+            --quiet
+
+      - name: Render dry-run plan
+        env:
+          SERVICE: ${{ inputs.service }}
+          ENVIRONMENT: ${{ inputs.environment }}
+          EXPECTED_COMMIT: ${{ inputs.expected_commit }}
+        run: |
+          set -euo pipefail
+          args=(
+            plan
+            --service "$SERVICE"
+            --environment "$ENVIRONMENT"
+            --output reports/deploy-plan.json
+            --markdown reports/deploy-plan.md
+            --quiet
+          )
+          if [ -n "$EXPECTED_COMMIT" ]; then
+            args+=(--commit "$EXPECTED_COMMIT")
+          fi
+          python3 scripts/deploy_orchestrator.py "${args[@]}"
+          cat reports/deploy-plan.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload dry-run evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: deploy-orchestrator-dry-run-${{ github.run_id }}
+          path: reports
+          if-no-files-found: error
+          retention-days: 14
