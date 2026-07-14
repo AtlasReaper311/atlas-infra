@@ -1,0 +1,10 @@
+{
+  "schema_version": "atlas-control-plane/source-journeys/v1",
+  "generated_at": "2026-07-14T10:00:00Z",
+  "stale_after": "2026-07-14T11:00:00Z",
+  "state": "failed",
+  "data": {
+    "total": 12,
+    "failed": 1
+  }
+}

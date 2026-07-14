@@ -26,6 +26,14 @@ honestly instead of fabricating a timestamp or URI. `json-export` and
 `vector-store-export` are additive method values; consumers must retain an
 unknown-method fallback during migration.
 
+The Phase 9 ControlPlaneSummary `journeys` and `contract_registry` projections
+and `gardener_proposals.open_pull_requests` property are additive and optional
+within v1. The Phase 9 aggregator emits them, while earlier v1 summaries remain
+valid. Missing projections are interpreted as `unknown`, never healthy.
+ServiceContract route paths also accept OpenAPI-style `{parameter}` templates;
+this relaxes the existing path character bound without changing route
+ownership semantics.
+
 ## Requires a new major path
 
 - Add a required property.

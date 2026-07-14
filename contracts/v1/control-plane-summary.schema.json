@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://schemas.atlas-systems.uk/control-plane/v1/control-plane-summary.schema.json",
   "title": "Atlas Systems ControlPlaneSummary v1",
-  "description": "A bounded, redacted aggregate for future read-only consumers.",
+  "description": "A bounded, redacted aggregate for read-only control-plane consumers.",
   "type": "object",
   "additionalProperties": false,
   "x-owner": {
@@ -60,6 +60,16 @@
         "active_incidents": {"type": "integer", "minimum": 0, "maximum": 1000}
       }
     },
+    "journeys": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "total", "failed"],
+      "properties": {
+        "state": {"$ref": "#/$defs/ControlPlaneState"},
+        "total": {"type": "integer", "minimum": 0, "maximum": 10000},
+        "failed": {"type": "integer", "minimum": 0, "maximum": 10000}
+      }
+    },
     "release": {
       "type": "object",
       "additionalProperties": false,
@@ -89,6 +99,17 @@
           "pattern": "^https://[^?#]+(?:#[A-Za-z0-9._/-]+)?$",
           "maxLength": 500
         }
+      }
+    },
+    "contract_registry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "contracts_total", "contracts_valid", "drift_count"],
+      "properties": {
+        "state": {"$ref": "#/$defs/ControlPlaneState"},
+        "contracts_total": {"type": "integer", "minimum": 0, "maximum": 10000},
+        "contracts_valid": {"type": "integer", "minimum": 0, "maximum": 10000},
+        "drift_count": {"type": "integer", "minimum": 0, "maximum": 100000}
       }
     },
     "quota": {
@@ -141,7 +162,8 @@
       "properties": {
         "state": {"$ref": "#/$defs/ControlPlaneState"},
         "total": {"type": "integer", "minimum": 0, "maximum": 10000},
-        "validation_failed": {"type": "integer", "minimum": 0, "maximum": 10000}
+        "validation_failed": {"type": "integer", "minimum": 0, "maximum": 10000},
+        "open_pull_requests": {"type": "integer", "minimum": 0, "maximum": 10000}
       }
     },
     "secret_hygiene": {

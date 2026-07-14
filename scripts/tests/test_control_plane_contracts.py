@@ -143,6 +143,48 @@ class ControlPlaneContractTests(unittest.TestCase):
             ),
         )
 
+    def test_service_contract_accepts_openapi_route_template(self) -> None:
+        service = self.fixture("valid/service-contract.json")
+        service.update(
+            {
+                "service_id": "atlas-api-public",
+                "display_name": "Atlas public API",
+                "source_repository": "AtlasReaper311/atlas-api-public",
+                "classification": {
+                    "lifecycle": "production",
+                    "scope": "public",
+                    "provenance": "original",
+                },
+                "registry_visibility": "current",
+                "control_plane_policy": {
+                    "new_features": True,
+                    "route_ownership": True,
+                    "default_assurance": True,
+                    "gardener_remediation": True,
+                    "deployment_orchestration": True,
+                },
+            }
+        )
+        service["routes"] = [
+            {
+                "path": "/v1/control-plane/tools/services/{service_id}",
+                "methods": ["GET"],
+                "visibility": "authenticated",
+            }
+        ]
+        self.assertEqual(
+            [],
+            contracts.validate_instance(
+                service, self.schema("service-contract.schema.json")
+            ),
+        )
+
+        service["routes"][0]["path"] = "/v1/services/{Invalid-parameter}"
+        errors = contracts.validate_instance(
+            service, self.schema("service-contract.schema.json")
+        )
+        self.assertTrue(any("pattern" in error for error in errors), errors)
+
     def test_invalid_release_timestamp_fails_without_crashing_semantics(self) -> None:
         release = self.fixture("valid/release-evidence.json")
         release["completed_at"] = "not-a-timestamp"

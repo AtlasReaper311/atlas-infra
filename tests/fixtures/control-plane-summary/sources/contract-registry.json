@@ -1,0 +1,11 @@
+{
+  "schema_version": "atlas-control-plane/source-contract-registry/v1",
+  "generated_at": "2026-07-14T10:00:00Z",
+  "stale_after": "2026-07-14T11:00:00Z",
+  "state": "warning",
+  "data": {
+    "contracts_total": 26,
+    "contracts_valid": 24,
+    "drift_count": 2
+  }
+}

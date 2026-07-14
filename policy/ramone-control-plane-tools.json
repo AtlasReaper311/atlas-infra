@@ -1,0 +1,101 @@
+{
+  "schema_version": "atlas-control-plane/ramone-read-policy/v1",
+  "owner": "AtlasReaper311/atlas-infra",
+  "mode": "read-only-disabled-by-default",
+  "authentication": {
+    "scheme": "bearer",
+    "secret_name": "RAMONE_CONTROL_PLANE_READ_TOKEN",
+    "holder": "OpenWebUI administrator-owned external tool connection",
+    "model_receives_credentials": false,
+    "provider_permissions": []
+  },
+  "home_assistant": {
+    "sensor_only": true,
+    "service_calls_allowed": false,
+    "assist_exposure_automatic": false,
+    "entities": [
+      "sensor.atlas_backup_freshness",
+      "sensor.atlas_contract_drift",
+      "sensor.atlas_estate_health",
+      "sensor.atlas_failed_journeys",
+      "sensor.atlas_latest_evidence",
+      "sensor.atlas_open_gardener_prs",
+      "sensor.atlas_quota_level",
+      "sensor.atlas_quota_projection",
+      "sensor.atlas_release_state",
+      "sensor.atlas_secret_hygiene"
+    ]
+  },
+  "operations": [
+    {
+      "operation_id": "GetBackupStatus",
+      "method": "GET",
+      "path": "/v1/control-plane/tools/backups"
+    },
+    {
+      "operation_id": "GetEstateSummary",
+      "method": "GET",
+      "path": "/v1/control-plane/tools/summary"
+    },
+    {
+      "operation_id": "GetQuotaProjection",
+      "method": "GET",
+      "path": "/v1/control-plane/tools/quota"
+    },
+    {
+      "operation_id": "GetReleaseStatus",
+      "method": "GET",
+      "path": "/v1/control-plane/tools/releases"
+    },
+    {
+      "operation_id": "GetServiceStatus",
+      "method": "GET",
+      "path": "/v1/control-plane/tools/services/{service_id}"
+    },
+    {
+      "operation_id": "ListActiveFindings",
+      "method": "GET",
+      "path": "/v1/control-plane/tools/findings"
+    },
+    {
+      "operation_id": "ListGardenerProposals",
+      "method": "GET",
+      "path": "/v1/control-plane/tools/gardener/proposals"
+    },
+    {
+      "operation_id": "FindRunbook",
+      "method": "GET",
+      "path": "/v1/control-plane/tools/runbooks/search"
+    },
+    {
+      "operation_id": "SearchEvidence",
+      "method": "GET",
+      "path": "/v1/control-plane/tools/evidence/search"
+    }
+  ],
+  "blocked_capabilities": [
+    "arbitrary-http",
+    "backup-restore",
+    "cloudflare-api-proxy",
+    "deployment",
+    "generic-home-assistant-service-call",
+    "generic-shell",
+    "github-mutation",
+    "merge",
+    "provider-api-proxy",
+    "raw-evidence-blob-fetch",
+    "secret-value-read",
+    "ssh",
+    "write-methods"
+  ],
+  "protected_capabilities": [
+    "Ramone identity and spoken behavior",
+    "Ramone system prompt and model assignment",
+    "ramone-memory Ollama-compatible proxy",
+    "existing Home Assistant control and lights",
+    "existing SPECULAR status and tools",
+    "existing phone and watch tools",
+    "existing wake word and Wyoming STT/TTS",
+    "existing OpenWebUI tool groups and assignments"
+  ]
+}

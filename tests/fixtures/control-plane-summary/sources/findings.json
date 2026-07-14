@@ -1,0 +1,16 @@
+{
+  "schema_version": "atlas-control-plane/source-findings/v1",
+  "generated_at": "2026-07-14T10:00:00Z",
+  "stale_after": "2026-07-15T10:00:00Z",
+  "state": "warning",
+  "data": {
+    "total": 3,
+    "by_severity": {
+      "info": 1,
+      "warning": 2,
+      "failure": 0,
+      "critical": 0
+    },
+    "oldest_detected_at": "2026-07-13T08:00:00Z"
+  }
+}

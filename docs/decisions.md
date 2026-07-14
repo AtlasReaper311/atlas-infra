@@ -44,6 +44,22 @@
 - **Why:** The estate needs one reviewable release order and recovery vocabulary before it needs cross-repository write authority. A stable dry-run proves graph, classification, approval, evidence, and failure behavior while leaving every production path unchanged and independently usable.
 - **Consequence:** `atlas-api-public` is the first policy target but remains `dry_run_only`. Its current ServiceContract does not yet prove release identity, so the plan records that readiness gap instead of reporting a verified deployment. Actual dispatch requires a later explicit owner decision and separate implementation phase.
 
+### Ramone control-plane access is additive and read-only *(new 2026-07-14)*
+
+- **Decision:** `ramone-memory` owns a disabled sensor-only Home Assistant
+  package/dashboard example, `atlas-api-public` owns a fixture/KV-backed
+  external OpenAPI read surface, and `atlas-infra` owns policy, summary
+  aggregation, contracts, fixtures, inventory, and rollback.
+- **Boundary:** Exactly ten sensors and nine GET tools are additive. There is
+  no provider proxy, Home Assistant service call, write operation, deployment,
+  restart, live configuration edit, secret creation, or automatic Ramone tool
+  assignment. Existing Ramone identity, prompt, model, memory, controls,
+  SPECULAR, phone/watch, wake, Wyoming, TTS, and spoken behavior remain
+  protected.
+- **Failure rule:** Missing, malformed, expired, or unavailable source data is
+  explicit and never healthy. The live port, tool pack, Assist selection,
+  device tools, and voice configuration remain owner-inspection gates.
+
 ### Token model
 
 - **Decision:** Narrowly-scoped Cloudflare tokens, never one account-wide token. Deploy-time and runtime credential paths never share secrets.

@@ -1,0 +1,11 @@
+{
+  "schema_version": "atlas-control-plane/source-runbooks/v1",
+  "generated_at": "2026-07-14T10:00:00Z",
+  "stale_after": "2026-07-15T10:00:00Z",
+  "state": "unknown",
+  "data": {
+    "valid": 0,
+    "invalid": 0,
+    "stale": 0
+  }
+}
