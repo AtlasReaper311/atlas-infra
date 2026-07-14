@@ -1,0 +1,13 @@
+{
+  "schema_version": "atlas-control-plane/source-release/v1",
+  "generated_at": "2026-07-14T10:00:00Z",
+  "stale_after": "2026-07-14T11:00:00Z",
+  "state": "healthy",
+  "data": {
+    "repository": "AtlasReaper311/atlas-api-public",
+    "environment": "production",
+    "commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "completed_at": "2026-07-14T09:58:00Z",
+    "evidence_ref": "https://github.com/AtlasReaper311/atlas-journey-watch/actions/runs/100"
+  }
+}

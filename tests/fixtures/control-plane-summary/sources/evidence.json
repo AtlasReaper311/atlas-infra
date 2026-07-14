@@ -1,0 +1,11 @@
+{
+  "schema_version": "atlas-control-plane/source-evidence/v1",
+  "generated_at": "2026-07-14T10:00:00Z",
+  "stale_after": "2026-07-15T10:00:00Z",
+  "state": "healthy",
+  "data": {
+    "searchable_records": 42,
+    "newest_record_at": "2026-07-14T09:59:00Z",
+    "expiring_soon": 0
+  }
+}

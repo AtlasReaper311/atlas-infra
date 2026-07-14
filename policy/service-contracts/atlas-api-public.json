@@ -23,6 +23,17 @@
     {"origin": "https://api.atlas-systems.uk", "path": "/v1", "methods": ["GET"], "visibility": "public"},
     {"origin": "https://api.atlas-systems.uk", "path": "/v1/_meta", "methods": ["GET"], "visibility": "public"},
     {"origin": "https://api.atlas-systems.uk", "path": "/v1/badge/status", "methods": ["GET"], "visibility": "public"},
+    {"origin": "https://api.atlas-systems.uk", "path": "/v1/control-plane/summary", "methods": ["GET"], "visibility": "public"},
+    {"origin": "https://api.atlas-systems.uk", "path": "/v1/control-plane/tools/backups", "methods": ["GET"], "visibility": "authenticated"},
+    {"origin": "https://api.atlas-systems.uk", "path": "/v1/control-plane/tools/evidence/search", "methods": ["GET"], "visibility": "authenticated"},
+    {"origin": "https://api.atlas-systems.uk", "path": "/v1/control-plane/tools/findings", "methods": ["GET"], "visibility": "authenticated"},
+    {"origin": "https://api.atlas-systems.uk", "path": "/v1/control-plane/tools/gardener/proposals", "methods": ["GET"], "visibility": "authenticated"},
+    {"origin": "https://api.atlas-systems.uk", "path": "/v1/control-plane/tools/openapi.json", "methods": ["GET"], "visibility": "authenticated"},
+    {"origin": "https://api.atlas-systems.uk", "path": "/v1/control-plane/tools/quota", "methods": ["GET"], "visibility": "authenticated"},
+    {"origin": "https://api.atlas-systems.uk", "path": "/v1/control-plane/tools/releases", "methods": ["GET"], "visibility": "authenticated"},
+    {"origin": "https://api.atlas-systems.uk", "path": "/v1/control-plane/tools/runbooks/search", "methods": ["GET"], "visibility": "authenticated"},
+    {"origin": "https://api.atlas-systems.uk", "path": "/v1/control-plane/tools/services/{service_id}", "methods": ["GET"], "visibility": "authenticated"},
+    {"origin": "https://api.atlas-systems.uk", "path": "/v1/control-plane/tools/summary", "methods": ["GET"], "visibility": "authenticated"},
     {"origin": "https://api.atlas-systems.uk", "path": "/v1/docs", "methods": ["GET"], "visibility": "public"},
     {"origin": "https://api.atlas-systems.uk", "path": "/v1/infra/report", "methods": ["POST"], "visibility": "authenticated"},
     {"origin": "https://api.atlas-systems.uk", "path": "/v1/infra/status", "methods": ["GET"], "visibility": "public"},
@@ -72,7 +83,10 @@
     "policy": "Repository owner review through GitHub."
   },
   "route_exceptions": [],
-  "contract_notes": ["Current worker metadata does not prove the deployed commit identity."],
+  "contract_notes": [
+    "Current worker metadata does not prove the deployed commit identity.",
+    "Phase 9 control-plane routes remain undeployed and return unavailable without a schema-valid bounded read model; authenticated tools use a dedicated provider-scope-free bearer."
+  ],
   "control_plane_policy": {
     "new_features": true,
     "route_ownership": true,

@@ -182,6 +182,26 @@ unbounded extraction. Architecture, policy format, safety limits, future
 read-only provider permissions, migration, and rollback are documented in
 [`docs/backup-audit.md`](docs/backup-audit.md).
 
+### Ramone and Home Assistant read surface
+
+Phase 9 adds a deterministic offline `ControlPlaneSummary` aggregator, exact
+ten-sensor and nine-tool policy, repository integration inventory, generated
+fixtures, and disabled rollout/rollback guidance. The implementation remains
+read-only and performs no live Home Assistant/OpenWebUI change or deployment.
+
+```bash
+python3 scripts/control_plane_summary.py \
+  --sources tests/fixtures/control-plane-summary/sources \
+  --now 2026-07-14T10:30:00Z
+python3 -m unittest scripts.tests.test_control_plane_summary \
+  scripts.tests.test_ramone_control_plane_policy -v
+```
+
+Architecture and owner gates are documented in
+[`docs/ramone-home-assistant-integration.md`](docs/ramone-home-assistant-integration.md),
+with repository evidence and live unknowns in the companion
+[inventory](docs/ramone-home-assistant-integration-inventory.md).
+
 ### Adopt a deployment pipeline
 
 Copy the matching template from `templates/` into a repo as `.github/workflows/deploy.yml`, change the name and flags, and forward secrets with `secrets: inherit`. The repo needs the secrets named in `docs/CICD-DECISIONS.md`.

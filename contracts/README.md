@@ -23,7 +23,9 @@ service, route, deployment, storage layer, remediation agent, or secret.
 - `EvidenceEnvelope`: one inline bounded payload or stable reference with a
   SHA-256 digest.
 - `ControlPlaneSummary`: redacted aggregate projections and the shared six-value
-  `ControlPlaneState` vocabulary.
+  `ControlPlaneState` vocabulary. Phase 9 adds optional journey,
+  contract-registry, and open-Gardener-PR projections for the bounded Home
+  Assistant sensors; earlier v1 summaries remain valid.
 
 Every schema uses JSON Schema Draft 2020-12, has a stable `$id`, requires an
 explicit `schema_version`, rejects undeclared top-level properties, declares an

@@ -1,0 +1,11 @@
+{
+  "schema_version": "atlas-control-plane/source-gardener-proposals/v1",
+  "generated_at": "2026-07-14T10:00:00Z",
+  "stale_after": "2026-07-15T10:00:00Z",
+  "state": "warning",
+  "data": {
+    "total": 2,
+    "validation_failed": 0,
+    "open_pull_requests": 1
+  }
+}
