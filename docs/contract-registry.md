@@ -183,6 +183,19 @@ Replace placeholders only after approving the target list. Do not write token
 values to reports, shell history, Git, or logs. Live absence must produce
 unknown/unavailable drift and must never delete or rewrite canonical data.
 
+## Phase 8 backup-audit integration
+
+`scripts/backup_audit.py` consumes this registry and its ServiceContracts
+offline. Every enabled backup target must resolve to the exact registered
+repository and service ID, match all three classification axes, and reference
+an existing runbook. Production runtime services and records already marked
+backup-relevant receive an explicit coverage entry in
+`policy/backup-audit.json`; `not-declared` is a warning and never healthy.
+
+`simple-proxy` remains historically visible but excluded from active drills.
+No Phase 8 check changes registry ownership, probes a route, or infers a live
+backup from `backup_relevance: relevant`.
+
 ## Migration
 
 1. Merge the `atlas-infra` registry after review.

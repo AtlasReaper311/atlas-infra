@@ -159,6 +159,29 @@ permission, no dispatch permission or secret, and retains plan artifacts for
 and rollback limitations are documented in
 [`docs/deploy-orchestrator.md`](docs/deploy-orchestrator.md).
 
+### Backup audit
+
+Phase 8 adds a standard-library, offline backup-policy validator and disposable
+restore-drill engine. The four initial targets are synthetic GitHub artifact,
+Cloudflare KV export, incident export, and Chroma/vector-store fixtures. They
+exercise assurance mechanics only and do not prove that a live backup exists.
+
+```bash
+python3 scripts/backup_audit.py \
+  --policy policy/backup-audit.json \
+  --fixtures tests/fixtures/backup-audit \
+  --report /tmp/backup-audit.json \
+  --markdown /tmp/backup-audit.md \
+  --now 2026-07-14T12:00:00Z
+```
+
+The auditor cross-checks the Phase 6 registry, emits schema-valid
+`BackupEvidence` and `Finding` records, and refuses live destinations, provider
+access, traversal, symlinks, executable archive entries, overwrites, and
+unbounded extraction. Architecture, policy format, safety limits, future
+read-only provider permissions, migration, and rollback are documented in
+[`docs/backup-audit.md`](docs/backup-audit.md).
+
 ### Adopt a deployment pipeline
 
 Copy the matching template from `templates/` into a repo as `.github/workflows/deploy.yml`, change the name and flags, and forward secrets with `secrets: inherit`. The repo needs the secrets named in `docs/CICD-DECISIONS.md`.

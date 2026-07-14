@@ -1,0 +1,25 @@
+{
+  "schema_version": "atlas-backup-fixture/cloudflare-kv-export/v1",
+  "exported_at": "2026-07-14T09:30:00Z",
+  "namespace": "fixture-redacted",
+  "entries": [
+    {
+      "key": "fixture:health",
+      "value": {
+        "state": "ok"
+      },
+      "metadata": {
+        "content_type": "application/json"
+      }
+    },
+    {
+      "key": "fixture:snapshot",
+      "value": {
+        "sequence": 1
+      },
+      "metadata": {
+        "content_type": "application/json"
+      }
+    }
+  ]
+}

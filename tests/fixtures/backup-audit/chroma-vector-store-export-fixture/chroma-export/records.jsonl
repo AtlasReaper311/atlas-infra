@@ -1,0 +1,2 @@
+{"collection_id":"fixture-collection","document":"Offline fixture document one.","embedding":[0.1,0.2,0.3],"id":"fixture-record-001","metadata":{"source":"fixture"}}
+{"collection_id":"fixture-collection","document":"Offline fixture document two.","embedding":[0.4,0.5,0.6],"id":"fixture-record-002","metadata":{"source":"fixture"}}

@@ -1,0 +1,25 @@
+{
+  "schema_version": "atlas-backup-audit/metadata/v1",
+  "target_id": "incident-export-fixture",
+  "service_id": "atlas-blackbox",
+  "repository": "AtlasReaper311/atlas-blackbox",
+  "backup_at": "2026-07-14T09:00:00Z",
+  "observed_at": "2026-07-14T11:00:00Z",
+  "source_type": "local-fixture",
+  "evidence_ref": "https://github.com/AtlasReaper311/atlas-infra/blob/main/tests/fixtures/backup-audit/incident-export-fixture/backup-metadata.json",
+  "digest": {
+    "algorithm": "sha-256",
+    "value": "789e788fa5494c4609cab8119ff755661297f0695ef01c279f54b2460b6e9442",
+    "path": "incidents.json"
+  },
+  "retention": {
+    "expected_days": 90,
+    "retained_until": "2026-10-12T09:00:00Z"
+  },
+  "restore_source": {
+    "kind": "json-export",
+    "path": "incidents.json"
+  },
+  "expected_file_count": 1,
+  "expected_total_size_bytes": 326
+}

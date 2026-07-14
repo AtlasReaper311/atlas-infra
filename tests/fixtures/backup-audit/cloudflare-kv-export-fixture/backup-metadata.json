@@ -1,0 +1,25 @@
+{
+  "schema_version": "atlas-backup-audit/metadata/v1",
+  "target_id": "cloudflare-kv-export-fixture",
+  "service_id": "atlas-vault",
+  "repository": "AtlasReaper311/atlas-vault",
+  "backup_at": "2026-07-14T09:30:00Z",
+  "observed_at": "2026-07-14T11:00:00Z",
+  "source_type": "local-fixture",
+  "evidence_ref": "https://github.com/AtlasReaper311/atlas-infra/blob/main/tests/fixtures/backup-audit/cloudflare-kv-export-fixture/backup-metadata.json",
+  "digest": {
+    "algorithm": "sha-256",
+    "value": "4b4d95ea3efc15d059179b20215d121257b5ed51eee8ef4800cbc3a37aebfb48",
+    "path": "kv-export.json"
+  },
+  "retention": {
+    "expected_days": 30,
+    "retained_until": "2026-08-13T09:30:00Z"
+  },
+  "restore_source": {
+    "kind": "json-export",
+    "path": "kv-export.json"
+  },
+  "expected_file_count": 1,
+  "expected_total_size_bytes": 494
+}

@@ -42,7 +42,7 @@
   "journey_coverage": {"state": "unknown", "references": []},
   "quota_policy": {"state": "unknown", "reference": null},
   "secret_declaration": {"state": "unknown", "reference": null},
-  "backup_relevance": {"state": "relevant", "reference": "docs/control-plane-expansion-plan.md"},
+  "backup_relevance": {"state": "relevant", "reference": "policy/backup-audit.json"},
   "release_watch_eligible": false,
   "escalation": {"contact": "github:AtlasReaper311", "policy": "Repository owner review through GitHub."},
   "route_exceptions": [],

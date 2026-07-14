@@ -23,6 +23,7 @@ jobs:
 
       - name: Validate assurance scripts
         run: |
+          python3 -m py_compile scripts/backup_audit.py
           python3 -m py_compile scripts/change_impact.py
           python3 -m py_compile scripts/contract_registry.py
           python3 -m py_compile scripts/control_plane_contracts.py
@@ -48,7 +49,15 @@ jobs:
             --markdown reports/contract-registry.md \
             --graph reports/service-dependency-graph.json \
             --catalog reports/service-catalog.json
+          python3 scripts/backup_audit.py \
+            --policy policy/backup-audit.json \
+            --fixtures tests/fixtures/backup-audit \
+            --report reports/backup-audit.json \
+            --markdown reports/backup-audit.md \
+            --now 2026-07-14T12:00:00Z \
+            --quiet
           cat reports/contract-registry.md >> "$GITHUB_STEP_SUMMARY"
+          cat reports/backup-audit.md >> "$GITHUB_STEP_SUMMARY"
           cat reports/deploy-plan.md >> "$GITHUB_STEP_SUMMARY"
 
       - name: Audit estate policy
