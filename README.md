@@ -82,11 +82,19 @@ rules. Validate them without installing dependencies:
 
 ```bash
 python3 scripts/validate_control_plane_contracts.py
+python3 scripts/validate_release_evidence.py --instance path/to/release-evidence.json
 python3 -m unittest discover -s scripts/tests -v
 ```
 
 The contracts are governance artifacts only. They add no route, runtime,
 storage, deployment, or secret.
+
+### Release watch policy
+
+Phase 3 release policy, calling examples, evidence conventions, and recovery
+guidance live in [`docs/release-watch.md`](docs/release-watch.md) and the
+[`release-watch` runbook](docs/runbooks/release-watch.md). Verification runs in
+`atlas-journey-watch`; this repository remains the contract and policy owner.
 
 ### Adopt a deployment pipeline
 

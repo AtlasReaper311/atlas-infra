@@ -1,8 +1,10 @@
 {
   "schema_version": "atlas-control-plane/release-evidence/v1",
   "repository": "AtlasReaper311/atlas-infra",
+  "service_id": "atlas-infra",
   "commit": "1111111111111111111111111111111111111111",
   "deployment_id": "github-run:100",
+  "deployment_target": "github-actions",
   "environment": "production",
   "started_at": "2026-07-14T10:00:00Z",
   "completed_at": "2026-07-14T10:05:00Z",
@@ -10,6 +12,7 @@
     {
       "check_id": "repository-tests",
       "status": "passed",
+      "state": "healthy",
       "evidence_ref": "https://github.com/AtlasReaper311/atlas-infra/actions/runs/100"
     }
   ],
