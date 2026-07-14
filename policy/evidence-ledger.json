@@ -1,0 +1,23 @@
+{
+  "schema_version": "1.0.0",
+  "retention_days": 90,
+  "max_records_per_ingest": 500,
+  "max_summary_characters": 1200,
+  "raw_payload_storage": false,
+  "allowed_kinds": [
+    "finding",
+    "release-evidence",
+    "backup-evidence",
+    "quota-report",
+    "secret-watch-report",
+    "registry-report",
+    "deploy-plan",
+    "runbook-match",
+    "control-plane-summary",
+    "gardener-proposal",
+    "incident"
+  ],
+  "allowed_states": ["healthy", "warning", "failed", "stale", "unavailable", "unknown", "live", "mismatch", "rolled-back", "passed", "matched", "no-match"],
+  "forbidden_field_fragments": ["password", "private_key", "private-key", "secret_value", "token_value", "authorization", "cookie", "raw_payload", "blob", "body"],
+  "searchable_metadata_days": 90
+}
