@@ -1,0 +1,217 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.atlas-systems.uk/policy/cost-guard/v1",
+  "title": "Atlas Systems cost-guard policy v1",
+  "description": "Advisory-only quota, usage, and cost-risk policy owned by atlas-infra.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "owner",
+    "finding_contract",
+    "evidence_contract",
+    "defaults",
+    "services"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "atlas-cost-guard/policy/v1"
+    },
+    "owner": {
+      "const": "AtlasReaper311/atlas-infra"
+    },
+    "finding_contract": {
+      "const": "contracts/v1/finding.schema.json"
+    },
+    "evidence_contract": {
+      "const": "contracts/v1/evidence-envelope.schema.json"
+    },
+    "defaults": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "notification_enabled",
+        "issue_creation_allowed",
+        "advisory_only"
+      ],
+      "properties": {
+        "notification_enabled": {
+          "type": "boolean"
+        },
+        "issue_creation_allowed": {
+          "type": "boolean"
+        },
+        "advisory_only": {
+          "const": true
+        }
+      }
+    },
+    "services": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/servicePolicy"
+      }
+    }
+  },
+  "$defs": {
+    "classification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["lifecycle", "scope", "provenance"],
+      "properties": {
+        "lifecycle": {
+          "enum": [
+            "production",
+            "active",
+            "experimental",
+            "deprecated",
+            "archived"
+          ]
+        },
+        "scope": {
+          "enum": ["public", "internal"]
+        },
+        "provenance": {
+          "enum": ["original", "external-derived"]
+        }
+      }
+    },
+    "assurance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["enabled", "exclusion_reason"],
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "exclusion_reason": {
+          "type": ["string", "null"],
+          "minLength": 1,
+          "maxLength": 240
+        }
+      }
+    },
+    "servicePolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "service_id",
+        "repository",
+        "provider",
+        "quota_type",
+        "unit",
+        "measurement_mode",
+        "free_tier_limit",
+        "warning_threshold_pct",
+        "critical_threshold_pct",
+        "projection_horizon_days",
+        "cooldown_hours",
+        "max_data_age_hours",
+        "acceleration_threshold_pct",
+        "owner",
+        "route_ref",
+        "worker_ref",
+        "classification",
+        "assurance",
+        "notification_enabled",
+        "issue_creation_allowed",
+        "advisory_only"
+      ],
+      "properties": {
+        "service_id": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+          "maxLength": 64
+        },
+        "repository": {
+          "type": "string",
+          "pattern": "^AtlasReaper311/[A-Za-z0-9._-]+$",
+          "maxLength": 128
+        },
+        "provider": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+          "maxLength": 64
+        },
+        "quota_type": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+          "maxLength": 64
+        },
+        "unit": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+          "maxLength": 64
+        },
+        "measurement_mode": {
+          "enum": ["cumulative", "gauge"]
+        },
+        "free_tier_limit": {
+          "type": ["number", "null"],
+          "minimum": 0
+        },
+        "warning_threshold_pct": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "critical_threshold_pct": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "projection_horizon_days": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 366
+        },
+        "cooldown_hours": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 720
+        },
+        "max_data_age_hours": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 720
+        },
+        "acceleration_threshold_pct": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 10000
+        },
+        "owner": {
+          "type": ["string", "null"],
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "route_ref": {
+          "type": ["string", "null"],
+          "pattern": "^/[A-Za-z0-9._~!$&'()*+,;=:@%/-]*$",
+          "maxLength": 240
+        },
+        "worker_ref": {
+          "type": ["string", "null"],
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+          "maxLength": 64
+        },
+        "classification": {
+          "$ref": "#/$defs/classification"
+        },
+        "assurance": {
+          "$ref": "#/$defs/assurance"
+        },
+        "notification_enabled": {
+          "type": "boolean"
+        },
+        "issue_creation_allowed": {
+          "type": "boolean"
+        },
+        "advisory_only": {
+          "const": true
+        }
+      }
+    }
+  }
+}
