@@ -1,0 +1,9 @@
+{
+  "type": "finding",
+  "service_id": "atlas-api-public",
+  "repository": "AtlasReaper311/atlas-infra",
+  "state": "warning",
+  "severity": "warning",
+  "observed_at": "2026-07-14T12:05:00Z",
+  "summary": "Release-watch readiness is not yet proven for the service."
+}

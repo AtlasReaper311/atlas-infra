@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://atlas-systems.uk/schemas/evidence-ledger-policy-v1.json",
+  "title": "Evidence ledger policy",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "retention_days", "max_records_per_ingest", "max_summary_characters", "raw_payload_storage", "allowed_kinds", "allowed_states", "forbidden_field_fragments", "searchable_metadata_days"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "retention_days": {"type": "integer", "minimum": 1, "maximum": 3650},
+    "max_records_per_ingest": {"type": "integer", "minimum": 1, "maximum": 5000},
+    "max_summary_characters": {"type": "integer", "minimum": 64, "maximum": 10000},
+    "raw_payload_storage": {"const": false},
+    "allowed_kinds": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}},
+    "allowed_states": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}},
+    "forbidden_field_fragments": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}},
+    "searchable_metadata_days": {"type": "integer", "minimum": 1, "maximum": 3650}
+  }
+}
