@@ -1,12 +1,24 @@
 {
   "schema_version": "atlas-contract-registry/estate-registry/v1",
   "owner": "AtlasReaper311/atlas-infra",
-  "reviewed_at": "2026-07-14T00:00:00Z",
-  "approved_repository_count": 34,
+  "reviewed_at": "2026-07-14T17:54:32Z",
+  "approved_repository_count": 35,
   "classification_axes": {
-    "lifecycle": ["active", "archived", "deprecated", "experimental", "production"],
-    "scope": ["internal", "public"],
-    "provenance": ["external-derived", "original"]
+    "lifecycle": [
+      "active",
+      "archived",
+      "deprecated",
+      "experimental",
+      "production"
+    ],
+    "scope": [
+      "internal",
+      "public"
+    ],
+    "provenance": [
+      "external-derived",
+      "original"
+    ]
   },
   "repositories": [
     {
@@ -26,7 +38,9 @@
       "runbook_reference": null,
       "contract_exception": null,
       "notes": "Public repository content, not a deployed Atlas runtime service.",
-      "exclusions": ["runtime-service-contract"]
+      "exclusions": [
+        "runtime-service-contract"
+      ]
     },
     {
       "repository": "AtlasReaper311/atlas-api-index",
@@ -39,7 +53,9 @@
       "runtime_service": true,
       "contract_required": true,
       "public_surface": true,
-      "service_ids": ["atlas-api-index"],
+      "service_ids": [
+        "atlas-api-index"
+      ],
       "deployment_owner": "AtlasReaper311/atlas-api-index",
       "evidence_owner": "AtlasReaper311/atlas-api-index",
       "runbook_reference": "docs/runbooks/contract-registry-service-triage.md",
@@ -58,7 +74,9 @@
       "runtime_service": true,
       "contract_required": true,
       "public_surface": true,
-      "service_ids": ["atlas-api-public"],
+      "service_ids": [
+        "atlas-api-public"
+      ],
       "deployment_owner": "AtlasReaper311/atlas-api-public",
       "evidence_owner": "AtlasReaper311/atlas-api-public",
       "runbook_reference": "docs/runbooks/contract-registry-service-triage.md",
@@ -83,7 +101,9 @@
       "runbook_reference": null,
       "contract_exception": null,
       "notes": "Build-time content tool with no declared runtime route.",
-      "exclusions": ["runtime-service-contract"]
+      "exclusions": [
+        "runtime-service-contract"
+      ]
     },
     {
       "repository": "AtlasReaper311/atlas-badges",
@@ -102,7 +122,9 @@
       "runbook_reference": null,
       "contract_exception": null,
       "notes": "Reusable non-public tool; no HTTP route is implied by its public repository scope.",
-      "exclusions": ["runtime-service-contract"]
+      "exclusions": [
+        "runtime-service-contract"
+      ]
     },
     {
       "repository": "AtlasReaper311/atlas-blackbox",
@@ -115,7 +137,9 @@
       "runtime_service": true,
       "contract_required": true,
       "public_surface": true,
-      "service_ids": ["atlas-blackbox"],
+      "service_ids": [
+        "atlas-blackbox"
+      ],
       "deployment_owner": "AtlasReaper311/atlas-blackbox",
       "evidence_owner": "AtlasReaper311/atlas-blackbox",
       "runbook_reference": "docs/runbooks/contract-registry-service-triage.md",
@@ -140,7 +164,9 @@
       "runbook_reference": null,
       "contract_exception": null,
       "notes": "Rebuild automation rather than a deployed service.",
-      "exclusions": ["runtime-service-contract"]
+      "exclusions": [
+        "runtime-service-contract"
+      ]
     },
     {
       "repository": "AtlasReaper311/atlas-corpus",
@@ -153,7 +179,9 @@
       "runtime_service": true,
       "contract_required": true,
       "public_surface": true,
-      "service_ids": ["atlas-corpus"],
+      "service_ids": [
+        "atlas-corpus"
+      ],
       "deployment_owner": "AtlasReaper311/atlas-corpus",
       "evidence_owner": "AtlasReaper311/atlas-corpus",
       "runbook_reference": "docs/runbooks/contract-registry-service-triage.md",
@@ -172,7 +200,9 @@
       "runtime_service": true,
       "contract_required": true,
       "public_surface": true,
-      "service_ids": ["atlas-daily-digest"],
+      "service_ids": [
+        "atlas-daily-digest"
+      ],
       "deployment_owner": "AtlasReaper311/atlas-daily-digest",
       "evidence_owner": "AtlasReaper311/atlas-daily-digest",
       "runbook_reference": "docs/runbooks/contract-registry-service-triage.md",
@@ -197,7 +227,9 @@
       "runbook_reference": null,
       "contract_exception": null,
       "notes": "Scheduled assurance workflow, not a routed runtime service.",
-      "exclusions": ["runtime-service-contract"]
+      "exclusions": [
+        "runtime-service-contract"
+      ]
     },
     {
       "repository": "AtlasReaper311/atlas-doc-viewer",
@@ -210,7 +242,9 @@
       "runtime_service": true,
       "contract_required": true,
       "public_surface": true,
-      "service_ids": ["atlas-doc-viewer"],
+      "service_ids": [
+        "atlas-doc-viewer"
+      ],
       "deployment_owner": "AtlasReaper311/atlas-doc-viewer",
       "evidence_owner": "AtlasReaper311/atlas-doc-viewer",
       "runbook_reference": "docs/runbooks/contract-registry-service-triage.md",
@@ -229,13 +263,37 @@
       "runtime_service": true,
       "contract_required": true,
       "public_surface": true,
-      "service_ids": ["atlas-dora"],
+      "service_ids": [
+        "atlas-dora"
+      ],
       "deployment_owner": "AtlasReaper311/atlas-dora",
       "evidence_owner": "AtlasReaper311/atlas-dora",
       "runbook_reference": "docs/runbooks/contract-registry-service-triage.md",
       "contract_exception": null,
       "notes": "Metadata is service-specific rather than the shared worker-meta shape.",
       "exclusions": []
+    },
+    {
+      "repository": "AtlasReaper311/atlas-eval-harness",
+      "local_directory": "atlas-eval-harness",
+      "lifecycle": "active",
+      "scope": "internal",
+      "provenance": "original",
+      "owner": "AtlasReaper311",
+      "purpose": "Run deterministic local model evaluations against grounded Atlas Systems regression cases.",
+      "runtime_service": false,
+      "contract_required": false,
+      "public_surface": false,
+      "service_ids": [],
+      "deployment_owner": null,
+      "evidence_owner": "AtlasReaper311/atlas-eval-harness",
+      "runbook_reference": null,
+      "contract_exception": null,
+      "notes": "Private evaluation tooling; CI runs the offline selftest and real Ollama runs remain owner-triggered on local hardware.",
+      "exclusions": [
+        "deployment-orchestration",
+        "runtime-service-contract"
+      ]
     },
     {
       "repository": "AtlasReaper311/atlas-infra",
@@ -254,7 +312,9 @@
       "runbook_reference": null,
       "contract_exception": null,
       "notes": "Canonical registry owner; example containers and reusable workflows are not registered as public services.",
-      "exclusions": ["runtime-service-contract"]
+      "exclusions": [
+        "runtime-service-contract"
+      ]
     },
     {
       "repository": "AtlasReaper311/atlas-journey-watch",
@@ -273,7 +333,9 @@
       "runbook_reference": null,
       "contract_exception": null,
       "notes": "Assurance executor rather than an estate service route.",
-      "exclusions": ["runtime-service-contract"]
+      "exclusions": [
+        "runtime-service-contract"
+      ]
     },
     {
       "repository": "AtlasReaper311/atlas-kit-python-rag",
@@ -292,7 +354,9 @@
       "runbook_reference": null,
       "contract_exception": null,
       "notes": "Library package; consumers own any runtime service contracts.",
-      "exclusions": ["runtime-service-contract"]
+      "exclusions": [
+        "runtime-service-contract"
+      ]
     },
     {
       "repository": "AtlasReaper311/atlas-notify",
@@ -305,7 +369,9 @@
       "runtime_service": true,
       "contract_required": true,
       "public_surface": true,
-      "service_ids": ["atlas-notify"],
+      "service_ids": [
+        "atlas-notify"
+      ],
       "deployment_owner": "AtlasReaper311/atlas-notify",
       "evidence_owner": "AtlasReaper311/atlas-notify",
       "runbook_reference": "docs/runbooks/contract-registry-service-triage.md",
@@ -324,7 +390,9 @@
       "runtime_service": true,
       "contract_required": true,
       "public_surface": false,
-      "service_ids": ["atlas-postmortem"],
+      "service_ids": [
+        "atlas-postmortem"
+      ],
       "deployment_owner": "AtlasReaper311/atlas-postmortem",
       "evidence_owner": "AtlasReaper311/atlas-postmortem",
       "runbook_reference": "docs/runbooks/contract-registry-service-triage.md",
@@ -343,7 +411,9 @@
       "runtime_service": true,
       "contract_required": true,
       "public_surface": true,
-      "service_ids": ["atlas-quota-watch"],
+      "service_ids": [
+        "atlas-quota-watch"
+      ],
       "deployment_owner": "AtlasReaper311/atlas-quota-watch",
       "evidence_owner": "AtlasReaper311/atlas-quota-watch",
       "runbook_reference": "docs/runbooks/contract-registry-service-triage.md",
@@ -368,7 +438,9 @@
       "runbook_reference": null,
       "contract_exception": null,
       "notes": "Scheduled repository workflow, not a routed runtime service.",
-      "exclusions": ["runtime-service-contract"]
+      "exclusions": [
+        "runtime-service-contract"
+      ]
     },
     {
       "repository": "AtlasReaper311/atlas-systems",
@@ -381,7 +453,9 @@
       "runtime_service": true,
       "contract_required": true,
       "public_surface": true,
-      "service_ids": ["atlas-systems"],
+      "service_ids": [
+        "atlas-systems"
+      ],
       "deployment_owner": "AtlasReaper311/atlas-systems",
       "evidence_owner": "AtlasReaper311/atlas-systems",
       "runbook_reference": "docs/runbooks/contract-registry-service-triage.md",
@@ -400,7 +474,9 @@
       "runtime_service": true,
       "contract_required": true,
       "public_surface": true,
-      "service_ids": ["atlas-vault"],
+      "service_ids": [
+        "atlas-vault"
+      ],
       "deployment_owner": "AtlasReaper311/atlas-vault",
       "evidence_owner": "AtlasReaper311/atlas-vault",
       "runbook_reference": "docs/runbooks/contract-registry-service-triage.md",
@@ -419,7 +495,9 @@
       "runtime_service": true,
       "contract_required": true,
       "public_surface": true,
-      "service_ids": ["deploy-watch"],
+      "service_ids": [
+        "deploy-watch"
+      ],
       "deployment_owner": "AtlasReaper311/deploy-watch",
       "evidence_owner": "AtlasReaper311/deploy-watch",
       "runbook_reference": "docs/runbooks/contract-registry-service-triage.md",
@@ -438,7 +516,9 @@
       "runtime_service": true,
       "contract_required": true,
       "public_surface": true,
-      "service_ids": ["github-pulse"],
+      "service_ids": [
+        "github-pulse"
+      ],
       "deployment_owner": "AtlasReaper311/github-pulse",
       "evidence_owner": "AtlasReaper311/github-pulse",
       "runbook_reference": "docs/runbooks/contract-registry-service-triage.md",
@@ -463,7 +543,9 @@
       "runbook_reference": null,
       "contract_exception": null,
       "notes": "Template consumers own their deployed runtime contracts.",
-      "exclusions": ["runtime-service-contract"]
+      "exclusions": [
+        "runtime-service-contract"
+      ]
     },
     {
       "repository": "AtlasReaper311/ramone-edge",
@@ -476,7 +558,9 @@
       "runtime_service": true,
       "contract_required": true,
       "public_surface": true,
-      "service_ids": ["ramone-edge"],
+      "service_ids": [
+        "ramone-edge"
+      ],
       "deployment_owner": "AtlasReaper311/ramone-edge",
       "evidence_owner": "AtlasReaper311/ramone-edge",
       "runbook_reference": "docs/runbooks/contract-registry-service-triage.md",
@@ -495,7 +579,9 @@
       "runtime_service": true,
       "contract_required": true,
       "public_surface": false,
-      "service_ids": ["ramone-memory"],
+      "service_ids": [
+        "ramone-memory"
+      ],
       "deployment_owner": "AtlasReaper311/ramone-memory",
       "evidence_owner": "AtlasReaper311/ramone-memory",
       "runbook_reference": "docs/runbooks/contract-registry-service-triage.md",
@@ -514,7 +600,9 @@
       "runtime_service": true,
       "contract_required": true,
       "public_surface": true,
-      "service_ids": ["ramone-trigger"],
+      "service_ids": [
+        "ramone-trigger"
+      ],
       "deployment_owner": "AtlasReaper311/ramone-voice-trigger",
       "evidence_owner": "AtlasReaper311/ramone-voice-trigger",
       "runbook_reference": "docs/runbooks/contract-registry-service-triage.md",
@@ -533,7 +621,9 @@
       "runtime_service": true,
       "contract_required": true,
       "public_surface": false,
-      "service_ids": ["simple-proxy"],
+      "service_ids": [
+        "simple-proxy"
+      ],
       "deployment_owner": null,
       "evidence_owner": null,
       "runbook_reference": "docs/runbooks/contract-registry-deprecated-route-owner.md",
@@ -558,7 +648,9 @@
       "runtime_service": true,
       "contract_required": true,
       "public_surface": true,
-      "service_ids": ["site-pulse"],
+      "service_ids": [
+        "site-pulse"
+      ],
       "deployment_owner": "AtlasReaper311/site-pulse",
       "evidence_owner": "AtlasReaper311/site-pulse",
       "runbook_reference": "docs/runbooks/contract-registry-service-triage.md",
@@ -577,7 +669,9 @@
       "runtime_service": true,
       "contract_required": true,
       "public_surface": false,
-      "service_ids": ["specular-sentinel"],
+      "service_ids": [
+        "specular-sentinel"
+      ],
       "deployment_owner": "AtlasReaper311/specular-sentinel",
       "evidence_owner": "AtlasReaper311/specular-sentinel",
       "runbook_reference": "docs/runbooks/contract-registry-service-triage.md",
@@ -596,7 +690,9 @@
       "runtime_service": true,
       "contract_required": true,
       "public_surface": true,
-      "service_ids": ["specular-sonify"],
+      "service_ids": [
+        "specular-sonify"
+      ],
       "deployment_owner": "AtlasReaper311/specular-sonify",
       "evidence_owner": "AtlasReaper311/specular-sonify",
       "runbook_reference": "docs/runbooks/contract-registry-service-triage.md",
@@ -615,7 +711,10 @@
       "runtime_service": true,
       "contract_required": true,
       "public_surface": true,
-      "service_ids": ["specular-edge", "specular-telemetry"],
+      "service_ids": [
+        "specular-edge",
+        "specular-telemetry"
+      ],
       "deployment_owner": "AtlasReaper311/specular-telemetry",
       "evidence_owner": "AtlasReaper311/specular-telemetry",
       "runbook_reference": "docs/runbooks/contract-registry-service-triage.md",
@@ -634,7 +733,9 @@
       "runtime_service": true,
       "contract_required": true,
       "public_surface": true,
-      "service_ids": ["status"],
+      "service_ids": [
+        "status"
+      ],
       "deployment_owner": "AtlasReaper311/status",
       "evidence_owner": "AtlasReaper311/status",
       "runbook_reference": "docs/runbooks/contract-registry-service-triage.md",
@@ -659,7 +760,9 @@
       "runbook_reference": null,
       "contract_exception": null,
       "notes": "Reusable kit; example routes do not create a deployed service contract.",
-      "exclusions": ["runtime-service-contract"]
+      "exclusions": [
+        "runtime-service-contract"
+      ]
     }
   ]
 }

@@ -29,6 +29,7 @@ EXPECTED_REPOSITORIES = (
     "AtlasReaper311/atlas-dep-audit",
     "AtlasReaper311/atlas-doc-viewer",
     "AtlasReaper311/atlas-dora",
+    "AtlasReaper311/atlas-eval-harness",
     "AtlasReaper311/atlas-infra",
     "AtlasReaper311/atlas-journey-watch",
     "AtlasReaper311/atlas-kit-python-rag",

@@ -14,14 +14,27 @@
     "repositories"
   ],
   "properties": {
-    "schema_version": {"const": "atlas-contract-registry/estate-registry/v1"},
-    "owner": {"const": "AtlasReaper311/atlas-infra"},
-    "reviewed_at": {"type": "string", "format": "date-time"},
-    "approved_repository_count": {"const": 34},
+    "schema_version": {
+      "const": "atlas-contract-registry/estate-registry/v1"
+    },
+    "owner": {
+      "const": "AtlasReaper311/atlas-infra"
+    },
+    "reviewed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "approved_repository_count": {
+      "const": 35
+    },
     "classification_axes": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["lifecycle", "scope", "provenance"],
+      "required": [
+        "lifecycle",
+        "scope",
+        "provenance"
+      ],
       "properties": {
         "lifecycle": {
           "type": "array",
@@ -29,7 +42,13 @@
           "maxItems": 5,
           "uniqueItems": true,
           "items": {
-            "enum": ["production", "active", "experimental", "deprecated", "archived"]
+            "enum": [
+              "production",
+              "active",
+              "experimental",
+              "deprecated",
+              "archived"
+            ]
           }
         },
         "scope": {
@@ -37,20 +56,30 @@
           "minItems": 2,
           "maxItems": 2,
           "uniqueItems": true,
-          "items": {"enum": ["public", "internal"]}
+          "items": {
+            "enum": [
+              "public",
+              "internal"
+            ]
+          }
         },
         "provenance": {
           "type": "array",
           "minItems": 2,
           "maxItems": 2,
           "uniqueItems": true,
-          "items": {"enum": ["original", "external-derived"]}
+          "items": {
+            "enum": [
+              "original",
+              "external-derived"
+            ]
+          }
         }
       }
     },
     "repositories": {
       "type": "array",
-      "minItems": 34,
+      "minItems": 35,
       "uniqueItems": true,
       "items": {
         "type": "object",
@@ -86,15 +115,45 @@
             "maxLength": 100
           },
           "lifecycle": {
-            "enum": ["production", "active", "experimental", "deprecated", "archived"]
+            "enum": [
+              "production",
+              "active",
+              "experimental",
+              "deprecated",
+              "archived"
+            ]
           },
-          "scope": {"enum": ["public", "internal"]},
-          "provenance": {"enum": ["original", "external-derived"]},
-          "owner": {"type": "string", "minLength": 1, "maxLength": 120},
-          "purpose": {"type": "string", "minLength": 1, "maxLength": 300},
-          "runtime_service": {"type": "boolean"},
-          "contract_required": {"type": "boolean"},
-          "public_surface": {"type": "boolean"},
+          "scope": {
+            "enum": [
+              "public",
+              "internal"
+            ]
+          },
+          "provenance": {
+            "enum": [
+              "original",
+              "external-derived"
+            ]
+          },
+          "owner": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "purpose": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 300
+          },
+          "runtime_service": {
+            "type": "boolean"
+          },
+          "contract_required": {
+            "type": "boolean"
+          },
+          "public_surface": {
+            "type": "boolean"
+          },
           "service_ids": {
             "type": "array",
             "maxItems": 10,
@@ -106,26 +165,42 @@
             }
           },
           "deployment_owner": {
-            "type": ["string", "null"],
+            "type": [
+              "string",
+              "null"
+            ],
             "pattern": "^AtlasReaper311/[A-Za-z0-9._-]+$",
             "maxLength": 128
           },
           "evidence_owner": {
-            "type": ["string", "null"],
+            "type": [
+              "string",
+              "null"
+            ],
             "pattern": "^AtlasReaper311/[A-Za-z0-9._-]+$",
             "maxLength": 128
           },
           "runbook_reference": {
-            "type": ["string", "null"],
+            "type": [
+              "string",
+              "null"
+            ],
             "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))[A-Za-z0-9._/-]+\\.md$",
             "maxLength": 240
           },
           "contract_exception": {
-            "type": ["string", "null"],
+            "type": [
+              "string",
+              "null"
+            ],
             "minLength": 1,
             "maxLength": 240
           },
-          "notes": {"type": "string", "minLength": 1, "maxLength": 500},
+          "notes": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500
+          },
           "exclusions": {
             "type": "array",
             "maxItems": 20,
