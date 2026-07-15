@@ -55,10 +55,15 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ${{ github.repository }}-deploy-worker-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   validate:
     name: Validate
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     defaults:
       run:
         working-directory: ${{ inputs.working_directory }}
@@ -100,6 +105,7 @@ jobs:
     name: Deploy
     needs: validate
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     outputs:
       target_env: ${{ steps.deploy_step.outputs.target_env }}
     defaults:
@@ -139,6 +145,7 @@ jobs:
     needs: [validate, deploy]
     if: ${{ always() }}
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     steps:
       - name: Compose and send embed
         env:
