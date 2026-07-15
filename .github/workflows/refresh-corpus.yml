@@ -5,6 +5,9 @@ on:
     branches: [main]
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 concurrency:
   group: ${{ github.repository }}-refresh-corpus-${{ github.ref }}
   cancel-in-progress: false
