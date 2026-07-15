@@ -56,6 +56,36 @@ class EstatePolicyTests(unittest.TestCase):
             estate_policy.manifest_repositories(manifest),
         )
 
+    def test_explicit_repository_exclusions_are_not_audited(self):
+        manifest = {
+            "repositories": [
+                {"repository": "AtlasReaper311/atlas-infra"},
+                {"repository": "AtlasReaper311/simple-proxy"},
+            ]
+        }
+        self.assertEqual(
+            ["AtlasReaper311/atlas-infra"],
+            estate_policy.manifest_repositories(
+                manifest,
+                {"AtlasReaper311/simple-proxy"},
+            ),
+        )
+
+    def test_explicit_url_exclusions_are_not_audited(self):
+        manifest = {
+            "repositories": [
+                {"url": "https://github.com/AtlasReaper311/simple-proxy"},
+                {"url": "https://github.com/AtlasReaper311/status"},
+            ]
+        }
+        self.assertEqual(
+            ["AtlasReaper311/status"],
+            estate_policy.manifest_repositories(
+                manifest,
+                {"AtlasReaper311/simple-proxy"},
+            ),
+        )
+
     def test_warning_reduces_weighted_score(self):
         policy = {"rules": {}, "banned_words": []}
         files = {
