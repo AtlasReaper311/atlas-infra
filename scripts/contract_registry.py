@@ -30,12 +30,14 @@ EXPECTED_REPOSITORIES = (
     "AtlasReaper311/atlas-doc-viewer",
     "AtlasReaper311/atlas-dora",
     "AtlasReaper311/atlas-eval-harness",
+    "AtlasReaper311/atlas-gardener",
     "AtlasReaper311/atlas-infra",
     "AtlasReaper311/atlas-journey-watch",
     "AtlasReaper311/atlas-kit-python-rag",
     "AtlasReaper311/atlas-notify",
     "AtlasReaper311/atlas-postmortem",
     "AtlasReaper311/atlas-quota-watch",
+    "AtlasReaper311/atlas-resource-audit",
     "AtlasReaper311/atlas-scheduler",
     "AtlasReaper311/atlas-systems",
     "AtlasReaper311/atlas-vault",
@@ -483,7 +485,7 @@ def _validate_registry_inventory(
             rule_id="stale-registry-entry",
             repository=repository,
             location="policy/estate-registry.json",
-            summary="Registry entry is outside the approved 34-repository estate.",
+            summary="Registry entry is outside the approved 36-repository estate.",
         )
 
     axes = registry.get("classification_axes")
