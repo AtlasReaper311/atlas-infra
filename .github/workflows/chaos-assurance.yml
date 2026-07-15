@@ -72,9 +72,41 @@ jobs:
           if-no-files-found: error
           retention-days: 90
 
+  scheduled-live-gate:
+    if: >-
+      github.event_name == 'schedule' &&
+      needs.simulate.result == 'success' &&
+      vars.CHAOS_SCHEDULE_ENABLED == 'true' &&
+      vars.CHAOS_FREEZE != 'true'
+    needs: simulate
+    name: Check scheduled live window
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    outputs:
+      eligible: ${{ steps.calendar.outputs.eligible }}
+    steps:
+      - name: Permit only the first Wednesday in UTC
+        id: calendar
+        shell: bash
+        run: |
+          day="$(date -u +%d)"
+          if ((10#$day <= 7)); then
+            echo "eligible=true" >> "$GITHUB_OUTPUT"
+            echo "Monthly live window is open."
+          else
+            echo "eligible=false" >> "$GITHUB_OUTPUT"
+            echo "Weekly simulation passed; monthly live window is closed."
+          fi
+
   scheduled-live:
-    if: github.event_name == 'schedule' && vars.CHAOS_SCHEDULE_ENABLED == 'true'
-    name: Run approved scheduled canary
+    if: >-
+      needs.simulate.result == 'success' &&
+      needs.scheduled-live-gate.result == 'success' &&
+      needs.scheduled-live-gate.outputs.eligible == 'true'
+    needs:
+      - simulate
+      - scheduled-live-gate
+    name: Run approved monthly canary
     runs-on: ubuntu-latest
     timeout-minutes: 12
     environment: production-chaos
@@ -115,7 +147,10 @@ jobs:
           retention-days: 365
 
   live:
-    if: github.event_name == 'workflow_dispatch' && inputs.mode == 'live'
+    if: >-
+      github.event_name == 'workflow_dispatch' &&
+      inputs.mode == 'live' &&
+      vars.CHAOS_FREEZE != 'true'
     name: Run approved live experiment
     runs-on: ubuntu-latest
     timeout-minutes: 12

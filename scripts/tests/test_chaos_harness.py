@@ -30,6 +30,21 @@ class ChaosHarnessTests(unittest.TestCase):
     def test_valid_experiment(self):
         self.assertEqual([], chaos_harness.validate_experiment(self.experiment()))
 
+    def test_lease_must_be_bounded(self):
+        experiment = self.experiment()
+        lease = {
+            "expires_at": (
+                chaos_harness.datetime.now(chaos_harness.timezone.utc)
+                + chaos_harness.timedelta(seconds=45)
+            ).isoformat().replace("+00:00", "Z")
+        }
+        result = chaos_harness.validate_lease(experiment, lease)
+        self.assertLessEqual(result["remaining_seconds"], 45)
+
+    def test_lease_without_expiry_is_rejected(self):
+        with self.assertRaisesRegex(RuntimeError, "expires_at"):
+            chaos_harness.validate_lease(self.experiment(), {})
+
     def test_unbounded_duration_is_rejected(self):
         experiment = self.experiment()
         experiment["duration_seconds"] = 301
@@ -40,6 +55,8 @@ class ChaosHarnessTests(unittest.TestCase):
     def test_simulation_closes_the_loop(self):
         report = chaos_harness.run_experiment(self.experiment(), "simulate", "")
         self.assertTrue(report["passed"])
+        self.assertTrue(report["stages"]["preflight"]["ok"])
+        self.assertTrue(report["stages"]["injection"]["lease_ttl_verified"])
         self.assertTrue(report["stages"]["detection"]["ok"])
         self.assertTrue(report["stages"]["notification"]["ok"])
         self.assertTrue(report["stages"]["recovery"]["ok"])
