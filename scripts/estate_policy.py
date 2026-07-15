@@ -309,6 +309,23 @@ def markdown_prose(text: str) -> str:
     return "".join(output)
 
 
+
+def documentation_path_excluded(
+    policy: dict[str, Any],
+    rule: str,
+    repo: str,
+    path: str,
+) -> bool:
+    """Return whether one repository-qualified document is outside a prose rule."""
+    configured = policy.get("rules", {}).get(rule, {}).get("excluded_paths", [])
+    if not isinstance(configured, list):
+        return False
+    qualified_path = f"{repo}:{path}"
+    return qualified_path in {
+        item for item in configured if isinstance(item, str) and item
+    }
+
+
 def documentation_findings(
     repo: str,
     path: str,
@@ -574,6 +591,8 @@ def evaluate_repository(
             policy.get("banned_words", BANNED_WORDS),
         )
         for rule in ("prose-dash", "banned-word", "unfinished-copy"):
+            if documentation_path_excluded(policy, rule, full_name, path):
+                continue
             docs_findings[rule].extend(path_findings[rule])
 
     for rule in ("prose-dash", "banned-word", "unfinished-copy"):
@@ -690,6 +709,9 @@ def build_report(
                 "weight": rule_config(policy, rule)["weight"],
                 "severity": rule_config(policy, rule)["severity"],
                 "description": policy.get("rules", {}).get(rule, {}).get("description", ""),
+                "excluded_paths": policy.get("rules", {}).get(rule, {}).get(
+                    "excluded_paths", []
+                ),
             }
             for rule in DEFAULT_RULES
         ],

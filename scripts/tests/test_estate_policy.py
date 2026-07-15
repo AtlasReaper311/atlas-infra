@@ -201,5 +201,48 @@ class EstatePolicyTests(unittest.TestCase):
         self.assertIn("seamless", findings["banned-word"][0].message)
 
 
+    def test_documentation_path_exclusion_is_repository_qualified(self):
+        policy = {
+            "rules": {
+                "prose-dash": {
+                    "excluded_paths": ["owner/repo:docs/decisions.md"],
+                }
+            }
+        }
+        self.assertTrue(
+            estate_policy.documentation_path_excluded(
+                policy,
+                "prose-dash",
+                "owner/repo",
+                "docs/decisions.md",
+            )
+        )
+        self.assertFalse(
+            estate_policy.documentation_path_excluded(
+                policy,
+                "prose-dash",
+                "other/repo",
+                "docs/decisions.md",
+            )
+        )
+
+    def test_documentation_path_exclusion_is_rule_specific(self):
+        policy = {
+            "rules": {
+                "prose-dash": {
+                    "excluded_paths": ["owner/repo:docs/decisions.md"],
+                }
+            }
+        }
+        self.assertFalse(
+            estate_policy.documentation_path_excluded(
+                policy,
+                "unfinished-copy",
+                "owner/repo",
+                "docs/decisions.md",
+            )
+        )
+
+
 if __name__ == "__main__":
     unittest.main()
