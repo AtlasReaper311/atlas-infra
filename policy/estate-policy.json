@@ -1,6 +1,6 @@
 {
   "schema": "atlas-estate-policy/v2",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "banned_words": [
     "leveraged",
     "utilised",
@@ -52,17 +52,17 @@
     "prose-dash": {
       "weight": 5,
       "severity": "warning",
-      "description": "Portfolio-facing prose follows the estate style."
+      "description": "Rendered portfolio-facing prose follows the estate style."
     },
     "banned-word": {
       "weight": 5,
       "severity": "warning",
-      "description": "Portfolio-facing prose avoids banned marketing terms."
+      "description": "Rendered portfolio-facing prose avoids banned marketing terms."
     },
     "unfinished-copy": {
       "weight": 6,
       "severity": "warning",
-      "description": "Public documentation contains no TODO or placeholder copy."
+      "description": "Rendered public documentation contains no TODO or placeholder copy."
     },
     "worker-meta": {
       "weight": 10,

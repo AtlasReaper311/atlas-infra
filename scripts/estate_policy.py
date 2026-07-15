@@ -74,7 +74,7 @@ class GitHubReader:
     def request(self, url: str) -> Any:
         headers = {
             "Accept": "application/vnd.github+json",
-            "User-Agent": "atlas-estate-policy/2.0",
+            "User-Agent": "atlas-estate-policy/2.1",
             "X-GitHub-Api-Version": "2022-11-28",
         }
         if self.token:
@@ -135,7 +135,7 @@ def load_json(source: str) -> dict[str, Any]:
     if source.startswith("https://"):
         request = urllib.request.Request(
             source,
-            headers={"User-Agent": "atlas-estate-policy/2.0"},
+            headers={"User-Agent": "atlas-estate-policy/2.1"},
         )
         with urllib.request.urlopen(request, timeout=30) as response:
             return json.load(response)
@@ -236,6 +236,122 @@ def workflow_timeout_findings(repo: str, path: str, text: str) -> list[Finding]:
                 "workflow-timeout",
                 path,
                 f"Runnable job has no timeout: {job_name}",
+            )
+        )
+    return findings
+
+
+def strip_inline_code(line: str) -> str:
+    """Remove complete Markdown code spans while retaining surrounding prose."""
+    output: list[str] = []
+    index = 0
+    while index < len(line):
+        if line[index] != "`":
+            output.append(line[index])
+            index += 1
+            continue
+        end_of_ticks = index
+        while end_of_ticks < len(line) and line[end_of_ticks] == "`":
+            end_of_ticks += 1
+        delimiter = line[index:end_of_ticks]
+        closing = line.find(delimiter, end_of_ticks)
+        if closing < 0:
+            output.append(delimiter)
+            index = end_of_ticks
+            continue
+        index = closing + len(delimiter)
+    return "".join(output)
+
+
+def markdown_prose(text: str) -> str:
+    """Return rendered Markdown prose, excluding examples and hidden comments."""
+    without_comments = re.sub(
+        r"<!--.*?-->",
+        lambda match: "\n" * match.group(0).count("\n"),
+        text,
+        flags=re.DOTALL,
+    )
+    output: list[str] = []
+    fence_character = ""
+    fence_length = 0
+    for raw_line in without_comments.splitlines(keepends=True):
+        if raw_line.endswith("\r\n"):
+            body = raw_line[:-2]
+            line_ending = "\r\n"
+        elif raw_line.endswith("\n"):
+            body = raw_line[:-1]
+            line_ending = "\n"
+        else:
+            body = raw_line
+            line_ending = ""
+
+        if fence_character:
+            closing = re.fullmatch(
+                rf"[ ]{{0,3}}{re.escape(fence_character)}{{{fence_length},}}[ \t]*",
+                body,
+            )
+            if closing:
+                fence_character = ""
+                fence_length = 0
+            output.append(line_ending)
+            continue
+
+        opening = re.match(r"^[ ]{0,3}(`{3,}|~{3,})", body)
+        if opening:
+            marker = opening.group(1)
+            fence_character = marker[0]
+            fence_length = len(marker)
+            output.append(line_ending)
+            continue
+
+        output.append(strip_inline_code(body))
+        output.append(line_ending)
+    return "".join(output)
+
+
+def documentation_findings(
+    repo: str,
+    path: str,
+    text: str,
+    banned_words: tuple[str, ...] | list[str],
+) -> dict[str, list[Finding]]:
+    """Evaluate only rendered prose, not code examples or HTML comments."""
+    findings: dict[str, list[Finding]] = {
+        "prose-dash": [],
+        "banned-word": [],
+        "unfinished-copy": [],
+    }
+    prose = markdown_prose(text)
+    if "\u2014" in prose:
+        findings["prose-dash"].append(
+            Finding(
+                repo,
+                "warning",
+                "prose-dash",
+                path,
+                "Portfolio-facing prose contains an em dash",
+            )
+        )
+    lowered = prose.lower()
+    for word in banned_words:
+        if re.search(rf"\b{re.escape(word.lower())}\b", lowered):
+            findings["banned-word"].append(
+                Finding(
+                    repo,
+                    "warning",
+                    "banned-word",
+                    path,
+                    f"Portfolio-facing prose contains banned word: {word}",
+                )
+            )
+    if re.search(r"\b(TODO|PLACEHOLDER)\b", prose, re.IGNORECASE):
+        findings["unfinished-copy"].append(
+            Finding(
+                repo,
+                "warning",
+                "unfinished-copy",
+                path,
+                "Portfolio-facing prose contains TODO or placeholder text",
             )
         )
     return findings
@@ -451,38 +567,14 @@ def evaluate_repository(
             text = reader.text(full_name, path, ref)
         except (urllib.error.URLError, urllib.error.HTTPError, ValueError):
             continue
-        if "\u2014" in text:
-            docs_findings["prose-dash"].append(
-                Finding(
-                    full_name,
-                    "warning",
-                    "prose-dash",
-                    path,
-                    "Portfolio-facing prose contains an em dash",
-                )
-            )
-        lowered = text.lower()
-        for word in policy.get("banned_words", BANNED_WORDS):
-            if re.search(rf"\b{re.escape(word.lower())}\b", lowered):
-                docs_findings["banned-word"].append(
-                    Finding(
-                        full_name,
-                        "warning",
-                        "banned-word",
-                        path,
-                        f"Portfolio-facing prose contains banned word: {word}",
-                    )
-                )
-        if re.search(r"\b(TODO|PLACEHOLDER)\b", text, re.IGNORECASE):
-            docs_findings["unfinished-copy"].append(
-                Finding(
-                    full_name,
-                    "warning",
-                    "unfinished-copy",
-                    path,
-                    "Portfolio-facing prose contains TODO or placeholder text",
-                )
-            )
+        path_findings = documentation_findings(
+            full_name,
+            path,
+            text,
+            policy.get("banned_words", BANNED_WORDS),
+        )
+        for rule in ("prose-dash", "banned-word", "unfinished-copy"):
+            docs_findings[rule].extend(path_findings[rule])
 
     for rule in ("prose-dash", "banned-word", "unfinished-copy"):
         results.append(
