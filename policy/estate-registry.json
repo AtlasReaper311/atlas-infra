@@ -1,8 +1,8 @@
 {
   "schema_version": "atlas-contract-registry/estate-registry/v1",
   "owner": "AtlasReaper311/atlas-infra",
-  "reviewed_at": "2026-07-14T17:54:32Z",
-  "approved_repository_count": 35,
+  "reviewed_at": "2026-07-15T00:00:00Z",
+  "approved_repository_count": 37,
   "classification_axes": {
     "lifecycle": [
       "active",
@@ -296,6 +296,27 @@
       ]
     },
     {
+      "repository": "AtlasReaper311/atlas-gardener",
+      "local_directory": "atlas-gardener",
+      "lifecycle": "active",
+      "scope": "internal",
+      "provenance": "original",
+      "owner": "AtlasReaper311",
+      "purpose": "Propose bounded, reviewable estate conformance remediations.",
+      "runtime_service": false,
+      "contract_required": false,
+      "public_surface": false,
+      "service_ids": [],
+      "deployment_owner": null,
+      "evidence_owner": "AtlasReaper311/atlas-gardener",
+      "runbook_reference": null,
+      "contract_exception": null,
+      "notes": "Assurance tooling with no routed runtime service or automatic merge authority.",
+      "exclusions": [
+        "runtime-service-contract"
+      ]
+    },
+    {
       "repository": "AtlasReaper311/atlas-infra",
       "local_directory": "atlas-infra",
       "lifecycle": "active",
@@ -420,6 +441,27 @@
       "contract_exception": null,
       "notes": "Phase 5 policy link is declared by the service contract; no live provider call is performed here.",
       "exclusions": []
+    },
+    {
+      "repository": "AtlasReaper311/atlas-resource-audit",
+      "local_directory": "atlas-resource-audit",
+      "lifecycle": "active",
+      "scope": "internal",
+      "provenance": "original",
+      "owner": "AtlasReaper311",
+      "purpose": "Reconcile declared and observed Cloudflare resources through a read-only deterministic audit.",
+      "runtime_service": false,
+      "contract_required": false,
+      "public_surface": false,
+      "service_ids": [],
+      "deployment_owner": null,
+      "evidence_owner": "AtlasReaper311/atlas-resource-audit",
+      "runbook_reference": null,
+      "contract_exception": null,
+      "notes": "Assurance tooling with no deletion path, deployment path, or routed runtime surface.",
+      "exclusions": [
+        "runtime-service-contract"
+      ]
     },
     {
       "repository": "AtlasReaper311/atlas-scheduler",

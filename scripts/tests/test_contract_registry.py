@@ -82,10 +82,10 @@ class ContractRegistryTests(unittest.TestCase):
     def rules(self, report: dict) -> set[str]:
         return {finding["rule_id"] for finding in report["findings"]}
 
-    def test_canonical_registry_contains_all_35_repositories(self) -> None:
+    def test_canonical_registry_contains_all_37_repositories(self) -> None:
         report = self.validate()
         self.assertEqual("passed", report["status"])
-        self.assertEqual(35, report["repositories_checked"])
+        self.assertEqual(37, report["repositories_checked"])
         self.assertEqual(
             set(contract_registry.EXPECTED_REPOSITORIES),
             {item["repository"] for item in self.registry()["repositories"]},

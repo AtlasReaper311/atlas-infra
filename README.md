@@ -118,7 +118,7 @@ are documented in [`docs/cost-guard.md`](docs/cost-guard.md).
 ### Contract registry
 
 [`policy/estate-registry.json`](policy/estate-registry.json) is the canonical
-34-repository catalogue. Runtime records under
+36-repository catalogue. Runtime records under
 [`policy/service-contracts/`](policy/service-contracts/) conform to the shared
 ServiceContract v1 schema and declare exact route ownership, explicit unknowns,
 dependencies, runbooks, and assurance links. Validate and generate local JSON,

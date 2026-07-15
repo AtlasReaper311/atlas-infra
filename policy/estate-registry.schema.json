@@ -25,7 +25,7 @@
       "format": "date-time"
     },
     "approved_repository_count": {
-      "const": 35
+      "const": 37
     },
     "classification_axes": {
       "type": "object",
@@ -79,7 +79,7 @@
     },
     "repositories": {
       "type": "array",
-      "minItems": 35,
+      "minItems": 37,
       "uniqueItems": true,
       "items": {
         "type": "object",
