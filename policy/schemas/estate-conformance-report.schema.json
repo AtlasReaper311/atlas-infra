@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://atlas-systems.uk/contracts/estate-conformance-report-v1.schema.json",
+  "title": "Atlas estate conformance report",
+  "type": "object",
+  "required": [
+    "schema",
+    "generated_at",
+    "policy_version",
+    "source",
+    "summary",
+    "repositories",
+    "fingerprint"
+  ],
+  "properties": {
+    "schema": {
+      "const": "atlas-estate-conformance-report/v1"
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "policy_version": {
+      "type": "string"
+    },
+    "source": {
+      "type": "object",
+      "required": [
+        "repository",
+        "commit"
+      ],
+      "properties": {
+        "repository": {
+          "type": "string"
+        },
+        "commit": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "summary": {
+      "type": "object",
+      "required": [
+        "repositories_scanned",
+        "repositories_scored",
+        "estate_score",
+        "errors",
+        "warnings",
+        "unknown"
+      ],
+      "properties": {
+        "repositories_scanned": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "repositories_scored": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "estate_score": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 100
+        },
+        "errors": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "warnings": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unknown": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "passing": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "repositories": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "fingerprint": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  },
+  "additionalProperties": true
+}

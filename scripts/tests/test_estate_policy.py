@@ -1,10 +1,24 @@
 import unittest
 from pathlib import Path
-
 import sys
+
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 import estate_policy
+
+
+class FakeReader:
+    def __init__(self, files):
+        self.files = files
+
+    def repo(self, _full_name):
+        return {"default_branch": "main"}
+
+    def tree(self, _full_name, _ref):
+        return [{"path": path, "type": "blob"} for path in self.files]
+
+    def text(self, _full_name, path, _ref):
+        return self.files[path]
 
 
 class EstatePolicyTests(unittest.TestCase):
@@ -41,6 +55,32 @@ class EstatePolicyTests(unittest.TestCase):
             ["AtlasReaper311/status"],
             estate_policy.manifest_repositories(manifest),
         )
+
+    def test_warning_reduces_weighted_score(self):
+        policy = {"rules": {}, "banned_words": []}
+        files = {
+            "README.md": "clean",
+            ".gitignore": "*.pyc\n",
+            "LICENSE": "MIT",
+            ".github/workflows/ci.yml": (
+                "permissions:\n  contents: read\n"
+                "concurrency:\n  group: ci\n"
+                "jobs:\n  test:\n    timeout-minutes: 10\n"
+                "    steps:\n      - uses: actions/checkout@v4\n"
+            ),
+        }
+        report = estate_policy.evaluate_repository(FakeReader(files), "owner/repo", policy)
+        self.assertEqual("warning", report["status"])
+        self.assertLess(report["score"], 100)
+        self.assertGreater(report["score"], 70)
+
+    def test_not_applicable_rules_leave_denominator(self):
+        policy = {"rules": {}, "banned_words": []}
+        files = {"README.md": "clean", ".gitignore": "*.pyc\n", "LICENSE": "MIT"}
+        report = estate_policy.evaluate_repository(FakeReader(files), "owner/repo", policy)
+        npm = next(rule for rule in report["rules"] if rule["rule"] == "npm-lock")
+        self.assertEqual("not_applicable", npm["status"])
+        self.assertEqual(100.0, report["score"])
 
 
 if __name__ == "__main__":

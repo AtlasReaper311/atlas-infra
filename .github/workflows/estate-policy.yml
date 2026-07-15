@@ -29,11 +29,15 @@ jobs:
           python3 -m py_compile scripts/control_plane_contracts.py
           python3 -m py_compile scripts/deploy_orchestrator.py
           python3 -m py_compile scripts/estate_policy.py
+          python3 -m py_compile scripts/chaos_harness.py
+          python3 -m py_compile scripts/publish_evidence.py
           python3 -m py_compile scripts/notify_assurance.py
           python3 -m py_compile scripts/validate_contract_registry.py
           python3 -m py_compile scripts/validate_control_plane_contracts.py
           python3 -m unittest discover -s scripts/tests -v
           python3 scripts/validate_control_plane_contracts.py
+          python3 scripts/chaos_harness.py validate \
+            --policy policy/chaos-experiments.json
           python3 scripts/deploy_orchestrator.py validate \
             --output reports/deploy-policy-validation.json \
             --markdown reports/deploy-policy-validation.md \
@@ -73,6 +77,15 @@ jobs:
             --json reports/estate-policy.json
           cat reports/estate-policy.md >> "$GITHUB_STEP_SUMMARY"
 
+      - name: Publish public conformance evidence
+        if: always()
+        env:
+          EVIDENCE_REPORT_KEY: ${{ secrets.EVIDENCE_REPORT_KEY }}
+        run: |
+          python3 scripts/publish_evidence.py \
+            --kind conformance \
+            --file reports/estate-policy.json
+
       - name: Upload policy report
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
@@ -89,13 +102,18 @@ jobs:
           NOTIFY_TOKEN: ${{ secrets.NOTIFY_TOKEN }}
           ERRORS: ${{ steps.policy.outputs.errors }}
           WARNINGS: ${{ steps.policy.outputs.warnings }}
+          SCORE: ${{ steps.policy.outputs.score }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           LEVEL="warning"
           if [ "${ERRORS:-0}" != "0" ]; then
             LEVEL="failure"
           fi
-          python3 scripts/notify_assurance.py             --title "Estate policy findings"             --level "$LEVEL"             --message "${ERRORS:-0} errors and ${WARNINGS:-0} warnings across the declared repository estate."             --url "$RUN_URL"
+          python3 scripts/notify_assurance.py \
+            --title "Estate policy findings" \
+            --level "$LEVEL" \
+            --message "${ERRORS:-0} errors and ${WARNINGS:-0} warnings; estate score ${SCORE:-unknown}." \
+            --url "$RUN_URL"
 
       - name: Fail on policy errors
         if: steps.policy.outputs.errors != '0'

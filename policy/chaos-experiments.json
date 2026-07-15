@@ -1,0 +1,63 @@
+{
+  "schema": "atlas-chaos-policy/v1",
+  "version": "1.0.0",
+  "defaults": {
+    "scheduled_mode": "simulate",
+    "maximum_duration_seconds": 300,
+    "live_requires_protected_environment": true
+  },
+  "experiments": [
+    {
+      "id": "specular-route-503-v1",
+      "version": "1.0.0",
+      "target": "specular-edge",
+      "control_url": "https://api.atlas-systems.uk/specular/__chaos",
+      "probe_url": "https://api.atlas-systems.uk/specular",
+      "notification_url": "https://api.atlas-systems.uk/notify/recent",
+      "fault": "status_503",
+      "duration_seconds": 45,
+      "expectations": {
+        "detect_within_seconds": 30,
+        "recover_within_seconds": 60
+      },
+      "rollback": {
+        "method": "delete_control_lease"
+      }
+    },
+    {
+      "id": "specular-latency-v1",
+      "version": "1.0.0",
+      "target": "specular-edge",
+      "control_url": "https://api.atlas-systems.uk/specular/__chaos",
+      "probe_url": "https://api.atlas-systems.uk/specular",
+      "notification_url": "https://api.atlas-systems.uk/notify/recent",
+      "fault": "latency",
+      "latency_ms": 2000,
+      "duration_seconds": 45,
+      "expectations": {
+        "detect_within_seconds": 30,
+        "recover_within_seconds": 60
+      },
+      "rollback": {
+        "method": "delete_control_lease"
+      }
+    },
+    {
+      "id": "specular-kv-reject-v1",
+      "version": "1.0.0",
+      "target": "specular-edge",
+      "control_url": "https://api.atlas-systems.uk/specular/__chaos",
+      "probe_url": "https://api.atlas-systems.uk/specular",
+      "notification_url": "https://api.atlas-systems.uk/notify/recent",
+      "fault": "kv_write_reject",
+      "duration_seconds": 45,
+      "expectations": {
+        "detect_within_seconds": 30,
+        "recover_within_seconds": 60
+      },
+      "rollback": {
+        "method": "delete_control_lease"
+      }
+    }
+  ]
+}

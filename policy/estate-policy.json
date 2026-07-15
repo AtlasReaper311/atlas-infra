@@ -1,10 +1,73 @@
 {
-  "schema": "atlas-estate-policy/v1",
+  "schema": "atlas-estate-policy/v2",
+  "version": "2.0.0",
   "banned_words": [
-    "le\u0076eraged",
-    "util\u0069sed",
-    "ro\u0062ust",
-    "sea\u006dless"
+    "leveraged",
+    "utilised",
+    "robust",
+    "seamless"
   ],
-  "failure_rule": "Errors fail the workflow. Warnings remain visible without blocking existing repositories during adoption."
+  "failure_rule": "Errors fail the workflow. Warnings reduce the public score without blocking adoption.",
+  "rules": {
+    "readme": {
+      "weight": 10,
+      "severity": "error",
+      "description": "A public repository has a README."
+    },
+    "license": {
+      "weight": 4,
+      "severity": "warning",
+      "description": "A top-level licence file exists."
+    },
+    "gitignore": {
+      "weight": 4,
+      "severity": "warning",
+      "description": "A repository-specific .gitignore exists."
+    },
+    "npm-lock": {
+      "weight": 12,
+      "severity": "error",
+      "description": "Node dependencies are locked when package.json exists."
+    },
+    "workflow-permissions": {
+      "weight": 10,
+      "severity": "warning",
+      "description": "Workflows declare top-level permissions."
+    },
+    "workflow-timeout": {
+      "weight": 8,
+      "severity": "warning",
+      "description": "Workflow jobs have bounded execution."
+    },
+    "workflow-concurrency": {
+      "weight": 8,
+      "severity": "warning",
+      "description": "Workflows declare a concurrency policy."
+    },
+    "actions-pin": {
+      "weight": 18,
+      "severity": "warning",
+      "description": "Third-party actions use immutable full commit SHAs."
+    },
+    "prose-dash": {
+      "weight": 5,
+      "severity": "warning",
+      "description": "Portfolio-facing prose follows the estate style."
+    },
+    "banned-word": {
+      "weight": 5,
+      "severity": "warning",
+      "description": "Portfolio-facing prose avoids banned marketing terms."
+    },
+    "unfinished-copy": {
+      "weight": 6,
+      "severity": "warning",
+      "description": "Public documentation contains no TODO or placeholder copy."
+    },
+    "worker-meta": {
+      "weight": 10,
+      "severity": "warning",
+      "description": "Cloudflare Workers visibly implement the /_meta convention."
+    }
+  }
 }
