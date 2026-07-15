@@ -82,7 +82,7 @@ python3 scripts/deploy_orchestrator.py plan \
 ```
 
 `--commit` accepts only a full lowercase 40- or 64-character commit. Without
-it, the plan uses an explicit `FULL_COMMIT_REQUIRED` placeholder in inert
+it, the plan uses the explicit `FULL_COMMIT_REQUIRED` sentinel value in inert
 release-watch inputs. A future approved dispatcher must resolve the ref and
 prove all required checks are green before dispatch.
 

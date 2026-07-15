@@ -772,18 +772,18 @@ Identifiers such as account IDs and zone IDs are not secret values, even when st
 
 The master prompt's numbered order is retained. Each phase stops for review and produces one focused branch per changed repository.
 
-1. **Phase 1 — shared contracts.** Schemas, fixtures, compatibility policy, fingerprints, and assurance integration. Gate: positive/negative tests and idempotent validation pass.
-2. **Phase 2 — gardener.** Dry-run first; then a manually enabled draft-PR path. Gate: malicious fixtures, unsafe-path tests, deterministic second run, and no permissions outside the selected repositories.
-3. **Phase 3 — release watch.** Event correlation and targeted journeys. Gate: canary deployment proves success, failure, timeout, unknown identity, and deduplication.
-4. **Phase 4 — secret watch.** Declarations and metadata only. Gate: test repositories prove missing/stale/unknown outcomes without logging a value.
-5. **Phase 5 — cost guard.** Shadow history first; alerts disabled until projection is compared with current quota output. Gate: bounded retention and transition-only notifications.
-6. **Phase 6 — contract registry.** Reconcile all 34 repositories and current services. Gate: manifest, source, metadata, and live observations report explicit drift; no public route regression.
-7. **Phase 7 — deploy orchestrator.** Start with one non-production Worker and one Pages project. Gate: approval, concurrency, partial failure, and rerun behavior proven; target credentials remain local.
-8. **Phase 8 — backup audit.** Freshness checks before restore drills. Gate: at least one disposable restore drill per storage class, with no production overwrite path.
-9. **Phase 9 — cockpit and Ramone expansion.** Complete the protected live compatibility export; add the cloud summary and nine-operation OpenAPI gateway; shadow the sensor-only custom integration; add the disabled OpenWebUI tool server; then assign the additional read-only group to the existing Ramone identity and verify text and voice paths. Gate: Home Assistant config check, exact ten-entity exposure, exact nine-tool OpenAPI, prompt/tool digest preservation, read-token isolation, fixture rendering, all six state behaviors, refusal/adversarial tests, existing-capability regressions, outage matrix, audit correlation, rollback rehearsal, and request budget.
-10. **Phase 10 — runbook bot.** Generate and validate deterministic index. Gate: exact, fallback, ambiguous, missing, and stale runbook tests.
-11. **Phase 11 — evidence ledger.** Shadow ingest and rebuild first, then public summaries. Gate: digest verification, TTL/pruning, access controls, rebuild, and redaction.
-12. **Phase 12 — estate integration.** Manifest, dependencies, decisions, runbooks, journeys, usage calculation, clean-clone tests, and one PR per repository.
+1. **Phase 1: shared contracts.** Schemas, fixtures, compatibility policy, fingerprints, and assurance integration. Gate: positive/negative tests and idempotent validation pass.
+2. **Phase 2: gardener.** Dry-run first; then a manually enabled draft-PR path. Gate: malicious fixtures, unsafe-path tests, deterministic second run, and no permissions outside the selected repositories.
+3. **Phase 3: release watch.** Event correlation and targeted journeys. Gate: canary deployment proves success, failure, timeout, unknown identity, and deduplication.
+4. **Phase 4: secret watch.** Declarations and metadata only. Gate: test repositories prove missing/stale/unknown outcomes without logging a value.
+5. **Phase 5: cost guard.** Shadow history first; alerts disabled until projection is compared with current quota output. Gate: bounded retention and transition-only notifications.
+6. **Phase 6: contract registry.** Reconcile all 34 repositories and current services. Gate: manifest, source, metadata, and live observations report explicit drift; no public route regression.
+7. **Phase 7: deploy orchestrator.** Start with one non-production Worker and one Pages project. Gate: approval, concurrency, partial failure, and rerun behavior proven; target credentials remain local.
+8. **Phase 8: backup audit.** Freshness checks before restore drills. Gate: at least one disposable restore drill per storage class, with no production overwrite path.
+9. **Phase 9: cockpit and Ramone expansion.** Complete the protected live compatibility export; add the cloud summary and nine-operation OpenAPI gateway; shadow the sensor-only custom integration; add the disabled OpenWebUI tool server; then assign the additional read-only group to the existing Ramone identity and verify text and voice paths. Gate: Home Assistant config check, exact ten-entity exposure, exact nine-tool OpenAPI, prompt/tool digest preservation, read-token isolation, fixture rendering, all six state behaviors, refusal/adversarial tests, existing-capability regressions, outage matrix, audit correlation, rollback rehearsal, and request budget.
+10. **Phase 10: runbook bot.** Generate and validate deterministic index. Gate: exact, fallback, ambiguous, missing, and stale runbook tests.
+11. **Phase 11: evidence ledger.** Shadow ingest and rebuild first, then public summaries. Gate: digest verification, TTL/pruning, access controls, rebuild, and redaction.
+12. **Phase 12: estate integration.** Manifest, dependencies, decisions, runbooks, journeys, usage calculation, clean-clone tests, and one PR per repository.
 
 No phase automatically advances to the next. No production deployment, merge, secret creation, or restore occurs without separate owner approval.
 
