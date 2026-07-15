@@ -78,7 +78,7 @@ jobs:
           cat reports/estate-policy.md >> "$GITHUB_STEP_SUMMARY"
 
       - name: Publish public conformance evidence
-        if: always()
+        if: always() && hashFiles('reports/estate-policy.json') != ''
         env:
           EVIDENCE_REPORT_KEY: ${{ secrets.EVIDENCE_REPORT_KEY }}
         run: |
@@ -87,7 +87,7 @@ jobs:
             --file reports/estate-policy.json
 
       - name: Upload policy report
-        if: always()
+        if: always() && hashFiles('reports/**') != ''
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: estate-policy-${{ github.run_id }}
