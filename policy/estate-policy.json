@@ -69,5 +69,8 @@
       "severity": "warning",
       "description": "Cloudflare Workers visibly implement the /_meta convention."
     }
-  }
+  },
+  "excluded_repositories": [
+    "AtlasReaper311/simple-proxy"
+  ]
 }

@@ -149,18 +149,25 @@ def normalize_repo(url: str) -> str:
     return cleaned
 
 
-def manifest_repositories(manifest: dict[str, Any]) -> list[str]:
+def manifest_repositories(
+    manifest: dict[str, Any],
+    excluded_repositories: set[str] | None = None,
+) -> list[str]:
+    excluded = excluded_repositories or set()
     repositories: set[str] = set()
     for item in manifest.get("repositories", []):
         if not isinstance(item, dict):
             continue
         full_name = item.get("repository")
         if isinstance(full_name, str) and full_name:
-            repositories.add(full_name)
+            if full_name not in excluded:
+                repositories.add(full_name)
             continue
         url = item.get("url")
         if isinstance(url, str) and url:
-            repositories.add(normalize_repo(url))
+            normalized = normalize_repo(url)
+            if normalized not in excluded:
+                repositories.add(normalized)
     return sorted(repositories)
 
 
@@ -632,7 +639,12 @@ def main() -> int:
     policy = load_json(args.policy)
     token = os.getenv("GH_DIGEST_PAT") or os.getenv("GITHUB_TOKEN")
     reader = GitHubReader(token)
-    repositories = manifest_repositories(manifest)
+    excluded_repositories = {
+        item
+        for item in policy.get("excluded_repositories", [])
+        if isinstance(item, str) and item
+    }
+    repositories = manifest_repositories(manifest, excluded_repositories)
 
     reports = []
     for repository in repositories:
