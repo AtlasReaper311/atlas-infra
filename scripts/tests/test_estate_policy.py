@@ -148,5 +148,58 @@ class EstatePolicyTests(unittest.TestCase):
         self.assertIn("unbounded", findings[0].message)
 
 
+    def test_documentation_rules_ignore_inline_code_examples(self):
+        text = (
+            "Avoid `leveraged`, `utilised`, `robust`, and `seamless`.\n"
+            "Do not leave `TODO`, `PLACEHOLDER`, or the `—` character in prose.\n"
+        )
+        findings = estate_policy.documentation_findings(
+            "owner/repo",
+            "docs/instructions.md",
+            text,
+            estate_policy.BANNED_WORDS,
+        )
+        self.assertTrue(all(not items for items in findings.values()))
+
+    def test_documentation_rules_ignore_fenced_examples_and_comments(self):
+        text = (
+            "Examples:\n"
+            "```text\n"
+            "TODO: replace this robust — placeholder.\n"
+            "```\n"
+            "<!-- TODO: hidden author note. -->\n"
+        )
+        findings = estate_policy.documentation_findings(
+            "owner/repo",
+            "docs/instructions.md",
+            text,
+            estate_policy.BANNED_WORDS,
+        )
+        self.assertTrue(all(not items for items in findings.values()))
+
+    def test_documentation_rules_still_flag_rendered_prose(self):
+        text = "TODO: write a robust summary — this remains unfinished.\n"
+        findings = estate_policy.documentation_findings(
+            "owner/repo",
+            "README.md",
+            text,
+            estate_policy.BANNED_WORDS,
+        )
+        self.assertEqual(1, len(findings["prose-dash"]))
+        self.assertEqual(1, len(findings["banned-word"]))
+        self.assertEqual(1, len(findings["unfinished-copy"]))
+
+    def test_documentation_rules_keep_rendered_prose_around_code(self):
+        text = "Never say `robust`, but this seamless claim is still rendered.\n"
+        findings = estate_policy.documentation_findings(
+            "owner/repo",
+            "README.md",
+            text,
+            estate_policy.BANNED_WORDS,
+        )
+        self.assertEqual(1, len(findings["banned-word"]))
+        self.assertIn("seamless", findings["banned-word"][0].message)
+
+
 if __name__ == "__main__":
     unittest.main()
