@@ -18,7 +18,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
@@ -63,6 +63,38 @@ def utc_now() -> str:
 
 def monotonic_ms() -> int:
     return int(time.monotonic() * 1000)
+
+
+def parse_timestamp(value: str) -> datetime:
+    parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    if parsed.tzinfo is None:
+        raise ValueError("timestamp must include a timezone")
+    return parsed.astimezone(timezone.utc)
+
+
+def validate_lease(experiment: dict[str, Any], lease: dict[str, Any]) -> dict[str, Any]:
+    if not isinstance(lease, dict):
+        raise RuntimeError("control endpoint returned no lease object")
+    expires_at = lease.get("expires_at")
+    if not isinstance(expires_at, str) or not expires_at:
+        raise RuntimeError("control lease has no expires_at timestamp")
+    try:
+        expiry = parse_timestamp(expires_at)
+    except (TypeError, ValueError) as error:
+        raise RuntimeError("control lease expires_at is invalid") from error
+    remaining = (expiry - datetime.now(timezone.utc)).total_seconds()
+    maximum = int(experiment["duration_seconds"]) + 15
+    if remaining <= 0:
+        raise RuntimeError("control lease is already expired")
+    if remaining > maximum:
+        raise RuntimeError(
+            f"control lease exceeds the bounded duration: {remaining:.1f}s > {maximum}s"
+        )
+    return {
+        "expires_at": expires_at,
+        "remaining_seconds": round(remaining, 3),
+        "maximum_seconds": maximum,
+    }
 
 
 def load_json(path: str | Path) -> dict[str, Any]:
@@ -138,12 +170,18 @@ class SimulatedAdapter:
     def __init__(self) -> None:
         self.active: dict[str, dict[str, Any]] = {}
 
+    def preflight(self, _experiment: dict[str, Any], _token: str) -> Observation:
+        return Observation(True, "simulated target is healthy", status=200, latency_ms=1)
+
     def activate(self, experiment: dict[str, Any], _token: str) -> dict[str, Any]:
         record = {
             "experiment_id": experiment["id"],
             "fault": experiment["fault"],
             "activated_at": utc_now(),
-            "expires_at": utc_now(),
+            "expires_at": (
+                datetime.now(timezone.utc)
+                + timedelta(seconds=int(experiment["duration_seconds"]))
+            ).isoformat().replace("+00:00", "Z"),
         }
         self.active[experiment["id"]] = record
         return record
@@ -213,6 +251,50 @@ class LiveAdapter:
                 {key.lower(): value for key, value in error.headers.items()},
                 monotonic_ms() - started,
             )
+
+    def preflight(self, experiment: dict[str, Any], token: str) -> Observation:
+        control_status, control_body, _, control_latency = self._request(
+            experiment["control_url"],
+            token=token,
+            timeout=10,
+        )
+        if control_status != 200:
+            return Observation(
+                False,
+                f"control preflight returned HTTP {control_status}",
+                control_status,
+                control_latency,
+            )
+        try:
+            control = json.loads(control_body)
+        except json.JSONDecodeError:
+            return Observation(
+                False,
+                "control preflight returned invalid JSON",
+                control_status,
+                control_latency,
+            )
+        if control.get("active"):
+            return Observation(
+                False,
+                "another chaos lease is already active",
+                control_status,
+                control_latency,
+            )
+        health = self.probe_recovery(experiment)
+        if not health.observed:
+            return Observation(
+                False,
+                f"baseline target is unhealthy: {health.detail}",
+                health.status,
+                health.latency_ms,
+            )
+        return Observation(
+            True,
+            "control plane is clear and baseline target is healthy",
+            health.status,
+            max(control_latency, health.latency_ms or 0),
+        )
 
     def activate(self, experiment: dict[str, Any], token: str) -> dict[str, Any]:
         payload = {
@@ -316,6 +398,11 @@ def build_report(experiment: dict[str, Any], mode: str, stages: dict[str, Any], 
             "duration_seconds": experiment["duration_seconds"],
             "rollback_method": experiment["rollback"]["method"],
             "allowlisted_target": True,
+            "baseline_healthy": bool(stages.get("preflight", {}).get("ok")),
+            "lease_ttl_verified": bool(
+                stages.get("injection", {}).get("lease_ttl_verified")
+            ),
+            "rollback_verified": bool(stages.get("recovery", {}).get("ok")),
         },
         "source": {
             "repository": os.getenv("GITHUB_REPOSITORY", "AtlasReaper311/atlas-infra"),
@@ -339,14 +426,30 @@ def run_experiment(experiment: dict[str, Any], mode: str, token: str) -> dict[st
     rollback_error = None
     activated = False
     try:
+        preflight_started = monotonic_ms()
+        preflight = adapter.preflight(experiment, token)
+        stages["preflight"] = {
+            "ok": bool(preflight.observed),
+            "at": utc_now(),
+            "latency_ms": monotonic_ms() - preflight_started,
+            "detail": preflight.detail,
+            "status": preflight.status,
+            "probe_latency_ms": preflight.latency_ms,
+        }
+        if not preflight.observed:
+            return build_report(experiment, mode, stages, False)
+
         activated_at = monotonic_ms()
         lease = adapter.activate(experiment, token)
         activated = True
+        ttl = validate_lease(experiment, lease)
         stages["injection"] = {
             "ok": True,
             "at": utc_now(),
             "latency_ms": monotonic_ms() - activated_at,
             "lease": lease,
+            "lease_ttl_verified": True,
+            "lease_ttl": ttl,
         }
 
         observation, detection_ms = wait_until(
@@ -382,6 +485,17 @@ def run_experiment(experiment: dict[str, Any], mode: str, token: str) -> dict[st
             "latency_ms": notification_ms,
             "expected": expected_notification,
         }
+    except Exception as error:  # noqa: BLE001
+        stages.setdefault(
+            "injection",
+            {
+                "ok": False,
+                "at": utc_now(),
+                "latency_ms": None,
+                "detail": str(error),
+                "lease_ttl_verified": False,
+            },
+        )
     finally:
         if activated:
             rollback_started = monotonic_ms()
@@ -408,7 +522,10 @@ def run_experiment(experiment: dict[str, Any], mode: str, token: str) -> dict[st
                     "detail": rollback_error,
                 }
 
-    passed = all(stages.get(name, {}).get("ok") for name in ("injection", "detection", "notification", "recovery"))
+    passed = all(
+        stages.get(name, {}).get("ok")
+        for name in ("preflight", "injection", "detection", "notification", "recovery")
+    )
     if rollback_error:
         passed = False
     return build_report(experiment, mode, stages, passed)
@@ -438,13 +555,14 @@ def write_reports(reports: list[dict[str, Any]], output: Path, markdown: Path) -
         f"Passed: **{document['summary']['passed']}**  ",
         f"Failed: **{document['summary']['failed']}**",
         "",
-        "| Experiment | Fault | Detection | Notification | Recovery | Verdict |",
-        "|---|---|---:|---:|---:|---|",
+        "| Experiment | Fault | Preflight | Detection | Notification | Recovery | Verdict |",
+        "|---|---|---|---:|---:|---:|---|",
     ]
     for item in reports:
         stages = item["stages"]
         lines.append(
             f"| `{item['experiment_id']}` | `{item['fault']}` | "
+            f"{'pass' if stages.get('preflight', {}).get('ok') else 'fail'} | "
             f"{stages.get('detection', {}).get('latency_ms', 'n/a')}ms | "
             f"{stages.get('notification', {}).get('latency_ms', 'n/a')}ms | "
             f"{stages.get('recovery', {}).get('latency_ms', 'n/a')}ms | "
