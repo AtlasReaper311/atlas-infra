@@ -34,6 +34,29 @@ MAX_DETECTION_SECONDS = 300
 ALLOWED_HOST_SUFFIXES = ("atlas-systems.uk", "workers.dev", "localhost", "127.0.0.1")
 
 
+def canonical_json_value(value):
+    """Match JSON.stringify number semantics before cross-runtime hashing."""
+    if isinstance(value, dict):
+        return {
+            key: canonical_json_value(item)
+            for key, item in value.items()
+        }
+    if isinstance(value, list):
+        return [canonical_json_value(item) for item in value]
+    if isinstance(value, float) and value.is_integer():
+        return int(value)
+    return value
+
+
+def canonical_json_bytes(value) -> bytes:
+    normalized = canonical_json_value(value)
+    return json.dumps(
+        normalized,
+        sort_keys=True,
+        separators=(",", ":"),
+        ensure_ascii=False,
+    ).encode("utf-8")
+
 def utc_now() -> str:
     return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
 
@@ -305,7 +328,7 @@ def build_report(experiment: dict[str, Any], mode: str, stages: dict[str, Any], 
             ),
         },
     }
-    canonical = json.dumps(report, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    canonical = canonical_json_bytes(report)
     report["fingerprint"] = hashlib.sha256(canonical).hexdigest()
     return report
 
@@ -403,7 +426,7 @@ def write_reports(reports: list[dict[str, Any]], output: Path, markdown: Path) -
         },
         "experiments": reports,
     }
-    canonical = json.dumps(document, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    canonical = canonical_json_bytes(document)
     document["fingerprint"] = hashlib.sha256(canonical).hexdigest()
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(document, indent=2, sort_keys=True) + "\n", encoding="utf-8")
