@@ -104,6 +104,29 @@ class GitHubReader:
         return base64.b64decode(payload["content"]).decode("utf-8", errors="replace")
 
 
+def canonical_json_value(value):
+    """Match JSON.stringify number semantics before cross-runtime hashing."""
+    if isinstance(value, dict):
+        return {
+            key: canonical_json_value(item)
+            for key, item in value.items()
+        }
+    if isinstance(value, list):
+        return [canonical_json_value(item) for item in value]
+    if isinstance(value, float) and value.is_integer():
+        return int(value)
+    return value
+
+
+def canonical_json_bytes(value) -> bytes:
+    normalized = canonical_json_value(value)
+    return json.dumps(
+        normalized,
+        sort_keys=True,
+        separators=(",", ":"),
+        ensure_ascii=False,
+    ).encode("utf-8")
+
 def utc_now() -> str:
     return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
 
@@ -543,7 +566,7 @@ def build_report(
             "unknown": "unscored",
         },
     }
-    canonical = json.dumps(report, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    canonical = canonical_json_bytes(report)
     report["fingerprint"] = hashlib.sha256(canonical).hexdigest()
     return report
 
