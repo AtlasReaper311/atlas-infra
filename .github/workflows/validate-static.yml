@@ -70,7 +70,7 @@ jobs:
     env:
       HTML_GLOB: ${{ inputs.html_glob }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
       - name: Check README style
         run: |
           set -euo pipefail
@@ -80,7 +80,7 @@ jobs:
           grep -q "Part of \[atlas-systems.uk\](https://atlas-systems.uk)" README.md
           grep -q "labelColor=0a0a0f" README.md
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: "22"
 
@@ -88,7 +88,7 @@ jobs:
         run: npx --yes html-validate@9 "$HTML_GLOB"
 
       - name: Check internal links (offline)
-        uses: lycheeverse/lychee-action@v2
+        uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2
         with:
           # --offline skips all http(s) URLs, so a flaky external site never
           # blocks a deploy; only relative and root-relative links are checked.
@@ -103,7 +103,7 @@ jobs:
     outputs:
       deployed: ${{ steps.deploy_step.outputs.deployed }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
       - name: Inject build metadata
         if: ${{ inputs.inject_build_meta }}
@@ -118,7 +118,7 @@ jobs:
           sed -i "0,/<\/head>/s||  <meta name=\"build-commit\" content=\"${COMMIT_SHA}\">\n  <meta name=\"build-time\" content=\"${BUILT}\">\n|" index.html
           echo "Injected build-commit=${COMMIT_SHA} build-time=${BUILT}"
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: "22"
 
