@@ -113,5 +113,40 @@ class EstatePolicyTests(unittest.TestCase):
         self.assertEqual(100.0, report["score"])
 
 
+    def test_reusable_caller_job_does_not_require_timeout(self):
+        workflow = (
+            "jobs:\n"
+            "  deploy:\n"
+            "    uses: owner/repo/.github/workflows/deploy.yml@main\n"
+        )
+        self.assertEqual(
+            [],
+            estate_policy.workflow_timeout_findings(
+                "owner/repo",
+                ".github/workflows/deploy.yml",
+                workflow,
+            ),
+        )
+
+    def test_each_runnable_job_requires_its_own_timeout(self):
+        workflow = (
+            "jobs:\n"
+            "  bounded:\n"
+            "    runs-on: ubuntu-latest\n"
+            "    timeout-minutes: 10\n"
+            "    steps: []\n"
+            "  unbounded:\n"
+            "    runs-on: ubuntu-latest\n"
+            "    steps: []\n"
+        )
+        findings = estate_policy.workflow_timeout_findings(
+            "owner/repo",
+            ".github/workflows/ci.yml",
+            workflow,
+        )
+        self.assertEqual(1, len(findings))
+        self.assertIn("unbounded", findings[0].message)
+
+
 if __name__ == "__main__":
     unittest.main()

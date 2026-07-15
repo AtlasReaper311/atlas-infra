@@ -63,10 +63,15 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ${{ github.repository }}-validate-static-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   validate:
     name: Validate HTML and links
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     env:
       HTML_GLOB: ${{ inputs.html_glob }}
     steps:
@@ -100,6 +105,7 @@ jobs:
     name: Deploy to Cloudflare Pages
     needs: validate
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     outputs:
       deployed: ${{ steps.deploy_step.outputs.deployed }}
     steps:
@@ -160,6 +166,7 @@ jobs:
     needs: [validate, deploy]
     if: ${{ always() }}
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     steps:
       - name: Compose and send embed
         env:

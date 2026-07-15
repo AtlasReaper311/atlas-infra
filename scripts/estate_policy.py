@@ -195,6 +195,51 @@ def action_ref_findings(repo: str, path: str, text: str) -> list[Finding]:
     return findings
 
 
+
+def workflow_timeout_findings(repo: str, path: str, text: str) -> list[Finding]:
+    """Require bounds only on jobs that execute directly on a runner."""
+    lines = text.splitlines()
+    jobs_start = next(
+        (index for index, line in enumerate(lines) if re.fullmatch(r"jobs:\s*", line)),
+        None,
+    )
+    if jobs_start is None:
+        return []
+
+    jobs_end = len(lines)
+    for index in range(jobs_start + 1, len(lines)):
+        line = lines[index]
+        if line and not line.startswith((" ", "#")):
+            jobs_end = index
+            break
+
+    headers: list[tuple[str, int]] = []
+    for index in range(jobs_start + 1, jobs_end):
+        match = re.fullmatch(r"  ([A-Za-z0-9_-]+):\s*(?:#.*)?", lines[index])
+        if match:
+            headers.append((match.group(1), index))
+
+    findings = []
+    for offset, (job_name, start) in enumerate(headers):
+        end = headers[offset + 1][1] if offset + 1 < len(headers) else jobs_end
+        block = "\n".join(lines[start:end])
+        if re.search(r"^    uses:\s*", block, re.MULTILINE):
+            continue
+        if not re.search(r"^    runs-on:\s*", block, re.MULTILINE):
+            continue
+        if re.search(r"^    timeout-minutes:\s*", block, re.MULTILINE):
+            continue
+        findings.append(
+            Finding(
+                repo,
+                "warning",
+                "workflow-timeout",
+                path,
+                f"Runnable job has no timeout: {job_name}",
+            )
+        )
+    return findings
+
 def rule_config(policy: dict[str, Any], rule: str) -> dict[str, Any]:
     configured = policy.get("rules", {}).get(rule, {})
     fallback = DEFAULT_RULES[rule]
@@ -359,16 +404,9 @@ def evaluate_repository(
                     "Workflow has no explicit top-level permissions block",
                 )
             )
-        if "timeout-minutes:" not in text:
-            workflow_findings["workflow-timeout"].append(
-                Finding(
-                    full_name,
-                    "warning",
-                    "workflow-timeout",
-                    path,
-                    "Workflow declares no job timeout",
-                )
-            )
+        workflow_findings["workflow-timeout"].extend(
+            workflow_timeout_findings(full_name, path, text)
+        )
         if not re.search(r"^concurrency:\s*$", text, re.MULTILINE):
             workflow_findings["workflow-concurrency"].append(
                 Finding(
