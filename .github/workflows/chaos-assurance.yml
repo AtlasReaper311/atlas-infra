@@ -1,0 +1,162 @@
+name: Chaos assurance
+
+on:
+  schedule:
+    - cron: "41 8 * * 3"
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "simulate is read-only; live requires the protected production-chaos environment"
+        required: true
+        default: "simulate"
+        type: choice
+        options:
+          - simulate
+          - live
+      experiment:
+        description: "Optional experiment id; empty runs every declared experiment"
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: chaos-assurance
+  cancel-in-progress: false
+
+jobs:
+  simulate:
+    if: github.event_name == 'schedule' || inputs.mode != 'live'
+    name: Validate and simulate experiments
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Run deterministic assurance simulation
+        env:
+          EXPERIMENT: ${{ inputs.experiment }}
+        run: |
+          python3 scripts/chaos_harness.py validate \
+            --policy policy/chaos-experiments.json
+          if [ -n "${EXPERIMENT:-}" ]; then
+            python3 scripts/chaos_harness.py run \
+              --policy policy/chaos-experiments.json \
+              --mode simulate \
+              --experiment "$EXPERIMENT" \
+              --output reports/chaos-report.json \
+              --markdown reports/chaos-report.md
+          else
+            python3 scripts/chaos_harness.py run \
+              --policy policy/chaos-experiments.json \
+              --mode simulate \
+              --output reports/chaos-report.json \
+              --markdown reports/chaos-report.md
+          fi
+          cat reports/chaos-report.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Publish simulation evidence
+        env:
+          EVIDENCE_REPORT_KEY: ${{ secrets.EVIDENCE_REPORT_KEY }}
+        run: |
+          python3 scripts/publish_evidence.py \
+            --kind chaos \
+            --file reports/chaos-report.json
+
+      - name: Upload simulation evidence
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: chaos-simulation-${{ github.run_id }}
+          path: reports
+          if-no-files-found: error
+          retention-days: 90
+
+  scheduled-live:
+    if: github.event_name == 'schedule' && vars.CHAOS_SCHEDULE_ENABLED == 'true'
+    name: Run approved scheduled canary
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    environment: production-chaos
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Run bounded 503 canary
+        env:
+          ATLAS_CHAOS_TOKEN: ${{ secrets.ATLAS_CHAOS_TOKEN }}
+        run: |
+          python3 scripts/chaos_harness.py run \
+            --policy policy/chaos-experiments.json \
+            --experiment specular-route-503-v1 \
+            --mode live \
+            --confirm-live \
+            --output reports/chaos-report.json \
+            --markdown reports/chaos-report.md
+          cat reports/chaos-report.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Publish scheduled live evidence
+        if: always()
+        env:
+          EVIDENCE_REPORT_KEY: ${{ secrets.EVIDENCE_REPORT_KEY }}
+        run: |
+          if [ -s reports/chaos-report.json ]; then
+            python3 scripts/publish_evidence.py \
+              --kind chaos \
+              --file reports/chaos-report.json
+          fi
+
+      - name: Upload scheduled live evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: chaos-scheduled-live-${{ github.run_id }}
+          path: reports
+          if-no-files-found: warn
+          retention-days: 365
+
+  live:
+    if: github.event_name == 'workflow_dispatch' && inputs.mode == 'live'
+    name: Run approved live experiment
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    environment: production-chaos
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Run bounded live experiment
+        env:
+          ATLAS_CHAOS_TOKEN: ${{ secrets.ATLAS_CHAOS_TOKEN }}
+          EXPERIMENT: ${{ inputs.experiment }}
+        run: |
+          if [ -z "${EXPERIMENT:-}" ]; then
+            echo "Live mode requires one explicit experiment id."
+            exit 1
+          fi
+          python3 scripts/chaos_harness.py run \
+            --policy policy/chaos-experiments.json \
+            --experiment "$EXPERIMENT" \
+            --mode live \
+            --confirm-live \
+            --output reports/chaos-report.json \
+            --markdown reports/chaos-report.md
+          cat reports/chaos-report.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Publish live evidence
+        if: always()
+        env:
+          EVIDENCE_REPORT_KEY: ${{ secrets.EVIDENCE_REPORT_KEY }}
+        run: |
+          if [ -s reports/chaos-report.json ]; then
+            python3 scripts/publish_evidence.py \
+              --kind chaos \
+              --file reports/chaos-report.json
+          fi
+
+      - name: Upload live evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: chaos-live-${{ github.run_id }}
+          path: reports
+          if-no-files-found: warn
+          retention-days: 365

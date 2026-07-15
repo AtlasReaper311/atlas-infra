@@ -202,6 +202,12 @@ Architecture and owner gates are documented in
 with repository evidence and live unknowns in the companion
 [inventory](docs/ramone-home-assistant-integration-inventory.md).
 
+### Signal and reliability evidence
+
+The weekly estate audit now emits a weighted `atlas-estate-conformance-report/v1` document with per-repository rule coverage, raw findings, provenance, and a deterministic fingerprint. `scripts/publish_evidence.py` publishes the verified result to the public API after the workflow has completed.
+
+`policy/chaos-experiments.json` declares bounded fault contracts. Scheduled runs are deterministic simulations; live mode is manual, requires one named experiment, a protected `production-chaos` environment, a short-lived token, an allowlisted target, and rollback in a `finally` path. The public report records injection, detection, notification, and recovery latency separately.
+
 ### Adopt a deployment pipeline
 
 Copy the matching template from `templates/` into a repo as `.github/workflows/deploy.yml`, change the name and flags, and forward secrets with `secrets: inherit`. The repo needs the secrets named in `docs/CICD-DECISIONS.md`.
