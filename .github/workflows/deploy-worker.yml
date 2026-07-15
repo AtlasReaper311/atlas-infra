@@ -71,12 +71,15 @@ jobs:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
       - name: Check README style
         run: |
-          set -euo pipefail
-          test -s README.md
-          grep -q "ATLAS SYSTEMS //" README.md
-          grep -q "## How it fits into Atlas Systems" README.md
-          grep -q "Part of \[atlas-systems.uk\](https://atlas-systems.uk)" README.md
-          grep -q "labelColor=0a0a0f" README.md
+  	set -euo pipefail
+
+  	README="${GITHUB_WORKSPACE}/README.md"
+
+  	test -s "$README"
+  	grep -Fq 'ATLAS SYSTEMS //' "$README"
+  	grep -Fq '## How it fits into Atlas Systems' "$README"
+  	grep -Fq 'Part of [atlas-systems.uk](https://atlas-systems.uk)' "$README"
+  	grep -Fq 'labelColor=0a0a0f' "$README"
 
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
