@@ -611,33 +611,6 @@
       "exclusions": []
     },
     {
-      "repository": "AtlasReaper311/simple-proxy",
-      "local_directory": "simple-proxy",
-      "lifecycle": "deprecated",
-      "scope": "internal",
-      "provenance": "external-derived",
-      "owner": "AtlasReaper311",
-      "purpose": "Retain attribution and historical dependency visibility for the external-derived proxy.",
-      "runtime_service": true,
-      "contract_required": true,
-      "public_surface": false,
-      "service_ids": [
-        "simple-proxy"
-      ],
-      "deployment_owner": null,
-      "evidence_owner": null,
-      "runbook_reference": "docs/runbooks/contract-registry-deprecated-route-owner.md",
-      "contract_exception": null,
-      "notes": "Historical contract only; no active route, schedule, remediation, orchestration, or feature ownership.",
-      "exclusions": [
-        "active-routes",
-        "default-assurance",
-        "deployment-orchestration",
-        "gardener-remediation",
-        "new-features"
-      ]
-    },
-    {
       "repository": "AtlasReaper311/site-pulse",
       "local_directory": "site-pulse",
       "lifecycle": "production",
