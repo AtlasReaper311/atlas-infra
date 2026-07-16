@@ -31,7 +31,7 @@
     "path": "/sonify/_meta",
     "expected_shape": "worker-meta/v1"
   },
-  "dependencies": ["specular-telemetry"],
+  "dependencies": ["atlas-api-public", "specular-telemetry"],
   "slo_refs": [],
   "runbooks": ["docs/runbooks/contract-registry-service-triage.md"],
   "journey_coverage": {"state": "unknown", "references": []},
@@ -41,7 +41,10 @@
   "release_watch_eligible": false,
   "escalation": {"contact": "github:AtlasReaper311", "policy": "Repository owner review through GitHub."},
   "route_exceptions": [],
-  "contract_notes": ["Current worker metadata does not prove the deployed commit identity."],
+  "contract_notes": [
+    "Current worker metadata does not prove the deployed commit identity.",
+    "The read-only sonification frame derives current service evidence from atlas-api-public and the specular telemetry snapshot; missing or stale evidence remains unknown."
+  ],
   "control_plane_policy": {
     "new_features": true,
     "route_ownership": true,
