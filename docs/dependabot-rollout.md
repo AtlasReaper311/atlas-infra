@@ -67,9 +67,12 @@ on Monday. Active non-runtime repositories run monthly at 04:00 on the first
 calendar day, which is GitHub's documented monthly behavior. The `day` option
 is valid only for weekly schedules.
 
-Minor and patch updates are grouped per ecosystem. Major updates stay
-individual and the common workflow adds `dependabot-major`. Each repository
-caller pins the central `atlas-infra` reusable policy to a complete commit SHA.
+Minor and patch updates are grouped per ecosystem by default. Public, active,
+non-runtime pilot repositories group npm minor updates but leave npm patches
+individual so the narrow auto-merge policy can evaluate one dependency at a
+time. Major updates stay individual and the common workflow adds
+`dependabot-major`. Each repository caller pins the central `atlas-infra`
+reusable policy to a complete commit SHA.
 The reusable workflow uses the `pull_request` event and verifies both the event
 actor and pull request author before it reads metadata. It checks out only the
 same immutable `atlas-infra` policy commit, never pull request code.
@@ -88,6 +91,9 @@ Docker, Python, GitHub Actions, and maintainer-modified updates remain manual.
 An eligible candidate is queried against OSV at its proposed version. An active
 advisory, malformed response, timeout, or OSV outage makes the update manual.
 This query is an extra merge guard and does not replace `atlas-dep-audit`.
+If a later synchronization makes a policy-created auto-merge request
+ineligible, the workflow disables that request. It does not cancel an
+auto-merge request created by the owner.
 
 Do not set the opt-in variable until the default branch has an active ruleset or
 branch protection rule requiring at least one repository-native passing check,

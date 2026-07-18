@@ -74,20 +74,18 @@ jobs:
           PR_URL: ${{ github.event.pull_request.html_url }}
         run: gh pr edit "$PR_URL" --add-label "dependabot-major"
 
-      - name: Approve eligible update
-        if: steps.policy.outputs.eligible == 'true'
+      - name: Revoke policy auto-merge when ineligible
+        if: steps.policy.outputs.eligible != 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           PR_URL: ${{ github.event.pull_request.html_url }}
         run: |
           set -euo pipefail
-          if gh pr view "$PR_URL" --json reviews \
-            --jq '.reviews[] | select(.author.login == "github-actions[bot]" and .state == "APPROVED")' \
-            | grep -q .; then
-            echo "Approval already recorded"
-            exit 0
+          AUTO_MERGE_ACTOR=$(gh pr view "$PR_URL" --json autoMergeRequest \
+            --jq '.autoMergeRequest.enabledBy.login // ""')
+          if [ "$AUTO_MERGE_ACTOR" = "github-actions[bot]" ]; then
+            gh pr merge "$PR_URL" --disable-auto
           fi
-          gh pr review --approve "$PR_URL"
 
       - name: Enable squash auto-merge
         if: steps.policy.outputs.eligible == 'true'

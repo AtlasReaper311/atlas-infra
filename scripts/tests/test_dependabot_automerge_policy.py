@@ -106,6 +106,18 @@ class DependabotAutomergePolicyTests(unittest.TestCase):
         self.assertIsNone(vulnerable)
         self.assertEqual("osv-unavailable", reason)
 
+    def test_reusable_workflow_revokes_only_policy_created_auto_merge(self):
+        workflow = (
+            Path(__file__).resolve().parents[2]
+            / ".github"
+            / "workflows"
+            / "dependabot-review.yml"
+        ).read_text(encoding="utf-8")
+
+        self.assertIn('gh pr merge "$PR_URL" --disable-auto', workflow)
+        self.assertIn('= "github-actions[bot]"', workflow)
+        self.assertNotIn("gh pr review --approve", workflow)
+
 
 if __name__ == "__main__":
     unittest.main()
