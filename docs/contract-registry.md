@@ -9,7 +9,7 @@ runbooks.
 
 The registry has three deliberately different views:
 
-1. `policy/estate-registry.json` declares all 35 approved repositories and
+1. `policy/estate-registry.json` declares all 39 approved repositories and
    maps runtime repositories to stable service IDs.
 2. `policy/service-contracts/*.json` declares runtime ownership, routes,
    dependencies, metadata, journeys, quota/secret/backup links, and escalation

@@ -1,8 +1,8 @@
 {
   "schema_version": "atlas-contract-registry/estate-registry/v1",
   "owner": "AtlasReaper311/atlas-infra",
-  "reviewed_at": "2026-07-15T00:00:00Z",
-  "approved_repository_count": 37,
+  "reviewed_at": "2026-07-18T00:00:00Z",
+  "approved_repository_count": 39,
   "classification_axes": {
     "lifecycle": [
       "active",
@@ -188,6 +188,31 @@
       "contract_exception": null,
       "notes": "The exact metadata endpoint is unknown from the approved committed-source inventory and remains explicit.",
       "exclusions": []
+    },
+    {
+      "repository": "AtlasReaper311/atlas-cv",
+      "local_directory": "atlas-cv",
+      "lifecycle": "archived",
+      "scope": "internal",
+      "provenance": "original",
+      "owner": "AtlasReaper311",
+      "purpose": "Preserve the retired CV backing content after its state was merged into atlas-systems.",
+      "runtime_service": false,
+      "contract_required": false,
+      "public_surface": false,
+      "service_ids": [],
+      "deployment_owner": null,
+      "evidence_owner": null,
+      "runbook_reference": null,
+      "contract_exception": null,
+      "notes": "Archived after the CV state was merged into atlas-systems; read-only and excluded from active controls.",
+      "exclusions": [
+        "default-assurance",
+        "deployment-orchestration",
+        "gardener-remediation",
+        "new-features",
+        "runtime-service-contract"
+      ]
     },
     {
       "repository": "AtlasReaper311/atlas-daily-digest",
@@ -525,6 +550,27 @@
       "contract_exception": null,
       "notes": "Workers.dev/custom-domain ownership is not evidenced in committed Wrangler routes; endpoints remain explicit unknowns.",
       "exclusions": []
+    },
+    {
+      "repository": "AtlasReaper311/atlas-watch",
+      "local_directory": "atlas-watch",
+      "lifecycle": "production",
+      "scope": "internal",
+      "provenance": "original",
+      "owner": "AtlasReaper311",
+      "purpose": "Provide a private personal watchlist for the owner and their partner with custom interfaces and streaming metadata integrations.",
+      "runtime_service": false,
+      "contract_required": false,
+      "public_surface": false,
+      "service_ids": [],
+      "deployment_owner": null,
+      "evidence_owner": null,
+      "runbook_reference": null,
+      "contract_exception": null,
+      "notes": "Not yet deployed or scheduled; production lifecycle grants weekly dependency coverage while runtime ownership remains false.",
+      "exclusions": [
+        "runtime-service-contract"
+      ]
     },
     {
       "repository": "AtlasReaper311/deploy-watch",
