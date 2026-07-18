@@ -30,6 +30,7 @@ TEMP_ROOT = Path(tempfile.gettempdir())
 DEFAULT_OUTPUT = TEMP_ROOT / "dependabot-rollout-plan"
 DEFAULT_TEMPLATE = Path("templates/dependabot-automerge.yml")
 ACTIVE_LIFECYCLES = {"active", "production"}
+ROLLOUT_EXCLUSIONS = {"AtlasReaper311/atlas-dep-audit"}
 READ_TOKEN_ENV = "ATLAS_DEPENDABOT_READ_TOKEN"
 
 
@@ -171,6 +172,12 @@ def _repo_plan(
         "notes": [],
     }
     files: dict[str, str] = {}
+    if full_name in ROLLOUT_EXCLUSIONS:
+        base.update(action="skip", schedule="none", ecosystems=[], grouped="no")
+        base["notes"].append(
+            "excluded from this rollout; existing dependency audit governance remains unchanged"
+        )
+        return base, files
     if repository.get("archived") or lifecycle == "archived":
         base.update(action="skip", schedule="none", ecosystems=[], grouped="no")
         base["notes"].append("archived repositories are read-only")

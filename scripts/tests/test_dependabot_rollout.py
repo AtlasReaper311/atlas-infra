@@ -47,6 +47,27 @@ class DependabotRolloutTests(unittest.TestCase):
             [],
         )
 
+    def test_atlas_dep_audit_is_excluded_from_rollout(self):
+        repository = {
+            "repository": "AtlasReaper311/atlas-dep-audit",
+            "default_branch": "main",
+            "archived": False,
+        }
+        entry = {
+            "lifecycle": "active",
+            "runtime_service": False,
+        }
+
+        plan, files = dependabot_rollout._repo_plan(
+            object(), repository, entry, "workflow"
+        )
+
+        self.assertEqual("skip", plan["action"])
+        self.assertEqual("none", plan["schedule"])
+        self.assertEqual([], plan["ecosystems"])
+        self.assertEqual({}, files)
+        self.assertIn("excluded from this rollout", plan["notes"][0])
+
     def test_deprecated_repository_gets_no_files(self):
         repository = {
             "repository": "AtlasReaper311/simple-proxy",
