@@ -9,7 +9,9 @@ cross-repository write boundary.
 
 Dependabot supplies version-currency pull requests. `atlas-dep-audit` continues
 to supply SBOM and OSV vulnerability evidence. The rollout changes no
-`atlas-dep-audit` scanner, policy, workflow, or credential.
+`atlas-dep-audit` scanner, policy, workflow, or credential. The repository
+itself is excluded from this rollout; no Dependabot configuration or
+auto-merge workflow is proposed for it.
 
 `simple-proxy` remains `deprecated`, `internal`, and `external-derived`. It gets
 vulnerability alerts only. It never gets a version-update configuration,
