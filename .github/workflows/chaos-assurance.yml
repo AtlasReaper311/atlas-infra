@@ -32,7 +32,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0, Node 24
 
       - name: Run deterministic assurance simulation
         env:
@@ -65,7 +65,7 @@ jobs:
             --file reports/chaos-report.json
 
       - name: Upload simulation evidence
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1, Node 24
         with:
           name: chaos-simulation-${{ github.run_id }}
           path: reports
@@ -111,7 +111,7 @@ jobs:
     timeout-minutes: 12
     environment: production-chaos
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0, Node 24
 
       - name: Run bounded 503 canary
         env:
@@ -139,7 +139,7 @@ jobs:
 
       - name: Upload scheduled live evidence
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1, Node 24
         with:
           name: chaos-scheduled-live-${{ github.run_id }}
           path: reports
@@ -156,7 +156,7 @@ jobs:
     timeout-minutes: 12
     environment: production-chaos
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0, Node 24
 
       - name: Run bounded live experiment
         env:
@@ -189,7 +189,7 @@ jobs:
 
       - name: Upload live evidence
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1, Node 24
         with:
           name: chaos-live-${{ github.run_id }}
           path: reports

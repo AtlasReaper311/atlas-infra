@@ -72,7 +72,7 @@ generated output stay deterministic.
 `scripts/validate_contract_registry.py` uses only the Python standard library
 and local files. It validates:
 
-- the 35-repository inventory and three classification axes;
+- the approved repository inventory and three classification axes;
 - registry and ServiceContract schemas;
 - missing or duplicate service IDs and contracts;
 - non-runtime contracts without an explicit exception;

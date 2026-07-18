@@ -485,7 +485,10 @@ def _validate_registry_inventory(
             rule_id="stale-registry-entry",
             repository=repository,
             location="policy/estate-registry.json",
-            summary="Registry entry is outside the approved 36-repository estate.",
+            summary=(
+                "Registry entry is outside the approved "
+                f"{len(EXPECTED_REPOSITORIES)}-repository estate."
+            ),
         )
 
     axes = registry.get("classification_axes")

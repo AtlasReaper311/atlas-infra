@@ -19,7 +19,7 @@ jobs:
     timeout-minutes: 25
     steps:
       - name: Check out atlas-infra
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0, Node 24
 
       - name: Validate assurance scripts
         run: |
@@ -28,7 +28,11 @@ jobs:
           python3 -m py_compile scripts/contract_registry.py
           python3 -m py_compile scripts/control_plane_contracts.py
           python3 -m py_compile scripts/deploy_orchestrator.py
+          python3 -m py_compile scripts/dependabot_rollout.py
+          python3 -m py_compile scripts/detect_ecosystem.py
+          python3 -m py_compile scripts/estate_repo_diff.py
           python3 -m py_compile scripts/estate_policy.py
+          python3 -m py_compile scripts/github_api.py
           python3 -m py_compile scripts/chaos_harness.py
           python3 -m py_compile scripts/publish_evidence.py
           python3 -m py_compile scripts/notify_assurance.py
@@ -88,7 +92,7 @@ jobs:
 
       - name: Upload policy report
         if: always() && hashFiles('reports/**') != ''
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1, Node 24
         with:
           name: estate-policy-${{ github.run_id }}
           path: reports

@@ -75,7 +75,7 @@ jobs:
     env:
       HTML_GLOB: ${{ inputs.html_glob }}
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0, Node 24
       - name: Check README style
         run: |
           set -euo pipefail
@@ -85,7 +85,7 @@ jobs:
           grep -q "Part of \[atlas-systems.uk\](https://atlas-systems.uk)" README.md
           grep -q "labelColor=0a0a0f" README.md
 
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0, Node 24
         with:
           node-version: "22"
 
@@ -109,7 +109,7 @@ jobs:
     outputs:
       deployed: ${{ steps.deploy_step.outputs.deployed }}
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0, Node 24
 
       - name: Inject build metadata
         if: ${{ inputs.inject_build_meta }}
@@ -124,7 +124,7 @@ jobs:
           sed -i "0,/<\/head>/s||  <meta name=\"build-commit\" content=\"${COMMIT_SHA}\">\n  <meta name=\"build-time\" content=\"${BUILT}\">\n|" index.html
           echo "Injected build-commit=${COMMIT_SHA} build-time=${BUILT}"
 
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0, Node 24
         with:
           node-version: "22"
 
