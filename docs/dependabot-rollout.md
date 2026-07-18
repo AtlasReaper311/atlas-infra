@@ -73,6 +73,11 @@ the safer `pull_request` event, performs no checkout, verifies both event actor
 and pull request author, and uses a Node 24 metadata action pinned to a complete
 commit SHA.
 
+The common workflow keeps workflow-level permissions read-only. Its guarded
+review job alone receives repository-scoped contents and pull-request write
+permissions. This permits the opt-in label, approval, and auto-merge steps
+without granting write access to unrelated jobs.
+
 Auto-merge is off by default. The common workflow enables it only when the
 repository variable `DEPENDABOT_AUTOMERGE_ENABLED` is exactly `true`. Do not set
 that variable until the default branch requires at least one passing check and
