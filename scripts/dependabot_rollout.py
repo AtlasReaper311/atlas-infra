@@ -134,23 +134,48 @@ def _content_text(client: GitHubClient, repository: str, path: str, ref: str) ->
 
 
 def _required_checks(client: GitHubClient, repository: str, branch: str) -> tuple[list[str], str]:
+    checks: set[str] = set()
+    access_unknown = False
     path = f"/repos/{repository}/branches/{quote_ref(branch)}/protection/required_status_checks"
     try:
         payload = client.get_optional(path)
     except GitHubApiError as error:
         if error.status == 403:
-            return [], "unknown"
-        raise
-    if payload is None:
-        return [], "none"
-    checks: set[str] = set()
-    for context in payload.get("contexts", []):
-        if isinstance(context, str):
-            checks.add(context)
-    for check in payload.get("checks", []):
-        if isinstance(check, dict) and isinstance(check.get("context"), str):
-            checks.add(check["context"])
-    return sorted(checks), "configured" if checks else "none"
+            access_unknown = True
+            payload = None
+        else:
+            raise
+    if isinstance(payload, dict):
+        for context in payload.get("contexts", []):
+            if isinstance(context, str):
+                checks.add(context)
+        for check in payload.get("checks", []):
+            if isinstance(check, dict) and isinstance(check.get("context"), str):
+                checks.add(check["context"])
+
+    rules_path = f"/repos/{repository}/rules/branches/{quote_ref(branch)}"
+    try:
+        rules = client.get_optional(rules_path)
+    except GitHubApiError as error:
+        if error.status == 403:
+            access_unknown = True
+            rules = None
+        else:
+            raise
+    if isinstance(rules, list):
+        for rule in rules:
+            if not isinstance(rule, dict) or rule.get("type") != "required_status_checks":
+                continue
+            parameters = rule.get("parameters", {})
+            if not isinstance(parameters, dict):
+                continue
+            for check in parameters.get("required_status_checks", []):
+                if isinstance(check, dict) and isinstance(check.get("context"), str):
+                    checks.add(check["context"])
+
+    if checks:
+        return sorted(checks), "configured"
+    return [], "unknown" if access_unknown else "none"
 
 
 def _repo_plan(

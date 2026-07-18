@@ -65,6 +65,7 @@ This repo holds the reusable workflows every other Atlas Systems repo deploys th
 - `deploy-worker.yml`: Cloudflare Worker pipeline. Validate, deploy, and report.
 - `validate-static.yml`: static-site pipeline. Validate, publish, and report.
 - `change-impact.yml`: read-only pull request blast-radius report derived from `estate.manifest.json`.
+- `dependabot-review.yml`: fail-closed review and selective auto-merge policy for eligible Dependabot updates.
 
 ### Scheduled assurance
 

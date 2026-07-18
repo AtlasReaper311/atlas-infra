@@ -21,12 +21,45 @@ class DependabotRolloutTests(unittest.TestCase):
         self.assertIn("permissions:\n  contents: read\n", template)
         self.assertIn(
             "  review:\n    permissions:\n"
-            "      contents: write\n      pull-requests: write\n",
+            "      contents: write\n      issues: write\n"
+            "      pull-requests: write\n",
             template,
         )
         default_permissions = template.split("concurrency:", 1)[0]
         self.assertNotIn("contents: write", default_permissions)
         self.assertNotIn("pull-requests: write", default_permissions)
+        self.assertIn(
+            "uses: AtlasReaper311/atlas-infra/.github/workflows/"
+            "dependabot-review.yml@31c80e4edf71df550687be89319ee75163a295b9",
+            template,
+        )
+        self.assertNotIn("dependabot-review.yml@main", template)
+        self.assertIn("automerge_enabled:", template)
+
+    def test_required_checks_include_active_repository_rulesets(self):
+        class RulesClient:
+            def get_optional(self, path):
+                if "/protection/required_status_checks" in path:
+                    return None
+                if "/rules/branches/" in path:
+                    return [
+                        {
+                            "type": "required_status_checks",
+                            "parameters": {
+                                "required_status_checks": [
+                                    {"context": "test", "integration_id": 15368}
+                                ]
+                            },
+                        }
+                    ]
+                raise AssertionError(path)
+
+        checks, state = dependabot_rollout._required_checks(
+            RulesClient(), "AtlasReaper311/example", "main"
+        )
+
+        self.assertEqual(["test"], checks)
+        self.assertEqual("configured", state)
 
     def test_production_config_is_weekly_grouped_and_branch_specific(self):
         entry = {"lifecycle": "production", "runtime_service": True}
