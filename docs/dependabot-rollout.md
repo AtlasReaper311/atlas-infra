@@ -67,21 +67,38 @@ on Monday. Active non-runtime repositories run monthly at 04:00 on the first
 calendar day, which is GitHub's documented monthly behavior. The `day` option
 is valid only for weekly schedules.
 
-Minor and patch updates are grouped per ecosystem. Major updates stay
-individual and the common workflow adds `dependabot-major`. The workflow uses
-the safer `pull_request` event, performs no checkout, verifies both event actor
-and pull request author, and uses a Node 24 metadata action pinned to a complete
-commit SHA.
+Minor and patch updates are grouped per ecosystem by default. Public, active,
+non-runtime pilot repositories group npm minor updates but leave npm patches
+individual so the narrow auto-merge policy can evaluate one dependency at a
+time. Major updates stay individual and the common workflow adds
+`dependabot-major`. Each repository caller pins the central `atlas-infra`
+reusable policy to a complete commit SHA.
+The reusable workflow uses the `pull_request` event and verifies both the event
+actor and pull request author before it reads metadata. It checks out only the
+same immutable `atlas-infra` policy commit, never pull request code.
 
 The common workflow keeps workflow-level permissions read-only. Its guarded
 review job alone receives repository-scoped contents and pull-request write
 permissions. This permits the opt-in label, approval, and auto-merge steps
 without granting write access to unrelated jobs.
 
-Auto-merge is off by default. The common workflow enables it only when the
-repository variable `DEPENDABOT_AUTOMERGE_ENABLED` is exactly `true`. Do not set
-that variable until the default branch requires at least one passing check and
-repository auto-merge is enabled. GitHub then holds the squash merge until all
+Auto-merge is off by default. The common workflow considers it only when the
+repository variable `DEPENDABOT_AUTOMERGE_ENABLED` is exactly `true`. The
+initial policy accepts only one ungrouped npm patch update to a stable direct
+development dependency. Production, indirect, grouped, major, minor, `0.x`,
+Docker, Python, GitHub Actions, and maintainer-modified updates remain manual.
+
+An eligible candidate is queried against OSV at its proposed version. An active
+advisory, malformed response, timeout, or OSV outage makes the update manual.
+This query is an extra merge guard and does not replace `atlas-dep-audit`.
+If a later synchronization makes a policy-created auto-merge request
+ineligible, the workflow disables that request. It does not cancel an
+auto-merge request created by the owner.
+
+Do not set the opt-in variable until the default branch has an active ruleset or
+branch protection rule requiring at least one repository-native passing check,
+repository auto-merge is enabled, and the repository has no deployment on a
+merge to its default branch. GitHub then holds the squash merge until all
 required checks and reviews pass.
 
 GitHub Free includes repository auto-merge for public repositories, not private
@@ -89,6 +106,14 @@ repositories. To preserve the free-tier rule, keep
 `DEPENDABOT_AUTOMERGE_ENABLED` unset in every private repository and merge its
 dependency pull requests manually. Do not upgrade a GitHub plan for this
 rollout.
+
+Pilot one public, active, non-runtime repository first. Keep every production
+or deploy-on-default-branch repository manual. Expand the allowlist only after
+the pilot records an eligible patch, an ineligible update, a failing required
+check, and an OSV failure path without an unintended merge.
+
+Failure diagnosis and the immediate opt-out command are in the
+[`Dependabot auto-merge runbook`](runbooks/dependabot-automerge-ineligible.md).
 
 ## Apply after review
 

@@ -1,0 +1,101 @@
+name: Reusable Dependabot policy
+
+on:
+  workflow_call:
+    inputs:
+      automerge_enabled:
+        description: "Repository opt-in"
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dependabot-policy-${{ github.repository }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  review:
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+    if: >-
+      github.actor == 'dependabot[bot]' &&
+      github.event.pull_request.user.login == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Read Dependabot metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@25dd0e34f4fe68f24cc83900b1fe3fe149efef98 # v3.1.0, Node 24
+        with:
+          github-token: ${{ github.token }}
+
+      - name: Check out immutable policy
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0, Node 24
+        with:
+          repository: ${{ job.workflow_repository }}
+          ref: ${{ job.workflow_sha }}
+          path: .atlas-dependabot-policy
+          persist-credentials: false
+
+      - name: Evaluate fail-closed eligibility
+        id: policy
+        env:
+          AUTOMERGE_ENABLED: ${{ inputs.automerge_enabled }}
+          DEPENDENCY_GROUP: ${{ steps.metadata.outputs.dependency-group }}
+          DEPENDENCY_NAME: ${{ steps.metadata.outputs.dependency-names }}
+          DEPENDENCY_TYPE: ${{ steps.metadata.outputs.dependency-type }}
+          MAINTAINER_CHANGES: ${{ steps.metadata.outputs.maintainer-changes }}
+          NEW_VERSION: ${{ steps.metadata.outputs.new-version }}
+          PACKAGE_ECOSYSTEM: ${{ steps.metadata.outputs.package-ecosystem }}
+          PREVIOUS_VERSION: ${{ steps.metadata.outputs.previous-version }}
+          UPDATE_TYPE: ${{ steps.metadata.outputs.update-type }}
+        run: |
+          python3 .atlas-dependabot-policy/scripts/dependabot_automerge_policy.py \
+            --enabled "$AUTOMERGE_ENABLED" \
+            --dependency-name "$DEPENDENCY_NAME" \
+            --dependency-type "$DEPENDENCY_TYPE" \
+            --update-type "$UPDATE_TYPE" \
+            --package-ecosystem "$PACKAGE_ECOSYSTEM" \
+            --previous-version "$PREVIOUS_VERSION" \
+            --new-version "$NEW_VERSION" \
+            --dependency-group "$DEPENDENCY_GROUP" \
+            --maintainer-changes "$MAINTAINER_CHANGES" \
+            --github-output "$GITHUB_OUTPUT"
+
+      - name: Label major update
+        if: steps.metadata.outputs.update-type == 'version-update:semver-major'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: gh pr edit "$PR_URL" --add-label "dependabot-major"
+
+      - name: Revoke policy auto-merge when ineligible
+        if: steps.policy.outputs.eligible != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: |
+          set -euo pipefail
+          AUTO_MERGE_ACTOR=$(gh pr view "$PR_URL" --json autoMergeRequest \
+            --jq '.autoMergeRequest.enabledBy.login // ""')
+          if [ "$AUTO_MERGE_ACTOR" = "github-actions[bot]" ]; then
+            gh pr merge "$PR_URL" --disable-auto
+          fi
+
+      - name: Enable squash auto-merge
+        if: steps.policy.outputs.eligible == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: |
+          set -euo pipefail
+          if [ "$(gh pr view "$PR_URL" --json autoMergeRequest --jq '.autoMergeRequest')" != "null" ]; then
+            echo "Auto-merge already enabled"
+            exit 0
+          fi
+          gh pr merge --auto --squash "$PR_URL"

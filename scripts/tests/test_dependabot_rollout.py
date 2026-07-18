@@ -21,12 +21,45 @@ class DependabotRolloutTests(unittest.TestCase):
         self.assertIn("permissions:\n  contents: read\n", template)
         self.assertIn(
             "  review:\n    permissions:\n"
-            "      contents: write\n      pull-requests: write\n",
+            "      contents: write\n      issues: write\n"
+            "      pull-requests: write\n",
             template,
         )
         default_permissions = template.split("concurrency:", 1)[0]
         self.assertNotIn("contents: write", default_permissions)
         self.assertNotIn("pull-requests: write", default_permissions)
+        self.assertIn(
+            "uses: AtlasReaper311/atlas-infra/.github/workflows/"
+            "dependabot-review.yml@8e6d08701823b02c4859bfc72af67fc8ace1f4b5",
+            template,
+        )
+        self.assertNotIn("dependabot-review.yml@main", template)
+        self.assertIn("automerge_enabled:", template)
+
+    def test_required_checks_include_active_repository_rulesets(self):
+        class RulesClient:
+            def get_optional(self, path):
+                if "/protection/required_status_checks" in path:
+                    return None
+                if "/rules/branches/" in path:
+                    return [
+                        {
+                            "type": "required_status_checks",
+                            "parameters": {
+                                "required_status_checks": [
+                                    {"context": "test", "integration_id": 15368}
+                                ]
+                            },
+                        }
+                    ]
+                raise AssertionError(path)
+
+        checks, state = dependabot_rollout._required_checks(
+            RulesClient(), "AtlasReaper311/example", "main"
+        )
+
+        self.assertEqual(["test"], checks)
+        self.assertEqual("configured", state)
 
     def test_production_config_is_weekly_grouped_and_branch_specific(self):
         entry = {"lifecycle": "production", "runtime_service": True}
@@ -63,6 +96,48 @@ class DependabotRolloutTests(unittest.TestCase):
             ),
             [],
         )
+
+    def test_public_active_non_runtime_plan_keeps_npm_patches_individual(self):
+        class PlanClient:
+            def get_optional(self, path):
+                if "/contents/" in path:
+                    return None
+                if "/protection/required_status_checks" in path:
+                    return None
+                if "/rules/branches/" in path:
+                    return []
+                raise AssertionError(path)
+
+            def get(self, path):
+                if path == "/repos/AtlasReaper311/example":
+                    return {"allow_auto_merge": False}
+                raise AssertionError(path)
+
+        original = dependabot_rollout.detect_ecosystem_locations
+        dependabot_rollout.detect_ecosystem_locations = lambda *_args: [
+            Detection("npm", ("/",))
+        ]
+        try:
+            plan, files = dependabot_rollout._repo_plan(
+                PlanClient(),
+                {
+                    "repository": "AtlasReaper311/example",
+                    "default_branch": "main",
+                    "archived": False,
+                    "private": False,
+                },
+                {"lifecycle": "active", "runtime_service": False},
+                "workflow",
+            )
+        finally:
+            dependabot_rollout.detect_ecosystem_locations = original
+
+        config = files[".github/dependabot.yml"]
+        self.assertEqual("minor; npm patches individual", plan["grouped"])
+        self.assertIn("npm-minor:", config)
+        self.assertNotIn("npm-minor-patch:", config)
+        self.assertEqual(1, config.count('          - "minor"'))
+        self.assertNotIn('          - "patch"', config)
 
     def test_atlas_dep_audit_is_excluded_from_rollout(self):
         repository = {

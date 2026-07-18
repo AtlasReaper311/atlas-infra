@@ -54,7 +54,11 @@ def _quoted(value: str) -> str:
 
 
 def render_dependabot(
-    detections: list[Detection], entry: dict[str, Any], default_branch: str
+    detections: list[Detection],
+    entry: dict[str, Any],
+    default_branch: str,
+    *,
+    separate_npm_patches: bool = False,
 ) -> str:
     limit = 10 if entry["lifecycle"] == "production" else 5
     schedule = schedule_for(entry)
@@ -62,6 +66,11 @@ def render_dependabot(
     for detection in detections:
         for directory in detection.directories:
             ecosystem = detection.ecosystem
+            group_name = f"{ecosystem}-minor-patch"
+            update_types = ['          - "minor"', '          - "patch"']
+            if ecosystem == "npm" and separate_npm_patches:
+                group_name = "npm-minor"
+                update_types = ['          - "minor"']
             lines.extend(
                 [
                     f"  - package-ecosystem: {_quoted(ecosystem)}",
@@ -82,13 +91,12 @@ def render_dependabot(
                     f"      - {_quoted(ecosystem)}",
                     f"    target-branch: {_quoted(default_branch)}",
                     "    groups:",
-                    f"      {ecosystem}-minor-patch:",
+                    f"      {group_name}:",
                     '        applies-to: "version-updates"',
                     "        patterns:",
                     '          - "*"',
                     "        update-types:",
-                    '          - "minor"',
-                    '          - "patch"',
+                    *update_types,
                 ]
             )
     return "\n".join(lines) + "\n"
@@ -134,23 +142,48 @@ def _content_text(client: GitHubClient, repository: str, path: str, ref: str) ->
 
 
 def _required_checks(client: GitHubClient, repository: str, branch: str) -> tuple[list[str], str]:
+    checks: set[str] = set()
+    access_unknown = False
     path = f"/repos/{repository}/branches/{quote_ref(branch)}/protection/required_status_checks"
     try:
         payload = client.get_optional(path)
     except GitHubApiError as error:
         if error.status == 403:
-            return [], "unknown"
-        raise
-    if payload is None:
-        return [], "none"
-    checks: set[str] = set()
-    for context in payload.get("contexts", []):
-        if isinstance(context, str):
-            checks.add(context)
-    for check in payload.get("checks", []):
-        if isinstance(check, dict) and isinstance(check.get("context"), str):
-            checks.add(check["context"])
-    return sorted(checks), "configured" if checks else "none"
+            access_unknown = True
+            payload = None
+        else:
+            raise
+    if isinstance(payload, dict):
+        for context in payload.get("contexts", []):
+            if isinstance(context, str):
+                checks.add(context)
+        for check in payload.get("checks", []):
+            if isinstance(check, dict) and isinstance(check.get("context"), str):
+                checks.add(check["context"])
+
+    rules_path = f"/repos/{repository}/rules/branches/{quote_ref(branch)}"
+    try:
+        rules = client.get_optional(rules_path)
+    except GitHubApiError as error:
+        if error.status == 403:
+            access_unknown = True
+            rules = None
+        else:
+            raise
+    if isinstance(rules, list):
+        for rule in rules:
+            if not isinstance(rule, dict) or rule.get("type") != "required_status_checks":
+                continue
+            parameters = rule.get("parameters", {})
+            if not isinstance(parameters, dict):
+                continue
+            for check in parameters.get("required_status_checks", []):
+                if isinstance(check, dict) and isinstance(check.get("context"), str):
+                    checks.add(check["context"])
+
+    if checks:
+        return sorted(checks), "configured"
+    return [], "unknown" if access_unknown else "none"
 
 
 def _repo_plan(
@@ -209,13 +242,28 @@ def _repo_plan(
     }
     schedule = schedule_for(entry)
     base["schedule"] = schedule["interval"]
-    base["grouped"] = "minor and patch"
+    separate_npm_patches = (
+        lifecycle == "active"
+        and not bool(entry.get("runtime_service"))
+        and not bool(repository.get("private"))
+        and "npm" in ecosystems
+    )
+    base["grouped"] = (
+        "minor; npm patches individual"
+        if separate_npm_patches
+        else "minor and patch"
+    )
     if not detections:
         base["action"] = "blocked"
         base["blockers"].append("no supported ecosystem detected")
         return base, files
 
-    dependabot_text = render_dependabot(detections, entry, default_branch)
+    dependabot_text = render_dependabot(
+        detections,
+        entry,
+        default_branch,
+        separate_npm_patches=separate_npm_patches,
+    )
     errors = validate_dependabot_text(dependabot_text, detections, entry, default_branch)
     if errors:
         base["action"] = "blocked"
