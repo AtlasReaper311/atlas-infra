@@ -82,14 +82,44 @@ class ContractRegistryTests(unittest.TestCase):
     def rules(self, report: dict) -> set[str]:
         return {finding["rule_id"] for finding in report["findings"]}
 
-    def test_canonical_registry_contains_all_37_repositories(self) -> None:
+    def test_canonical_registry_contains_all_39_repositories(self) -> None:
         report = self.validate()
         self.assertEqual("passed", report["status"])
-        self.assertEqual(37, report["repositories_checked"])
+        self.assertEqual(39, report["repositories_checked"])
         self.assertEqual(
             set(contract_registry.EXPECTED_REPOSITORIES),
             {item["repository"] for item in self.registry()["repositories"]},
         )
+
+    def test_atlas_cv_is_archived_and_excluded_from_active_controls(self) -> None:
+        entry = self.entry(self.registry(), "AtlasReaper311/atlas-cv")
+        self.assertEqual("archived", entry["lifecycle"])
+        self.assertEqual("internal", entry["scope"])
+        self.assertEqual("original", entry["provenance"])
+        self.assertFalse(entry["runtime_service"])
+        self.assertFalse(entry["contract_required"])
+        self.assertFalse(entry["public_surface"])
+        self.assertEqual([], entry["service_ids"])
+        self.assertTrue(
+            {
+                "default-assurance",
+                "deployment-orchestration",
+                "gardener-remediation",
+                "new-features",
+                "runtime-service-contract",
+            }.issubset(entry["exclusions"])
+        )
+
+    def test_atlas_watch_is_production_but_not_yet_runtime(self) -> None:
+        entry = self.entry(self.registry(), "AtlasReaper311/atlas-watch")
+        self.assertEqual("production", entry["lifecycle"])
+        self.assertEqual("internal", entry["scope"])
+        self.assertEqual("original", entry["provenance"])
+        self.assertFalse(entry["runtime_service"])
+        self.assertFalse(entry["contract_required"])
+        self.assertFalse(entry["public_surface"])
+        self.assertEqual([], entry["service_ids"])
+        self.assertIn("runtime-service-contract", entry["exclusions"])
 
     def test_classification_axes_are_valid_and_independent(self) -> None:
         registry = self.registry()
