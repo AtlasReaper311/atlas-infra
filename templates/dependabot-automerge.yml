@@ -5,8 +5,7 @@ on:
     types: [opened, reopened, synchronize]
 
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
 
 concurrency:
   group: dependabot-review-${{ github.event.pull_request.number }}
@@ -14,6 +13,9 @@ concurrency:
 
 jobs:
   review:
+    permissions:
+      contents: write
+      pull-requests: write
     if: >-
       github.actor == 'dependabot[bot]' &&
       github.event.pull_request.user.login == 'dependabot[bot]'
@@ -33,7 +35,7 @@ jobs:
           PR_URL: ${{ github.event.pull_request.html_url }}
         run: gh pr edit "$PR_URL" --add-label "dependabot-major"
 
-      # GITHUB_TOKEN is limited to this repository and has only the permissions above.
+      # GITHUB_TOKEN is limited to this job and repository with the permissions above.
       # A cross-repository writer requires a separately approved GitHub App identity.
       - name: Approve minor or patch update
         if: >-

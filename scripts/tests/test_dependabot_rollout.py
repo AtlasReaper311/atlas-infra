@@ -11,6 +11,23 @@ from detect_ecosystem import Detection
 
 
 class DependabotRolloutTests(unittest.TestCase):
+    def test_automerge_template_uses_read_only_defaults_and_job_scoped_writes(self):
+        template = (
+            Path(__file__).resolve().parents[2]
+            / "templates"
+            / "dependabot-automerge.yml"
+        ).read_text(encoding="utf-8")
+
+        self.assertIn("permissions:\n  contents: read\n", template)
+        self.assertIn(
+            "  review:\n    permissions:\n"
+            "      contents: write\n      pull-requests: write\n",
+            template,
+        )
+        default_permissions = template.split("concurrency:", 1)[0]
+        self.assertNotIn("contents: write", default_permissions)
+        self.assertNotIn("pull-requests: write", default_permissions)
+
     def test_production_config_is_weekly_grouped_and_branch_specific(self):
         entry = {"lifecycle": "production", "runtime_service": True}
         detections = [
