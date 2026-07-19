@@ -202,7 +202,7 @@ jobs:
                   {name: "Actor", value: $actor, inline: true},
                   {name: "Run", value: ("[logs](" + $run_url + ")"), inline: false}
                 ],
-                footer: {text: "Atlas Systems — Pipeline"}
+                footer: {text: "Atlas Systems - Pipeline"}
               }]
             }')
 
@@ -210,7 +210,7 @@ jobs:
             -H "Content-Type: application/json" \
             -d "$PAYLOAD"
 
-      - name: Persist to Lab Failure log
+      - name: Persist to Lab, mirror failures to alerts
         if: always()
         continue-on-error: true
         env:
@@ -259,4 +259,5 @@ jobs:
               --arg title "$TITLE" \
               --arg message "$MSG" \
               --arg url "$RUN_URL" \
-              '{source:$source, level:$level, title:$title, message:$message, url:$url, persist_only:true}')"
+              '{source:$source, level:$level, title:$title, message:$message, url:$url}
+               + (if $level == "failure" then {signal_class:"alerts"} else {persist_only:true} end)')"
