@@ -22,6 +22,14 @@ service, route, deployment, storage layer, remediation agent, or secret.
 - `RunbookIndexEntry`: deterministic failure-to-runbook metadata.
 - `EvidenceEnvelope`: one inline bounded payload or stable reference with a
   SHA-256 digest.
+- `ReliabilityObjective`: one approved service-level objective bound to a
+  measurable evidence source, with freshness bounds, sample minima, and
+  provenance. Targets are never invented in a contract instance.
+- `ReliabilityResult`: one deterministic estate evaluation with per-service
+  budgets, day-granular burn rates, coverage, explicit failure states, and the
+  explicit unmeasured list.
+- `ReleaseReliabilityCorrelation`: before and after reliability observations
+  around detected releases, always labelled correlation rather than causation.
 - `ControlPlaneSummary`: redacted aggregate projections and the shared six-value
   `ControlPlaneState` vocabulary. Phase 9 adds optional journey,
   contract-registry, and open-Gardener-PR projections for the bounded Home

@@ -84,6 +84,42 @@
       "diagnostic_commands": ["python3 scripts/deploy_orchestrator.py validate"],
       "escalation": {"owner": "AtlasReaper311", "channel_ref": "github-actions-run"},
       "last_validated_at": "2026-07-14T16:00:00Z"
+    },
+    {
+      "schema_version": "atlas-control-plane/runbook-index-entry/v1",
+      "entry_id": "reliability-budget-exhausted",
+      "failure_fingerprints": [],
+      "categories": ["availability"],
+      "service_id": "atlas-api-public",
+      "repository": "AtlasReaper311/atlas-infra",
+      "runbook_path": "docs/runbooks/reliability-budget-exhausted.md",
+      "diagnostic_commands": ["python3 scripts/reliability_policy.py validate"],
+      "escalation": {"owner": "AtlasReaper311", "channel_ref": "github-actions-run"},
+      "last_validated_at": "2026-07-19T00:00:00Z"
+    },
+    {
+      "schema_version": "atlas-control-plane/runbook-index-entry/v1",
+      "entry_id": "reliability-evidence-stale",
+      "failure_fingerprints": [],
+      "categories": ["availability", "evidence"],
+      "service_id": "atlas-api-public",
+      "repository": "AtlasReaper311/atlas-infra",
+      "runbook_path": "docs/runbooks/reliability-evidence-stale.md",
+      "diagnostic_commands": ["python3 scripts/reliability_policy.py validate"],
+      "escalation": {"owner": "AtlasReaper311", "channel_ref": "github-actions-run"},
+      "last_validated_at": "2026-07-19T00:00:00Z"
+    },
+    {
+      "schema_version": "atlas-control-plane/runbook-index-entry/v1",
+      "entry_id": "reliability-source-unavailable",
+      "failure_fingerprints": [],
+      "categories": ["availability", "evidence"],
+      "service_id": "atlas-api-public",
+      "repository": "AtlasReaper311/atlas-infra",
+      "runbook_path": "docs/runbooks/reliability-source-unavailable.md",
+      "diagnostic_commands": ["python3 scripts/reliability_policy.py validate"],
+      "escalation": {"owner": "AtlasReaper311", "channel_ref": "github-actions-run"},
+      "last_validated_at": "2026-07-19T00:00:00Z"
     }
   ]
 }

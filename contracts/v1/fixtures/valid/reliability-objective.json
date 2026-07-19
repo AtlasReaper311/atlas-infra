@@ -1,0 +1,30 @@
+{
+  "schema_version": "atlas-control-plane/reliability-objective/v1",
+  "objective_id": "atlas-notify-availability-30d",
+  "service_id": "atlas-notify",
+  "indicator": "availability",
+  "measurement_source": {
+    "provider": "atlas-api-public/v1/slo",
+    "component": "notify"
+  },
+  "window_days": 30,
+  "target_pct": 99.5,
+  "freshness": {
+    "evidence_stale_after_seconds": 1800
+  },
+  "min_samples": {
+    "evaluate": 288,
+    "fast_burn": 24,
+    "slow_burn": 144
+  },
+  "provenance": {
+    "origin": "approved-target-migration",
+    "source_ref": "AtlasReaper311/status:slo.json",
+    "approved_by": "AtlasReaper311",
+    "approved_at": "2026-07-19T00:00:00Z"
+  },
+  "display": {
+    "label": "event router",
+    "domain": "edge"
+  }
+}

@@ -1,0 +1,57 @@
+name: Reliability policy
+
+on:
+  schedule:
+    - cron: "41 7 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: reliability-policy
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Validate and publish reliability policy
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out atlas-infra
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0, Node 24
+
+      - name: Validate reliability policy and evaluator
+        run: |
+          python3 -m py_compile scripts/reliability_policy.py
+          python3 -m py_compile scripts/reliability_evaluator.py
+          python3 -m py_compile scripts/incident_evidence_pack.py
+          python3 scripts/validate_control_plane_contracts.py
+          python3 scripts/reliability_policy.py validate
+          python3 -m unittest \
+            scripts.tests.test_reliability_policy \
+            scripts.tests.test_reliability_evaluator \
+            scripts.tests.test_incident_evidence_pack -v
+
+      - name: Render the policy document
+        run: |
+          mkdir -p reports
+          python3 scripts/reliability_policy.py emit-policy-document \
+            --output reports/reliability-policy.json
+          python3 scripts/reliability_policy.py emit-status-slo \
+            --output reports/status-slo-projection.json
+
+      - name: Publish to atlas-api-public
+        env:
+          EVIDENCE_REPORT_KEY: ${{ secrets.EVIDENCE_REPORT_KEY }}
+        run: |
+          python3 scripts/publish_evidence.py \
+            --kind reliability-policy \
+            --file reports/reliability-policy.json
+
+      - name: Retain rendered projections
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1, Node 24
+        with:
+          name: reliability-policy
+          path: reports/
+          retention-days: 30

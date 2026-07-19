@@ -88,6 +88,39 @@
       "path": "invalid/service-contract.simple-proxy-route-owner.json",
       "valid": false,
       "expected_error": "must equal False"
+    },
+    {
+      "schema": "reliability-objective.schema.json",
+      "path": "valid/reliability-objective.json",
+      "valid": true
+    },
+    {
+      "schema": "reliability-objective.schema.json",
+      "path": "invalid/reliability-objective.zero-target.json",
+      "valid": false,
+      "expected_error": "below minimum"
+    },
+    {
+      "schema": "reliability-result.schema.json",
+      "path": "valid/reliability-result.json",
+      "valid": true
+    },
+    {
+      "schema": "reliability-result.schema.json",
+      "path": "invalid/reliability-result.missing-fingerprint.json",
+      "valid": false,
+      "expected_error": "missing required property"
+    },
+    {
+      "schema": "release-reliability-correlation.schema.json",
+      "path": "valid/release-reliability-correlation.json",
+      "valid": true
+    },
+    {
+      "schema": "release-reliability-correlation.schema.json",
+      "path": "invalid/release-reliability-correlation.causal-claim.json",
+      "valid": false,
+      "expected_error": "must equal True"
     }
   ]
 }

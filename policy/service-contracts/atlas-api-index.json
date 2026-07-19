@@ -46,7 +46,7 @@
     "expected_shape": "worker-meta/v1"
   },
   "dependencies": [],
-  "slo_refs": [],
+  "slo_refs": ["policy/reliability/objectives/atlas-api-index.json"],
   "runbooks": ["docs/runbooks/contract-registry-service-triage.md"],
   "journey_coverage": {"state": "unknown", "references": []},
   "quota_policy": {"state": "unknown", "reference": null},

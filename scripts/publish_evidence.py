@@ -14,7 +14,9 @@ from pathlib import Path
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--kind", choices=("conformance", "chaos"), required=True)
+    parser.add_argument(
+        "--kind", choices=("conformance", "chaos", "reliability-policy"), required=True
+    )
     parser.add_argument("--file", required=True)
     parser.add_argument(
         "--url",
@@ -30,8 +32,15 @@ def main() -> int:
     path = Path(args.file)
     payload = json.loads(path.read_text(encoding="utf-8"))
     body = json.dumps(payload, separators=(",", ":")).encode("utf-8")
+    if args.kind == "reliability-policy":
+        endpoint = os.getenv(
+            "ATLAS_RELIABILITY_POLICY_URL",
+            "https://api.atlas-systems.uk/v1/reliability/objectives/report",
+        )
+    else:
+        endpoint = f"{args.url.rstrip('/')}/{args.kind}/report"
     request = urllib.request.Request(
-        f"{args.url.rstrip('/')}/{args.kind}/report",
+        endpoint,
         data=body,
         method="POST",
         headers={

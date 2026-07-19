@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://atlas-systems.uk/contracts/reliability-policy-v1.schema.json",
+  "title": "Atlas reliability policy document",
+  "description": "The published projection of canonical reliability objectives and evaluator configuration. Rendered deterministically from policy/reliability/ and verified by fingerprint at ingest.",
+  "type": "object",
+  "required": [
+    "schema",
+    "generated_at",
+    "source",
+    "evaluator_config",
+    "objectives",
+    "fingerprint"
+  ],
+  "properties": {
+    "schema": {
+      "const": "atlas-reliability-policy/v1"
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "source": {
+      "type": "object",
+      "required": ["repository", "path"],
+      "properties": {
+        "repository": {
+          "const": "AtlasReaper311/atlas-infra"
+        },
+        "path": {
+          "const": "policy/reliability"
+        },
+        "commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "evaluator_config": {
+      "type": "object"
+    },
+    "objectives": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 50,
+      "items": {
+        "type": "object"
+      }
+    },
+    "unmeasured": {
+      "type": "array",
+      "maxItems": 60,
+      "items": {
+        "type": "object",
+        "required": ["service_id", "reason"],
+        "properties": {
+          "service_id": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+            "maxLength": 64
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "fingerprint": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  },
+  "additionalProperties": false
+}

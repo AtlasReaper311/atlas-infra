@@ -1,0 +1,28 @@
+{
+  "schema_version": "atlas-reliability-evaluator-config/v1",
+  "expected_samples_per_day": 144,
+  "result_stale_after_seconds": 1800,
+  "policy_stale_after_seconds": 691200,
+  "minimum_evaluation_samples": 288,
+  "fast_burn": {
+    "bucket_days": 2,
+    "minimum_samples": 24,
+    "at_risk_threshold": 2
+  },
+  "slow_burn": {
+    "bucket_days": 8,
+    "minimum_samples": 144,
+    "at_risk_threshold": 1.5
+  },
+  "remaining_budget_at_risk_fraction": 0.25,
+  "coverage_confidence_floor": 0.5,
+  "recovery_confirmation_passes": 6,
+  "notification_cooldown_seconds": 21600,
+  "storm_suppression_threshold": 5,
+  "percentile_reason": "per-day aggregate counters cannot support percentiles",
+  "release_baseline": {
+    "latency_regression_percent": 25,
+    "error_rate_increase": 0.02,
+    "stale_after_seconds": 1800
+  }
+}
