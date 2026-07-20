@@ -16,14 +16,8 @@ import control_plane_contracts as contracts  # noqa: E402
 class CostGuardPolicyTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        cls.policy = json.loads(
-            (ROOT / "policy" / "cost-guard.json").read_text(encoding="utf-8")
-        )
-        cls.schema = json.loads(
-            (ROOT / "policy" / "cost-guard.schema.json").read_text(
-                encoding="utf-8"
-            )
-        )
+        cls.policy = json.loads((ROOT / "policy" / "cost-guard.json").read_text(encoding="utf-8"))
+        cls.schema = json.loads((ROOT / "policy" / "cost-guard.schema.json").read_text(encoding="utf-8"))
 
     def test_policy_matches_declared_schema(self) -> None:
         self.assertEqual([], contracts.validate_instance(self.policy, self.schema))
@@ -37,17 +31,10 @@ class CostGuardPolicyTests(unittest.TestCase):
     def test_thresholds_and_keys_are_deterministic(self) -> None:
         keys: set[tuple[str, str, str]] = set()
         for service in self.policy["services"]:
-            key = (
-                service["service_id"],
-                service["provider"],
-                service["quota_type"],
-            )
+            key = (service["service_id"], service["provider"], service["quota_type"])
             self.assertNotIn(key, keys)
             keys.add(key)
-            self.assertLess(
-                service["warning_threshold_pct"],
-                service["critical_threshold_pct"],
-            )
+            self.assertLess(service["warning_threshold_pct"], service["critical_threshold_pct"])
 
     def test_every_action_is_advisory_and_issue_creation_is_disabled(self) -> None:
         self.assertTrue(self.policy["defaults"]["advisory_only"])
@@ -56,23 +43,12 @@ class CostGuardPolicyTests(unittest.TestCase):
             self.assertTrue(service["advisory_only"])
             self.assertFalse(service["issue_creation_allowed"])
 
-    def test_simple_proxy_is_explicitly_excluded(self) -> None:
-        service = next(
-            item
-            for item in self.policy["services"]
-            if item["service_id"] == "simple-proxy"
-        )
-        self.assertEqual(
-            {
-                "lifecycle": "deprecated",
-                "scope": "internal",
-                "provenance": "external-derived",
-            },
-            service["classification"],
-        )
-        self.assertFalse(service["assurance"]["enabled"])
-        self.assertFalse(service["notification_enabled"])
-        self.assertTrue(service["assurance"]["exclusion_reason"])
+    def test_public_policy_contains_only_active_assured_services(self) -> None:
+        for service in self.policy["services"]:
+            self.assertNotIn(service["classification"]["lifecycle"], {"deprecated", "archived"})
+            self.assertNotEqual(service["classification"]["provenance"], "external-derived")
+            self.assertTrue(service["assurance"]["enabled"])
+            self.assertIsNone(service["assurance"]["exclusion_reason"])
 
     def test_phase_one_contract_references_exist(self) -> None:
         for field in ("finding_contract", "evidence_contract"):
@@ -91,9 +67,7 @@ class CostGuardPolicyTests(unittest.TestCase):
         }
         for name in names:
             with self.subTest(name=name):
-                self.assertTrue(
-                    (ROOT / "docs" / "runbooks" / f"cost-guard-{name}.md").is_file()
-                )
+                self.assertTrue((ROOT / "docs" / "runbooks" / f"cost-guard-{name}.md").is_file())
 
 
 if __name__ == "__main__":

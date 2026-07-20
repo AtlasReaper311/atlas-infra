@@ -46,7 +46,5 @@
       "Contents: write"
     ]
   },
-  "excluded_release_owners": [
-    "AtlasReaper311/simple-proxy"
-  ]
+  "excluded_release_owners": []
 }

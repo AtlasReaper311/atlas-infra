@@ -41,14 +41,24 @@ class PolicyValidationTests(unittest.TestCase):
         holder = temp_root()
         self.addCleanup(holder.cleanup)
         root = Path(holder.name)
+        registry_path = root / "policy/estate-registry.json"
+        registry = load_json(registry_path)
+        entry = next(
+            item
+            for item in registry["repositories"]
+            if item["repository"] == "AtlasReaper311/atlas-api-public"
+        )
+        entry["lifecycle"] = "deprecated"
+        registry_path.write_text(json.dumps(registry, indent=2) + "\n", encoding="utf-8")
+
         template = load_json(root / "policy/reliability/objectives/atlas-notify.json")
-        template["service_id"] = "simple-proxy"
-        template["objective_id"] = "simple-proxy-availability-30d"
-        path = root / "policy/reliability/objectives/simple-proxy.json"
-        path.write_text(json.dumps(template, indent=2) + "\n")
+        template["service_id"] = "atlas-api-public"
+        template["objective_id"] = "atlas-api-public-availability-30d"
+        path = root / "policy/reliability/objectives/atlas-api-public.json"
+        path.write_text(json.dumps(template, indent=2) + "\n", encoding="utf-8")
         errors = validate_policy(root)
         self.assertTrue(
-            any("deprecated service 'simple-proxy'" in error for error in errors),
+            any("deprecated service 'atlas-api-public'" in error for error in errors),
             errors,
         )
 
@@ -61,9 +71,7 @@ class PolicyValidationTests(unittest.TestCase):
         path = root / "policy/reliability/objectives/deploy-watch.json"
         path.write_text(json.dumps(clone, indent=2) + "\n")
         errors = validate_policy(root)
-        self.assertTrue(
-            any("duplicate objective_id" in error for error in errors), errors
-        )
+        self.assertTrue(any("duplicate objective_id" in error for error in errors), errors)
 
     def test_slo_ref_targets_must_exist(self) -> None:
         holder = temp_root()
@@ -71,9 +79,7 @@ class PolicyValidationTests(unittest.TestCase):
         root = Path(holder.name)
         (root / "policy/reliability/objectives/atlas-notify.json").unlink()
         errors = validate_policy(root)
-        self.assertTrue(
-            any("slo_refs target missing" in error for error in errors), errors
-        )
+        self.assertTrue(any("slo_refs target missing" in error for error in errors), errors)
 
 
 class ProjectionTests(unittest.TestCase):
@@ -86,9 +92,7 @@ class ProjectionTests(unittest.TestCase):
 
     def test_policy_fingerprint_tracks_content(self) -> None:
         document = build_policy_document(ROOT)
-        without = {
-            key: value for key, value in document.items() if key != "fingerprint"
-        }
+        without = {key: value for key, value in document.items() if key != "fingerprint"}
         from scripts.control_plane_io import digest_json
 
         self.assertEqual(digest_json(without), document["fingerprint"])
@@ -147,9 +151,8 @@ class ProjectionTests(unittest.TestCase):
     def test_unmeasured_covers_runtime_services_without_objectives(self) -> None:
         unmeasured = build_unmeasured(ROOT)
         by_id = {item["service_id"]: item["reason"] for item in unmeasured}
-        self.assertIn("simple-proxy", by_id)
-        self.assertIn("deprecated lifecycle", by_id["simple-proxy"])
         self.assertIn("atlas-api-public", by_id)
+        self.assertIn("no approved objective", by_id["atlas-api-public"])
         for measured in ("atlas-notify", "deploy-watch", "ramone-memory"):
             self.assertNotIn(measured, by_id)
 

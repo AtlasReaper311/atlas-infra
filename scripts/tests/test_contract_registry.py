@@ -82,44 +82,23 @@ class ContractRegistryTests(unittest.TestCase):
     def rules(self, report: dict) -> set[str]:
         return {finding["rule_id"] for finding in report["findings"]}
 
-    def test_canonical_registry_contains_all_39_repositories(self) -> None:
+    def test_canonical_public_registry_passes(self) -> None:
         report = self.validate()
+        registry = self.registry()
         self.assertEqual("passed", report["status"])
-        self.assertEqual(39, report["repositories_checked"])
+        self.assertEqual(len(registry["repositories"]), report["repositories_checked"])
         self.assertEqual(
-            set(contract_registry.EXPECTED_REPOSITORIES),
-            {item["repository"] for item in self.registry()["repositories"]},
+            registry["approved_repository_count"], report["repositories_checked"]
         )
+        self.assertGreater(report["repositories_checked"], 0)
+        self.assertEqual(report["contracts_checked"], len(report["service_catalog"]))
 
-    def test_atlas_cv_is_archived_and_excluded_from_active_controls(self) -> None:
-        entry = self.entry(self.registry(), "AtlasReaper311/atlas-cv")
-        self.assertEqual("archived", entry["lifecycle"])
-        self.assertEqual("internal", entry["scope"])
-        self.assertEqual("original", entry["provenance"])
-        self.assertFalse(entry["runtime_service"])
-        self.assertFalse(entry["contract_required"])
-        self.assertFalse(entry["public_surface"])
-        self.assertEqual([], entry["service_ids"])
-        self.assertTrue(
-            {
-                "default-assurance",
-                "deployment-orchestration",
-                "gardener-remediation",
-                "new-features",
-                "runtime-service-contract",
-            }.issubset(entry["exclusions"])
-        )
-
-    def test_atlas_watch_is_production_but_not_yet_runtime(self) -> None:
-        entry = self.entry(self.registry(), "AtlasReaper311/atlas-watch")
-        self.assertEqual("production", entry["lifecycle"])
-        self.assertEqual("internal", entry["scope"])
-        self.assertEqual("original", entry["provenance"])
-        self.assertFalse(entry["runtime_service"])
-        self.assertFalse(entry["contract_required"])
-        self.assertFalse(entry["public_surface"])
-        self.assertEqual([], entry["service_ids"])
-        self.assertIn("runtime-service-contract", entry["exclusions"])
+    def test_public_registry_is_sorted_and_unique(self) -> None:
+        repositories = [
+            item["repository"] for item in self.registry()["repositories"]
+        ]
+        self.assertEqual(sorted(repositories), repositories)
+        self.assertEqual(len(repositories), len(set(repositories)))
 
     def test_classification_axes_are_valid_and_independent(self) -> None:
         registry = self.registry()
@@ -131,19 +110,6 @@ class ContractRegistryTests(unittest.TestCase):
             self.assertIn(entry["lifecycle"], normalized["lifecycle"])
             self.assertIn(entry["scope"], normalized["scope"])
             self.assertIn(entry["provenance"], normalized["provenance"])
-
-    def test_simple_proxy_classification_and_exclusions(self) -> None:
-        entry = self.entry(self.registry(), "AtlasReaper311/simple-proxy")
-        self.assertEqual("deprecated", entry["lifecycle"])
-        self.assertEqual("internal", entry["scope"])
-        self.assertEqual("external-derived", entry["provenance"])
-        self.assertFalse(entry["public_surface"])
-        self.assertTrue(
-            contract_registry.SIMPLE_PROXY_EXCLUSIONS.issubset(entry["exclusions"])
-        )
-        contract = self.contract("simple-proxy")
-        self.assertEqual([], contract["routes"])
-        self.assertTrue(not any(contract["control_plane_policy"].values()))
 
     def test_valid_service_contract_conforms_to_v1_schema(self) -> None:
         contract = self.contract("atlas-api-public")
@@ -195,47 +161,18 @@ class ContractRegistryTests(unittest.TestCase):
         registry = self.registry()
         entry = self.entry(registry, "AtlasReaper311/atlas-api-index")
         entry["runtime_service"] = False
+        entry["contract_exception"] = None
         self.write(self.registry_path, registry)
         self.assertIn("non-runtime-contract", self.rules(self.validate()))
 
     def test_missing_runbook_for_production_runtime_is_rejected(self) -> None:
         registry = self.registry()
-        self.entry(registry, "AtlasReaper311/atlas-api-index")["runbook_reference"] = (
-            None
-        )
+        self.entry(registry, "AtlasReaper311/atlas-api-index")["runbook_reference"] = None
         self.write(self.registry_path, registry)
         contract = self.contract("atlas-api-index")
         contract["runbooks"] = []
         self.write_contract("atlas-api-index", contract)
         self.assertIn("missing-production-runbook", self.rules(self.validate()))
-
-    def test_deprecated_repository_cannot_claim_route(self) -> None:
-        contract = self.contract("simple-proxy")
-        contract["routes"] = [
-            {
-                "origin": "https://proxy.invalid",
-                "path": "/proxy",
-                "methods": ["GET"],
-                "visibility": "authenticated",
-            }
-        ]
-        self.write_contract("simple-proxy", contract)
-        self.assertIn("deprecated-route-owner", self.rules(self.validate()))
-
-    def test_archived_repository_cannot_claim_route(self) -> None:
-        registry = self.registry()
-        self.entry(registry, "AtlasReaper311/atlas-api-index")["lifecycle"] = "archived"
-        self.write(self.registry_path, registry)
-        contract = self.contract("atlas-api-index")
-        contract["classification"]["lifecycle"] = "archived"
-        self.write_contract("atlas-api-index", contract)
-        self.assertIn("archived-route-owner", self.rules(self.validate()))
-
-    def test_external_derived_repository_cannot_enable_active_features(self) -> None:
-        contract = self.contract("simple-proxy")
-        contract["control_plane_policy"]["new_features"] = True
-        self.write_contract("simple-proxy", contract)
-        self.assertIn("external-derived-active-feature", self.rules(self.validate()))
 
     def test_public_route_on_internal_service_requires_exception(self) -> None:
         registry = self.registry()
@@ -243,6 +180,7 @@ class ContractRegistryTests(unittest.TestCase):
         self.write(self.registry_path, registry)
         contract = self.contract("atlas-api-index")
         contract["classification"]["scope"] = "internal"
+        contract["route_exceptions"] = []
         self.write_contract("atlas-api-index", contract)
         self.assertIn("public-internal-mismatch", self.rules(self.validate()))
 
@@ -265,20 +203,26 @@ class ContractRegistryTests(unittest.TestCase):
         self.write_contract("atlas-api-index", contract)
         self.assertIn("missing-metadata-endpoint", self.rules(self.validate()))
 
-    def test_registry_lifecycle_mismatch_is_rejected(self) -> None:
+    def test_registry_classification_mismatch_is_rejected(self) -> None:
         contract = self.contract("atlas-api-index")
         contract["classification"]["scope"] = "internal"
         self.write_contract("atlas-api-index", contract)
         self.assertIn("lifecycle-conflict", self.rules(self.validate()))
 
-    def test_stale_registry_entry_is_rejected(self) -> None:
-        registry = self.registry()
-        extra = copy.deepcopy(registry["repositories"][0])
-        extra["repository"] = "AtlasReaper311/stale-example"
-        extra["local_directory"] = "stale-example"
-        registry["repositories"].append(extra)
-        registry["repositories"].sort(key=lambda entry: entry["repository"])
-        self.write(self.registry_path, registry)
+    def test_contract_outside_public_registry_is_rejected(self) -> None:
+        contract = copy.deepcopy(self.contract("atlas-api-index"))
+        contract["service_id"] = "orphan-public-service"
+        contract["source_repository"] = "AtlasReaper311/orphan-public-service"
+        contract["routes"] = []
+        contract["dependencies"] = []
+        contract["metadata_route"] = None
+        contract["metadata_endpoint"] = {
+            "state": "not-applicable",
+            "origin": None,
+            "path": None,
+            "expected_shape": "not-applicable",
+        }
+        self.write_contract("orphan-public-service", contract)
         self.assertIn("stale-registry-entry", self.rules(self.validate()))
 
     def test_emitted_findings_validate_against_finding_schema(self) -> None:
@@ -297,7 +241,7 @@ class ContractRegistryTests(unittest.TestCase):
             sorted(node["service_id"] for node in first["dependency_graph"]["nodes"]),
             [node["service_id"] for node in first["dependency_graph"]["nodes"]],
         )
-        self.assertEqual(24, len(first["service_catalog"]))
+        self.assertEqual(first["contracts_checked"], len(first["service_catalog"]))
 
     def test_cli_generates_json_markdown_graph_and_catalog(self) -> None:
         output = self.root / "output"

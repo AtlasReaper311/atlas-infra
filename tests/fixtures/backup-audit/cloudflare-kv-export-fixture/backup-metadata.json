@@ -1,8 +1,8 @@
 {
   "schema_version": "atlas-backup-audit/metadata/v1",
   "target_id": "cloudflare-kv-export-fixture",
-  "service_id": "atlas-vault",
-  "repository": "AtlasReaper311/atlas-vault",
+  "service_id": "atlas-api-public",
+  "repository": "AtlasReaper311/atlas-api-public",
   "backup_at": "2026-07-14T09:30:00Z",
   "observed_at": "2026-07-14T11:00:00Z",
   "source_type": "local-fixture",

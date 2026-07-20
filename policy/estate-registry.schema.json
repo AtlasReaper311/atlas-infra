@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://schemas.atlas-systems.uk/registry/v1/estate-registry.schema.json",
-  "title": "Atlas Systems estate registry v1",
-  "description": "The canonical repository catalogue and runtime contract index.",
+  "title": "Atlas Systems public estate registry v1",
+  "description": "The public repository catalogue and runtime contract index. Private repository governance is source-owned and is never represented here.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -25,16 +25,13 @@
       "format": "date-time"
     },
     "approved_repository_count": {
-      "const": 39
+      "type": "integer",
+      "minimum": 0
     },
     "classification_axes": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "lifecycle",
-        "scope",
-        "provenance"
-      ],
+      "required": ["lifecycle", "scope", "provenance"],
       "properties": {
         "lifecycle": {
           "type": "array",
@@ -42,13 +39,7 @@
           "maxItems": 5,
           "uniqueItems": true,
           "items": {
-            "enum": [
-              "production",
-              "active",
-              "experimental",
-              "deprecated",
-              "archived"
-            ]
+            "enum": ["production", "active", "experimental", "deprecated", "archived"]
           }
         },
         "scope": {
@@ -57,10 +48,7 @@
           "maxItems": 2,
           "uniqueItems": true,
           "items": {
-            "enum": [
-              "public",
-              "internal"
-            ]
+            "enum": ["public", "internal"]
           }
         },
         "provenance": {
@@ -69,17 +57,14 @@
           "maxItems": 2,
           "uniqueItems": true,
           "items": {
-            "enum": [
-              "original",
-              "external-derived"
-            ]
+            "enum": ["original", "external-derived"]
           }
         }
       }
     },
     "repositories": {
       "type": "array",
-      "minItems": 39,
+      "minItems": 0,
       "uniqueItems": true,
       "items": {
         "type": "object",
@@ -115,25 +100,13 @@
             "maxLength": 100
           },
           "lifecycle": {
-            "enum": [
-              "production",
-              "active",
-              "experimental",
-              "deprecated",
-              "archived"
-            ]
+            "enum": ["production", "active", "experimental", "deprecated", "archived"]
           },
           "scope": {
-            "enum": [
-              "public",
-              "internal"
-            ]
+            "enum": ["public", "internal"]
           },
           "provenance": {
-            "enum": [
-              "original",
-              "external-derived"
-            ]
+            "enum": ["original", "external-derived"]
           },
           "owner": {
             "type": "string",
@@ -165,34 +138,22 @@
             }
           },
           "deployment_owner": {
-            "type": [
-              "string",
-              "null"
-            ],
+            "type": ["string", "null"],
             "pattern": "^AtlasReaper311/[A-Za-z0-9._-]+$",
             "maxLength": 128
           },
           "evidence_owner": {
-            "type": [
-              "string",
-              "null"
-            ],
+            "type": ["string", "null"],
             "pattern": "^AtlasReaper311/[A-Za-z0-9._-]+$",
             "maxLength": 128
           },
           "runbook_reference": {
-            "type": [
-              "string",
-              "null"
-            ],
+            "type": ["string", "null"],
             "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))[A-Za-z0-9._/-]+\\.md$",
             "maxLength": 240
           },
           "contract_exception": {
-            "type": [
-              "string",
-              "null"
-            ],
+            "type": ["string", "null"],
             "minLength": 1,
             "maxLength": 240
           },
