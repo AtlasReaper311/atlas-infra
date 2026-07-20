@@ -1,7 +1,7 @@
 {
   "schema_version": "atlas-backup-audit/policy/v1",
   "owner": "AtlasReaper311/atlas-infra",
-  "reviewed_at": "2026-07-14T12:00:00Z",
+  "reviewed_at": "2026-07-20T00:00:00Z",
   "mode": "fixture-only",
   "guardrails": {
     "offline_only": true,
@@ -17,7 +17,7 @@
   "eligibility": {
     "excluded_lifecycles": ["archived", "deprecated"],
     "excluded_provenance": ["external-derived"],
-    "excluded_services": ["simple-proxy"]
+    "excluded_services": []
   },
   "service_coverage": [
     {
@@ -25,16 +25,16 @@
       "repository": "AtlasReaper311/atlas-api-index",
       "state": "not-declared",
       "target_ids": [],
-      "rationale": "No production backup target or no-backup decision is approved in Phase 8.",
-      "notes": "Current registry evidence is insufficient to assert recoverability."
+      "rationale": "No production backup target or no-backup decision is approved for this public runtime.",
+      "notes": "Current public registry evidence is insufficient to assert recoverability."
     },
     {
       "service_id": "atlas-api-public",
       "repository": "AtlasReaper311/atlas-api-public",
       "state": "not-declared",
       "target_ids": [],
-      "rationale": "No production backup target or no-backup decision is approved in Phase 8.",
-      "notes": "Current registry evidence is insufficient to assert recoverability."
+      "rationale": "No production backup target or no-backup decision is approved for this public runtime.",
+      "notes": "Current public registry evidence is insufficient to assert recoverability."
     },
     {
       "service_id": "atlas-blackbox",
@@ -57,40 +57,40 @@
       "repository": "AtlasReaper311/atlas-daily-digest",
       "state": "not-declared",
       "target_ids": [],
-      "rationale": "No production backup target or no-backup decision is approved in Phase 8.",
-      "notes": "Current registry evidence is insufficient to assert recoverability."
+      "rationale": "No production backup target or no-backup decision is approved for this public runtime.",
+      "notes": "Current public registry evidence is insufficient to assert recoverability."
+    },
+    {
+      "service_id": "atlas-doc-viewer",
+      "repository": "AtlasReaper311/atlas-doc-viewer",
+      "state": "no-backup-rationale",
+      "target_ids": [],
+      "rationale": "The static viewer is rebuilt from reviewed Git source and has no declared mutable service-owned store.",
+      "notes": "Provider deployment recovery remains separate from data backup."
     },
     {
       "service_id": "atlas-dora",
       "repository": "AtlasReaper311/atlas-dora",
       "state": "not-declared",
       "target_ids": [],
-      "rationale": "No production backup target or no-backup decision is approved in Phase 8.",
-      "notes": "Current registry evidence is insufficient to assert recoverability."
+      "rationale": "No production backup target or no-backup decision is approved for this public runtime.",
+      "notes": "Current public registry evidence is insufficient to assert recoverability."
     },
     {
       "service_id": "atlas-notify",
       "repository": "AtlasReaper311/atlas-notify",
       "state": "not-declared",
       "target_ids": [],
-      "rationale": "No production backup target or no-backup decision is approved in Phase 8.",
-      "notes": "Current registry evidence is insufficient to assert recoverability."
-    },
-    {
-      "service_id": "atlas-postmortem",
-      "repository": "AtlasReaper311/atlas-postmortem",
-      "state": "not-declared",
-      "target_ids": [],
-      "rationale": "No production backup target or no-backup decision is approved in Phase 8.",
-      "notes": "Current registry evidence is insufficient to assert recoverability."
+      "rationale": "No production backup target or no-backup decision is approved for this public runtime.",
+      "notes": "Current public registry evidence is insufficient to assert recoverability."
     },
     {
       "service_id": "atlas-quota-watch",
       "repository": "AtlasReaper311/atlas-quota-watch",
       "state": "not-declared",
       "target_ids": [],
-      "rationale": "No production backup target or no-backup decision is approved in Phase 8.",
-      "notes": "Current registry evidence is insufficient to assert recoverability."
+      "rationale": "No production backup target or no-backup decision is approved for this public runtime.",
+      "notes": "Current public registry evidence is insufficient to assert recoverability."
     },
     {
       "service_id": "atlas-systems",
@@ -101,28 +101,20 @@
       "notes": "Git history and deployment recovery remain outside this fixture audit."
     },
     {
-      "service_id": "atlas-vault",
-      "repository": "AtlasReaper311/atlas-vault",
-      "state": "target",
-      "target_ids": ["cloudflare-kv-export-fixture"],
-      "rationale": "A fixture KV export validates metadata, digest, retention, and disposable JSON restore behavior.",
-      "notes": "No live KV namespace is accessed."
-    },
-    {
       "service_id": "deploy-watch",
       "repository": "AtlasReaper311/deploy-watch",
       "state": "not-declared",
       "target_ids": [],
-      "rationale": "No production backup target or no-backup decision is approved in Phase 8.",
-      "notes": "Current registry evidence is insufficient to assert recoverability."
+      "rationale": "No production backup target or no-backup decision is approved for this public runtime.",
+      "notes": "Current public registry evidence is insufficient to assert recoverability."
     },
     {
       "service_id": "github-pulse",
       "repository": "AtlasReaper311/github-pulse",
       "state": "not-declared",
       "target_ids": [],
-      "rationale": "No production backup target or no-backup decision is approved in Phase 8.",
-      "notes": "Current registry evidence is insufficient to assert recoverability."
+      "rationale": "No production backup target or no-backup decision is approved for this public runtime.",
+      "notes": "Current public registry evidence is insufficient to assert recoverability."
     },
     {
       "service_id": "ramone-edge",
@@ -130,15 +122,15 @@
       "state": "no-backup-rationale",
       "target_ids": [],
       "rationale": "The edge gateway is stateless and rebuilt from reviewed Git source; private upstream state is owned outside this service.",
-      "notes": "Secret rotation and upstream recovery are separate runbooks."
+      "notes": "Credential rotation and upstream recovery are separate runbooks."
     },
     {
       "service_id": "ramone-memory",
       "repository": "AtlasReaper311/ramone-memory",
       "state": "not-declared",
       "target_ids": [],
-      "rationale": "The registry marks memory data backup-relevant, but no approved production evidence source exists in Phase 8.",
-      "notes": "Do not infer a live Chroma backup from the atlas-corpus fixture."
+      "rationale": "The public contract marks memory data backup-relevant, but no approved public production evidence source exists.",
+      "notes": "Do not infer a live Chroma backup from the corpus fixture."
     },
     {
       "service_id": "ramone-trigger",
@@ -146,23 +138,15 @@
       "state": "no-backup-rationale",
       "target_ids": [],
       "rationale": "The trigger Worker is stateless and rebuilt from reviewed Git source; workflow execution history is owned by GitHub.",
-      "notes": "No trigger secret or workflow state is read by this audit."
-    },
-    {
-      "service_id": "simple-proxy",
-      "repository": "AtlasReaper311/simple-proxy",
-      "state": "excluded",
-      "target_ids": [],
-      "rationale": "The repository is deprecated, internal, and external-derived and cannot receive active backup drills by default.",
-      "notes": "Historical visibility is retained without scheduled assurance."
+      "notes": "No trigger credential or workflow state is read by this audit."
     },
     {
       "service_id": "site-pulse",
       "repository": "AtlasReaper311/site-pulse",
       "state": "not-declared",
       "target_ids": [],
-      "rationale": "No production backup target or no-backup decision is approved in Phase 8.",
-      "notes": "Current registry evidence is insufficient to assert recoverability."
+      "rationale": "No production backup target or no-backup decision is approved for this public runtime.",
+      "notes": "Current public registry evidence is insufficient to assert recoverability."
     },
     {
       "service_id": "specular-edge",
@@ -170,15 +154,15 @@
       "state": "no-backup-rationale",
       "target_ids": [],
       "rationale": "The edge projection is stateless and rebuilt from reviewed Git source; telemetry history belongs to the local producer.",
-      "notes": "This rationale does not cover specular-telemetry local data."
+      "notes": "This rationale does not cover local telemetry data."
     },
     {
       "service_id": "specular-sentinel",
       "repository": "AtlasReaper311/specular-sentinel",
       "state": "not-declared",
       "target_ids": [],
-      "rationale": "No production backup target or no-backup decision is approved in Phase 8.",
-      "notes": "Current registry evidence is insufficient to assert recoverability."
+      "rationale": "No production backup target or no-backup decision is approved for this public runtime.",
+      "notes": "Current public registry evidence is insufficient to assert recoverability."
     },
     {
       "service_id": "specular-sonify",
@@ -193,8 +177,8 @@
       "repository": "AtlasReaper311/specular-telemetry",
       "state": "not-declared",
       "target_ids": [],
-      "rationale": "No production backup target or no-backup decision is approved in Phase 8.",
-      "notes": "Current registry evidence is insufficient to assert recoverability."
+      "rationale": "No production backup target or no-backup decision is approved for this public runtime.",
+      "notes": "Current public registry evidence is insufficient to assert recoverability."
     },
     {
       "service_id": "status",
@@ -244,47 +228,7 @@
       "criticality": "high",
       "enabled": true,
       "fixture_only": true,
-      "notes": "Validates a small Chroma-shaped export without reading atlas-corpus production data."
-    },
-    {
-      "target_id": "cloudflare-kv-export-fixture",
-      "service_id": "atlas-vault",
-      "repository": "AtlasReaper311/atlas-vault",
-      "data_type": "cloudflare-kv-export",
-      "storage_type": "cloudflare-kv",
-      "owner": "github:AtlasReaper311",
-      "classification": {
-        "lifecycle": "active",
-        "scope": "internal",
-        "provenance": "original"
-      },
-      "backup_frequency_hours": 24,
-      "maximum_allowed_age_hours": 24,
-      "recovery_point_objective_hours": 24,
-      "recovery_time_objective_hours": 4,
-      "retention_expectation_days": 30,
-      "restore_drill_type": "json-export-validation",
-      "disposable_restore_location": "system-temporary-directory",
-      "evidence_source": "cloudflare-kv-export-fixture/backup-metadata.json",
-      "required_metadata_fields": [
-        "backup_at",
-        "digest",
-        "evidence_ref",
-        "expected_file_count",
-        "expected_total_size_bytes",
-        "observed_at",
-        "repository",
-        "restore_source",
-        "retention",
-        "service_id",
-        "source_type",
-        "target_id"
-      ],
-      "runbook_reference": "docs/runbooks/backup-audit-restore-drill-failed.md",
-      "criticality": "high",
-      "enabled": true,
-      "fixture_only": true,
-      "notes": "Validates a local JSON fixture; it does not read or write a Cloudflare namespace."
+      "notes": "Validates a small Chroma-shaped export without reading production data."
     },
     {
       "target_id": "github-workflow-artifact-fixture",
