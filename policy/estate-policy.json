@@ -1,6 +1,6 @@
 {
   "schema": "atlas-estate-policy/v2",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "banned_words": [
     "leveraged",
     "utilised",
@@ -73,10 +73,8 @@
     "worker-meta": {
       "weight": 10,
       "severity": "warning",
-      "description": "Cloudflare Workers visibly implement the /_meta convention."
+      "description": "Approved public Cloudflare Workers visibly implement the /_meta convention."
     }
   },
-  "excluded_repositories": [
-    "AtlasReaper311/simple-proxy"
-  ]
+  "excluded_repositories": []
 }
