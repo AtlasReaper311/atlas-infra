@@ -1,0 +1,61 @@
+name: Contract registry CI
+
+on:
+  pull_request:
+    paths:
+      - "contracts/**"
+      - "docs/adrs/**"
+      - "docs/runbooks/**"
+      - "policy/estate-registry.json"
+      - "policy/estate-registry.schema.json"
+      - "policy/service-contracts/**"
+      - "scripts/contract_registry.py"
+      - "scripts/control_plane_contracts.py"
+      - "scripts/validate_contract_registry.py"
+      - ".github/workflows/contract-registry-ci.yml"
+  push:
+    branches: [main]
+    paths:
+      - "contracts/**"
+      - "docs/adrs/**"
+      - "docs/runbooks/**"
+      - "policy/estate-registry.json"
+      - "policy/estate-registry.schema.json"
+      - "policy/service-contracts/**"
+      - "scripts/contract_registry.py"
+      - "scripts/control_plane_contracts.py"
+      - "scripts/validate_contract_registry.py"
+      - ".github/workflows/contract-registry-ci.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.repository }}-contract-registry-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Validate public runtime contracts
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0, Node 24
+
+      - name: Validate public registry and service contracts
+        run: |
+          set -euo pipefail
+          python3 scripts/validate_contract_registry.py \
+            --report /tmp/registry-report.json \
+            --markdown /tmp/registry-report.md \
+            --graph /tmp/service-dependency-graph.json \
+            --catalog /tmp/service-catalog.json
+
+      - name: Compile registry tooling
+        run: |
+          set -euo pipefail
+          python3 -m py_compile \
+            scripts/contract_registry.py \
+            scripts/control_plane_contracts.py \
+            scripts/validate_contract_registry.py
