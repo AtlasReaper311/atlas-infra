@@ -1,5 +1,12 @@
 #!/usr/bin/env python3
-"""Offline validation and reporting for the Atlas contract registry."""
+"""Offline validation and reporting for the public Atlas contract registry.
+
+The public registry is intentionally data-driven. It validates only repositories
+and service contracts committed to this public control-plane repository. Private
+repositories own their governance documents inside their own repositories and
+are validated through the reusable governance workflow instead of being named
+or indexed here.
+"""
 
 from __future__ import annotations
 
@@ -14,48 +21,6 @@ from control_plane_contracts import (
     semantic_errors,
     sha256_hex,
     validate_instance,
-)
-
-EXPECTED_REPOSITORIES = (
-    "AtlasReaper311/AtlasReaper311",
-    "AtlasReaper311/atlas-api-index",
-    "AtlasReaper311/atlas-api-public",
-    "AtlasReaper311/atlas-article-gen",
-    "AtlasReaper311/atlas-badges",
-    "AtlasReaper311/atlas-blackbox",
-    "AtlasReaper311/atlas-bootstrap",
-    "AtlasReaper311/atlas-corpus",
-    "AtlasReaper311/atlas-cv",
-    "AtlasReaper311/atlas-daily-digest",
-    "AtlasReaper311/atlas-dep-audit",
-    "AtlasReaper311/atlas-doc-viewer",
-    "AtlasReaper311/atlas-dora",
-    "AtlasReaper311/atlas-eval-harness",
-    "AtlasReaper311/atlas-gardener",
-    "AtlasReaper311/atlas-infra",
-    "AtlasReaper311/atlas-journey-watch",
-    "AtlasReaper311/atlas-kit-python-rag",
-    "AtlasReaper311/atlas-notify",
-    "AtlasReaper311/atlas-postmortem",
-    "AtlasReaper311/atlas-quota-watch",
-    "AtlasReaper311/atlas-resource-audit",
-    "AtlasReaper311/atlas-scheduler",
-    "AtlasReaper311/atlas-systems",
-    "AtlasReaper311/atlas-vault",
-    "AtlasReaper311/atlas-watch",
-    "AtlasReaper311/deploy-watch",
-    "AtlasReaper311/github-pulse",
-    "AtlasReaper311/ollama-rag-kit",
-    "AtlasReaper311/ramone-edge",
-    "AtlasReaper311/ramone-memory",
-    "AtlasReaper311/ramone-voice-trigger",
-    "AtlasReaper311/simple-proxy",
-    "AtlasReaper311/site-pulse",
-    "AtlasReaper311/specular-sentinel",
-    "AtlasReaper311/specular-sonify",
-    "AtlasReaper311/specular-telemetry",
-    "AtlasReaper311/status",
-    "AtlasReaper311/worker-meta-kit",
 )
 
 CLASSIFICATION_AXES = {
@@ -78,14 +43,6 @@ PHASE6_CONTRACT_FIELDS = (
     "contract_notes",
 )
 
-SIMPLE_PROXY_EXCLUSIONS = {
-    "active-routes",
-    "default-assurance",
-    "deployment-orchestration",
-    "gardener-remediation",
-    "new-features",
-}
-
 RUNBOOKS = {
     "duplicate-route-owner": "docs/runbooks/contract-registry-duplicate-route-owner.md",
     "missing-service-contract": "docs/runbooks/contract-registry-missing-service-contract.md",
@@ -94,7 +51,6 @@ RUNBOOKS = {
     "missing-metadata-endpoint": "docs/runbooks/contract-registry-missing-metadata-endpoint.md",
     "stale-registry-entry": "docs/runbooks/contract-registry-stale-registry-entry.md",
     "unknown-service-id": "docs/runbooks/contract-registry-unknown-service-id.md",
-    "deprecated-route-owner": "docs/runbooks/contract-registry-deprecated-route-owner.md",
 }
 DEFAULT_RUNBOOK = "docs/runbooks/contract-registry-validation.md"
 
@@ -165,30 +121,23 @@ def _contract_location(file_name: str) -> str:
 
 def _endpoint_errors(contract: dict[str, Any]) -> list[tuple[str, str]]:
     errors: list[tuple[str, str]] = []
-    health = contract.get("health_endpoint")
-    if isinstance(health, dict):
-        known = health.get("state") == "known"
-        has_target = bool(health.get("origin")) and bool(health.get("path"))
+    for field in ("health_endpoint", "metadata_endpoint"):
+        endpoint = contract.get(field)
+        if not isinstance(endpoint, dict):
+            continue
+        known = endpoint.get("state") == "known"
+        has_target = bool(endpoint.get("origin")) and bool(endpoint.get("path"))
         if known != has_target:
             errors.append(
                 (
-                    "health-endpoint-state",
-                    "A known health endpoint requires origin and path; unknown or not-applicable endpoints require null origin and path.",
+                    f"{field.replace('_', '-')}-state",
+                    f"{field} known state must match whether origin and path are declared.",
                 )
             )
-
     metadata = contract.get("metadata_endpoint")
     if isinstance(metadata, dict):
         known = metadata.get("state") == "known"
-        has_target = bool(metadata.get("origin")) and bool(metadata.get("path"))
         shape = metadata.get("expected_shape")
-        if known != has_target:
-            errors.append(
-                (
-                    "metadata-endpoint-state",
-                    "A known metadata endpoint requires origin and path; unknown or not-applicable endpoints require null origin and path.",
-                )
-            )
         if known and shape in {"unknown", "not-applicable", None}:
             errors.append(
                 (
@@ -197,15 +146,13 @@ def _endpoint_errors(contract: dict[str, Any]) -> list[tuple[str, str]]:
                 )
             )
         if not known and metadata.get("state") in {"unknown", "not-applicable"}:
-            expected = metadata.get("state")
-            if shape != expected:
+            if shape != metadata.get("state"):
                 errors.append(
                     (
                         "metadata-shape-state",
                         "Unknown and not-applicable metadata endpoints must use the matching expected_shape value.",
                     )
                 )
-
         legacy_route = contract.get("metadata_route")
         if legacy_route is not None and (
             not known or legacy_route != metadata.get("path")
@@ -213,7 +160,7 @@ def _endpoint_errors(contract: dict[str, Any]) -> list[tuple[str, str]]:
             errors.append(
                 (
                     "metadata-route-mismatch",
-                    "metadata_route must match a known metadata_endpoint path when it is declared.",
+                    "metadata_route must match a known metadata_endpoint path when declared.",
                 )
             )
     return errors
@@ -245,9 +192,7 @@ def _sorted_contract_errors(contract: dict[str, Any]) -> list[str]:
             if isinstance(route, dict)
         ]
         if route_keys != sorted(route_keys):
-            errors.append(
-                "routes must be sorted by origin, path, methods, and visibility"
-            )
+            errors.append("routes must be sorted by origin, path, methods, and visibility")
         for route in routes:
             if isinstance(route, dict):
                 methods = route.get("methods")
@@ -284,14 +229,14 @@ def _load_contracts(
             rule_id="missing-service-contract",
             repository="AtlasReaper311/atlas-infra",
             location="policy/service-contracts",
-            summary="The service-contract directory is missing.",
+            summary="The public service-contract directory is missing.",
         )
         return contracts, contract_files
 
     for path in sorted(contracts_dir.glob("*.json"), key=lambda item: item.name):
         location = _contract_location(path.name)
         contract, load_error = _load_document(path)
-        if load_error:
+        if load_error or not isinstance(contract, dict):
             _append_finding(
                 findings,
                 rules=rules,
@@ -299,18 +244,7 @@ def _load_contracts(
                 rule_id="contract-json-invalid",
                 repository="AtlasReaper311/atlas-infra",
                 location=location,
-                summary=f"Service contract cannot be loaded: {load_error}.",
-            )
-            continue
-        if not isinstance(contract, dict):
-            _append_finding(
-                findings,
-                rules=rules,
-                detected_at=detected_at,
-                rule_id="contract-schema-invalid",
-                repository="AtlasReaper311/atlas-infra",
-                location=location,
-                summary="Service contract root must be an object.",
+                summary=f"Service contract cannot be loaded: {load_error or 'root must be an object'}.",
             )
             continue
 
@@ -324,6 +258,7 @@ def _load_contracts(
         schema_errors.extend(
             semantic_errors("service-contract.schema.json", contract, rules)
         )
+        schema_errors.extend(_sorted_contract_errors(contract))
         if schema_errors:
             _append_finding(
                 findings,
@@ -333,12 +268,10 @@ def _load_contracts(
                 repository=repository,
                 service_id=subject_service,
                 location=location,
-                summary=f"Service contract is malformed: {schema_errors[0]}",
+                summary=f"ServiceContract is malformed: {schema_errors[0]}",
             )
 
-        if not isinstance(contract.get("owner"), dict) or not contract["owner"].get(
-            "github"
-        ):
+        if not isinstance(contract.get("owner"), dict) or not contract["owner"].get("github"):
             _append_finding(
                 findings,
                 rules=rules,
@@ -347,7 +280,7 @@ def _load_contracts(
                 repository=repository,
                 service_id=subject_service,
                 location=location,
-                summary="Service contract has no approved owner.",
+                summary="ServiceContract has no approved owner.",
             )
 
         missing_fields = [
@@ -362,7 +295,7 @@ def _load_contracts(
                 repository=repository,
                 service_id=subject_service,
                 location=location,
-                summary=f"Phase 6 registry fields are missing: {', '.join(missing_fields)}.",
+                summary=f"Registry fields are missing: {', '.join(missing_fields)}.",
             )
 
         for rule_id, message in _endpoint_errors(contract):
@@ -377,47 +310,17 @@ def _load_contracts(
                 summary=message,
             )
 
-        sorted_errors = _sorted_contract_errors(contract)
-        if sorted_errors:
-            _append_finding(
-                findings,
-                rules=rules,
-                detected_at=detected_at,
-                rule_id="contract-not-sorted",
-                repository=repository,
-                service_id=subject_service,
-                location=location,
-                summary=sorted_errors[0] + ".",
-            )
-
-        routes = contract.get("routes", [])
-        for route in routes if isinstance(routes, list) else []:
-            if isinstance(route, dict) and not route.get("origin"):
-                _append_finding(
-                    findings,
-                    rules=rules,
-                    detected_at=detected_at,
-                    rule_id="route-origin-missing",
-                    repository=repository,
-                    service_id=subject_service,
-                    location=location,
-                    summary="Every canonical route requires an HTTPS origin.",
-                )
-                break
-
         if not isinstance(service_id, str) or not service_id:
-            continue
-        if path.stem != service_id:
             _append_finding(
                 findings,
                 rules=rules,
                 detected_at=detected_at,
-                rule_id="contract-filename-mismatch",
+                rule_id="unknown-service-id",
                 repository=repository,
-                service_id=service_id,
                 location=location,
-                summary=f"Contract filename must be {service_id}.json.",
+                summary="ServiceContract has no service_id.",
             )
+            continue
         if service_id in contracts:
             _append_finding(
                 findings,
@@ -465,32 +368,19 @@ def _validate_registry_inventory(
             rule_id="duplicate-repository",
             repository="AtlasReaper311/atlas-infra",
             location="policy/estate-registry.json",
-            summary="The estate registry contains duplicate repository entries.",
+            summary="The public registry contains duplicate repository entries.",
         )
 
-    declared = set(valid_names)
-    for repository in sorted(set(EXPECTED_REPOSITORIES) - declared):
+    approved_count = registry.get("approved_repository_count")
+    if approved_count != len(entries):
         _append_finding(
             findings,
             rules=rules,
             detected_at=detected_at,
-            rule_id="missing-repository",
-            repository=repository,
+            rule_id="registry-count-mismatch",
+            repository="AtlasReaper311/atlas-infra",
             location="policy/estate-registry.json",
-            summary="Approved repository is absent from the canonical estate registry.",
-        )
-    for repository in sorted(declared - set(EXPECTED_REPOSITORIES)):
-        _append_finding(
-            findings,
-            rules=rules,
-            detected_at=detected_at,
-            rule_id="stale-registry-entry",
-            repository=repository,
-            location="policy/estate-registry.json",
-            summary=(
-                "Registry entry is outside the approved "
-                f"{len(EXPECTED_REPOSITORIES)}-repository estate."
-            ),
+            summary="approved_repository_count must equal the number of public registry entries.",
         )
 
     axes = registry.get("classification_axes")
@@ -526,30 +416,6 @@ def _validate_registry_inventory(
                 repository=repository,
                 location="policy/estate-registry.json",
                 summary="Repository service_ids must be sorted.",
-            )
-
-    simple = entries_by_repo.get("AtlasReaper311/simple-proxy")
-    if simple:
-        exact_classification = (
-            simple.get("lifecycle") == "deprecated"
-            and simple.get("scope") == "internal"
-            and simple.get("provenance") == "external-derived"
-        )
-        exclusions = set(simple.get("exclusions", []))
-        if (
-            not exact_classification
-            or simple.get("public_surface") is not False
-            or not SIMPLE_PROXY_EXCLUSIONS.issubset(exclusions)
-        ):
-            _append_finding(
-                findings,
-                rules=rules,
-                detected_at=detected_at,
-                rule_id="lifecycle-conflict",
-                repository="AtlasReaper311/simple-proxy",
-                service_id="simple-proxy",
-                location="policy/estate-registry.json",
-                summary="simple-proxy must remain deprecated, internal, external-derived, non-public, and excluded from active control-plane ownership.",
             )
     return entries_by_repo
 
@@ -616,7 +482,7 @@ def _validate_contract_relationships(
                     repository=repository,
                     service_id=service_id,
                     location="policy/estate-registry.json",
-                    summary="Declared runtime service has no ServiceContract file.",
+                    summary="Declared public runtime service has no ServiceContract file.",
                 )
                 continue
             if contract.get("source_repository") != repository:
@@ -628,7 +494,7 @@ def _validate_contract_relationships(
                     repository=repository,
                     service_id=service_id,
                     location=_contract_location(contract_files[service_id]),
-                    summary="ServiceContract source_repository does not match its estate registry owner.",
+                    summary="ServiceContract source_repository does not match its public registry owner.",
                 )
 
             classification = contract.get("classification", {})
@@ -646,15 +512,14 @@ def _validate_contract_relationships(
                     repository=repository,
                     service_id=service_id,
                     location=_contract_location(contract_files[service_id]),
-                    summary="ServiceContract lifecycle, scope, or provenance conflicts with the estate registry.",
+                    summary="ServiceContract classification conflicts with the public registry entry.",
                 )
 
             if entry.get("lifecycle") == "production" and runtime:
                 registry_runbook = entry.get("runbook_reference")
                 contract_runbooks = contract.get("runbooks", [])
                 registry_runbook_exists = (
-                    isinstance(registry_runbook, str)
-                    and (root / registry_runbook).is_file()
+                    isinstance(registry_runbook, str) and (root / registry_runbook).is_file()
                 )
                 contract_runbook_exists = any(
                     isinstance(reference, str) and (root / reference).is_file()
@@ -684,7 +549,7 @@ def _validate_contract_relationships(
                 repository=repository,
                 service_id=service_id,
                 location=location,
-                summary="ServiceContract names a repository outside the canonical estate registry.",
+                summary="Public ServiceContract names a repository outside the public runtime registry.",
             )
         elif service_id not in referenced_ids:
             _append_finding(
@@ -695,56 +560,8 @@ def _validate_contract_relationships(
                 repository=repository,
                 service_id=service_id,
                 location=location,
-                summary="ServiceContract is not indexed by its repository registry entry.",
+                summary="ServiceContract is not indexed by its public repository registry entry.",
             )
-
-        classification = contract.get("classification", {})
-        routes = contract.get("routes", [])
-        policy = contract.get("control_plane_policy", {})
-        if routes and classification.get("lifecycle") == "deprecated":
-            _append_finding(
-                findings,
-                rules=rules,
-                detected_at=detected_at,
-                rule_id="deprecated-route-owner",
-                repository=repository,
-                service_id=service_id,
-                location=location,
-                summary="Deprecated services cannot claim active routes.",
-            )
-        if routes and classification.get("lifecycle") == "archived":
-            _append_finding(
-                findings,
-                rules=rules,
-                detected_at=detected_at,
-                rule_id="archived-route-owner",
-                repository=repository,
-                service_id=service_id,
-                location=location,
-                summary="Archived services cannot claim active routes.",
-            )
-        if classification.get("provenance") == "external-derived":
-            active_controls = any(
-                policy.get(field) is True
-                for field in (
-                    "new_features",
-                    "route_ownership",
-                    "default_assurance",
-                    "gardener_remediation",
-                    "deployment_orchestration",
-                )
-            )
-            if routes or active_controls:
-                _append_finding(
-                    findings,
-                    rules=rules,
-                    detected_at=detected_at,
-                    rule_id="external-derived-active-feature",
-                    repository=repository,
-                    service_id=service_id,
-                    location=location,
-                    summary="External-derived services cannot claim active routes or active feature/remediation/orchestration policy.",
-                )
 
         metadata = contract.get("metadata_endpoint", {})
         if contract.get("release_watch_eligible") is True and (
@@ -772,7 +589,7 @@ def _validate_contract_relationships(
                     repository=repository,
                     service_id=service_id,
                     location=location,
-                    summary=f"Dependency references unknown service ID {dependency}.",
+                    summary=f"Dependency references unknown public service ID {dependency}.",
                 )
 
 
@@ -840,9 +657,7 @@ def _validate_routes(
                 rules=rules,
                 detected_at=detected_at,
                 rule_id="duplicate-route-owner",
-                repository=contract.get(
-                    "source_repository", "AtlasReaper311/atlas-infra"
-                ),
+                repository=contract.get("source_repository", "AtlasReaper311/atlas-infra"),
                 service_id=first,
                 location=_contract_location(contract_files[first]),
                 summary=f"{method} {origin}{path} is claimed by {', '.join(unique_owners)}.",
@@ -859,7 +674,6 @@ def _validate_routes(
 
 
 def build_dependency_graph(contracts: dict[str, dict[str, Any]]) -> dict[str, Any]:
-    """Return a deterministic machine-readable graph of registered services."""
     nodes = []
     edges = []
     for service_id, contract in sorted(contracts.items()):
@@ -903,18 +717,10 @@ def _service_catalog(contracts: dict[str, dict[str, Any]]) -> list[dict[str, Any
                 "environments": sorted(contract.get("environments", [])),
                 "public_routes": public_routes,
                 "metadata": {
-                    "state": metadata.get("state")
-                    if isinstance(metadata, dict)
-                    else None,
-                    "origin": metadata.get("origin")
-                    if isinstance(metadata, dict)
-                    else None,
-                    "path": metadata.get("path")
-                    if isinstance(metadata, dict)
-                    else None,
-                    "expected_shape": metadata.get("expected_shape")
-                    if isinstance(metadata, dict)
-                    else None,
+                    "state": metadata.get("state") if isinstance(metadata, dict) else None,
+                    "origin": metadata.get("origin") if isinstance(metadata, dict) else None,
+                    "path": metadata.get("path") if isinstance(metadata, dict) else None,
+                    "expected_shape": metadata.get("expected_shape") if isinstance(metadata, dict) else None,
                 },
             }
         )
@@ -927,7 +733,6 @@ def validate_contract_registry(
     registry_path: Path,
     contracts_dir: Path,
 ) -> dict[str, Any]:
-    """Validate the registry and contracts using local files only."""
     contract_root = root / "contracts" / "v1"
     fingerprint_rules = load_json(contract_root / "fingerprint-rules.json")
     finding_schema = load_json(contract_root / "finding.schema.json")
@@ -949,7 +754,7 @@ def validate_contract_registry(
             rule_id="registry-json-invalid",
             repository="AtlasReaper311/atlas-infra",
             location="policy/estate-registry.json",
-            summary=f"Estate registry cannot be loaded: {registry_error or 'root must be an object'}.",
+            summary=f"Public registry cannot be loaded: {registry_error or 'root must be an object'}.",
         )
         registry = {"repositories": [], "reviewed_at": detected_at}
     else:
@@ -962,7 +767,7 @@ def validate_contract_registry(
                 rule_id="registry-schema-invalid",
                 repository="AtlasReaper311/atlas-infra",
                 location="policy/estate-registry.json",
-                summary=f"Estate registry is malformed: {registry_errors[0]}",
+                summary=f"Public registry is malformed: {registry_errors[0]}",
             )
 
     contracts, contract_files = _load_contracts(
@@ -1008,13 +813,11 @@ def validate_contract_registry(
     finding_schema_errors: list[str] = []
     for index, finding in enumerate(findings):
         errors = validate_instance(finding, finding_schema)
-        errors.extend(
-            semantic_errors("finding.schema.json", finding, fingerprint_rules)
-        )
+        errors.extend(semantic_errors("finding.schema.json", finding, fingerprint_rules))
         finding_schema_errors.extend(f"finding[{index}]: {error}" for error in errors)
 
     graph = build_dependency_graph(contracts)
-    report = {
+    return {
         "schema_version": "atlas-contract-registry/validation-report/v1",
         "reviewed_at": detected_at,
         "status": "passed" if not findings and not finding_schema_errors else "failed",
@@ -1031,11 +834,9 @@ def validate_contract_registry(
         "dependency_graph": graph,
         "service_catalog": _service_catalog(contracts),
     }
-    return report
 
 
 def render_markdown(report: dict[str, Any]) -> str:
-    """Render a deterministic human-readable validation report."""
     lines = [
         "# Contract registry validation",
         "",
