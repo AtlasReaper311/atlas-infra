@@ -12,6 +12,7 @@ on:
       - "scripts/contract_registry.py"
       - "scripts/control_plane_contracts.py"
       - "scripts/validate_contract_registry.py"
+      - "scripts/tests/**"
       - ".github/workflows/contract-registry-ci.yml"
   push:
     branches: [main]
@@ -25,6 +26,7 @@ on:
       - "scripts/contract_registry.py"
       - "scripts/control_plane_contracts.py"
       - "scripts/validate_contract_registry.py"
+      - "scripts/tests/**"
       - ".github/workflows/contract-registry-ci.yml"
   workflow_dispatch:
 
@@ -59,3 +61,8 @@ jobs:
             scripts/contract_registry.py \
             scripts/control_plane_contracts.py \
             scripts/validate_contract_registry.py
+
+      - name: Run control-plane unit tests
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -s scripts/tests -v
