@@ -23,6 +23,7 @@ jobs:
 
       - name: Validate assurance scripts
         run: |
+          python3 -m py_compile scripts/assurance_scope.py
           python3 -m py_compile scripts/backup_audit.py
           python3 -m py_compile scripts/change_impact.py
           python3 -m py_compile scripts/contract_registry.py
@@ -74,8 +75,11 @@ jobs:
         env:
           GH_DIGEST_PAT: ${{ secrets.GH_DIGEST_PAT }}
         run: |
+          python3 scripts/assurance_scope.py \
+            --input policy/estate-registry.json \
+            --output reports/estate-assurance-registry.json
           python3 scripts/estate_policy.py \
-            --manifest policy/estate-registry.json \
+            --manifest reports/estate-assurance-registry.json \
             --policy policy/estate-policy.json \
             --markdown reports/estate-policy.md \
             --json reports/estate-policy.json
