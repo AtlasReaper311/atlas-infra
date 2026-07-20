@@ -1,0 +1,225 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://atlas-systems.uk/contracts/incident-evidence-pack-v1.schema.json",
+  "title": "Atlas incident evidence pack",
+  "description": "A deterministic, reference-only bundle of the reliability evidence around one incident. Every linked artifact is a path plus digest, never an embedded payload, and absent evidence is stated.",
+  "type": "object",
+  "required": [
+    "schema",
+    "generated_at",
+    "service_id",
+    "objective_id",
+    "indicator",
+    "detection",
+    "reliability",
+    "release",
+    "journey",
+    "notifications",
+    "recovery",
+    "runbook_ref",
+    "dora_correlation",
+    "chaos_experiment_id",
+    "references",
+    "fingerprint"
+  ],
+  "properties": {
+    "schema": {
+      "const": "atlas-incident-evidence-pack/v1"
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "service_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+      "maxLength": 64
+    },
+    "objective_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+      "maxLength": 96
+    },
+    "indicator": {
+      "enum": ["availability", "latency"]
+    },
+    "detection": {
+      "type": "object",
+      "required": ["first_detected_at", "last_healthy_at", "incident_id"],
+      "properties": {
+        "first_detected_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "last_healthy_at": {
+          "type": ["string", "null"],
+          "format": "date-time"
+        },
+        "incident_id": {
+          "type": ["string", "null"],
+          "maxLength": 120
+        }
+      },
+      "additionalProperties": false
+    },
+    "reliability": {
+      "type": "object",
+      "required": ["state", "burn_transition", "result_reference"],
+      "properties": {
+        "state": {
+          "enum": [
+            "objective_met",
+            "budget_at_risk",
+            "budget_exhausted",
+            "insufficient_evidence",
+            "stale_evidence",
+            "unavailable_source",
+            "malformed_evidence",
+            "unmeasured"
+          ]
+        },
+        "burn_transition": {
+          "type": ["string", "null"],
+          "maxLength": 160
+        },
+        "result_reference": {
+          "type": ["string", "null"],
+          "maxLength": 240
+        }
+      },
+      "additionalProperties": false
+    },
+    "release": {
+      "type": "object",
+      "required": ["related", "repository", "deploy_event_at", "reference"],
+      "properties": {
+        "related": {
+          "enum": ["linked", "none-identified", "unknown"]
+        },
+        "repository": {
+          "type": ["string", "null"],
+          "maxLength": 128
+        },
+        "deploy_event_at": {
+          "type": ["string", "null"],
+          "format": "date-time"
+        },
+        "reference": {
+          "type": ["string", "null"],
+          "maxLength": 240
+        }
+      },
+      "additionalProperties": false
+    },
+    "journey": {
+      "type": "object",
+      "required": ["state", "reference"],
+      "properties": {
+        "state": {
+          "enum": ["passed", "failed", "skipped", "unknown"]
+        },
+        "reference": {
+          "type": ["string", "null"],
+          "maxLength": 240
+        }
+      },
+      "additionalProperties": false
+    },
+    "notifications": {
+      "type": "object",
+      "required": ["delivered_count", "suppressed", "reference"],
+      "properties": {
+        "delivered_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000
+        },
+        "suppressed": {
+          "type": ["boolean", "null"]
+        },
+        "reference": {
+          "type": ["string", "null"],
+          "maxLength": 240
+        }
+      },
+      "additionalProperties": false
+    },
+    "recovery": {
+      "type": "object",
+      "required": ["state", "confirmed_at", "reference"],
+      "properties": {
+        "state": {
+          "enum": ["confirmed", "not-confirmed", "unknown"]
+        },
+        "confirmed_at": {
+          "type": ["string", "null"],
+          "format": "date-time"
+        },
+        "reference": {
+          "type": ["string", "null"],
+          "maxLength": 240
+        }
+      },
+      "additionalProperties": false
+    },
+    "runbook_ref": {
+      "type": ["string", "null"],
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))[A-Za-z0-9._/-]+\\.md$",
+      "maxLength": 240
+    },
+    "dora_correlation": {
+      "type": "object",
+      "required": ["state", "reference"],
+      "properties": {
+        "state": {
+          "enum": ["available", "unavailable"]
+        },
+        "reference": {
+          "type": ["string", "null"],
+          "maxLength": 240
+        }
+      },
+      "additionalProperties": false
+    },
+    "chaos_experiment_id": {
+      "type": ["string", "null"],
+      "maxLength": 120
+    },
+    "references": {
+      "type": "array",
+      "maxItems": 20,
+      "items": {
+        "type": "object",
+        "required": ["kind", "path", "digest"],
+        "properties": {
+          "kind": {
+            "enum": [
+              "reliability-result",
+              "recovery-result",
+              "incident",
+              "release-evidence",
+              "correlation",
+              "notify-events",
+              "chaos-report"
+            ]
+          },
+          "path": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 300
+          },
+          "digest": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "fingerprint": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  },
+  "additionalProperties": false
+}

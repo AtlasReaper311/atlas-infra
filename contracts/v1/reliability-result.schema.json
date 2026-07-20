@@ -1,0 +1,386 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.atlas-systems.uk/control-plane/v1/reliability-result.schema.json",
+  "title": "Atlas Systems ReliabilityResult v1",
+  "description": "One deterministic estate reliability evaluation: per-service derived results plus the explicit unmeasured list. Missing evidence is a stated condition, never health.",
+  "type": "object",
+  "additionalProperties": false,
+  "x-owner": {
+    "repository": "AtlasReaper311/atlas-infra",
+    "consumer": "atlas-api-public /v1/reliability, status cockpit, atlas-dora correlation, incident evidence pack"
+  },
+  "required": [
+    "schema_version",
+    "evaluated_at",
+    "stale_after",
+    "policy_fingerprint",
+    "source",
+    "results",
+    "unmeasured",
+    "fingerprint"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "atlas-control-plane/reliability-result/v1"
+    },
+    "evaluated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "stale_after": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "policy_fingerprint": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["provider", "window_days", "measuring_since"],
+      "properties": {
+        "provider": {
+          "enum": ["atlas-api-public/v1/slo"]
+        },
+        "window_days": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 90
+        },
+        "measuring_since": {
+          "type": ["string", "null"],
+          "format": "date-time"
+        },
+        "checked_at": {
+          "type": ["string", "null"],
+          "format": "date-time"
+        }
+      }
+    },
+    "results": {
+      "type": "array",
+      "maxItems": 50,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "service_id",
+          "objective_id",
+          "indicator",
+          "target_pct",
+          "state",
+          "control_plane_state",
+          "reasons",
+          "window",
+          "samples",
+          "availability_pct",
+          "coverage",
+          "latency",
+          "budget",
+          "burn"
+        ],
+        "properties": {
+          "service_id": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+            "maxLength": 64
+          },
+          "objective_id": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+            "maxLength": 96
+          },
+          "indicator": {
+            "enum": ["availability", "latency"]
+          },
+          "target_pct": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 100
+          },
+          "state": {
+            "$ref": "#/$defs/ReliabilityState"
+          },
+          "control_plane_state": {
+            "enum": ["healthy", "warning", "failed", "stale", "unavailable", "unknown"]
+          },
+          "reasons": {
+            "type": "array",
+            "maxItems": 8,
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            }
+          },
+          "window": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["start_day", "end_day", "days_observed"],
+            "properties": {
+              "start_day": {
+                "type": ["string", "null"],
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+              },
+              "end_day": {
+                "type": ["string", "null"],
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+              },
+              "days_observed": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 90
+              }
+            }
+          },
+          "samples": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["ok", "failed", "total"],
+            "properties": {
+              "ok": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "failed": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "total": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          },
+          "availability_pct": {
+            "type": ["number", "null"],
+            "minimum": 0,
+            "maximum": 100
+          },
+          "coverage": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["fraction", "observed", "expected"],
+            "properties": {
+              "fraction": {
+                "type": ["number", "null"],
+                "minimum": 0,
+                "maximum": 1
+              },
+              "observed": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "expected": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          },
+          "latency": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["avg_ms", "percentiles_supported", "percentile_reason"],
+            "properties": {
+              "avg_ms": {
+                "type": ["number", "null"],
+                "minimum": 0
+              },
+              "percentiles_supported": {
+                "const": false
+              },
+              "percentile_reason": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              }
+            }
+          },
+          "budget": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["allowed_failures", "remaining_fraction", "consumed_fraction"],
+            "properties": {
+              "allowed_failures": {
+                "type": ["number", "null"],
+                "minimum": 0
+              },
+              "remaining_fraction": {
+                "type": ["number", "null"],
+                "maximum": 1
+              },
+              "consumed_fraction": {
+                "type": ["number", "null"],
+                "minimum": 0
+              }
+            }
+          },
+          "burn": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["fast", "slow"],
+            "properties": {
+              "fast": {
+                "$ref": "#/$defs/BurnObservation"
+              },
+              "slow": {
+                "$ref": "#/$defs/BurnObservation"
+              }
+            }
+          },
+          "freshness": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["evidence_stale_after_seconds"],
+            "properties": {
+              "evidence_stale_after_seconds": {
+                "type": "integer",
+                "minimum": 60,
+                "maximum": 604800
+              }
+            }
+          }
+        }
+      }
+    },
+    "unmeasured": {
+      "type": "array",
+      "maxItems": 60,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["service_id", "reason"],
+        "properties": {
+          "service_id": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+            "maxLength": 64
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          }
+        }
+      }
+    },
+    "fingerprint": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  },
+  "$defs": {
+    "ReliabilityState": {
+      "enum": [
+        "objective_met",
+        "budget_at_risk",
+        "budget_exhausted",
+        "insufficient_evidence",
+        "stale_evidence",
+        "unavailable_source",
+        "malformed_evidence",
+        "unmeasured"
+      ]
+    },
+    "BurnObservation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rate", "samples", "bucket_days", "reason"],
+      "properties": {
+        "rate": {
+          "type": ["number", "null"],
+          "minimum": 0
+        },
+        "samples": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "bucket_days": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 30
+        },
+        "reason": {
+          "type": ["string", "null"],
+          "maxLength": 200
+        }
+      }
+    }
+  },
+  "examples": [
+    {
+      "schema_version": "atlas-control-plane/reliability-result/v1",
+      "evaluated_at": "2026-07-19T12:00:00Z",
+      "stale_after": "2026-07-19T12:30:00Z",
+      "policy_fingerprint": "7f9c2ba4e88f827d616045507605853ed73b8093f6efbc88eb1a6eacfa66ef26",
+      "source": {
+        "provider": "atlas-api-public/v1/slo",
+        "window_days": 30,
+        "measuring_since": "2026-07-13T18:50:00Z",
+        "checked_at": "2026-07-19T11:58:00Z"
+      },
+      "results": [
+        {
+          "service_id": "atlas-notify",
+          "objective_id": "atlas-notify-availability-30d",
+          "indicator": "availability",
+          "target_pct": 99.5,
+          "state": "objective_met",
+          "control_plane_state": "healthy",
+          "reasons": [],
+          "window": {
+            "start_day": "2026-07-13",
+            "end_day": "2026-07-19",
+            "days_observed": 7
+          },
+          "samples": {
+            "ok": 1006,
+            "failed": 2,
+            "total": 1008
+          },
+          "availability_pct": 99.8,
+          "coverage": {
+            "fraction": 1,
+            "observed": 1008,
+            "expected": 1008
+          },
+          "latency": {
+            "avg_ms": 184,
+            "percentiles_supported": false,
+            "percentile_reason": "per-day aggregate counters cannot support percentiles"
+          },
+          "budget": {
+            "allowed_failures": 5.04,
+            "remaining_fraction": 0.603,
+            "consumed_fraction": 0.397
+          },
+          "burn": {
+            "fast": {
+              "rate": 0.0,
+              "samples": 216,
+              "bucket_days": 2,
+              "reason": null
+            },
+            "slow": {
+              "rate": 0.4,
+              "samples": 1008,
+              "bucket_days": 8,
+              "reason": null
+            }
+          },
+          "freshness": {
+            "evidence_stale_after_seconds": 1800
+          }
+        }
+      ],
+      "unmeasured": [
+        {
+          "service_id": "atlas-vault",
+          "reason": "no approved objective; service remains explicitly unmeasured"
+        }
+      ],
+      "fingerprint": "2c26b46b68ffc68ff99b453c1d30413413422d706483bfa0f98a5e886266e7ae"
+    }
+  ]
+}

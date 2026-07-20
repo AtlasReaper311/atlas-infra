@@ -1,0 +1,73 @@
+{
+  "schema_version": "atlas-control-plane/reliability-result/v1",
+  "evaluated_at": "2026-07-19T12:00:00Z",
+  "stale_after": "2026-07-19T12:30:00Z",
+  "policy_fingerprint": "7f9c2ba4e88f827d616045507605853ed73b8093f6efbc88eb1a6eacfa66ef26",
+  "source": {
+    "provider": "atlas-api-public/v1/slo",
+    "window_days": 30,
+    "measuring_since": "2026-07-13T18:50:00Z",
+    "checked_at": "2026-07-19T11:58:00Z"
+  },
+  "results": [
+    {
+      "service_id": "atlas-notify",
+      "objective_id": "atlas-notify-availability-30d",
+      "indicator": "availability",
+      "target_pct": 99.5,
+      "state": "objective_met",
+      "control_plane_state": "healthy",
+      "reasons": [],
+      "window": {
+        "start_day": "2026-07-13",
+        "end_day": "2026-07-19",
+        "days_observed": 7
+      },
+      "samples": {
+        "ok": 1006,
+        "failed": 2,
+        "total": 1008
+      },
+      "availability_pct": 99.8,
+      "coverage": {
+        "fraction": 1,
+        "observed": 1008,
+        "expected": 1008
+      },
+      "latency": {
+        "avg_ms": 184,
+        "percentiles_supported": false,
+        "percentile_reason": "per-day aggregate counters cannot support percentiles"
+      },
+      "budget": {
+        "allowed_failures": 5.04,
+        "remaining_fraction": 0.603,
+        "consumed_fraction": 0.397
+      },
+      "burn": {
+        "fast": {
+          "rate": 0.0,
+          "samples": 216,
+          "bucket_days": 2,
+          "reason": null
+        },
+        "slow": {
+          "rate": 0.4,
+          "samples": 1008,
+          "bucket_days": 8,
+          "reason": null
+        }
+      },
+      "freshness": {
+        "evidence_stale_after_seconds": 1800
+      }
+    }
+  ],
+  "unmeasured": [
+    {
+      "service_id": "atlas-vault",
+      "reason": "no approved objective; service remains explicitly unmeasured"
+    }
+  ],
+  "fingerprint": "2c26b46b68ffc68ff99b453c1d30413413422d706483bfa0f98a5e886266e7ae"
+}

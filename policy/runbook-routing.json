@@ -93,6 +93,45 @@
         "Remove only the incorrect dependency edge through a reviewed policy change."
       ],
       "blocked_actions": ["workflow dispatch", "deployment", "environment protection bypass"]
+    },
+    "reliability-budget-exhausted": {
+      "title": "Error budget at risk or exhausted",
+      "services": ["*"],
+      "repositories": ["AtlasReaper311/atlas-infra"],
+      "states": ["failed", "warning"],
+      "severities": ["warning", "critical"],
+      "triggers": ["reliability.budget-exhausted", "reliability.budget-at-risk", "budget-exhausted"],
+      "diagnostics": [
+        "Read the derived service entry and its burn-rate sample counts.",
+        "Check recent failure events and the release correlation view for the burn window."
+      ],
+      "blocked_actions": ["automatic rollback", "deployment", "target edits outside atlas-infra policy"]
+    },
+    "reliability-evidence-stale": {
+      "title": "Reliability evidence stale",
+      "services": ["*"],
+      "repositories": ["AtlasReaper311/atlas-infra"],
+      "states": ["stale"],
+      "severities": ["warning"],
+      "triggers": ["reliability.stale", "evidence-stale"],
+      "diagnostics": [
+        "Compare evaluated_at with stale_after on the derived document.",
+        "Confirm the probe cron and evaluation step are both completing."
+      ],
+      "blocked_actions": ["manual KV edits", "presenting stale values as current"]
+    },
+    "reliability-source-unavailable": {
+      "title": "Reliability source unavailable",
+      "services": ["*"],
+      "repositories": ["AtlasReaper311/atlas-infra"],
+      "states": ["unavailable"],
+      "severities": ["warning", "critical"],
+      "triggers": ["reliability.unavailable", "reliability.malformed", "source-unavailable"],
+      "diagnostics": [
+        "Read the reasons array naming the missing or malformed input.",
+        "Confirm the policy publish workflow and the component name pairing."
+      ],
+      "blocked_actions": ["fabricating bridge values", "manual KV edits"]
     }
   }
 }

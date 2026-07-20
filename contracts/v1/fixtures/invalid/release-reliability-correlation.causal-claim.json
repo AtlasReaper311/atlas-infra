@@ -1,0 +1,50 @@
+{
+  "schema_version": "atlas-control-plane/release-reliability-correlation/v1",
+  "generated_at": "2026-07-19T12:00:00Z",
+  "stale_after": "2026-07-19T12:30:00Z",
+  "basis": "deploy events from the atlas-notify ring buffer correlated against atlas-api-public per-day probe counters; release day excluded as mixed",
+  "releases": [
+    {
+      "repository": "AtlasReaper311/atlas-notify",
+      "service_id": "atlas-notify",
+      "deploy_event_at": "2026-07-16T14:12:00Z",
+      "deploy_event_source": "atlas-notify/notify/recent",
+      "windows": {
+        "pre_days": [
+          "2026-07-13",
+          "2026-07-14",
+          "2026-07-15"
+        ],
+        "post_days": [
+          "2026-07-17",
+          "2026-07-18"
+        ],
+        "excluded_mixed_day": "2026-07-16"
+      },
+      "pre": {
+        "availability_pct": 99.77,
+        "avg_ms": 190,
+        "samples": 432
+      },
+      "post": {
+        "availability_pct": 99.65,
+        "avg_ms": 201,
+        "samples": 288
+      },
+      "deltas": {
+        "availability_pct_change": -0.12,
+        "avg_ms_change": 11,
+        "failure_rate_change": 0.0012
+      },
+      "scheduled_journey_state": "healthy",
+      "verification": {
+        "state": "unavailable-from-public-surface",
+        "reference": null
+      },
+      "evidence_sufficiency": "partial",
+      "suspected_regression": false,
+      "correlation_not_causation": false,
+      "confidence": "medium"
+    }
+  ]
+}

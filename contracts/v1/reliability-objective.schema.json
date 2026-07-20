@@ -1,0 +1,194 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.atlas-systems.uk/control-plane/v1/reliability-objective.schema.json",
+  "title": "Atlas Systems ReliabilityObjective v1",
+  "description": "One declared service-level objective bound to a measurable evidence source. Targets are never invented here; provenance records where the approved value came from.",
+  "type": "object",
+  "additionalProperties": false,
+  "x-owner": {
+    "repository": "AtlasReaper311/atlas-infra",
+    "consumer": "reliability evaluator, atlas-api-public runtime, status projection"
+  },
+  "required": [
+    "schema_version",
+    "objective_id",
+    "service_id",
+    "indicator",
+    "measurement_source",
+    "window_days",
+    "target_pct",
+    "freshness",
+    "min_samples",
+    "provenance",
+    "display"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "atlas-control-plane/reliability-objective/v1"
+    },
+    "objective_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+      "maxLength": 96
+    },
+    "service_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+      "maxLength": 64
+    },
+    "indicator": {
+      "enum": ["availability", "latency"]
+    },
+    "measurement_source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["provider", "component"],
+      "properties": {
+        "provider": {
+          "enum": ["atlas-api-public/v1/slo"]
+        },
+        "component": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:_[a-z0-9]+)*$",
+          "maxLength": 64
+        }
+      }
+    },
+    "window_days": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 90
+    },
+    "target_pct": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 100
+    },
+    "freshness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["evidence_stale_after_seconds"],
+      "properties": {
+        "evidence_stale_after_seconds": {
+          "type": "integer",
+          "minimum": 60,
+          "maximum": 604800
+        }
+      }
+    },
+    "min_samples": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["evaluate", "fast_burn", "slow_burn"],
+      "properties": {
+        "evaluate": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100000
+        },
+        "fast_burn": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100000
+        },
+        "slow_burn": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100000
+        }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["origin", "source_ref", "approved_by", "approved_at"],
+      "properties": {
+        "origin": {
+          "enum": ["approved-target-migration", "owner-approved-policy"]
+        },
+        "source_ref": {
+          "type": "string",
+          "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))[A-Za-z0-9._/:-]+$",
+          "maxLength": 240
+        },
+        "approved_by": {
+          "const": "AtlasReaper311"
+        },
+        "approved_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "display": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["label", "domain"],
+      "properties": {
+        "label": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "domain": {
+          "enum": ["edge", "machine"]
+        },
+        "order": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 50
+        },
+        "note": {
+          "type": "string",
+          "maxLength": 300
+        }
+      }
+    }
+  },
+  "$defs": {
+    "ReliabilityState": {
+      "enum": [
+        "objective_met",
+        "budget_at_risk",
+        "budget_exhausted",
+        "insufficient_evidence",
+        "stale_evidence",
+        "unavailable_source",
+        "malformed_evidence",
+        "unmeasured"
+      ]
+    }
+  },
+  "examples": [
+    {
+      "schema_version": "atlas-control-plane/reliability-objective/v1",
+      "objective_id": "atlas-notify-availability-30d",
+      "service_id": "atlas-notify",
+      "indicator": "availability",
+      "measurement_source": {
+        "provider": "atlas-api-public/v1/slo",
+        "component": "notify"
+      },
+      "window_days": 30,
+      "target_pct": 99.5,
+      "freshness": {
+        "evidence_stale_after_seconds": 1800
+      },
+      "min_samples": {
+        "evaluate": 288,
+        "fast_burn": 24,
+        "slow_burn": 144
+      },
+      "provenance": {
+        "origin": "approved-target-migration",
+        "source_ref": "AtlasReaper311/status:slo.json",
+        "approved_by": "AtlasReaper311",
+        "approved_at": "2026-07-19T00:00:00Z"
+      },
+      "display": {
+        "label": "event router",
+        "domain": "edge"
+      }
+    }
+  ]
+}
