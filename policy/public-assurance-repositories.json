@@ -1,0 +1,16 @@
+{
+  "schema_version": "atlas-public-assurance/repositories/v1",
+  "repositories": [
+    "AtlasReaper311/AtlasReaper311",
+    "AtlasReaper311/atlas-badges",
+    "AtlasReaper311/atlas-bootstrap",
+    "AtlasReaper311/atlas-dep-audit",
+    "AtlasReaper311/atlas-gardener",
+    "AtlasReaper311/atlas-infra",
+    "AtlasReaper311/atlas-journey-watch",
+    "AtlasReaper311/atlas-kit-python-rag",
+    "AtlasReaper311/atlas-resource-audit",
+    "AtlasReaper311/ollama-rag-kit",
+    "AtlasReaper311/worker-meta-kit"
+  ]
+}
