@@ -188,36 +188,6 @@
       "notification_enabled": true,
       "issue_creation_allowed": false,
       "advisory_only": true
-    },
-    {
-      "service_id": "simple-proxy",
-      "repository": "AtlasReaper311/simple-proxy",
-      "provider": "cloudflare",
-      "quota_type": "workers-requests",
-      "unit": "requests",
-      "measurement_mode": "cumulative",
-      "free_tier_limit": null,
-      "warning_threshold_pct": 80,
-      "critical_threshold_pct": 95,
-      "projection_horizon_days": 7,
-      "cooldown_hours": 24,
-      "max_data_age_hours": 26,
-      "acceleration_threshold_pct": 50,
-      "owner": "AtlasReaper311",
-      "route_ref": null,
-      "worker_ref": null,
-      "classification": {
-        "lifecycle": "deprecated",
-        "scope": "internal",
-        "provenance": "external-derived"
-      },
-      "assurance": {
-        "enabled": false,
-        "exclusion_reason": "Deprecated, internal, external-derived repository; excluded from active cost guard by owner decision."
-      },
-      "notification_enabled": false,
-      "issue_creation_allowed": false,
-      "advisory_only": true
     }
   ]
 }
