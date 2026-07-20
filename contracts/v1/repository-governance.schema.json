@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.atlas-systems.uk/control-plane/v1/repository-governance.schema.json",
+  "title": "Atlas Systems repository governance v1",
+  "description": "Source-owned governance contract for Atlas Systems repositories that must not be projected into the public estate registry.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "repository",
+    "visibility",
+    "estate_membership",
+    "lifecycle",
+    "provenance",
+    "public_projection",
+    "anonymous_aggregate_metrics",
+    "runtime_service",
+    "service_ids"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "atlas-repository-governance/v1"
+    },
+    "repository": {
+      "type": "string",
+      "pattern": "^AtlasReaper311/[A-Za-z0-9._-]+$",
+      "maxLength": 128
+    },
+    "visibility": {
+      "const": "private"
+    },
+    "estate_membership": {
+      "const": "internal"
+    },
+    "lifecycle": {
+      "enum": ["production", "active", "experimental"]
+    },
+    "provenance": {
+      "const": "original"
+    },
+    "public_projection": {
+      "const": false
+    },
+    "anonymous_aggregate_metrics": {
+      "type": "boolean"
+    },
+    "runtime_service": {
+      "type": "boolean"
+    },
+    "service_ids": {
+      "type": "array",
+      "maxItems": 10,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+        "maxLength": 64
+      }
+    }
+  }
+}
