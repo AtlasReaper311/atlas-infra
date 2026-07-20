@@ -1,11 +1,11 @@
 {
   "schema_version": "atlas-deploy-orchestrator/policy/v1",
   "owner": "AtlasReaper311/atlas-infra",
-  "reviewed_at": "2026-07-14T00:00:00Z",
+  "reviewed_at": "2026-07-20T00:00:00Z",
   "eligibility": {
     "excluded_lifecycles": ["archived", "deprecated", "experimental"],
     "excluded_provenance": ["external-derived"],
-    "excluded_services": ["simple-proxy"]
+    "excluded_services": []
   },
   "approval_model": {
     "dry_run_default": true,
