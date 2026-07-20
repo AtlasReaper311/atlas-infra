@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Any
 
 DEFAULT_ASSURANCE_EXCLUSION = "default-assurance"
+PUBLIC_ASSURANCE_REPOSITORIES = "public-assurance-repositories.json"
 
 
 def filter_default_assurance(registry: dict[str, Any]) -> dict[str, Any]:
@@ -31,6 +32,36 @@ def filter_default_assurance(registry: dict[str, Any]) -> dict[str, Any]:
     return filtered
 
 
+def add_public_assurance_repositories(
+    registry: dict[str, Any], supplement_path: Path
+) -> dict[str, Any]:
+    """Add public non-runtime repositories without putting private repos in policy."""
+    if not supplement_path.is_file():
+        return registry
+
+    supplement = json.loads(supplement_path.read_text(encoding="utf-8"))
+    names = supplement.get("repositories", [])
+    if not isinstance(names, list):
+        raise ValueError("public assurance repository supplement must be a list")
+
+    merged = copy.deepcopy(registry)
+    repositories = merged.setdefault("repositories", [])
+    present = {
+        item.get("repository")
+        for item in repositories
+        if isinstance(item, dict) and isinstance(item.get("repository"), str)
+    }
+    for repository in names:
+        if not isinstance(repository, str) or not repository:
+            raise ValueError("public assurance repository names must be non-empty strings")
+        if repository not in present:
+            repositories.append({"repository": repository})
+            present.add(repository)
+
+    repositories.sort(key=lambda item: str(item.get("repository", "")))
+    return merged
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--input", type=Path, required=True)
@@ -42,6 +73,8 @@ def main() -> int:
         raise ValueError("estate registry root must be an object")
 
     filtered = filter_default_assurance(registry)
+    supplement_path = args.input.parent / PUBLIC_ASSURANCE_REPOSITORIES
+    filtered = add_public_assurance_repositories(filtered, supplement_path)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(
         json.dumps(filtered, indent=2, sort_keys=True) + "\n",
@@ -50,7 +83,7 @@ def main() -> int:
 
     before = len(registry.get("repositories", []))
     after = len(filtered.get("repositories", []))
-    print(f"default assurance scope: {after} repositories ({before - after} excluded)")
+    print(f"default assurance scope: {after} repositories ({after - before:+d} net)")
     return 0
 
 
