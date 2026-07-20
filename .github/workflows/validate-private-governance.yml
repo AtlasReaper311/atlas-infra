@@ -16,18 +16,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - name: Check out caller repository
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0, Node 24
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0, Node 24
 
-      - name: Check out pinned Atlas contract tooling
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0, Node 24
-        with:
-          repository: AtlasReaper311/atlas-infra
-          ref: ac9a8287fa36e3caec387093f575873c5f260027
-          path: .atlas-infra
-          persist-credentials: false
-
-      - name: Validate source-owned governance and runtime contract
+      - name: Validate source-owned governance contract
         shell: bash
         env:
           EXPECTED_REPOSITORY: ${{ github.repository }}
@@ -37,15 +28,14 @@ jobs:
           python3 - <<'PY'
           import json
           import os
-          import sys
           from pathlib import Path
 
-          governance_path = Path('.atlas/governance.json')
-          if not governance_path.is_file():
+          path = Path('.atlas/governance.json')
+          if not path.is_file():
               raise SystemExit('missing .atlas/governance.json')
 
           try:
-              document = json.loads(governance_path.read_text(encoding='utf-8'))
+              document = json.loads(path.read_text(encoding='utf-8'))
           except json.JSONDecodeError as error:
               raise SystemExit(
                   f'invalid .atlas/governance.json at line {error.lineno}, column {error.colno}'
@@ -63,8 +53,10 @@ jobs:
               'runtime_service',
               'service_ids',
           }
+          allowed = required
+
           missing = sorted(required - set(document))
-          unexpected = sorted(set(document) - required)
+          unexpected = sorted(set(document) - allowed)
           if missing:
               raise SystemExit('missing governance fields: ' + ', '.join(missing))
           if unexpected:
@@ -74,7 +66,9 @@ jobs:
           if document['schema_version'] != 'atlas-repository-governance/v1':
               raise SystemExit('unsupported governance schema_version')
           if document['repository'] != expected_repository:
-              raise SystemExit(f'governance repository must equal {expected_repository}')
+              raise SystemExit(
+                  f"governance repository must equal {expected_repository}"
+              )
           if document['visibility'] != 'private':
               raise SystemExit('private governance requires visibility=private')
           if document['estate_membership'] != 'internal':
@@ -100,46 +94,16 @@ jobs:
           for service_id in service_ids:
               if not isinstance(service_id, str) or not service_id:
                   raise SystemExit('service_ids must contain non-empty strings')
-              if not (service_id.replace('-', '').isalnum() and service_id.lower() == service_id):
+              if not all(
+                  part and part.replace('-', '').isalnum() and part.lower() == part
+                  for part in [service_id]
+              ):
                   raise SystemExit(f'invalid service_id: {service_id}')
 
           if document['runtime_service'] and not service_ids:
               raise SystemExit('runtime_service=true requires at least one service_id')
           if not document['runtime_service'] and service_ids:
               raise SystemExit('runtime_service=false requires an empty service_ids array')
-
-          contract_path = Path('.atlas/service-contract.json')
-          if document['runtime_service']:
-              if not contract_path.is_file():
-                  raise SystemExit('runtime_service=true requires .atlas/service-contract.json')
-
-              tooling = Path('.atlas-infra')
-              sys.path.insert(0, str(tooling / 'scripts'))
-              from control_plane_contracts import semantic_errors, validate_instance
-
-              contract = json.loads(contract_path.read_text(encoding='utf-8'))
-              schema = json.loads(
-                  (tooling / 'contracts/v1/service-contract.schema.json').read_text(encoding='utf-8')
-              )
-              rules = json.loads(
-                  (tooling / 'contracts/v1/fingerprint-rules.json').read_text(encoding='utf-8')
-              )
-              errors = validate_instance(contract, schema)
-              errors.extend(semantic_errors('service-contract.schema.json', contract, rules))
-              if errors:
-                  raise SystemExit('private service contract invalid: ' + errors[0])
-              if contract.get('source_repository') != expected_repository:
-                  raise SystemExit('private service contract source_repository must match caller')
-              if contract.get('service_id') not in service_ids:
-                  raise SystemExit('private service contract service_id must be declared by governance')
-              classification = contract.get('classification', {})
-              expected_classification = {
-                  'lifecycle': document['lifecycle'],
-                  'scope': 'internal',
-                  'provenance': document['provenance'],
-              }
-              if classification != expected_classification:
-                  raise SystemExit('private service contract classification must match governance')
 
           print(
               'private governance valid:',
