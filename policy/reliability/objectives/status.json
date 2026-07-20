@@ -1,0 +1,32 @@
+{
+  "schema_version": "atlas-control-plane/reliability-objective/v1",
+  "objective_id": "status-availability-30d",
+  "service_id": "status",
+  "indicator": "availability",
+  "measurement_source": {
+    "provider": "atlas-api-public/v1/slo",
+    "component": "status_surface"
+  },
+  "window_days": 30,
+  "target_pct": 99.5,
+  "freshness": {
+    "evidence_stale_after_seconds": 1800
+  },
+  "min_samples": {
+    "evaluate": 288,
+    "fast_burn": 24,
+    "slow_burn": 144
+  },
+  "provenance": {
+    "origin": "owner-approved-policy",
+    "source_ref": "AtlasReaper311/atlas-infra:pull/41",
+    "approved_by": "AtlasReaper311",
+    "approved_at": "2026-07-20T00:00:00Z"
+  },
+  "display": {
+    "label": "status page",
+    "domain": "edge",
+    "order": 13,
+    "note": "measured externally by the API worker, so the page reporting on itself relies on that outside view"
+  }
+}

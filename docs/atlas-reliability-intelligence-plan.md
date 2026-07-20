@@ -46,7 +46,7 @@ Discovery was read-only and every claim below was verified against the working t
 ### 2.1 Functional
 
 1. Answer, from measured evidence only: which services meet their objectives, which are burning budget too quickly, which are healthy, degraded, stale, unavailable or unknown, whether a release improved or damaged reliability, which dependency is implicated, whether a regression followed a deployment, whether the owner was told once, which runbook applies, what evidence attaches to an incident, and what remains unmeasured.
-2. Populate `slo_refs` only for the ten services with approved targets and measurable probe evidence. Every other service is explicitly unmeasured.
+2. Populate `slo_refs` only for services with approved targets and measurable probe evidence: the ten migrated from `status/slo.json`, plus `atlas-systems`, `atlas-doc-viewer`, and `status` at 99.5 percent, approved by the owner during review of this programme (their probe components already existed and their counters were already public). Every other service is explicitly unmeasured.
 3. Derive error budget, day-granular burn rates, measurement coverage and freshness deterministically from the existing probe counters.
 4. Correlate releases with before and after measurement windows, labelled as correlation and never causation.
 5. Notify on meaningful state transitions only, deduplicated, cooled down, storm-suppressed, with runbook references.

@@ -31,7 +31,7 @@
     "expected_shape": "service-specific"
   },
   "dependencies": ["atlas-api-public", "deploy-watch", "github-pulse", "site-pulse"],
-  "slo_refs": [],
+  "slo_refs": ["policy/reliability/objectives/atlas-systems.json"],
   "runbooks": ["docs/runbooks/contract-registry-service-triage.md"],
   "journey_coverage": {
     "state": "present",

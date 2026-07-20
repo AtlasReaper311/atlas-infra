@@ -26,7 +26,7 @@
   "metadata_route": null,
   "metadata_endpoint": {"state": "unknown", "origin": null, "path": null, "expected_shape": "unknown"},
   "dependencies": ["atlas-api-index", "atlas-api-public"],
-  "slo_refs": [],
+  "slo_refs": ["policy/reliability/objectives/status.json"],
   "runbooks": ["docs/runbooks/contract-registry-service-triage.md"],
   "journey_coverage": {
     "state": "present",

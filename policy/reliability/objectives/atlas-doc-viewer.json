@@ -1,0 +1,31 @@
+{
+  "schema_version": "atlas-control-plane/reliability-objective/v1",
+  "objective_id": "atlas-doc-viewer-availability-30d",
+  "service_id": "atlas-doc-viewer",
+  "indicator": "availability",
+  "measurement_source": {
+    "provider": "atlas-api-public/v1/slo",
+    "component": "atlas_doc_viewer"
+  },
+  "window_days": 30,
+  "target_pct": 99.5,
+  "freshness": {
+    "evidence_stale_after_seconds": 1800
+  },
+  "min_samples": {
+    "evaluate": 288,
+    "fast_burn": 24,
+    "slow_burn": 144
+  },
+  "provenance": {
+    "origin": "owner-approved-policy",
+    "source_ref": "AtlasReaper311/atlas-infra:pull/41",
+    "approved_by": "AtlasReaper311",
+    "approved_at": "2026-07-20T00:00:00Z"
+  },
+  "display": {
+    "label": "document viewer",
+    "domain": "edge",
+    "order": 12
+  }
+}

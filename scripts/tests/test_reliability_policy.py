@@ -137,6 +137,9 @@ class ProjectionTests(unittest.TestCase):
                 "github-pulse",
                 "site-pulse",
                 "deploy-watch",
+                "atlas-systems",
+                "atlas-doc-viewer",
+                "status",
             ],
             [service["id"] for service in projection["services"]],
         )
