@@ -1,0 +1,115 @@
+name: Validate private repository governance
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.repository }}-private-governance-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Validate private governance
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0, Node 24
+
+      - name: Validate source-owned governance contract
+        shell: bash
+        env:
+          EXPECTED_REPOSITORY: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+
+          python3 - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          path = Path('.atlas/governance.json')
+          if not path.is_file():
+              raise SystemExit('missing .atlas/governance.json')
+
+          try:
+              document = json.loads(path.read_text(encoding='utf-8'))
+          except json.JSONDecodeError as error:
+              raise SystemExit(
+                  f'invalid .atlas/governance.json at line {error.lineno}, column {error.colno}'
+              ) from error
+
+          required = {
+              'schema_version',
+              'repository',
+              'visibility',
+              'estate_membership',
+              'lifecycle',
+              'provenance',
+              'public_projection',
+              'anonymous_aggregate_metrics',
+              'runtime_service',
+              'service_ids',
+          }
+          allowed = required
+
+          missing = sorted(required - set(document))
+          unexpected = sorted(set(document) - allowed)
+          if missing:
+              raise SystemExit('missing governance fields: ' + ', '.join(missing))
+          if unexpected:
+              raise SystemExit('unexpected governance fields: ' + ', '.join(unexpected))
+
+          expected_repository = os.environ['EXPECTED_REPOSITORY']
+          if document['schema_version'] != 'atlas-repository-governance/v1':
+              raise SystemExit('unsupported governance schema_version')
+          if document['repository'] != expected_repository:
+              raise SystemExit(
+                  f"governance repository must equal {expected_repository}"
+              )
+          if document['visibility'] != 'private':
+              raise SystemExit('private governance requires visibility=private')
+          if document['estate_membership'] != 'internal':
+              raise SystemExit('private governance requires estate_membership=internal')
+          if document['lifecycle'] not in {'production', 'active', 'experimental'}:
+              raise SystemExit('invalid private repository lifecycle')
+          if document['provenance'] != 'original':
+              raise SystemExit('private Atlas Systems repositories must declare provenance=original')
+          if document['public_projection'] is not False:
+              raise SystemExit('private repositories must declare public_projection=false')
+          if not isinstance(document['anonymous_aggregate_metrics'], bool):
+              raise SystemExit('anonymous_aggregate_metrics must be boolean')
+          if not isinstance(document['runtime_service'], bool):
+              raise SystemExit('runtime_service must be boolean')
+
+          service_ids = document['service_ids']
+          if not isinstance(service_ids, list):
+              raise SystemExit('service_ids must be an array')
+          if service_ids != sorted(service_ids):
+              raise SystemExit('service_ids must be sorted')
+          if len(service_ids) != len(set(service_ids)):
+              raise SystemExit('service_ids must be unique')
+          for service_id in service_ids:
+              if not isinstance(service_id, str) or not service_id:
+                  raise SystemExit('service_ids must contain non-empty strings')
+              if not all(
+                  part and part.replace('-', '').isalnum() and part.lower() == part
+                  for part in [service_id]
+              ):
+                  raise SystemExit(f'invalid service_id: {service_id}')
+
+          if document['runtime_service'] and not service_ids:
+              raise SystemExit('runtime_service=true requires at least one service_id')
+          if not document['runtime_service'] and service_ids:
+              raise SystemExit('runtime_service=false requires an empty service_ids array')
+
+          print(
+              'private governance valid:',
+              expected_repository,
+              f"lifecycle={document['lifecycle']}",
+              f"runtime_service={document['runtime_service']}",
+              f"anonymous_aggregate_metrics={document['anonymous_aggregate_metrics']}",
+          )
+          PY
