@@ -14,6 +14,10 @@ on:
       - "policy/estate-registry.schema.json"
       - "policy/public-assurance-repositories.json"
       - "policy/public-assurance-repositories.schema.json"
+      - "policy/public-cloudflare-resources.json"
+      - "policy/public-cloudflare-resources.schema.json"
+      - "policy/public-cloudflare-topology.json"
+      - "policy/public-cloudflare-topology.schema.json"
       - "policy/public-repository-classifications.json"
       - "policy/public-repository-classifications.schema.json"
       - "policy/reliability/**"
@@ -25,6 +29,7 @@ on:
       - "scripts/atlas_trace.py"
       - "scripts/contract_registry.py"
       - "scripts/control_plane_contracts.py"
+      - "scripts/public_cloudflare_topology.py"
       - "scripts/public_repository_classifications.py"
       - "scripts/readme_contract.py"
       - "scripts/reliability_policy.py"
@@ -58,6 +63,10 @@ on:
       - "policy/estate-registry.schema.json"
       - "policy/public-assurance-repositories.json"
       - "policy/public-assurance-repositories.schema.json"
+      - "policy/public-cloudflare-resources.json"
+      - "policy/public-cloudflare-resources.schema.json"
+      - "policy/public-cloudflare-topology.json"
+      - "policy/public-cloudflare-topology.schema.json"
       - "policy/public-repository-classifications.json"
       - "policy/public-repository-classifications.schema.json"
       - "policy/reliability/**"
@@ -69,6 +78,7 @@ on:
       - "scripts/atlas_trace.py"
       - "scripts/contract_registry.py"
       - "scripts/control_plane_contracts.py"
+      - "scripts/public_cloudflare_topology.py"
       - "scripts/public_repository_classifications.py"
       - "scripts/readme_contract.py"
       - "scripts/reliability_policy.py"
@@ -114,6 +124,11 @@ jobs:
             --graph /tmp/service-dependency-graph.json \
             --catalog /tmp/service-catalog.json
 
+      - name: Validate public Cloudflare topology authority
+        run: |
+          set -euo pipefail
+          python3 scripts/public_cloudflare_topology.py --root . --report /tmp/public-cloudflare-topology.json
+
       - name: Verify public repository classification projection
         run: |
           set -euo pipefail
@@ -145,6 +160,7 @@ jobs:
             scripts/atlas_trace.py \
             scripts/contract_registry.py \
             scripts/control_plane_contracts.py \
+            scripts/public_cloudflare_topology.py \
             scripts/public_repository_classifications.py \
             scripts/readme_contract.py \
             scripts/reliability_policy.py \
