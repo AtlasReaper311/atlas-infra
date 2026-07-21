@@ -1,0 +1,39 @@
+{
+  "schema_version": "atlas-reliability-unmeasured/v1",
+  "owner": "AtlasReaper311/atlas-infra",
+  "reviewed_at": "2026-07-21T00:00:00Z",
+  "services": [
+    {
+      "service_id": "atlas-api-public",
+      "reason": "The evaluator runs inside this service, so self-probing would not provide independent availability evidence; no external objective is approved."
+    },
+    {
+      "service_id": "atlas-blackbox",
+      "reason": "A ten-minute health probe exists, but no availability target has been owner-approved; its counters remain observational until a target is deliberately set."
+    },
+    {
+      "service_id": "atlas-daily-digest",
+      "reason": "Liveness alone would not prove successful scheduled delivery; no end-to-end digest delivery objective or journey is approved."
+    },
+    {
+      "service_id": "atlas-dora",
+      "reason": "The Worker has a health route, but the estate does not yet probe it or have an approved target; DORA correctness is not inferred from liveness."
+    },
+    {
+      "service_id": "atlas-quota-watch",
+      "reason": "The existing probe evaluates quota threshold state as well as reachability, so its counters are not a pure availability indicator and no objective is approved."
+    },
+    {
+      "service_id": "ramone-edge",
+      "reason": "Reachability is probed and sleeping local AI is intentionally healthy, but no edge availability target has been owner-approved."
+    },
+    {
+      "service_id": "specular-sentinel",
+      "reason": "Sentinel silence contributes to the machine verdict, but there is no independent sentinel probe; a direct objective would reuse its own derived evidence."
+    },
+    {
+      "service_id": "specular-sonify",
+      "reason": "No dedicated uptime probe or approved availability target exists; keep the service unmeasured until independent evidence is added."
+    }
+  ]
+}
