@@ -3,7 +3,7 @@
   "owner": {
     "github": "AtlasReaper311",
     "repository": "AtlasReaper311/atlas-infra",
-    "responsibility": "schema governance, compatibility policy, canonical fixtures, and validator"
+    "responsibility": "schema governance, compatibility policy, canonical fixtures, deterministic identity rules, and validators"
   },
   "assurance_consumer": {
     "repository": "AtlasReaper311/atlas-dep-audit",
@@ -15,8 +15,14 @@
     "evidence-envelope.schema.json",
     "finding.schema.json",
     "release-evidence.schema.json",
+    "release-reliability-correlation.schema.json",
+    "reliability-objective.schema.json",
+    "reliability-result.schema.json",
     "remediation-proposal.schema.json",
     "runbook-index-entry.schema.json",
-    "service-contract.schema.json"
+    "service-contract.schema.json",
+    "atlas-trace/evidence-node.schema.json",
+    "atlas-trace/evidence-edge.schema.json",
+    "atlas-trace/evidence-graph.schema.json"
   ]
 }

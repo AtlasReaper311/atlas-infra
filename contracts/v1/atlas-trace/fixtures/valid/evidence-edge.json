@@ -1,0 +1,26 @@
+{
+  "edge_id": "edge:sha256:a9b29a312b94f146c32412f7fb659bed4c4e6cc4476290275487363b2ae37af6",
+  "schema_version": "atlas-control-plane/evidence-edge/v1",
+  "from_node": "node:sha256:f02a8389fa7bbf4a0acce0bbb8b426623587d88640a02524940842320390eb7b",
+  "relation": "SOURCE_OF",
+  "to_node": "node:sha256:e1b1e04c92ab62b73b56b219529c7eac23b84c1caadfb5150f01efe0df3dc6cd",
+  "visibility": "public",
+  "basis": {
+    "method": "exact-identity",
+    "rationale": "The repository node and commit node carry the same explicit repository identity.",
+    "match_keys": [
+      "commit_sha",
+      "repository"
+    ]
+  },
+  "evidence": [
+    {
+      "producer": "github",
+      "evidence_type": "commit",
+      "digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+      "uri": "https://github.com/AtlasReaper311/atlas-api-public/commit/7e2277773aa1d69e4051d6728d0e968fc7cdb1d6",
+      "source_commit": "7e2277773aa1d69e4051d6728d0e968fc7cdb1d6",
+      "visibility": "public"
+    }
+  ]
+}

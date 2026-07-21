@@ -1,0 +1,21 @@
+{
+  "node_id": "node:sha256:f02a8389fa7bbf4a0acce0bbb8b426623587d88640a02524940842320390eb7b",
+  "schema_version": "atlas-control-plane/evidence-node/v1",
+  "kind": "repository",
+  "identity": {
+    "key": "AtlasReaper311/atlas-api-public",
+    "repository": "AtlasReaper311/atlas-api-public"
+  },
+  "visibility": "public",
+  "evidence_state": "verified",
+  "evidence": [
+    {
+      "producer": "atlas-infra",
+      "evidence_type": "repository-authority",
+      "digest": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+      "uri": "https://github.com/AtlasReaper311/atlas-api-public",
+      "observed_at": "2026-07-21T20:15:47Z",
+      "visibility": "public"
+    }
+  ]
+}

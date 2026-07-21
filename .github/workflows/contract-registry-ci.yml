@@ -5,6 +5,7 @@ on:
     paths:
       - "contracts/**"
       - "docs/adrs/**"
+      - "docs/atlas-trace.md"
       - "docs/repository-hygiene.md"
       - "docs/worker-contract-enforcement.md"
       - "docs/runbooks/**"
@@ -19,6 +20,7 @@ on:
       - "policy/schemas/reliability-*.schema.json"
       - "policy/schemas/repository-hygiene.schema.json"
       - "policy/service-contracts/**"
+      - "scripts/atlas_trace.py"
       - "scripts/contract_registry.py"
       - "scripts/control_plane_contracts.py"
       - "scripts/public_repository_classifications.py"
@@ -44,6 +46,7 @@ on:
     paths:
       - "contracts/**"
       - "docs/adrs/**"
+      - "docs/atlas-trace.md"
       - "docs/repository-hygiene.md"
       - "docs/worker-contract-enforcement.md"
       - "docs/runbooks/**"
@@ -58,6 +61,7 @@ on:
       - "policy/schemas/reliability-*.schema.json"
       - "policy/schemas/repository-hygiene.schema.json"
       - "policy/service-contracts/**"
+      - "scripts/atlas_trace.py"
       - "scripts/contract_registry.py"
       - "scripts/control_plane_contracts.py"
       - "scripts/public_repository_classifications.py"
@@ -116,10 +120,16 @@ jobs:
           python3 scripts/repository_metadata.py check-policy
           python3 scripts/repository_labels.py check-policy
 
+      - name: Validate Atlas Trace contracts
+        run: |
+          set -euo pipefail
+          python3 scripts/atlas_trace.py validate-contracts
+
       - name: Compile registry tooling
         run: |
           set -euo pipefail
           python3 -m py_compile \
+            scripts/atlas_trace.py \
             scripts/contract_registry.py \
             scripts/control_plane_contracts.py \
             scripts/public_repository_classifications.py \
