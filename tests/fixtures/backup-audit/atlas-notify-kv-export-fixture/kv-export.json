@@ -11,13 +11,13 @@
             "id": "fixture-event-001",
             "level": "info",
             "source": "fixture",
-            "ts": "2026-07-21T11:55:00Z"
+            "ts": "2026-07-14T08:25:00Z"
           },
           {
             "id": "fixture-event-002",
             "level": "warning",
             "source": "fixture",
-            "ts": "2026-07-21T11:56:00Z"
+            "ts": "2026-07-14T08:26:00Z"
           }
         ]
       },
