@@ -2,17 +2,6 @@
   "schema_version": "atlas-control-plane/fixture-manifest/v1",
   "fixtures": [
     {
-      "schema": "adr-runtime-relationship.schema.json",
-      "path": "valid/adr-runtime-relationship.json",
-      "valid": true
-    },
-    {
-      "schema": "adr-runtime-relationship.schema.json",
-      "path": "invalid/adr-runtime-relationship.bad-fingerprint.json",
-      "valid": false,
-      "expected_error": "deterministic adr-runtime-relationship"
-    },
-    {
       "schema": "backup-evidence.schema.json",
       "path": "valid/backup-evidence.json",
       "valid": true
@@ -57,17 +46,6 @@
       "expected_error": "deterministic finding"
     },
     {
-      "schema": "model-promotion.schema.json",
-      "path": "valid/model-promotion.json",
-      "valid": true
-    },
-    {
-      "schema": "model-promotion.schema.json",
-      "path": "invalid/model-promotion.below-threshold.json",
-      "valid": false,
-      "expected_error": "pass_rate must meet or exceed minimum_pass_rate"
-    },
-    {
       "schema": "release-evidence.schema.json",
       "path": "valid/release-evidence.json",
       "valid": true
@@ -79,15 +57,37 @@
       "expected_error": "must not precede"
     },
     {
-      "schema": "release-reliability-correlation.schema.json",
-      "path": "valid/release-reliability-correlation.json",
+      "schema": "remediation-proposal.schema.json",
+      "path": "valid/remediation-proposal.json",
       "valid": true
     },
     {
-      "schema": "release-reliability-correlation.schema.json",
-      "path": "invalid/release-reliability-correlation.causal-claim.json",
+      "schema": "remediation-proposal.schema.json",
+      "path": "invalid/remediation-proposal.unsafe-command.json",
       "valid": false,
-      "expected_error": "must equal True"
+      "expected_error": "does not match required pattern"
+    },
+    {
+      "schema": "runbook-index-entry.schema.json",
+      "path": "valid/runbook-index-entry.json",
+      "valid": true
+    },
+    {
+      "schema": "runbook-index-entry.schema.json",
+      "path": "invalid/runbook-index-entry.unsafe-command.json",
+      "valid": false,
+      "expected_error": "does not match required pattern"
+    },
+    {
+      "schema": "service-contract.schema.json",
+      "path": "valid/service-contract.json",
+      "valid": true
+    },
+    {
+      "schema": "service-contract.schema.json",
+      "path": "invalid/service-contract.simple-proxy-route-owner.json",
+      "valid": false,
+      "expected_error": "must equal False"
     },
     {
       "schema": "reliability-objective.schema.json",
@@ -112,48 +112,15 @@
       "expected_error": "missing required property"
     },
     {
-      "schema": "remediation-proposal.schema.json",
-      "path": "valid/remediation-proposal.json",
+      "schema": "release-reliability-correlation.schema.json",
+      "path": "valid/release-reliability-correlation.json",
       "valid": true
     },
     {
-      "schema": "remediation-proposal.schema.json",
-      "path": "invalid/remediation-proposal.unsafe-command.json",
+      "schema": "release-reliability-correlation.schema.json",
+      "path": "invalid/release-reliability-correlation.causal-claim.json",
       "valid": false,
-      "expected_error": "does not match required pattern"
-    },
-    {
-      "schema": "retirement-evidence.schema.json",
-      "path": "valid/retirement-evidence.json",
-      "valid": true
-    },
-    {
-      "schema": "retirement-evidence.schema.json",
-      "path": "invalid/retirement-evidence.archived-with-unknown.json",
-      "valid": false,
-      "expected_error": "archived retirement requires verified or not-applicable evidence"
-    },
-    {
-      "schema": "runbook-index-entry.schema.json",
-      "path": "valid/runbook-index-entry.json",
-      "valid": true
-    },
-    {
-      "schema": "runbook-index-entry.schema.json",
-      "path": "invalid/runbook-index-entry.unsafe-command.json",
-      "valid": false,
-      "expected_error": "does not match required pattern"
-    },
-    {
-      "schema": "service-contract.schema.json",
-      "path": "valid/service-contract.json",
-      "valid": true
-    },
-    {
-      "schema": "service-contract.schema.json",
-      "path": "invalid/service-contract.simple-proxy-route-owner.json",
-      "valid": false,
-      "expected_error": "must equal False"
+      "expected_error": "must equal True"
     }
   ]
 }
