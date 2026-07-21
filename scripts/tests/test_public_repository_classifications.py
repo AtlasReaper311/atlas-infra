@@ -22,6 +22,15 @@ class PublicRepositoryClassificationTests(unittest.TestCase):
             self.load("policy/public-assurance-repositories.json"),
         )
 
+    def test_public_non_runtime_source_conforms_to_schema(self):
+        schema = self.load("policy/public-assurance-repositories.schema.json")
+        self.assertEqual(
+            [],
+            control_plane_contracts.validate_instance(
+                self.load("policy/public-assurance-repositories.json"), schema
+            ),
+        )
+
     def test_committed_projection_matches_authoritative_sources(self):
         expected = public_repository_classifications.render_json(self.projection())
         actual = (ROOT / "policy/public-repository-classifications.json").read_text(
