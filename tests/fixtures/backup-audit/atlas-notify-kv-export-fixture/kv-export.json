@@ -1,0 +1,29 @@
+{
+  "schema_version": "atlas-backup-fixture/cloudflare-kv-export/v1",
+  "exported_at": "2026-07-14T08:30:00Z",
+  "namespace": "notify-log-fixture-redacted",
+  "entries": [
+    {
+      "key": "notify:recent:v1",
+      "value": {
+        "events": [
+          {
+            "id": "fixture-event-001",
+            "level": "info",
+            "source": "fixture",
+            "ts": "2026-07-21T11:55:00Z"
+          },
+          {
+            "id": "fixture-event-002",
+            "level": "warning",
+            "source": "fixture",
+            "ts": "2026-07-21T11:56:00Z"
+          }
+        ]
+      },
+      "metadata": {
+        "content_type": "application/json"
+      }
+    }
+  ]
+}
