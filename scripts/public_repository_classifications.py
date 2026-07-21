@@ -127,7 +127,41 @@ def build_projection(
 
 
 def render_json(value: dict[str, Any]) -> str:
-    return json.dumps(value, ensure_ascii=False, indent=2, sort_keys=True) + "\n"
+    """Render a stable review-friendly projection with one repository per line."""
+
+    lines = [
+        "{",
+        f'  "authority": {json.dumps(value["authority"])},',
+        '  "repositories": [',
+    ]
+    repositories = value["repositories"]
+    for index, repository in enumerate(repositories):
+        suffix = "," if index < len(repositories) - 1 else ""
+        lines.append(
+            "    "
+            + json.dumps(
+                repository,
+                ensure_ascii=False,
+                sort_keys=True,
+                separators=(",", ":"),
+            )
+            + suffix
+        )
+    lines.extend(
+        [
+            "  ],",
+            f'  "repository_count": {value["repository_count"]},',
+            f'  "schema_version": {json.dumps(value["schema_version"])},',
+            f'  "source_fingerprint": {json.dumps(value["source_fingerprint"])},',
+            '  "sources": {',
+            f'    "public_non_runtime": {json.dumps(value["sources"]["public_non_runtime"])},',
+            f'    "runtime_registry": {json.dumps(value["sources"]["runtime_registry"])}',
+            "  }",
+            "}",
+            "",
+        ]
+    )
+    return "\n".join(lines)
 
 
 def main() -> int:
