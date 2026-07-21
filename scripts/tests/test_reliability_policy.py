@@ -99,7 +99,10 @@ class PolicyValidationTests(unittest.TestCase):
         path.write_text(json.dumps(document, indent=2) + "\n", encoding="utf-8")
         errors = validate_policy(root)
         self.assertTrue(
-            any("atlas-api-public" in error and "needs an owner-reviewed" in error for error in errors),
+            any(
+                "atlas-api-public" in error and "needs an owner-reviewed" in error
+                for error in errors
+            ),
             errors,
         )
 
@@ -208,10 +211,16 @@ class ProjectionTests(unittest.TestCase):
         self.assertIn("self-probing", by_id["atlas-api-public"])
         self.assertIn("owner-approved", by_id["atlas-blackbox"])
         self.assertIn("scheduled delivery", by_id["atlas-daily-digest"])
-        self.assertIn("not yet probe", by_id["atlas-dora"])
-        self.assertIn("not a pure availability indicator", by_id["atlas-quota-watch"])
-        self.assertIn("sleeping local AI is intentionally healthy", by_id["ramone-edge"])
-        self.assertIn("no independent sentinel probe", by_id["specular-sentinel"])
+        self.assertIn("does not yet probe", by_id["atlas-dora"])
+        self.assertIn(
+            "not a pure availability indicator", by_id["atlas-quota-watch"]
+        )
+        self.assertIn(
+            "sleeping local AI is intentionally healthy", by_id["ramone-edge"]
+        )
+        self.assertIn(
+            "no independent sentinel probe", by_id["specular-sentinel"]
+        )
         self.assertIn("No dedicated uptime probe", by_id["specular-sonify"])
         for measured in ("atlas-notify", "deploy-watch", "ramone-memory"):
             self.assertNotIn(measured, by_id)
