@@ -1,0 +1,10 @@
+{
+  "schema_version": "atlas-control-plane/model-promotion/v1",
+  "promotion_id": "promotion:sha256:7d575e9f4a051701dbd51346fca043db095325ec228b1425feb08102fbe6ece6",
+  "capability": "postmortem-drafting",
+  "model": {"name": "qwen3:14b", "digest": "sha256:1111111111111111111111111111111111111111111111111111111111111111"},
+  "configuration": {"prompt_fingerprint": "sha256:2222222222222222222222222222222222222222222222222222222222222222", "retrieval_policy_fingerprint": null, "corpus_snapshot": null, "runtime_options_fingerprint": "sha256:3333333333333333333333333333333333333333333333333333333333333333"},
+  "evaluation": {"suite_revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "evidence_fingerprint": "sha256:4444444444444444444444444444444444444444444444444444444444444444", "evidence_uri": "https://github.com/AtlasReaper311/atlas-eval-harness/actions/runs/100", "pass_rate": 1.0, "minimum_pass_rate": 1.0},
+  "approval": {"approved_by": "AtlasReaper311", "approved_at": "2026-07-21T22:30:00Z"},
+  "visibility": "internal"
+}
