@@ -41,9 +41,13 @@ jobs:
           python3 -m py_compile scripts/notify_assurance.py
           python3 -m py_compile scripts/validate_contract_registry.py
           python3 -m py_compile scripts/validate_control_plane_contracts.py
+          python3 -m py_compile scripts/validate_public_cloudflare_resources.py
           python3 -m unittest discover -s scripts/tests -v
           python3 scripts/validate_control_plane_contracts.py
           python3 scripts/public_repository_classifications.py --check
+          python3 scripts/validate_public_cloudflare_resources.py \
+            --json reports/public-cloudflare-resources.json \
+            --quiet
           python3 scripts/chaos_harness.py validate \
             --policy policy/chaos-experiments.json
           python3 scripts/deploy_orchestrator.py validate \
