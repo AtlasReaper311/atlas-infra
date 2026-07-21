@@ -1,0 +1,160 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.atlas-systems.uk/control-plane/v1/evidence-edge.schema.json",
+  "title": "Atlas Trace EvidenceEdge v1",
+  "description": "A bounded relationship whose identity and evidence basis are explicit.",
+  "type": "object",
+  "additionalProperties": false,
+  "x-owner": {
+    "repository": "AtlasReaper311/atlas-infra",
+    "consumer": "Atlas Trace offline assembler and later bounded public projection"
+  },
+  "required": [
+    "schema_version",
+    "edge_id",
+    "from_node",
+    "relation",
+    "to_node",
+    "visibility",
+    "basis",
+    "evidence"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "atlas-control-plane/evidence-edge/v1"
+    },
+    "edge_id": {
+      "type": "string",
+      "pattern": "^edge:sha256:[0-9a-f]{64}$"
+    },
+    "from_node": {
+      "type": "string",
+      "pattern": "^node:sha256:[0-9a-f]{64}$"
+    },
+    "relation": {
+      "enum": [
+        "SOURCE_OF",
+        "VALIDATED_BY",
+        "DEPLOYED_AS",
+        "VERIFIED_BY",
+        "OBSERVED_BY",
+        "CORRELATED_WITH",
+        "TRIGGERED",
+        "RECOVERED_BY",
+        "DOCUMENTED_BY",
+        "PRODUCED_SBOM",
+        "GOVERNED_BY",
+        "SUPERSEDES"
+      ]
+    },
+    "to_node": {
+      "type": "string",
+      "pattern": "^node:sha256:[0-9a-f]{64}$"
+    },
+    "visibility": {
+      "enum": ["public", "internal", "restricted-metadata"]
+    },
+    "basis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["method", "rationale", "match_keys"],
+      "properties": {
+        "method": {
+          "enum": [
+            "exact-identity",
+            "verified-runtime-identity",
+            "release-watch-identity",
+            "signed-provenance",
+            "declared-governance",
+            "correlation-with-explicit-evidence",
+            "manual-attestation"
+          ]
+        },
+        "rationale": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "match_keys": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]*$",
+            "maxLength": 64
+          }
+        }
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 16,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["producer", "evidence_type", "digest", "visibility"],
+        "properties": {
+          "producer": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+            "maxLength": 64
+          },
+          "evidence_type": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+            "maxLength": 64
+          },
+          "digest": {
+            "type": "string",
+            "pattern": "^sha256:[0-9a-f]{64}$"
+          },
+          "uri": {
+            "type": "string",
+            "format": "uri",
+            "pattern": "^https://[^?#]+(?:#[A-Za-z0-9._/-]+)?$",
+            "maxLength": 500
+          },
+          "observed_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "source_commit": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{40}$"
+          },
+          "visibility": {
+            "enum": ["public", "internal", "restricted-metadata"]
+          }
+        }
+      }
+    }
+  },
+  "examples": [
+    {
+      "edge_id": "edge:sha256:a9b29a312b94f146c32412f7fb659bed4c4e6cc4476290275487363b2ae37af6",
+      "schema_version": "atlas-control-plane/evidence-edge/v1",
+      "from_node": "node:sha256:f02a8389fa7bbf4a0acce0bbb8b426623587d88640a02524940842320390eb7b",
+      "relation": "SOURCE_OF",
+      "to_node": "node:sha256:e1b1e04c92ab62b73b56b219529c7eac23b84c1caadfb5150f01efe0df3dc6cd",
+      "visibility": "public",
+      "basis": {
+        "method": "exact-identity",
+        "rationale": "The repository node and commit node carry the same explicit repository identity.",
+        "match_keys": ["commit_sha", "repository"]
+      },
+      "evidence": [
+        {
+          "producer": "github",
+          "evidence_type": "commit",
+          "digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+          "uri": "https://github.com/AtlasReaper311/atlas-api-public/commit/7e2277773aa1d69e4051d6728d0e968fc7cdb1d6",
+          "source_commit": "7e2277773aa1d69e4051d6728d0e968fc7cdb1d6",
+          "visibility": "public"
+        }
+      ]
+    }
+  ]
+}
