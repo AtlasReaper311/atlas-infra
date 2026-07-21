@@ -4,7 +4,7 @@ Wave 2 turns Atlas Systems repository presentation from convention into an audit
 
 ## Authority
 
-`policy/public-repository-classifications.json` remains the allowlist of intentionally public repositories. Public hygiene and metadata audits consume that projection and never enumerate account membership. A public GitHub repository that is not in the projection is not silently admitted into Atlas portfolio governance.
+`policy/public-repository-classifications.json` remains the allowlist of intentionally public repositories. Public hygiene, metadata, and label audits consume that projection and never enumerate account membership. A public GitHub repository that is not in the projection is not silently admitted into Atlas portfolio governance.
 
 `policy/repository-hygiene.json` owns README, GitHub metadata, and PR-status-label presentation rules.
 
@@ -67,18 +67,34 @@ Private metadata evidence remains in the private caller repository. The workflow
 
 Atlas-specific labels exist only for states GitHub does not already model directly:
 
-- `status:blocked`;
-- `status:live-verified`;
-- `status:owner-review`;
-- `status:rollout-pending`;
-- `status:superseded`.
+- `status:blocked` with red `d73a4a`;
+- `status:live-verified` with green `4ade80`;
+- `status:owner-review` with amber `f5a623`;
+- `status:rollout-pending` with dark amber `b7791f`;
+- `status:superseded` with grey `555560`.
+
+The exact descriptions are canonical in `policy/repository-hygiene.json`. The label audit checks name, colour, and description, so an existing label with presentation drift is still non-compliant.
 
 Draft state, CI state, and merge state remain native GitHub facts and are intentionally not duplicated as labels.
+
+## Public label audit
+
+`.github/workflows/repository-label-audit.yml` is the label-only W2.3 proof path. It queries labels only for repositories in the canonical public projection and supports manual `advisory` and `enforce` modes.
+
+The workflow is read-only and retains JSON and Markdown evidence for 30 days. It does not create, edit, remove, or apply labels to issues or pull requests.
+
+## Private label validation
+
+`.github/workflows/validate-private-labels.yml` provides equivalent source-local validation for governed private repositories.
+
+The caller's `.atlas/governance.json` must identify the authenticated repository, declare `visibility=private`, and keep `public_projection=false`. The workflow then queries labels only for `github.repository` and checks them against the same canonical policy used by public repositories.
+
+Private label evidence remains in the caller repository. The validator does not publish or maintain a cross-estate private repository list.
 
 ## Audit and enforcement
 
 `.github/workflows/repository-hygiene-audit.yml` remains the combined read-only estate audit. It queries only repositories named in the public classification projection, reads README content, GitHub repository metadata, and labels, then emits a sanitized JSON and Markdown report.
 
-The scheduled combined run remains advisory while Wave 2 remediation is in progress because W2.3 label findings are intentionally still open. Metadata can be proven independently through the metadata-only workflow without weakening that separation.
+The scheduled combined run remains advisory while Wave 2 remediation is in progress. README, metadata, and labels each have an independent enforcement workflow so one unfinished wave cannot hide proof for another.
 
-No audit path changes repository descriptions, topics, labels, archive state, branches, READMEs, or provider resources. GitHub metadata writes remain explicit owner actions performed separately from read-only evidence collection.
+No audit path changes repository descriptions, topics, labels, archive state, branches, READMEs, or provider resources. GitHub metadata and label writes remain explicit owner actions performed separately from read-only evidence collection.

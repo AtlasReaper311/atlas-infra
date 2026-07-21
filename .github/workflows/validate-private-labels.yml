@@ -1,0 +1,51 @@
+name: Validate private repository labels
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+  issues: read
+
+concurrency:
+  group: ${{ github.repository }}-private-labels-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Validate private label contract
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out caller repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0, Node 24
+
+      - name: Check out exact Atlas Infra workflow revision
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0, Node 24
+        with:
+          repository: AtlasReaper311/atlas-infra
+          ref: ${{ job.workflow_sha }}
+          path: .atlas-infra-labels
+          persist-credentials: false
+
+      - name: Validate source-local repository labels
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/private-repository-labels"
+          python3 .atlas-infra-labels/scripts/repository_labels.py audit-private \
+            --governance .atlas/governance.json \
+            --mode enforce \
+            --json-out "$RUNNER_TEMP/private-repository-labels/report.json" \
+            --markdown-out "$RUNNER_TEMP/private-repository-labels/report.md"
+          cat "$RUNNER_TEMP/private-repository-labels/report.md" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload private label evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1, Node 24
+        with:
+          name: private-repository-labels-${{ github.run_id }}
+          path: ${{ runner.temp }}/private-repository-labels
+          if-no-files-found: warn
+          retention-days: 30

@@ -1,0 +1,62 @@
+name: Repository label audit
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "advisory reports findings; enforce fails when label findings exist"
+        required: true
+        default: advisory
+        type: choice
+        options:
+          - advisory
+          - enforce
+
+permissions:
+  contents: read
+  issues: read
+
+concurrency:
+  group: ${{ github.repository }}-repository-label-audit-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    name: Audit public repository labels
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0, Node 24
+
+      - name: Validate label tooling
+        run: |
+          set -euo pipefail
+          python3 -m py_compile scripts/repository_hygiene.py scripts/repository_metadata.py scripts/repository_labels.py
+          python3 scripts/repository_labels.py check-policy
+          python3 -m unittest scripts.tests.test_repository_labels -v
+
+      - name: Audit approved public repository labels
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          MODE: ${{ inputs.mode }}
+        run: |
+          set -euo pipefail
+          mkdir -p reports
+          set +e
+          python3 scripts/repository_labels.py audit-public \
+            --mode "$MODE" \
+            --json-out reports/repository-label-audit.json \
+            --markdown-out reports/repository-label-audit.md
+          AUDIT_STATUS=$?
+          set -e
+          cat reports/repository-label-audit.md >> "$GITHUB_STEP_SUMMARY"
+          exit "$AUDIT_STATUS"
+
+      - name: Upload label audit report
+        if: always() && hashFiles('reports/**') != ''
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1, Node 24
+        with:
+          name: repository-label-audit-${{ github.run_id }}
+          path: reports
+          if-no-files-found: error
+          retention-days: 30
