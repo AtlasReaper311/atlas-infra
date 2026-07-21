@@ -3,8 +3,9 @@ name: Deploy Worker (reusable)
 # Canonical Cloudflare Worker pipeline for Atlas Systems.
 #
 # Shape: validate -> deploy -> notify
-#   validate  bundles the Worker (wrangler dry-run) and runs optional
-#             lint/test gates. Nothing reaches Cloudflare if this fails.
+#   validate  bundles the Worker (wrangler dry-run), runs optional lint/test
+#             gates, and can require public Worker contracts in the exact
+#             deploy bundle. Nothing reaches Cloudflare if validation fails.
 #   deploy    pushes to production on `main`, to the dev environment on
 #             any other branch. Uses wrangler directly (no marketplace
 #             action) so the version pinned in the caller repo is the one
@@ -34,6 +35,16 @@ on:
         type: boolean
       run_tests:
         description: "Run `npm test` in the validate job."
+        required: false
+        default: false
+        type: boolean
+      require_meta:
+        description: "Fail validation unless the Wrangler deploy bundle contains the Atlas /_meta contract."
+        required: false
+        default: false
+        type: boolean
+      require_openapi:
+        description: "Fail validation unless the Wrangler deploy bundle contains the public OpenAPI contract and /v1/openapi.json route."
         required: false
         default: false
         type: boolean
@@ -69,6 +80,7 @@ jobs:
         working-directory: ${{ inputs.working_directory }}
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0, Node 24
+
       - name: Check README style
         run: |
           set -euo pipefail
@@ -103,6 +115,35 @@ jobs:
       - name: Test
         if: ${{ inputs.run_tests }}
         run: npm test
+
+      - name: Check out exact Atlas Infra contract validator
+        if: ${{ inputs.require_meta || inputs.require_openapi }}
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0, Node 24
+        with:
+          repository: AtlasReaper311/atlas-infra
+          ref: ${{ job.workflow_sha }}
+          path: .atlas-infra-contracts
+          persist-credentials: false
+
+      - name: Validate required public Worker contracts
+        if: ${{ inputs.require_meta || inputs.require_openapi }}
+        env:
+          REQUIRE_META: ${{ inputs.require_meta }}
+          REQUIRE_OPENAPI: ${{ inputs.require_openapi }}
+        run: |
+          set -euo pipefail
+
+          ARGS=(check --bundle-dir dist)
+
+          if [ "$REQUIRE_META" = "true" ]; then
+            ARGS+=(--require-meta)
+          fi
+
+          if [ "$REQUIRE_OPENAPI" = "true" ]; then
+            ARGS+=(--require-openapi)
+          fi
+
+          python3 "${GITHUB_WORKSPACE}/.atlas-infra-contracts/scripts/worker_contract.py" "${ARGS[@]}"
 
   deploy:
     name: Deploy
