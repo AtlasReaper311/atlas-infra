@@ -45,5 +45,45 @@
       "prefix": "proposal:sha256:",
       "output_path": "proposal_id"
     }
+  },
+  "trace_rules": {
+    "evidence-node": {
+      "kind": "selected-fields",
+      "schema": "evidence-node.schema.json",
+      "fields": [
+        "kind",
+        "identity.key"
+      ],
+      "sort_arrays": [],
+      "prefix": "node:sha256:",
+      "output_path": "node_id"
+    },
+    "evidence-edge": {
+      "kind": "selected-fields",
+      "schema": "evidence-edge.schema.json",
+      "fields": [
+        "from_node",
+        "relation",
+        "to_node"
+      ],
+      "sort_arrays": [],
+      "prefix": "edge:sha256:",
+      "output_path": "edge_id"
+    },
+    "evidence-graph": {
+      "kind": "selected-fields",
+      "schema": "evidence-graph.schema.json",
+      "fields": [
+        "visibility",
+        "nodes",
+        "edges"
+      ],
+      "sort_arrays": [
+        "nodes",
+        "edges"
+      ],
+      "prefix": "graph:sha256:",
+      "output_path": "fingerprint"
+    }
   }
 }
