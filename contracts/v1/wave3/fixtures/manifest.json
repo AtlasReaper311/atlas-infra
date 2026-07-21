@@ -1,0 +1,11 @@
+{
+  "schema_version": "atlas-control-plane/wave3-fixture-manifest/v1",
+  "fixtures": [
+    {"schema": "adr-runtime-relationship.schema.json", "path": "valid/adr-runtime-relationship.json", "valid": true},
+    {"schema": "adr-runtime-relationship.schema.json", "path": "invalid/adr-runtime-relationship.bad-fingerprint.json", "valid": false, "expected_error": "deterministic adr-runtime-relationship"},
+    {"schema": "model-promotion.schema.json", "path": "valid/model-promotion.json", "valid": true},
+    {"schema": "model-promotion.schema.json", "path": "invalid/model-promotion.below-threshold.json", "valid": false, "expected_error": "pass_rate must meet or exceed minimum_pass_rate"},
+    {"schema": "retirement-evidence.schema.json", "path": "valid/retirement-evidence.json", "valid": true},
+    {"schema": "retirement-evidence.schema.json", "path": "invalid/retirement-evidence.archived-with-unknown.json", "valid": false, "expected_error": "archived retirement requires verified or not-applicable evidence"}
+  ]
+}
