@@ -12,10 +12,13 @@ on:
       - "policy/public-assurance-repositories.schema.json"
       - "policy/public-repository-classifications.json"
       - "policy/public-repository-classifications.schema.json"
+      - "policy/reliability/**"
+      - "policy/schemas/reliability-*.schema.json"
       - "policy/service-contracts/**"
       - "scripts/contract_registry.py"
       - "scripts/control_plane_contracts.py"
       - "scripts/public_repository_classifications.py"
+      - "scripts/reliability_policy.py"
       - "scripts/validate_contract_registry.py"
       - "scripts/tests/**"
       - ".github/workflows/contract-registry-ci.yml"
@@ -31,10 +34,13 @@ on:
       - "policy/public-assurance-repositories.schema.json"
       - "policy/public-repository-classifications.json"
       - "policy/public-repository-classifications.schema.json"
+      - "policy/reliability/**"
+      - "policy/schemas/reliability-*.schema.json"
       - "policy/service-contracts/**"
       - "scripts/contract_registry.py"
       - "scripts/control_plane_contracts.py"
       - "scripts/public_repository_classifications.py"
+      - "scripts/reliability_policy.py"
       - "scripts/validate_contract_registry.py"
       - "scripts/tests/**"
       - ".github/workflows/contract-registry-ci.yml"
@@ -76,6 +82,7 @@ jobs:
             scripts/contract_registry.py \
             scripts/control_plane_contracts.py \
             scripts/public_repository_classifications.py \
+            scripts/reliability_policy.py \
             scripts/validate_contract_registry.py
 
       - name: Run control-plane unit tests
