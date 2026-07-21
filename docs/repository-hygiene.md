@@ -6,13 +6,31 @@ Wave 2 turns Atlas Systems repository presentation from convention into an audit
 
 `policy/public-repository-classifications.json` remains the allowlist of intentionally public repositories. The hygiene auditor consumes that projection and never enumerates account membership. A public GitHub repository that is not in the projection is not silently admitted into Atlas portfolio governance.
 
-`policy/repository-hygiene.json` owns presentation rules for the repositories already approved by that projection.
+`policy/repository-hygiene.json` owns the presentation rules used by the public audit and by source-local private README validation.
+
+Private repository identities remain source-owned. A private repository calls the reusable README validator from its own authenticated workflow; Atlas Infra does not add those identities to the public classification projection or public audit report.
 
 ## README contract
 
 Standard repository READMEs must preserve the Atlas icon, exact repository H1, repository-specific `ATLAS SYSTEMS //` banner, branded badge treatment, `## How it fits into Atlas Systems`, and the atlas-systems.uk footer. The GitHub profile repository is a deliberate special case with its existing 120-pixel icon and `# Atlas Reaper` heading.
 
+`## How it fits into Atlas Systems` must be the final H2 section and the Atlas Systems footer must be the final non-empty README line. This keeps the checked contract aligned with the canonical README style guide rather than validating only the presence of individual markers.
+
 The contract also rejects the portfolio wording prohibited by the README style guide and rejects em dashes in README prose.
+
+## Public README audit
+
+`.github/workflows/repository-readme-audit.yml` provides a README-only audit for the approved public projection. It is useful during W2.1 because metadata and label findings do not obscure README completion. Manual dispatch supports `advisory` and `enforce` modes.
+
+The workflow reads only repositories already present in `policy/public-repository-classifications.json` and retains a bounded JSON and Markdown report.
+
+## Private README validation
+
+`.github/workflows/validate-private-readme.yml` is reusable from source-owned private repositories. It checks out the caller repository, then checks out the exact Atlas Infra workflow revision identified by `job.workflow_sha` and runs the same README policy against the caller's local `README.md`.
+
+The private validation path has `contents: read` only. It does not enumerate account repositories, publish a private repository list, alter provider state, or upload a cross-estate private inventory.
+
+Repositories that are intentionally excluded from Atlas portfolio presentation remain outside this README rollout through their source-owned governance decision; they are not named in public policy.
 
 ## GitHub metadata contract
 
