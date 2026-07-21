@@ -1,8 +1,16 @@
-# Public repository classification authority
++++
+id = "ADR-0004"
+date = 2026-07-21
+status = "accepted"
+slug = "public-repository-classification-authority"
+visibility = "public"
+repositories = ["AtlasReaper311/atlas-api-public", "AtlasReaper311/atlas-infra"]
+services = ["atlas-api-public"]
+contracts = ["atlas-control-plane/service-contract/v1"]
+policies = ["policy/estate-registry.json", "policy/public-assurance-repositories.json", "policy/public-repository-classifications.json"]
++++
 
-Status: Accepted
-
-Date: 2026-07-21
+# ADR-0004: Public repository classification authority
 
 ## Context
 

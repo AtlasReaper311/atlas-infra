@@ -23,6 +23,9 @@
     "service-contract.schema.json",
     "atlas-trace/evidence-node.schema.json",
     "atlas-trace/evidence-edge.schema.json",
-    "atlas-trace/evidence-graph.schema.json"
+    "atlas-trace/evidence-graph.schema.json",
+    "wave3/adr-runtime-relationship.schema.json",
+    "wave3/model-promotion.schema.json",
+    "wave3/retirement-evidence.schema.json"
   ]
 }

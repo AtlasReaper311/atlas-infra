@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.atlas-systems.uk/control-plane/v1/adr-runtime-relationship.schema.json",
+  "title": "Atlas Systems ADRRuntimeRelationship v1",
+  "description": "Machine-readable scope for one architecture decision so Atlas Trace can connect governed repositories, services, contracts, and policies without creating a second ADR authority.",
+  "type": "object",
+  "additionalProperties": false,
+  "x-owner": {"repository": "AtlasReaper311/atlas-infra", "consumer": "ADR validation, Atlas Trace, and future bounded public proof chains"},
+  "required": ["schema_version", "relationship_id", "adr", "affects", "visibility"],
+  "properties": {
+    "schema_version": {"const": "atlas-control-plane/adr-runtime-relationship/v1"},
+    "relationship_id": {"type": "string", "pattern": "^adrrel:sha256:[0-9a-f]{64}$"},
+    "adr": {
+      "type": "object", "additionalProperties": false, "required": ["id", "path", "status", "date", "title"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^ADR-[0-9]{4}$"},
+        "path": {"type": "string", "pattern": "^docs/adrs/[A-Za-z0-9._-]+\\.md$", "maxLength": 240},
+        "status": {"enum": ["proposed", "accepted", "superseded"]},
+        "date": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"},
+        "title": {"type": "string", "minLength": 1, "maxLength": 200},
+        "supersedes": {"type": "string", "pattern": "^ADR-[0-9]{4}$"}
+      }
+    },
+    "affects": {
+      "type": "object", "additionalProperties": false, "required": ["repositories", "services", "contracts", "policies"],
+      "properties": {
+        "repositories": {"type": "array", "maxItems": 50, "uniqueItems": true, "items": {"type": "string", "pattern": "^AtlasReaper311/[A-Za-z0-9._-]+$", "maxLength": 128}},
+        "services": {"type": "array", "maxItems": 50, "uniqueItems": true, "items": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$", "maxLength": 64}},
+        "contracts": {"type": "array", "maxItems": 50, "uniqueItems": true, "items": {"type": "string", "pattern": "^atlas-[a-z0-9-]+/[a-z0-9-]+/v[0-9]+$", "maxLength": 160}},
+        "policies": {"type": "array", "maxItems": 50, "uniqueItems": true, "items": {"type": "string", "pattern": "^policy/[A-Za-z0-9._/-]+$", "maxLength": 240}}
+      }
+    },
+    "visibility": {"enum": ["public", "internal", "restricted-metadata"]}
+  },
+  "examples": [{
+    "schema_version": "atlas-control-plane/adr-runtime-relationship/v1",
+    "relationship_id": "adrrel:sha256:90e89c86cd1654bd65e0bcf5617c9e22bac9e599481e5fc6c6d34f5560393ab3",
+    "adr": {"id": "ADR-0001", "path": "docs/adrs/ADR-0001-worker-to-worker-service-bindings.md", "status": "accepted", "date": "2026-07-02", "title": "Worker-to-Worker calls use service bindings, not public hostnames"},
+    "affects": {"repositories": ["AtlasReaper311/atlas-api-index", "AtlasReaper311/atlas-notify"], "services": ["atlas-api-index", "atlas-notify"], "contracts": ["atlas-control-plane/service-contract/v1"], "policies": ["policy/estate-registry.json"]},
+    "visibility": "public"
+  }]
+}

@@ -1,8 +1,16 @@
-# Public and private estate boundary
++++
+id = "ADR-0003"
+date = 2026-07-20
+status = "accepted"
+slug = "public-private-estate-boundary"
+visibility = "public"
+repositories = ["AtlasReaper311/atlas-api-index", "AtlasReaper311/atlas-api-public", "AtlasReaper311/atlas-corpus", "AtlasReaper311/atlas-infra"]
+services = ["atlas-api-index", "atlas-api-public", "atlas-corpus"]
+contracts = ["atlas-control-plane/service-contract/v1"]
+policies = ["policy/estate-registry.json", "policy/public-repository-classifications.json"]
++++
 
-Status: Accepted
-
-Date: 2026-07-20
+# ADR-0003: Public and private estate boundary
 
 ## Context
 

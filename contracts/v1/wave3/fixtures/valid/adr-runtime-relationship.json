@@ -1,0 +1,7 @@
+{
+  "schema_version": "atlas-control-plane/adr-runtime-relationship/v1",
+  "relationship_id": "adrrel:sha256:90e89c86cd1654bd65e0bcf5617c9e22bac9e599481e5fc6c6d34f5560393ab3",
+  "adr": {"id": "ADR-0001", "path": "docs/adrs/ADR-0001-worker-to-worker-service-bindings.md", "status": "accepted", "date": "2026-07-02", "title": "Worker-to-Worker calls use service bindings, not public hostnames"},
+  "affects": {"repositories": ["AtlasReaper311/atlas-api-index", "AtlasReaper311/atlas-notify"], "services": ["atlas-api-index", "atlas-notify"], "contracts": ["atlas-control-plane/service-contract/v1"], "policies": ["policy/estate-registry.json"]},
+  "visibility": "public"
+}
