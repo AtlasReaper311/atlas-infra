@@ -6,6 +6,7 @@ on:
       - "contracts/**"
       - "docs/adrs/**"
       - "docs/atlas-trace.md"
+      - "docs/wave3-contracts.md"
       - "docs/repository-hygiene.md"
       - "docs/worker-contract-enforcement.md"
       - "docs/runbooks/**"
@@ -20,6 +21,7 @@ on:
       - "policy/schemas/reliability-*.schema.json"
       - "policy/schemas/repository-hygiene.schema.json"
       - "policy/service-contracts/**"
+      - "scripts/adr_trace.py"
       - "scripts/atlas_trace.py"
       - "scripts/contract_registry.py"
       - "scripts/control_plane_contracts.py"
@@ -29,6 +31,7 @@ on:
       - "scripts/repository_hygiene.py"
       - "scripts/repository_labels.py"
       - "scripts/repository_metadata.py"
+      - "scripts/wave3_contracts.py"
       - "scripts/worker_contract.py"
       - "scripts/validate_contract_registry.py"
       - "scripts/tests/**"
@@ -47,6 +50,7 @@ on:
       - "contracts/**"
       - "docs/adrs/**"
       - "docs/atlas-trace.md"
+      - "docs/wave3-contracts.md"
       - "docs/repository-hygiene.md"
       - "docs/worker-contract-enforcement.md"
       - "docs/runbooks/**"
@@ -61,6 +65,7 @@ on:
       - "policy/schemas/reliability-*.schema.json"
       - "policy/schemas/repository-hygiene.schema.json"
       - "policy/service-contracts/**"
+      - "scripts/adr_trace.py"
       - "scripts/atlas_trace.py"
       - "scripts/contract_registry.py"
       - "scripts/control_plane_contracts.py"
@@ -70,6 +75,7 @@ on:
       - "scripts/repository_hygiene.py"
       - "scripts/repository_labels.py"
       - "scripts/repository_metadata.py"
+      - "scripts/wave3_contracts.py"
       - "scripts/worker_contract.py"
       - "scripts/validate_contract_registry.py"
       - "scripts/tests/**"
@@ -125,10 +131,17 @@ jobs:
           set -euo pipefail
           python3 scripts/atlas_trace.py validate-contracts
 
+      - name: Validate Wave 3.1 governance contracts
+        run: |
+          set -euo pipefail
+          python3 scripts/wave3_contracts.py check --root .
+          python3 scripts/adr_trace.py check --root .
+
       - name: Compile registry tooling
         run: |
           set -euo pipefail
           python3 -m py_compile \
+            scripts/adr_trace.py \
             scripts/atlas_trace.py \
             scripts/contract_registry.py \
             scripts/control_plane_contracts.py \
@@ -138,6 +151,7 @@ jobs:
             scripts/repository_hygiene.py \
             scripts/repository_labels.py \
             scripts/repository_metadata.py \
+            scripts/wave3_contracts.py \
             scripts/worker_contract.py \
             scripts/validate_contract_registry.py
 
