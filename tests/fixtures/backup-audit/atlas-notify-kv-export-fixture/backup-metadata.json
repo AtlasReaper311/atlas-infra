@@ -1,0 +1,25 @@
+{
+  "schema_version": "atlas-backup-audit/metadata/v1",
+  "target_id": "atlas-notify-kv-export-fixture",
+  "service_id": "atlas-notify",
+  "repository": "AtlasReaper311/atlas-notify",
+  "backup_at": "2026-07-14T08:30:00Z",
+  "observed_at": "2026-07-14T11:00:00Z",
+  "source_type": "local-fixture",
+  "evidence_ref": "https://github.com/AtlasReaper311/atlas-infra/blob/main/tests/fixtures/backup-audit/atlas-notify-kv-export-fixture/backup-metadata.json",
+  "digest": {
+    "algorithm": "sha-256",
+    "value": "8f06280e7bec0ab7d52119fbb037fb66761dceed9e48468bad8cf6b493d2785d",
+    "path": "kv-export.json"
+  },
+  "retention": {
+    "expected_days": 30,
+    "retained_until": "2026-08-13T08:30:00Z"
+  },
+  "restore_source": {
+    "kind": "json-export",
+    "path": "kv-export.json"
+  },
+  "expected_file_count": 1,
+  "expected_total_size_bytes": 686
+}
