@@ -1,0 +1,19 @@
+{
+  "schema_version": "atlas-control-plane/retirement-evidence/v1",
+  "retirement_id": "retirement:sha256:197bcc02e67cc7b94f376b7c87f0c95709f908f056d3a9f4c39beaf93c02f44c",
+  "subject": {"kind": "service", "service_id": "atlas-api-index"},
+  "state": "archived",
+  "evidence": {
+    "dependencies_clear": "unknown",
+    "routes_clear": "verified",
+    "bindings_clear": "verified",
+    "manifest_clear": "verified",
+    "worker_allowlist_clear": "verified",
+    "production_prs_clear": "verified",
+    "historical_evidence_preserved": "verified",
+    "recovery_handled": "not-applicable"
+  },
+  "visibility": "public",
+  "recorded_at": "2026-07-21T22:30:00Z",
+  "approved_by": "AtlasReaper311"
+}
