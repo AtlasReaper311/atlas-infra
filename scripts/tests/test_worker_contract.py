@@ -26,10 +26,13 @@ paths
 
 
 class WorkerContractTests(unittest.TestCase):
-    def write_bundle(self, text: str) -> Path:
+    def make_directory(self) -> Path:
         tmp = tempfile.TemporaryDirectory()
         self.addCleanup(tmp.cleanup)
-        root = Path(tmp.name)
+        return Path(tmp.name)
+
+    def write_bundle(self, text: str) -> Path:
+        root = self.make_directory()
         (root / "worker.js").write_text(text, encoding="utf-8")
         return root
 
@@ -73,6 +76,24 @@ class WorkerContractTests(unittest.TestCase):
             require_openapi=True,
         )
         self.assertEqual([], errors)
+
+    def test_missing_bundle_directory_fails_closed(self) -> None:
+        root = self.make_directory()
+        missing = root / "missing-dist"
+        with self.assertRaisesRegex(ContractError, "bundle directory does not exist"):
+            validate_contracts(
+                missing,
+                require_meta=True,
+                require_openapi=False,
+            )
+
+    def test_empty_bundle_directory_fails_closed(self) -> None:
+        with self.assertRaisesRegex(ContractError, "no readable Worker bundle files"):
+            validate_contracts(
+                self.make_directory(),
+                require_meta=True,
+                require_openapi=False,
+            )
 
     def test_at_least_one_contract_must_be_selected(self) -> None:
         with self.assertRaisesRegex(ContractError, "at least one"):
