@@ -36,12 +36,14 @@ jobs:
           python3 -m py_compile scripts/github_api.py
           python3 -m py_compile scripts/chaos_harness.py
           python3 -m py_compile scripts/public_boundary_audit.py
+          python3 -m py_compile scripts/public_repository_classifications.py
           python3 -m py_compile scripts/publish_evidence.py
           python3 -m py_compile scripts/notify_assurance.py
           python3 -m py_compile scripts/validate_contract_registry.py
           python3 -m py_compile scripts/validate_control_plane_contracts.py
           python3 -m unittest discover -s scripts/tests -v
           python3 scripts/validate_control_plane_contracts.py
+          python3 scripts/public_repository_classifications.py --check
           python3 scripts/chaos_harness.py validate \
             --policy policy/chaos-experiments.json
           python3 scripts/deploy_orchestrator.py validate \
@@ -123,29 +125,8 @@ jobs:
           retention-days: 90
 
       - name: Report consolidated findings
-        if: always() && (steps.policy.outputs.errors != '0' || steps.policy.outputs.warnings != '0')
-        continue-on-error: true
-        env:
-          NOTIFY_TOKEN: ${{ secrets.NOTIFY_TOKEN }}
-          ERRORS: ${{ steps.policy.outputs.errors }}
-          WARNINGS: ${{ steps.policy.outputs.warnings }}
-          SCORE: ${{ steps.policy.outputs.score }}
-          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        if: always()
         run: |
-          LEVEL="warning"
-          if [ "${ERRORS:-0}" != "0" ]; then
-            LEVEL="failure"
-          fi
           python3 scripts/notify_assurance.py \
-            --title "Estate policy findings" \
-            --level "$LEVEL" \
-            --message "${ERRORS:-0} errors and ${WARNINGS:-0} warnings; estate score ${SCORE:-unknown}." \
-            --url "$RUN_URL"
-
-      - name: Fail on policy errors
-        if: steps.policy.outputs.errors != '0'
-        env:
-          ERRORS: ${{ steps.policy.outputs.errors }}
-        run: |
-          echo "Estate policy found ${ERRORS} blocking errors."
-          exit 1
+            --conformance reports/estate-policy.json \
+            --output reports/assurance-summary.json

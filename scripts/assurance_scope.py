@@ -11,6 +11,8 @@ from typing import Any
 
 DEFAULT_ASSURANCE_EXCLUSION = "default-assurance"
 PUBLIC_ASSURANCE_REPOSITORIES = "public-assurance-repositories.json"
+PUBLIC_ASSURANCE_SCHEMA_VERSION = "atlas-public-assurance/repositories/v2"
+CLASSIFICATION_KEYS = {"repository", "lifecycle", "scope", "provenance"}
 
 
 def filter_default_assurance(registry: dict[str, Any]) -> dict[str, Any]:
@@ -35,13 +37,18 @@ def filter_default_assurance(registry: dict[str, Any]) -> dict[str, Any]:
 def add_public_assurance_repositories(
     registry: dict[str, Any], supplement_path: Path
 ) -> dict[str, Any]:
-    """Add public non-runtime repositories without putting private repos in policy."""
+    """Add classified public non-runtime repositories without private identities."""
     if not supplement_path.is_file():
         return registry
 
     supplement = json.loads(supplement_path.read_text(encoding="utf-8"))
-    names = supplement.get("repositories", [])
-    if not isinstance(names, list):
+    if not isinstance(supplement, dict):
+        raise ValueError("public assurance repository supplement must be an object")
+    if supplement.get("schema_version") != PUBLIC_ASSURANCE_SCHEMA_VERSION:
+        raise ValueError("unsupported public assurance repository supplement schema")
+
+    entries = supplement.get("repositories", [])
+    if not isinstance(entries, list):
         raise ValueError("public assurance repository supplement must be a list")
 
     merged = copy.deepcopy(registry)
@@ -51,12 +58,30 @@ def add_public_assurance_repositories(
         for item in repositories
         if isinstance(item, dict) and isinstance(item.get("repository"), str)
     }
-    for repository in names:
+    for entry in entries:
+        if not isinstance(entry, dict) or set(entry) != CLASSIFICATION_KEYS:
+            raise ValueError(
+                "public assurance entries must contain repository and classification axes"
+            )
+        repository = entry.get("repository")
         if not isinstance(repository, str) or not repository:
             raise ValueError("public assurance repository names must be non-empty strings")
-        if repository not in present:
-            repositories.append({"repository": repository})
-            present.add(repository)
+        if entry.get("scope") != "public":
+            raise ValueError("public assurance non-runtime repositories must have public scope")
+        if repository in present:
+            raise ValueError(
+                f"public assurance repository overlaps runtime registry: {repository}"
+            )
+        repositories.append(
+            {
+                "repository": repository,
+                "lifecycle": entry["lifecycle"],
+                "scope": entry["scope"],
+                "provenance": entry["provenance"],
+                "runtime_service": False,
+            }
+        )
+        present.add(repository)
 
     repositories.sort(key=lambda item: str(item.get("repository", "")))
     return merged

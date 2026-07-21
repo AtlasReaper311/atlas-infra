@@ -8,9 +8,14 @@ on:
       - "docs/runbooks/**"
       - "policy/estate-registry.json"
       - "policy/estate-registry.schema.json"
+      - "policy/public-assurance-repositories.json"
+      - "policy/public-assurance-repositories.schema.json"
+      - "policy/public-repository-classifications.json"
+      - "policy/public-repository-classifications.schema.json"
       - "policy/service-contracts/**"
       - "scripts/contract_registry.py"
       - "scripts/control_plane_contracts.py"
+      - "scripts/public_repository_classifications.py"
       - "scripts/validate_contract_registry.py"
       - "scripts/tests/**"
       - ".github/workflows/contract-registry-ci.yml"
@@ -22,9 +27,14 @@ on:
       - "docs/runbooks/**"
       - "policy/estate-registry.json"
       - "policy/estate-registry.schema.json"
+      - "policy/public-assurance-repositories.json"
+      - "policy/public-assurance-repositories.schema.json"
+      - "policy/public-repository-classifications.json"
+      - "policy/public-repository-classifications.schema.json"
       - "policy/service-contracts/**"
       - "scripts/contract_registry.py"
       - "scripts/control_plane_contracts.py"
+      - "scripts/public_repository_classifications.py"
       - "scripts/validate_contract_registry.py"
       - "scripts/tests/**"
       - ".github/workflows/contract-registry-ci.yml"
@@ -54,12 +64,18 @@ jobs:
             --graph /tmp/service-dependency-graph.json \
             --catalog /tmp/service-catalog.json
 
+      - name: Verify public repository classification projection
+        run: |
+          set -euo pipefail
+          python3 scripts/public_repository_classifications.py --check
+
       - name: Compile registry tooling
         run: |
           set -euo pipefail
           python3 -m py_compile \
             scripts/contract_registry.py \
             scripts/control_plane_contracts.py \
+            scripts/public_repository_classifications.py \
             scripts/validate_contract_registry.py
 
       - name: Run control-plane unit tests
