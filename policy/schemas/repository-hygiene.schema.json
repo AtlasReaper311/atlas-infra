@@ -1,0 +1,116 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.atlas-systems.uk/policy/v1/repository-hygiene.schema.json",
+  "title": "Atlas Systems repository hygiene policy v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "authority",
+    "repository_projection",
+    "reviewed_at",
+    "readme",
+    "metadata",
+    "pull_request_labels"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "atlas-repository-hygiene/v1"
+    },
+    "authority": {
+      "const": "AtlasReaper311/atlas-infra"
+    },
+    "repository_projection": {
+      "const": "policy/public-repository-classifications.json"
+    },
+    "reviewed_at": {
+      "type": "string",
+      "pattern": "^20[0-9]{2}-[0-9]{2}-[0-9]{2}$"
+    },
+    "readme": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "profile_repository",
+        "icon_url",
+        "standard_icon_width",
+        "profile_icon_width",
+        "required_banner_prefix",
+        "required_heading",
+        "required_footer",
+        "required_badge_label_color",
+        "minimum_badge_count",
+        "forbidden_terms",
+        "forbid_em_dash"
+      ],
+      "properties": {
+        "profile_repository": {"const": "AtlasReaper311/AtlasReaper311"},
+        "icon_url": {"type": "string", "minLength": 1, "maxLength": 300},
+        "standard_icon_width": {"const": 88},
+        "profile_icon_width": {"const": 120},
+        "required_banner_prefix": {"const": "ATLAS SYSTEMS //"},
+        "required_heading": {"const": "## How it fits into Atlas Systems"},
+        "required_footer": {"const": "Part of [atlas-systems.uk](https://atlas-systems.uk)"},
+        "required_badge_label_color": {"const": "labelColor=0a0a0f"},
+        "minimum_badge_count": {"type": "integer", "minimum": 1, "maximum": 12},
+        "forbidden_terms": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1, "maxLength": 64}
+        },
+        "forbid_em_dash": {"type": "boolean"}
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "visibility",
+        "default_branch",
+        "homepage_required",
+        "allowed_homepage_domain",
+        "required_topics",
+        "description_required",
+        "description_max_length",
+        "archived_lifecycles"
+      ],
+      "properties": {
+        "visibility": {"const": "public"},
+        "default_branch": {"const": "main"},
+        "homepage_required": {"type": "boolean"},
+        "allowed_homepage_domain": {"const": "atlas-systems.uk"},
+        "required_topics": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]{0,49}$"}
+        },
+        "description_required": {"type": "boolean"},
+        "description_max_length": {"type": "integer", "minimum": 1, "maximum": 350},
+        "archived_lifecycles": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"enum": ["active", "archived", "deprecated", "experimental", "production"]}
+        }
+      }
+    },
+    "pull_request_labels": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 20,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "color", "description"],
+        "properties": {
+          "name": {"type": "string", "pattern": "^status:[a-z0-9-]+$", "maxLength": 50},
+          "color": {"type": "string", "pattern": "^[0-9a-f]{6}$"},
+          "description": {"type": "string", "minLength": 1, "maxLength": 100}
+        }
+      }
+    }
+  }
+}
