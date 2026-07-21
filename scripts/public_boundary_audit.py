@@ -17,6 +17,7 @@ from github_api import GitHubApiError, GitHubClient
 
 SCHEMA_VERSION = "atlas-public-boundary/audit/v1"
 MAX_LOCAL_FILE_BYTES = 1_048_576
+MAX_SEARCH_PAGES_PER_IDENTITY = 10
 SKIP_DIRECTORIES = {
     ".git",
     ".mypy_cache",
@@ -64,49 +65,31 @@ class BoundaryAuditError(RuntimeError):
     """Describe a boundary-audit failure without exposing a protected identity."""
 
 
-def _sha256(value: str) -> str:
-    return hashlib.sha256(value.encode("utf-8")).hexdigest()
+def _finding_fingerprint(repository: str, path: str, line: int | None) -> str:
+    """Create a stable fingerprint from public finding coordinates only."""
 
-
-def _identity_fingerprint(identity: str) -> str:
-    return "sha256:" + _sha256(identity)
-
-
-def _finding_fingerprint(
-    identity_fingerprint: str,
-    repository: str,
-    path: str,
-    line: int | None,
-) -> str:
     material = json.dumps(
         {
-            "identity_fingerprint": identity_fingerprint,
             "repository": repository,
             "path": path,
             "line": line,
+            "rule": "protected-private-identity-in-public-source",
         },
         sort_keys=True,
         separators=(",", ":"),
     )
-    return "sha256:" + _sha256(material)
+    digest = hashlib.sha256(material.encode("utf-8")).hexdigest()
+    return "sha256:" + digest
 
 
 def _redacted_finding(
-    identity: str,
     repository: str,
     path: str,
     *,
     line: int | None = None,
 ) -> dict[str, Any]:
-    identity_fingerprint = _identity_fingerprint(identity)
     return {
-        "fingerprint": _finding_fingerprint(
-            identity_fingerprint,
-            repository,
-            path,
-            line,
-        ),
-        "identity_fingerprint": identity_fingerprint,
+        "fingerprint": _finding_fingerprint(repository, path, line),
         "repository": repository,
         "path": path,
         "line": line,
@@ -114,7 +97,7 @@ def _redacted_finding(
 
 
 def load_protected_identities(path: Path) -> list[str]:
-    """Load a protected identity set from JSON or newline-delimited local input."""
+    """Load a protected identity set from local JSON or newline-delimited input."""
 
     text = path.read_text(encoding="utf-8")
     stripped = text.strip()
@@ -125,7 +108,7 @@ def load_protected_identities(path: Path) -> list[str]:
     if stripped.startswith("["):
         try:
             value = json.loads(stripped)
-        except json.JSONDecodeError as error:
+        except json.JSONDecodeError:
             raise BoundaryAuditError("protected identity JSON is malformed") from None
         if not isinstance(value, list) or not all(
             isinstance(item, str) and item.strip() for item in value
@@ -165,7 +148,7 @@ def audit_local_tree(
     repository: str | None = None,
     excluded_paths: Iterable[str] = (),
 ) -> dict[str, Any]:
-    """Scan one current source tree and return only redacted identity findings."""
+    """Scan one current source tree and return only redacted public coordinates."""
 
     root = root.resolve(strict=True)
     repository_label = repository or root.name
@@ -192,33 +175,31 @@ def audit_local_tree(
             continue
 
         files_checked += 1
-        for identity in identities:
-            if identity not in text:
-                continue
-            for line_number, line in enumerate(text.splitlines(), start=1):
-                if identity in line:
-                    findings.append(
-                        _redacted_finding(
-                            identity,
-                            repository_label,
-                            relative,
-                            line=line_number,
-                        )
+        for line_number, line in enumerate(text.splitlines(), start=1):
+            if any(identity in line for identity in identities):
+                findings.append(
+                    _redacted_finding(
+                        repository_label,
+                        relative,
+                        line=line_number,
                     )
+                )
 
-    findings.sort(
+    findings = sorted(
+        {
+            (item["repository"], item["path"], item["line"]): item
+            for item in findings
+        }.values(),
         key=lambda item: (
             item["repository"],
             item["path"],
             item["line"] or 0,
-            item["identity_fingerprint"],
-        )
+        ),
     )
     errors = sorted(set(errors))
     return {
         "schema_version": SCHEMA_VERSION,
         "mode": "local",
-        "protected_identity_count": len(identities),
         "files_checked": files_checked,
         "findings": findings,
         "errors": errors,
@@ -227,7 +208,7 @@ def audit_local_tree(
 
 
 def discover_private_identities(client: GitHubClient, owner: str) -> list[str]:
-    """Derive protected repository identities inside authenticated GitHub context."""
+    """Derive the protected identity set inside authenticated GitHub context."""
 
     try:
         repositories = client.paginate(
@@ -245,7 +226,9 @@ def discover_private_identities(client: GitHubClient, owner: str) -> list[str]:
         repository_owner = repository.get("owner")
         if not isinstance(repository_owner, dict):
             continue
-        if repository_owner.get("login") != owner or repository.get("private") is not True:
+        if repository_owner.get("login") != owner:
+            continue
+        if repository.get("private") is not True:
             continue
         name = repository.get("name")
         full_name = repository.get("full_name")
@@ -274,14 +257,12 @@ def _code_search_page(
     try:
         payload = client.get(path)
     except (GitHubApiError, RuntimeError):
-        fingerprint = _identity_fingerprint(identity)
         raise BoundaryAuditError(
-            f"GitHub code search failed for protected identity {fingerprint}"
+            "GitHub code search failed while evaluating a protected identity"
         ) from None
     if not isinstance(payload, dict) or not isinstance(payload.get("items"), list):
-        fingerprint = _identity_fingerprint(identity)
         raise BoundaryAuditError(
-            f"GitHub code search returned an invalid result for protected identity {fingerprint}"
+            "GitHub code search returned an invalid result while evaluating a protected identity"
         )
     return payload
 
@@ -291,16 +272,14 @@ def audit_github_public_source(
     owner: str,
     identities: list[str],
 ) -> dict[str, Any]:
-    """Search current indexed GitHub source and retain only public-repository matches."""
+    """Search current indexed GitHub source and retain only public matches."""
 
-    findings_by_key: dict[tuple[str, str, str], dict[str, Any]] = {}
-    searches_performed = 0
+    findings_by_key: dict[tuple[str, str], dict[str, Any]] = {}
 
     for identity in identities:
         page = 1
         while True:
             payload = _code_search_page(client, owner, identity, page)
-            searches_performed += 1
             items = payload["items"]
             for item in items:
                 if not isinstance(item, dict):
@@ -319,37 +298,24 @@ def audit_github_public_source(
                 path = item.get("path")
                 if not isinstance(full_name, str) or not isinstance(path, str):
                     continue
-                finding = _redacted_finding(identity, full_name, path)
-                key = (
-                    finding["identity_fingerprint"],
-                    finding["repository"],
-                    finding["path"],
-                )
-                findings_by_key[key] = finding
+                finding = _redacted_finding(full_name, path)
+                findings_by_key[(finding["repository"], finding["path"])] = finding
 
             if len(items) < 100:
                 break
             page += 1
-            if page > 10:
-                fingerprint = _identity_fingerprint(identity)
+            if page > MAX_SEARCH_PAGES_PER_IDENTITY:
                 raise BoundaryAuditError(
-                    f"GitHub code search exceeded the bounded result window for protected identity {fingerprint}"
+                    "GitHub code search exceeded the bounded result window while evaluating a protected identity"
                 )
 
     findings = sorted(
         findings_by_key.values(),
-        key=lambda item: (
-            item["repository"],
-            item["path"],
-            item["identity_fingerprint"],
-        ),
+        key=lambda item: (item["repository"], item["path"]),
     )
     return {
         "schema_version": SCHEMA_VERSION,
         "mode": "github",
-        "owner": owner,
-        "protected_identity_count": len(identities),
-        "searches_performed": searches_performed,
         "findings": findings,
         "errors": [],
         "status": "failed" if findings else "passed",
@@ -361,13 +327,14 @@ def render_markdown(report: dict[str, Any]) -> str:
         "# Public/private source boundary audit",
         "",
         f"Status: **{report['status']}**",
-        "",
-        f"Protected identities evaluated: {report['protected_identity_count']}",
     ]
     if report.get("mode") == "local":
-        lines.append(f"UTF-8 source files checked: {report.get('files_checked', 0)}")
-    else:
-        lines.append(f"Bounded GitHub searches performed: {report.get('searches_performed', 0)}")
+        lines.extend(
+            [
+                "",
+                f"UTF-8 source files checked: {report.get('files_checked', 0)}",
+            ]
+        )
 
     errors = report.get("errors", [])
     findings = report.get("findings", [])
@@ -380,28 +347,36 @@ def render_markdown(report: dict[str, Any]) -> str:
                 "",
                 "## Redacted findings",
                 "",
-                "| Public repository | Path | Line | Protected identity fingerprint | Finding fingerprint |",
-                "|---|---|---:|---|---|",
+                "| Public repository | Path | Line | Finding fingerprint |",
+                "|---|---|---:|---|",
             ]
         )
         for finding in findings:
             line = finding.get("line") or ""
             lines.append(
-                "| {repository} | `{path}` | {line} | `{identity}` | `{fingerprint}` |".format(
+                "| {repository} | `{path}` | {line} | `{fingerprint}` |".format(
                     repository=finding["repository"],
                     path=finding["path"],
                     line=line,
-                    identity=finding["identity_fingerprint"],
                     fingerprint=finding["fingerprint"],
                 )
             )
     else:
-        lines.extend(["", "No protected repository identities were found in public source."])
+        lines.extend(
+            [
+                "",
+                "No protected repository identities were found in public source.",
+            ]
+        )
     lines.append("")
     return "\n".join(lines)
 
 
-def write_report(report: dict[str, Any], json_path: Path | None, markdown_path: Path | None) -> None:
+def write_report(
+    report: dict[str, Any],
+    json_path: Path | None,
+    markdown_path: Path | None,
+) -> None:
     if json_path is not None:
         json_path.parent.mkdir(parents=True, exist_ok=True)
         json_path.write_text(
