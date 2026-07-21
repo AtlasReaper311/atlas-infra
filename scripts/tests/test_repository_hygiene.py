@@ -5,7 +5,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from repository_hygiene import (
+from scripts.repository_hygiene import (
     label_findings,
     metadata_findings,
     readme_findings,
