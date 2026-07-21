@@ -1,0 +1,39 @@
+name: Validate private repository README
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.repository }}-private-readme-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Validate private README contract
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out caller repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0, Node 24
+
+      - name: Check out the exact Atlas Infra workflow revision
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0, Node 24
+        with:
+          repository: AtlasReaper311/atlas-infra
+          ref: ${{ job.workflow_sha }}
+          path: .atlas-infra-readme
+          persist-credentials: false
+
+      - name: Validate source-local README
+        env:
+          TARGET_REPOSITORY: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          python3 .atlas-infra-readme/scripts/readme_contract.py check-local \
+            --repository "$TARGET_REPOSITORY" \
+            --readme README.md \
+            --license LICENSE \
+            --policy .atlas-infra-readme/policy/repository-hygiene.json
