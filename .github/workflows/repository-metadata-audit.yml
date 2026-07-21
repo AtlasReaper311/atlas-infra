@@ -1,0 +1,57 @@
+name: Repository metadata audit
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "advisory reports findings; enforce fails when metadata findings exist"
+        required: true
+        default: advisory
+        type: choice
+        options:
+          - advisory
+          - enforce
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.repository }}-repository-metadata-audit-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    name: Audit public repository metadata
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0, Node 24
+
+      - name: Validate metadata tooling
+        run: |
+          set -euo pipefail
+          python3 -m py_compile scripts/repository_hygiene.py scripts/repository_metadata.py
+          python3 scripts/repository_metadata.py check-policy
+          python3 -m unittest scripts.tests.test_repository_metadata -v
+
+      - name: Audit approved public repository metadata
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          MODE: ${{ inputs.mode }}
+        run: |
+          set -euo pipefail
+          mkdir -p reports
+          python3 scripts/repository_metadata.py audit-public \
+            --mode "$MODE" \
+            --json-out reports/repository-metadata-audit.json \
+            --markdown-out reports/repository-metadata-audit.md
+          cat reports/repository-metadata-audit.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload metadata audit report
+        if: always() && hashFiles('reports/**') != ''
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1, Node 24
+        with:
+          name: repository-metadata-audit-${{ github.run_id }}
+          path: reports
+          if-no-files-found: error
+          retention-days: 30

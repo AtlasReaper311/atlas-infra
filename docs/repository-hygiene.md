@@ -4,11 +4,11 @@ Wave 2 turns Atlas Systems repository presentation from convention into an audit
 
 ## Authority
 
-`policy/public-repository-classifications.json` remains the allowlist of intentionally public repositories. The hygiene auditor consumes that projection and never enumerates account membership. A public GitHub repository that is not in the projection is not silently admitted into Atlas portfolio governance.
+`policy/public-repository-classifications.json` remains the allowlist of intentionally public repositories. Public hygiene and metadata audits consume that projection and never enumerate account membership. A public GitHub repository that is not in the projection is not silently admitted into Atlas portfolio governance.
 
-`policy/repository-hygiene.json` owns the presentation rules used by the public audit and by source-local private README validation.
+`policy/repository-hygiene.json` owns README, GitHub metadata, and PR-status-label presentation rules.
 
-Private repository identities remain source-owned. A private repository calls the reusable README validator from its own authenticated workflow; Atlas Infra does not add those identities to the public classification projection or public audit report.
+Private repository identities remain source-owned. Private repositories call reusable validators from their own authenticated workflows; Atlas Infra does not add those identities to the public classification projection or public audit reports.
 
 ## README contract
 
@@ -20,7 +20,7 @@ The contract also rejects the portfolio wording prohibited by the README style g
 
 ## Public README audit
 
-`.github/workflows/repository-readme-audit.yml` provides a README-only audit for the approved public projection. It is useful during W2.1 because metadata and label findings do not obscure README completion. Manual dispatch supports `advisory` and `enforce` modes.
+`.github/workflows/repository-readme-audit.yml` provides a README-only audit for the approved public projection. Manual dispatch supports `advisory` and `enforce` modes.
 
 The workflow reads only repositories already present in `policy/public-repository-classifications.json` and retains a bounded JSON and Markdown report.
 
@@ -30,7 +30,7 @@ The workflow reads only repositories already present in `policy/public-repositor
 
 The private validation path has `contents: read` only. It does not enumerate account repositories, publish a private repository list, alter provider state, or upload a cross-estate private inventory.
 
-Repositories that are intentionally excluded from Atlas portfolio presentation remain outside this README rollout through their source-owned governance decision; they are not named in public policy.
+Repositories intentionally excluded from Atlas portfolio presentation remain outside this rollout through their source-owned governance decision; they are not named in public policy.
 
 ## GitHub metadata contract
 
@@ -38,12 +38,30 @@ Every approved public repository must have:
 
 - public visibility;
 - `main` as the default branch;
-- a non-empty bounded description;
+- a non-empty description of at most 160 characters;
 - an HTTPS homepage on `atlas-systems.uk` or one of its subdomains;
-- the `atlas-systems` topic;
+- the required `atlas-systems` topic;
+- between one and eight topics total;
+- only topics from the controlled Atlas Systems vocabulary in `policy/repository-hygiene.json`;
 - a GitHub archived state consistent with the declared lifecycle.
 
+Descriptions follow the same restrained language rules as README prose: no prohibited portfolio wording and no em dashes.
+
 The policy does not infer a repository's lifecycle from GitHub metadata. Atlas Infra classification remains authoritative and GitHub metadata must conform to it.
+
+## Public metadata audit
+
+`.github/workflows/repository-metadata-audit.yml` is the metadata-only W2.2 proof path. It queries only repositories in the canonical public projection and reports description, homepage, topic, visibility, default-branch, and archive-state drift without mixing in README or PR-label findings.
+
+Manual dispatch supports `advisory` and `enforce` modes. Reports contain only approved public repository identities and are retained for 30 days.
+
+## Private metadata validation
+
+`.github/workflows/validate-private-metadata.yml` provides the equivalent source-local check for governed private repositories.
+
+The workflow reads the caller's `.atlas/governance.json`, requires `visibility=private` and `public_projection=false`, verifies the caller repository identity, and queries only `github.repository`. The caller's lifecycle remains the archive-state authority.
+
+Private metadata evidence remains in the private caller repository. The workflow does not create or upload a cross-estate private repository inventory.
 
 ## Pull request status labels
 
@@ -59,8 +77,8 @@ Draft state, CI state, and merge state remain native GitHub facts and are intent
 
 ## Audit and enforcement
 
-`.github/workflows/repository-hygiene-audit.yml` is read-only. It queries only repositories named in the public classification projection, reads README content, public repository metadata, and labels, then emits a sanitized JSON and Markdown report.
+`.github/workflows/repository-hygiene-audit.yml` remains the combined read-only estate audit. It queries only repositories named in the public classification projection, reads README content, GitHub repository metadata, and labels, then emits a sanitized JSON and Markdown report.
 
-The scheduled run is advisory while Wave 2 remediation is in progress. Manual dispatch supports `advisory` and `enforce` modes. Once the estate is clean, the workflow can be switched to scheduled enforcement in a separate reviewed change.
+The scheduled combined run remains advisory while Wave 2 remediation is in progress because W2.3 label findings are intentionally still open. Metadata can be proven independently through the metadata-only workflow without weakening that separation.
 
-No audit path changes repository descriptions, topics, labels, archive state, branches, READMEs, or provider resources.
+No audit path changes repository descriptions, topics, labels, archive state, branches, READMEs, or provider resources. GitHub metadata writes remain explicit owner actions performed separately from read-only evidence collection.
