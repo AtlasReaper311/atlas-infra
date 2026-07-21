@@ -110,7 +110,7 @@
   "examples": [
     {
       "schema_version": "atlas-control-plane/adr-runtime-relationship/v1",
-      "relationship_id": "adrrel:sha256:c41fe91c9df761926ab7b5ac1c6227c7f3c7b8fe0474e47e86e337a42d18c974",
+      "relationship_id": "adrrel:sha256:90e89c86cd1654bd65e0bcf5617c9e22bac9e599481e5fc6c6d34f5560393ab3",
       "adr": {
         "id": "ADR-0001",
         "path": "docs/adrs/ADR-0001-worker-to-worker-service-bindings.md",
