@@ -1,0 +1,154 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.atlas-systems.uk/control-plane/v1/retirement-evidence.schema.json",
+  "title": "Atlas Systems RetirementEvidence v1",
+  "description": "A bounded, reviewable lifecycle evidence record for deprecation and retirement without granting deletion or archival authority.",
+  "type": "object",
+  "additionalProperties": false,
+  "x-owner": {
+    "repository": "AtlasReaper311/atlas-infra",
+    "consumer": "retirement planning and Atlas Trace"
+  },
+  "required": [
+    "schema_version",
+    "retirement_id",
+    "subject",
+    "state",
+    "evidence",
+    "visibility",
+    "recorded_at",
+    "approved_by"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "atlas-control-plane/retirement-evidence/v1"
+    },
+    "retirement_id": {
+      "type": "string",
+      "pattern": "^retirement:sha256:[0-9a-f]{64}$"
+    },
+    "subject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind"],
+      "properties": {
+        "kind": {
+          "enum": ["repository", "service"]
+        },
+        "repository": {
+          "type": "string",
+          "pattern": "^AtlasReaper311/[A-Za-z0-9._-]+$",
+          "maxLength": 128
+        },
+        "service_id": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+          "maxLength": 64
+        }
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"kind": {"const": "repository"}}},
+          "then": {"required": ["repository"]}
+        },
+        {
+          "if": {"properties": {"kind": {"const": "service"}}},
+          "then": {"required": ["service_id"]}
+        }
+      ]
+    },
+    "state": {
+      "enum": [
+        "active",
+        "deprecation-proposed",
+        "deprecated",
+        "dependency-clear",
+        "runtime-removed",
+        "publication-removed",
+        "archived"
+      ]
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "dependencies_clear",
+        "routes_clear",
+        "bindings_clear",
+        "manifest_clear",
+        "worker_allowlist_clear",
+        "production_prs_clear",
+        "historical_evidence_preserved",
+        "recovery_handled"
+      ],
+      "properties": {
+        "dependencies_clear": {"$ref": "#/definitions/evidenceState"},
+        "routes_clear": {"$ref": "#/definitions/evidenceState"},
+        "bindings_clear": {"$ref": "#/definitions/evidenceState"},
+        "manifest_clear": {"$ref": "#/definitions/evidenceState"},
+        "worker_allowlist_clear": {"$ref": "#/definitions/evidenceState"},
+        "production_prs_clear": {"$ref": "#/definitions/evidenceState"},
+        "historical_evidence_preserved": {"$ref": "#/definitions/evidenceState"},
+        "recovery_handled": {"$ref": "#/definitions/evidenceState"}
+      }
+    },
+    "replacement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "id"],
+      "properties": {
+        "kind": {"enum": ["repository", "service"]},
+        "id": {
+          "type": "string",
+          "pattern": "^(?:AtlasReaper311/[A-Za-z0-9._-]+|[a-z0-9]+(?:-[a-z0-9]+)*)$",
+          "maxLength": 128
+        }
+      }
+    },
+    "supersedes": {
+      "type": "string",
+      "pattern": "^retirement:sha256:[0-9a-f]{64}$"
+    },
+    "visibility": {
+      "enum": ["public", "internal", "restricted-metadata"]
+    },
+    "recorded_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "approved_by": {
+      "const": "AtlasReaper311"
+    },
+    "note": {
+      "type": "string",
+      "maxLength": 500
+    }
+  },
+  "definitions": {
+    "evidenceState": {
+      "enum": ["verified", "failed", "unknown", "unavailable", "not-applicable"]
+    }
+  },
+  "examples": [
+    {
+      "schema_version": "atlas-control-plane/retirement-evidence/v1",
+      "retirement_id": "retirement:sha256:55b2741ccde866b98c86ee6d0d56a53755554de028ed800d4711a4b3b02e7948",
+      "subject": {"kind": "service", "service_id": "atlas-api-index"},
+      "state": "deprecated",
+      "evidence": {
+        "dependencies_clear": "unknown",
+        "routes_clear": "unknown",
+        "bindings_clear": "unknown",
+        "manifest_clear": "unknown",
+        "worker_allowlist_clear": "unknown",
+        "production_prs_clear": "verified",
+        "historical_evidence_preserved": "verified",
+        "recovery_handled": "not-applicable"
+      },
+      "visibility": "public",
+      "recorded_at": "2026-07-21T22:30:00Z",
+      "approved_by": "AtlasReaper311",
+      "note": "Example deprecation evidence; final archival remains blocked until runtime and publication checks are verified."
+    }
+  ]
+}
