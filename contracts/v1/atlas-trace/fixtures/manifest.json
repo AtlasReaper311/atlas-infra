@@ -1,0 +1,38 @@
+{
+  "schema_version": "atlas-control-plane/atlas-trace-fixture-manifest/v1",
+  "fixtures": [
+    {
+      "schema": "evidence-node.schema.json",
+      "path": "valid/evidence-node.json",
+      "valid": true
+    },
+    {
+      "schema": "evidence-node.schema.json",
+      "path": "invalid/evidence-node.bad-id.json",
+      "valid": false,
+      "expected_error": "deterministic evidence-node"
+    },
+    {
+      "schema": "evidence-edge.schema.json",
+      "path": "valid/evidence-edge.json",
+      "valid": true
+    },
+    {
+      "schema": "evidence-edge.schema.json",
+      "path": "invalid/evidence-edge.correlation-basis.json",
+      "valid": false,
+      "expected_error": "CORRELATED_WITH requires"
+    },
+    {
+      "schema": "evidence-graph.schema.json",
+      "path": "valid/evidence-graph.json",
+      "valid": true
+    },
+    {
+      "schema": "evidence-graph.schema.json",
+      "path": "invalid/evidence-graph.dangling-edge.json",
+      "valid": false,
+      "expected_error": "referenced node is absent"
+    }
+  ]
+}
