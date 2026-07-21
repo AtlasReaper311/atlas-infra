@@ -35,6 +35,7 @@ jobs:
           python3 -m py_compile scripts/estate_policy.py
           python3 -m py_compile scripts/github_api.py
           python3 -m py_compile scripts/chaos_harness.py
+          python3 -m py_compile scripts/public_boundary_audit.py
           python3 -m py_compile scripts/publish_evidence.py
           python3 -m py_compile scripts/notify_assurance.py
           python3 -m py_compile scripts/validate_contract_registry.py
@@ -84,6 +85,24 @@ jobs:
             --markdown reports/estate-policy.md \
             --json reports/estate-policy.json
           cat reports/estate-policy.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Audit public and private source boundary
+        env:
+          GH_DIGEST_PAT: ${{ secrets.GH_DIGEST_PAT }}
+        run: |
+          set +e
+          python3 scripts/public_boundary_audit.py \
+            --github-owner AtlasReaper311 \
+            --token-env GH_DIGEST_PAT \
+            --report reports/public-boundary-audit.json \
+            --markdown reports/public-boundary-audit.md \
+            --quiet
+          BOUNDARY_STATUS=$?
+          set -e
+          if [ -f reports/public-boundary-audit.md ]; then
+            cat reports/public-boundary-audit.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+          exit "$BOUNDARY_STATUS"
 
       - name: Publish public conformance evidence
         if: always() && hashFiles('reports/estate-policy.json') != ''
