@@ -160,9 +160,9 @@ class DependabotRolloutTests(unittest.TestCase):
         self.assertEqual({}, files)
         self.assertIn("excluded from this rollout", plan["notes"][0])
 
-    def test_deprecated_repository_gets_no_files(self):
+    def test_deprecated_external_derived_repository_gets_no_files(self):
         repository = {
-            "repository": "AtlasReaper311/simple-proxy",
+            "repository": "AtlasReaper311/example-deprecated-source",
             "default_branch": "main",
             "archived": False,
         }
@@ -182,7 +182,7 @@ class DependabotRolloutTests(unittest.TestCase):
 
     def test_archived_repository_is_skipped(self):
         repository = {
-            "repository": "AtlasReaper311/atlas-cv",
+            "repository": "AtlasReaper311/example-archived-source",
             "default_branch": "main",
             "archived": True,
         }
