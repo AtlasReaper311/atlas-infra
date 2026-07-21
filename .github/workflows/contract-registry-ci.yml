@@ -24,13 +24,16 @@ on:
       - "scripts/readme_contract.py"
       - "scripts/reliability_policy.py"
       - "scripts/repository_hygiene.py"
+      - "scripts/repository_labels.py"
       - "scripts/repository_metadata.py"
       - "scripts/validate_contract_registry.py"
       - "scripts/tests/**"
       - ".github/workflows/contract-registry-ci.yml"
       - ".github/workflows/repository-hygiene-audit.yml"
+      - ".github/workflows/repository-label-audit.yml"
       - ".github/workflows/repository-metadata-audit.yml"
       - ".github/workflows/repository-readme-audit.yml"
+      - ".github/workflows/validate-private-labels.yml"
       - ".github/workflows/validate-private-metadata.yml"
       - ".github/workflows/validate-private-readme.yml"
   push:
@@ -57,13 +60,16 @@ on:
       - "scripts/readme_contract.py"
       - "scripts/reliability_policy.py"
       - "scripts/repository_hygiene.py"
+      - "scripts/repository_labels.py"
       - "scripts/repository_metadata.py"
       - "scripts/validate_contract_registry.py"
       - "scripts/tests/**"
       - ".github/workflows/contract-registry-ci.yml"
       - ".github/workflows/repository-hygiene-audit.yml"
+      - ".github/workflows/repository-label-audit.yml"
       - ".github/workflows/repository-metadata-audit.yml"
       - ".github/workflows/repository-readme-audit.yml"
+      - ".github/workflows/validate-private-labels.yml"
       - ".github/workflows/validate-private-metadata.yml"
       - ".github/workflows/validate-private-readme.yml"
   workflow_dispatch:
@@ -102,6 +108,7 @@ jobs:
           set -euo pipefail
           python3 scripts/repository_hygiene.py check-policy
           python3 scripts/repository_metadata.py check-policy
+          python3 scripts/repository_labels.py check-policy
 
       - name: Compile registry tooling
         run: |
@@ -113,6 +120,7 @@ jobs:
             scripts/readme_contract.py \
             scripts/reliability_policy.py \
             scripts/repository_hygiene.py \
+            scripts/repository_labels.py \
             scripts/repository_metadata.py \
             scripts/validate_contract_registry.py
 
