@@ -2,6 +2,11 @@
 id = "ADR-NNNN"
 date = 2026-01-01
 status = "proposed"
+visibility = "public"
+repositories = []
+services = []
+contracts = []
+policies = []
 # supersedes = "ADR-MMMM"   # uncomment when this record replaces another
 +++
 
