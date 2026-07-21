@@ -38,10 +38,8 @@ class PublicRepositoryClassificationTests(unittest.TestCase):
         )
         self.assertEqual(expected, actual)
 
-    def test_projection_conforms_to_public_contract(self):
-        schema = self.load(
-            "contracts/v1/public-repository-classifications.schema.json"
-        )
+    def test_projection_conforms_to_policy_schema(self):
+        schema = self.load("policy/public-repository-classifications.schema.json")
         self.assertEqual(
             [],
             control_plane_contracts.validate_instance(self.projection(), schema),
