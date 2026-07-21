@@ -1,0 +1,115 @@
+{
+  "schema_version": "atlas-public-cloudflare-resources/v1",
+  "owner": "AtlasReaper311/atlas-infra",
+  "reviewed_at": "2026-07-21T00:00:00Z",
+  "account_id": "49e221b7e55a9e5c45b88d08efca5771",
+  "privacy_model": "declared-public-resources-only; undeclared provider resources are aggregate-only",
+  "resources": [
+    {
+      "kind": "kv-namespace",
+      "provider_id": "2f513e0863ad4bbba09228e699183268",
+      "display_label": "REGISTRY_KV",
+      "owner": {
+        "service_id": "atlas-api-index",
+        "repository": "AtlasReaper311/atlas-api-index",
+        "source_ref": "AtlasReaper311/atlas-api-index:wrangler.toml"
+      },
+      "consumers": []
+    },
+    {
+      "kind": "kv-namespace",
+      "provider_id": "33fa7cbf66fc495ea0304a5f95ffc9a8",
+      "display_label": "ATLAS_PUBLIC_KV",
+      "owner": {
+        "service_id": "atlas-api-public",
+        "repository": "AtlasReaper311/atlas-api-public",
+        "source_ref": "AtlasReaper311/atlas-api-public:wrangler.toml"
+      },
+      "consumers": []
+    },
+    {
+      "kind": "kv-namespace",
+      "provider_id": "a0c92692d5c142b38b3196c13f346d21",
+      "display_label": "DORA_CACHE",
+      "owner": {
+        "service_id": "atlas-dora",
+        "repository": "AtlasReaper311/atlas-dora",
+        "source_ref": "AtlasReaper311/atlas-dora:wrangler.jsonc"
+      },
+      "consumers": []
+    },
+    {
+      "kind": "kv-namespace",
+      "provider_id": "bcf2b463496f4f4fbb886ab2d10f225d",
+      "display_label": "NOTIFY_LOG",
+      "owner": {
+        "service_id": "atlas-notify",
+        "repository": "AtlasReaper311/atlas-notify",
+        "source_ref": "AtlasReaper311/atlas-notify:wrangler.toml"
+      },
+      "consumers": []
+    },
+    {
+      "kind": "kv-namespace",
+      "provider_id": "f14a933fc4db415e967930c5e543161d",
+      "display_label": "DEPLOY_STATE",
+      "owner": {
+        "service_id": "deploy-watch",
+        "repository": "AtlasReaper311/deploy-watch",
+        "source_ref": "AtlasReaper311/deploy-watch:wrangler.toml"
+      },
+      "consumers": []
+    },
+    {
+      "kind": "kv-namespace",
+      "provider_id": "5664a9475b92499c8ee22a7e820a76fd",
+      "display_label": "PULSE_CACHE",
+      "owner": {
+        "service_id": "github-pulse",
+        "repository": "AtlasReaper311/github-pulse",
+        "source_ref": "AtlasReaper311/github-pulse:wrangler.toml"
+      },
+      "consumers": []
+    },
+    {
+      "kind": "kv-namespace",
+      "provider_id": "2c05e40ce00946c0aa4057513c3fec40",
+      "display_label": "RL",
+      "owner": {
+        "service_id": "ramone-edge",
+        "repository": "AtlasReaper311/ramone-edge",
+        "source_ref": "AtlasReaper311/ramone-edge:wrangler.toml"
+      },
+      "consumers": []
+    },
+    {
+      "kind": "kv-namespace",
+      "provider_id": "fe85fc9c743044918a5fd1817ced5421",
+      "display_label": "PULSE_CACHE",
+      "owner": {
+        "service_id": "site-pulse",
+        "repository": "AtlasReaper311/site-pulse",
+        "source_ref": "AtlasReaper311/site-pulse:wrangler.toml"
+      },
+      "consumers": []
+    },
+    {
+      "kind": "kv-namespace",
+      "provider_id": "3b033fc37ca14e7c9fb1559ecd6430b1",
+      "display_label": "TELEMETRY_KV",
+      "owner": {
+        "service_id": "specular-edge",
+        "repository": "AtlasReaper311/specular-telemetry",
+        "source_ref": "AtlasReaper311/specular-telemetry:worker/wrangler.toml"
+      },
+      "consumers": [
+        {
+          "service_id": "specular-sonify",
+          "repository": "AtlasReaper311/specular-sonify",
+          "access": "read-only",
+          "source_ref": "AtlasReaper311/specular-sonify:wrangler.toml"
+        }
+      ]
+    }
+  ]
+}
