@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://atlas-systems.uk/contracts/reliability-unmeasured-v1.schema.json",
+  "title": "Atlas reliability unmeasured-service policy",
+  "description": "Owner-reviewed reasons why active runtime services do not currently carry an approved reliability objective.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "owner", "reviewed_at", "services"],
+  "properties": {
+    "schema_version": {
+      "const": "atlas-reliability-unmeasured/v1"
+    },
+    "owner": {
+      "const": "AtlasReaper311/atlas-infra"
+    },
+    "reviewed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "services": {
+      "type": "array",
+      "maxItems": 60,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["service_id", "reason"],
+        "properties": {
+          "service_id": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+            "maxLength": 64
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          }
+        }
+      }
+    }
+  }
+}

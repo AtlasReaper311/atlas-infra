@@ -2,7 +2,8 @@
 """Load, validate, and project the canonical reliability policy.
 
 The canonical form is one objective file per measured service under
-``policy/reliability/objectives/`` plus ``policy/reliability/evaluator-config.json``.
+``policy/reliability/objectives/`` plus ``policy/reliability/evaluator-config.json``
+and the owner-reviewed ``policy/reliability/unmeasured.json`` declaration.
 Everything else is a deterministic projection of those files:
 
 - ``emit-policy-document`` renders the fingerprinted ``atlas-reliability-policy/v1``
@@ -29,8 +30,10 @@ except ImportError:  # direct script execution
 ROOT = Path(__file__).resolve().parents[1]
 OBJECTIVES_DIR = ROOT / "policy/reliability/objectives"
 EVALUATOR_CONFIG = ROOT / "policy/reliability/evaluator-config.json"
+UNMEASURED_POLICY = ROOT / "policy/reliability/unmeasured.json"
 OBJECTIVE_SCHEMA = ROOT / "contracts/v1/reliability-objective.schema.json"
 POLICY_SCHEMA = ROOT / "policy/schemas/reliability-policy.schema.json"
+UNMEASURED_SCHEMA = ROOT / "policy/schemas/reliability-unmeasured.schema.json"
 FINGERPRINT_RULES = ROOT / "contracts/v1/fingerprint-rules.json"
 REGISTRY = ROOT / "policy/estate-registry.json"
 SERVICE_CONTRACTS = ROOT / "policy/service-contracts"
@@ -55,8 +58,25 @@ def load_objectives(root: Path = ROOT) -> list[dict[str, Any]]:
     return objectives
 
 
+def load_unmeasured_policy(root: Path = ROOT) -> dict[str, Any]:
+    """Load the owner-reviewed reasons for active runtime services without objectives."""
+    return load_json(root / "policy/reliability/unmeasured.json")
+
+
+def _runtime_service_lifecycles(registry: dict[str, Any]) -> dict[str, str]:
+    lifecycles: dict[str, str] = {}
+    for repository in registry.get("repositories", []):
+        if not repository.get("runtime_service"):
+            continue
+        lifecycle = repository.get("lifecycle", "unknown")
+        for service_id in repository.get("service_ids", []):
+            if isinstance(service_id, str):
+                lifecycles[service_id] = lifecycle
+    return lifecycles
+
+
 def validate_policy(root: Path = ROOT) -> list[str]:
-    """Validate objectives, config, and cross-references. Returns errors."""
+    """Validate objectives, config, unmeasured reasons, and cross-references."""
     contracts = _contracts_module()
     errors: list[str] = []
     schema = load_json(root / "contracts/v1/reliability-objective.schema.json")
@@ -113,6 +133,58 @@ def validate_policy(root: Path = ROOT) -> list[str]:
             if not (root / ref).exists():
                 errors.append(f"{contract_path.name}: slo_refs target missing: {ref}")
 
+    unmeasured_path = root / "policy/reliability/unmeasured.json"
+    unmeasured_schema_path = root / "policy/schemas/reliability-unmeasured.schema.json"
+    try:
+        unmeasured = load_json(unmeasured_path)
+        unmeasured_schema = load_json(unmeasured_schema_path)
+    except (FileNotFoundError, json.JSONDecodeError) as error:
+        errors.append(f"unmeasured.json: cannot load policy or schema: {error}")
+        unmeasured = {"services": []}
+        unmeasured_schema = None
+
+    if unmeasured_schema is not None:
+        for problem in contracts.validate_instance(unmeasured, unmeasured_schema):
+            errors.append(f"unmeasured.json: {problem}")
+
+    unmeasured_entries = [
+        item for item in unmeasured.get("services", []) if isinstance(item, dict)
+    ]
+    unmeasured_ids = [
+        item.get("service_id")
+        for item in unmeasured_entries
+        if isinstance(item.get("service_id"), str)
+    ]
+    if unmeasured_ids != sorted(unmeasured_ids):
+        errors.append("unmeasured.json: services must be sorted by service_id")
+    if len(unmeasured_ids) != len(set(unmeasured_ids)):
+        errors.append("unmeasured.json: service_id values must be unique")
+
+    runtime_lifecycles = _runtime_service_lifecycles(registry)
+    expected_unmeasured = {
+        service_id
+        for service_id, lifecycle in runtime_lifecycles.items()
+        if service_id not in seen_services and lifecycle not in EXCLUDED_LIFECYCLES
+    }
+    actual_unmeasured = set(unmeasured_ids)
+    for service_id in sorted(expected_unmeasured - actual_unmeasured):
+        errors.append(
+            f"unmeasured.json: active runtime service {service_id!r} needs an owner-reviewed unmeasured reason"
+        )
+    for service_id in sorted(actual_unmeasured - expected_unmeasured):
+        if service_id in seen_services:
+            errors.append(
+                f"unmeasured.json: measured service {service_id!r} must not also be declared unmeasured"
+            )
+        elif service_id not in runtime_lifecycles:
+            errors.append(
+                f"unmeasured.json: service {service_id!r} is not a registered runtime service"
+            )
+        else:
+            errors.append(
+                f"unmeasured.json: {runtime_lifecycles[service_id]} service {service_id!r} uses lifecycle exclusion instead of an active unmeasured reason"
+            )
+
     config = load_json(root / "policy/reliability/evaluator-config.json")
     if config.get("schema_version") != "atlas-reliability-evaluator-config/v1":
         errors.append("evaluator-config.json: unexpected schema_version")
@@ -154,7 +226,7 @@ def validate_policy(root: Path = ROOT) -> list[str]:
                 found.extend(integral_float_errors(child, f"{path}.{key}"))
         elif isinstance(value, list):
             for index, child in enumerate(value):
-                found.extend(integral_float_errors(child, f"{path}[{index}]"))
+                found.extend(integral_float_errors(child, f"{path}[{index}]") )
         return found
 
     errors.extend(integral_float_errors(config, "$"))
@@ -162,9 +234,20 @@ def validate_policy(root: Path = ROOT) -> list[str]:
 
 
 def build_unmeasured(root: Path = ROOT) -> list[dict[str, str]]:
-    """Runtime services without an approved objective, each with its reason."""
+    """Runtime services without an approved objective, each with its reviewed reason."""
     registry = load_json(root / "policy/estate-registry.json")
-    measured = {path.stem for path in (root / "policy/reliability/objectives").glob("*.json")}
+    measured = {
+        path.stem for path in (root / "policy/reliability/objectives").glob("*.json")
+    }
+    declaration = load_unmeasured_policy(root)
+    reviewed_reasons = {
+        item["service_id"]: item["reason"]
+        for item in declaration.get("services", [])
+        if isinstance(item, dict)
+        and isinstance(item.get("service_id"), str)
+        and isinstance(item.get("reason"), str)
+    }
+
     unmeasured = []
     for repository in registry.get("repositories", []):
         if not repository.get("runtime_service"):
@@ -176,7 +259,11 @@ def build_unmeasured(root: Path = ROOT) -> list[dict[str, str]]:
             if lifecycle in EXCLUDED_LIFECYCLES:
                 reason = f"{lifecycle} lifecycle; excluded from reliability objectives"
             else:
-                reason = "no approved objective; service remains explicitly unmeasured"
+                reason = reviewed_reasons.get(service_id)
+                if not reason:
+                    raise ValueError(
+                        f"active runtime service {service_id!r} has no owner-reviewed unmeasured reason"
+                    )
             unmeasured.append({"service_id": service_id, "reason": reason})
     return sorted(unmeasured, key=lambda item: item["service_id"])
 
