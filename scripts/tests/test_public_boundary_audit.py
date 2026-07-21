@@ -33,7 +33,7 @@ class FakeGitHubClient:
 
 
 class PublicBoundaryAuditTests(unittest.TestCase):
-    def test_local_scan_finds_identity_without_echoing_it(self):
+    def test_local_scan_finds_identity_without_echoing_or_hashing_it(self):
         protected = "private-example"
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -53,7 +53,29 @@ class PublicBoundaryAuditTests(unittest.TestCase):
         self.assertEqual("README.md", report["findings"][0]["path"])
         serialized = json.dumps(report, sort_keys=True)
         self.assertNotIn(protected, serialized)
-        self.assertIn("sha256:", serialized)
+        self.assertNotIn(
+            __import__("hashlib").sha256(protected.encode("utf-8")).hexdigest(),
+            serialized,
+        )
+        self.assertIn("sha256:", report["findings"][0]["fingerprint"])
+        self.assertNotIn("protected_identity_count", report)
+
+    def test_multiple_protected_identities_on_one_line_emit_one_public_coordinate(self):
+        protected = ["private-example-one", "private-example-two"]
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "README.md").write_text(
+                "references " + " and ".join(protected) + "\n",
+                encoding="utf-8",
+            )
+
+            report = public_boundary_audit.audit_local_tree(root, protected)
+
+        self.assertEqual("failed", report["status"])
+        self.assertEqual(1, len(report["findings"]))
+        serialized = json.dumps(report, sort_keys=True)
+        for identity in protected:
+            self.assertNotIn(identity, serialized)
 
     def test_local_scan_ignores_binary_and_explicit_exclusion(self):
         protected = "private-example"
@@ -89,7 +111,7 @@ class PublicBoundaryAuditTests(unittest.TestCase):
         self.assertIn("size bound", report["errors"][0])
         self.assertNotIn(protected, json.dumps(report))
 
-    def test_private_identity_discovery_returns_name_and_full_name(self):
+    def test_private_identity_discovery_returns_name_and_full_name_in_memory(self):
         client = FakeGitHubClient(
             private_repositories=[
                 {
@@ -166,18 +188,17 @@ class PublicBoundaryAuditTests(unittest.TestCase):
         )
         serialized = json.dumps(report, sort_keys=True)
         self.assertNotIn(identity, serialized)
-        self.assertIn("sha256:", serialized)
+        self.assertNotIn("protected_identity_count", report)
+        self.assertNotIn("searches_performed", report)
 
-    def test_markdown_contains_only_redacted_identity_fingerprint(self):
-        identity = "private-example"
+    def test_markdown_contains_only_public_coordinates_and_finding_fingerprint(self):
+        protected = "private-example"
         report = {
             "schema_version": public_boundary_audit.SCHEMA_VERSION,
             "mode": "local",
-            "protected_identity_count": 1,
             "files_checked": 1,
             "findings": [
                 public_boundary_audit._redacted_finding(
-                    identity,
                     "AtlasReaper311/public-example",
                     "README.md",
                     line=4,
@@ -189,8 +210,10 @@ class PublicBoundaryAuditTests(unittest.TestCase):
 
         markdown = public_boundary_audit.render_markdown(report)
 
-        self.assertNotIn(identity, markdown)
-        self.assertIn("Protected identity fingerprint", markdown)
+        self.assertNotIn(protected, markdown)
+        self.assertNotIn("Protected identity fingerprint", markdown)
+        self.assertNotIn("Protected identities evaluated", markdown)
+        self.assertIn("Finding fingerprint", markdown)
         self.assertIn("AtlasReaper311/public-example", markdown)
 
 
