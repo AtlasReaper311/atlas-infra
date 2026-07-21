@@ -1,7 +1,12 @@
 +++
 id = "ADR-0002"
-date = 2026-07-19
-status = "proposed"
+date = 2026-07-20
+status = "accepted"
+visibility = "public"
+repositories = ["AtlasReaper311/atlas-api-public", "AtlasReaper311/atlas-infra", "AtlasReaper311/status"]
+services = ["atlas-api-public", "status"]
+contracts = ["atlas-control-plane/reliability-objective/v1", "atlas-control-plane/reliability-result/v1", "atlas-control-plane/release-reliability-correlation/v1"]
+policies = ["policy/reliability/evaluator-config.json"]
 +++
 
 # ADR-0002: reliability objectives are canonical in atlas-infra
