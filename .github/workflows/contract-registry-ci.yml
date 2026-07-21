@@ -26,9 +26,11 @@ on:
       - "scripts/repository_hygiene.py"
       - "scripts/repository_labels.py"
       - "scripts/repository_metadata.py"
+      - "scripts/worker_contract.py"
       - "scripts/validate_contract_registry.py"
       - "scripts/tests/**"
       - ".github/workflows/contract-registry-ci.yml"
+      - ".github/workflows/deploy-worker.yml"
       - ".github/workflows/repository-hygiene-audit.yml"
       - ".github/workflows/repository-label-audit.yml"
       - ".github/workflows/repository-metadata-audit.yml"
@@ -62,9 +64,11 @@ on:
       - "scripts/repository_hygiene.py"
       - "scripts/repository_labels.py"
       - "scripts/repository_metadata.py"
+      - "scripts/worker_contract.py"
       - "scripts/validate_contract_registry.py"
       - "scripts/tests/**"
       - ".github/workflows/contract-registry-ci.yml"
+      - ".github/workflows/deploy-worker.yml"
       - ".github/workflows/repository-hygiene-audit.yml"
       - ".github/workflows/repository-label-audit.yml"
       - ".github/workflows/repository-metadata-audit.yml"
@@ -122,6 +126,7 @@ jobs:
             scripts/repository_hygiene.py \
             scripts/repository_labels.py \
             scripts/repository_metadata.py \
+            scripts/worker_contract.py \
             scripts/validate_contract_registry.py
 
       - name: Run control-plane unit tests
