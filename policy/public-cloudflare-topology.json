@@ -1,0 +1,264 @@
+{
+  "schema_version": "atlas-public-cloudflare-topology/v1",
+  "owner": "AtlasReaper311/atlas-infra",
+  "reviewed_at": "2026-07-22T00:00:00Z",
+  "account_id": "49e221b7e55a9e5c45b88d08efca5771",
+  "zone_id": "8ba6350a78c988447c111048b125f917",
+  "privacy_model": "declared-public-topology-only; undeclared provider topology is private and aggregate-only",
+  "storage_policy_ref": "policy/public-cloudflare-resources.json",
+  "workers": [
+    {
+      "script_name": "atlas-api-index",
+      "service_id": "atlas-api-index",
+      "repository": "AtlasReaper311/atlas-api-index",
+      "source_ref": "AtlasReaper311/atlas-api-index:wrangler.toml",
+      "routes": [
+        {"pattern": "api.atlas-systems.uk/", "custom_domain": false},
+        {"pattern": "api.atlas-systems.uk/_meta", "custom_domain": false}
+      ],
+      "metadata_url": "https://api.atlas-systems.uk/_meta",
+      "service_bindings": [
+        {"binding": "ATLAS_NOTIFY", "service": "atlas-notify"},
+        {"binding": "WORKER_DEPLOY_WATCH", "service": "deploy-watch"},
+        {"binding": "WORKER_GITHUB_PULSE", "service": "github-pulse"},
+        {"binding": "WORKER_RAMONE_EDGE", "service": "ramone-edge"},
+        {"binding": "WORKER_RAMONE_TRIGGER", "service": "ramone-trigger"},
+        {"binding": "WORKER_SITE_PULSE", "service": "site-pulse"},
+        {"binding": "WORKER_SPECULAR_EDGE", "service": "specular-edge"}
+      ],
+      "storage_bindings": [
+        {"binding": "REGISTRY_KV", "kind": "kv-namespace", "provider_id": "2f513e0863ad4bbba09228e699183268"}
+      ]
+    },
+    {
+      "script_name": "atlas-api-public",
+      "service_id": "atlas-api-public",
+      "repository": "AtlasReaper311/atlas-api-public",
+      "source_ref": "AtlasReaper311/atlas-api-public:wrangler.toml",
+      "routes": [
+        {"pattern": "api.atlas-systems.uk/notify/recent*", "custom_domain": false},
+        {"pattern": "api.atlas-systems.uk/v1*", "custom_domain": false}
+      ],
+      "metadata_url": "https://api.atlas-systems.uk/v1/_meta",
+      "service_bindings": [
+        {"binding": "ATLAS_BLACKBOX", "service": "atlas-blackbox"},
+        {"binding": "ATLAS_NOTIFY", "service": "atlas-notify"},
+        {"binding": "ATLAS_QUOTA_WATCH", "service": "atlas-quota-watch"},
+        {"binding": "DEPLOY_WATCH", "service": "deploy-watch"},
+        {"binding": "GITHUB_PULSE", "service": "github-pulse"},
+        {"binding": "RAMONE_EDGE", "service": "ramone-edge"},
+        {"binding": "RAMONE_TRIGGER", "service": "ramone-trigger"},
+        {"binding": "REGISTRY", "service": "atlas-api-index"},
+        {"binding": "SITE_PULSE", "service": "site-pulse"},
+        {"binding": "SPECULAR_EDGE", "service": "specular-edge"}
+      ],
+      "storage_bindings": [
+        {"binding": "ATLAS_PUBLIC_KV", "kind": "kv-namespace", "provider_id": "33fa7cbf66fc495ea0304a5f95ffc9a8"}
+      ]
+    },
+    {
+      "script_name": "atlas-blackbox",
+      "service_id": "atlas-blackbox",
+      "repository": "AtlasReaper311/atlas-blackbox",
+      "source_ref": "AtlasReaper311/atlas-blackbox:wrangler.toml",
+      "routes": [
+        {"pattern": "api.atlas-systems.uk/blackbox*", "custom_domain": false}
+      ],
+      "metadata_url": "https://api.atlas-systems.uk/blackbox/_meta",
+      "service_bindings": [
+        {"binding": "ATLAS_NOTIFY", "service": "atlas-notify"}
+      ],
+      "storage_bindings": [
+        {"binding": "RECORDER", "kind": "durable-object", "class_name": "Recorder"}
+      ]
+    },
+    {
+      "script_name": "atlas-daily-digest",
+      "service_id": "atlas-daily-digest",
+      "repository": "AtlasReaper311/atlas-daily-digest",
+      "source_ref": "AtlasReaper311/atlas-daily-digest:wrangler.toml",
+      "routes": [
+        {"pattern": "api.atlas-systems.uk/digest", "custom_domain": false},
+        {"pattern": "api.atlas-systems.uk/digest/*", "custom_domain": false}
+      ],
+      "metadata_url": "https://api.atlas-systems.uk/digest/_meta",
+      "service_bindings": [
+        {"binding": "ATLAS_NOTIFY", "service": "atlas-notify"}
+      ],
+      "storage_bindings": []
+    },
+    {
+      "script_name": "atlas-dora",
+      "service_id": "atlas-dora",
+      "repository": "AtlasReaper311/atlas-dora",
+      "source_ref": "AtlasReaper311/atlas-dora:wrangler.jsonc",
+      "routes": [
+        {"pattern": "api.atlas-systems.uk/dora/*", "custom_domain": false}
+      ],
+      "metadata_url": "https://api.atlas-systems.uk/dora/_meta",
+      "service_bindings": [
+        {"binding": "ATLAS_API_PUBLIC", "service": "atlas-api-public"},
+        {"binding": "ATLAS_BLACKBOX", "service": "atlas-blackbox"},
+        {"binding": "ATLAS_NOTIFY", "service": "atlas-notify"},
+        {"binding": "DEPLOY_WATCH", "service": "deploy-watch"}
+      ],
+      "storage_bindings": [
+        {"binding": "DORA_CACHE", "kind": "kv-namespace", "provider_id": "a0c92692d5c142b38b3196c13f346d21"}
+      ]
+    },
+    {
+      "script_name": "atlas-notify",
+      "service_id": "atlas-notify",
+      "repository": "AtlasReaper311/atlas-notify",
+      "source_ref": "AtlasReaper311/atlas-notify:wrangler.toml",
+      "routes": [
+        {"pattern": "api.atlas-systems.uk/*", "custom_domain": false},
+        {"pattern": "api.atlas-systems.uk/notify*", "custom_domain": false}
+      ],
+      "metadata_url": "https://api.atlas-systems.uk/notify/_meta",
+      "service_bindings": [],
+      "storage_bindings": [
+        {"binding": "NOTIFY_LOG", "kind": "kv-namespace", "provider_id": "bcf2b463496f4f4fbb886ab2d10f225d"}
+      ]
+    },
+    {
+      "script_name": "atlas-quota-watch",
+      "service_id": "atlas-quota-watch",
+      "repository": "AtlasReaper311/atlas-quota-watch",
+      "source_ref": "AtlasReaper311/atlas-quota-watch:wrangler.toml",
+      "routes": [
+        {"pattern": "api.atlas-systems.uk/quota*", "custom_domain": false}
+      ],
+      "metadata_url": "https://api.atlas-systems.uk/quota/_meta",
+      "service_bindings": [
+        {"binding": "ATLAS_NOTIFY", "service": "atlas-notify"}
+      ],
+      "storage_bindings": []
+    },
+    {
+      "script_name": "deploy-watch",
+      "service_id": "deploy-watch",
+      "repository": "AtlasReaper311/deploy-watch",
+      "source_ref": "AtlasReaper311/deploy-watch:wrangler.toml",
+      "routes": [
+        {"pattern": "api.atlas-systems.uk/deploy-watch*", "custom_domain": false}
+      ],
+      "metadata_url": "https://api.atlas-systems.uk/deploy-watch/_meta",
+      "service_bindings": [],
+      "storage_bindings": [
+        {"binding": "DEPLOY_STATE", "kind": "kv-namespace", "provider_id": "f14a933fc4db415e967930c5e543161d"}
+      ]
+    },
+    {
+      "script_name": "github-pulse",
+      "service_id": "github-pulse",
+      "repository": "AtlasReaper311/github-pulse",
+      "source_ref": "AtlasReaper311/github-pulse:wrangler.toml",
+      "routes": [
+        {"pattern": "api.atlas-systems.uk/pulse*", "custom_domain": false}
+      ],
+      "metadata_url": "https://api.atlas-systems.uk/pulse/_meta",
+      "service_bindings": [],
+      "storage_bindings": [
+        {"binding": "PULSE_CACHE", "kind": "kv-namespace", "provider_id": "5664a9475b92499c8ee22a7e820a76fd"}
+      ]
+    },
+    {
+      "script_name": "ramone-edge",
+      "service_id": "ramone-edge",
+      "repository": "AtlasReaper311/ramone-edge",
+      "source_ref": "AtlasReaper311/ramone-edge:wrangler.toml",
+      "routes": [
+        {"pattern": "ramone.atlas-systems.uk", "custom_domain": true},
+        {"pattern": "ramone.atlas-systems.uk/*", "custom_domain": false}
+      ],
+      "metadata_url": "https://ramone.atlas-systems.uk/_meta",
+      "service_bindings": [
+        {"binding": "ATLAS_NOTIFY", "service": "atlas-notify"}
+      ],
+      "storage_bindings": [
+        {"binding": "RL", "kind": "kv-namespace", "provider_id": "2c05e40ce00946c0aa4057513c3fec40"}
+      ]
+    },
+    {
+      "script_name": "ramone-trigger",
+      "service_id": "ramone-trigger",
+      "repository": "AtlasReaper311/ramone-voice-trigger",
+      "source_ref": "AtlasReaper311/ramone-voice-trigger:worker/wrangler.toml",
+      "routes": [
+        {"pattern": "api.atlas-systems.uk/trigger*", "custom_domain": false}
+      ],
+      "metadata_url": "https://api.atlas-systems.uk/trigger/_meta",
+      "service_bindings": [
+        {"binding": "ATLAS_NOTIFY", "service": "atlas-notify"}
+      ],
+      "storage_bindings": []
+    },
+    {
+      "script_name": "site-pulse",
+      "service_id": "site-pulse",
+      "repository": "AtlasReaper311/site-pulse",
+      "source_ref": "AtlasReaper311/site-pulse:wrangler.toml",
+      "routes": [
+        {"pattern": "api.atlas-systems.uk/site-pulse*", "custom_domain": false}
+      ],
+      "metadata_url": "https://api.atlas-systems.uk/site-pulse/_meta",
+      "service_bindings": [],
+      "storage_bindings": [
+        {"binding": "PULSE_CACHE", "kind": "kv-namespace", "provider_id": "fe85fc9c743044918a5fd1817ced5421"}
+      ]
+    },
+    {
+      "script_name": "specular-edge",
+      "service_id": "specular-edge",
+      "repository": "AtlasReaper311/specular-telemetry",
+      "source_ref": "AtlasReaper311/specular-telemetry:worker/wrangler.toml",
+      "routes": [
+        {"pattern": "api.atlas-systems.uk/specular*", "custom_domain": false}
+      ],
+      "metadata_url": "https://api.atlas-systems.uk/specular/_meta",
+      "service_bindings": [
+        {"binding": "ATLAS_NOTIFY", "service": "atlas-notify"}
+      ],
+      "storage_bindings": [
+        {"binding": "TELEMETRY_KV", "kind": "kv-namespace", "provider_id": "3b033fc37ca14e7c9fb1559ecd6430b1"}
+      ]
+    },
+    {
+      "script_name": "specular-sonify",
+      "service_id": "specular-sonify",
+      "repository": "AtlasReaper311/specular-sonify",
+      "source_ref": "AtlasReaper311/specular-sonify:wrangler.toml",
+      "routes": [
+        {"pattern": "api.atlas-systems.uk/sonify*", "custom_domain": false}
+      ],
+      "metadata_url": "https://api.atlas-systems.uk/sonify/_meta",
+      "service_bindings": [
+        {"binding": "ATLAS_PUBLIC", "service": "atlas-api-public"}
+      ],
+      "storage_bindings": [
+        {"binding": "TELEMETRY_KV", "kind": "kv-namespace", "provider_id": "3b033fc37ca14e7c9fb1559ecd6430b1"}
+      ]
+    }
+  ],
+  "pages_projects": [
+    {
+      "project_name": "atlas-doc-viewer",
+      "repository": "AtlasReaper311/atlas-doc-viewer",
+      "source_ref": "AtlasReaper311/atlas-doc-viewer:.github/workflows/deploy.yml",
+      "public_surface": "https://cv.atlas-systems.uk"
+    },
+    {
+      "project_name": "atlas-systems",
+      "repository": "AtlasReaper311/atlas-systems",
+      "source_ref": "AtlasReaper311/atlas-systems:.github/workflows/deploy.yml",
+      "public_surface": "https://atlas-systems.uk"
+    },
+    {
+      "project_name": "status",
+      "repository": "AtlasReaper311/status",
+      "source_ref": "AtlasReaper311/status:.github/workflows/deploy.yml",
+      "public_surface": "https://status.atlas-systems.uk"
+    }
+  ]
+}
