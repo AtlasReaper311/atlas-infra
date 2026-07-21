@@ -2,6 +2,11 @@
 id = "ADR-0001"
 date = 2026-07-02
 status = "accepted"
+visibility = "public"
+repositories = ["AtlasReaper311/atlas-api-index", "AtlasReaper311/atlas-notify"]
+services = ["atlas-api-index", "atlas-notify"]
+contracts = ["atlas-control-plane/service-contract/v1"]
+policies = ["policy/estate-registry.json"]
 +++
 
 # ADR-0001: Worker-to-Worker calls use service bindings, not public hostnames
