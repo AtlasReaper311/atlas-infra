@@ -21,12 +21,15 @@ on:
       - "scripts/contract_registry.py"
       - "scripts/control_plane_contracts.py"
       - "scripts/public_repository_classifications.py"
+      - "scripts/readme_contract.py"
       - "scripts/reliability_policy.py"
       - "scripts/repository_hygiene.py"
       - "scripts/validate_contract_registry.py"
       - "scripts/tests/**"
       - ".github/workflows/contract-registry-ci.yml"
       - ".github/workflows/repository-hygiene-audit.yml"
+      - ".github/workflows/repository-readme-audit.yml"
+      - ".github/workflows/validate-private-readme.yml"
   push:
     branches: [main]
     paths:
@@ -48,12 +51,15 @@ on:
       - "scripts/contract_registry.py"
       - "scripts/control_plane_contracts.py"
       - "scripts/public_repository_classifications.py"
+      - "scripts/readme_contract.py"
       - "scripts/reliability_policy.py"
       - "scripts/repository_hygiene.py"
       - "scripts/validate_contract_registry.py"
       - "scripts/tests/**"
       - ".github/workflows/contract-registry-ci.yml"
       - ".github/workflows/repository-hygiene-audit.yml"
+      - ".github/workflows/repository-readme-audit.yml"
+      - ".github/workflows/validate-private-readme.yml"
   workflow_dispatch:
 
 permissions:
@@ -97,6 +103,7 @@ jobs:
             scripts/contract_registry.py \
             scripts/control_plane_contracts.py \
             scripts/public_repository_classifications.py \
+            scripts/readme_contract.py \
             scripts/reliability_policy.py \
             scripts/repository_hygiene.py \
             scripts/validate_contract_registry.py
