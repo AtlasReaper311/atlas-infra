@@ -12,7 +12,7 @@ class AssuranceScopeTests(unittest.TestCase):
         registry = {
             "repositories": [
                 {
-                    "repository": "AtlasReaper311/atlas-cv",
+                    "repository": "AtlasReaper311/example-default-excluded",
                     "exclusions": ["default-assurance", "new-features"],
                 },
                 {
@@ -34,7 +34,7 @@ class AssuranceScopeTests(unittest.TestCase):
         registry = {
             "repositories": [
                 {
-                    "repository": "AtlasReaper311/atlas-eval-harness",
+                    "repository": "AtlasReaper311/example-unrelated-exclusion",
                     "exclusions": ["deployment-orchestration"],
                 }
             ]
