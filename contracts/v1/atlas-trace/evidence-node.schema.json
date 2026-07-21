@@ -1,0 +1,156 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.atlas-systems.uk/control-plane/v1/evidence-node.schema.json",
+  "title": "Atlas Trace EvidenceNode v1",
+  "description": "A bounded, identity-stable evidence node for deterministic Atlas Trace projections.",
+  "type": "object",
+  "additionalProperties": false,
+  "x-owner": {
+    "repository": "AtlasReaper311/atlas-infra",
+    "consumer": "Atlas Trace offline assembler and later bounded public projection"
+  },
+  "required": [
+    "schema_version",
+    "node_id",
+    "kind",
+    "identity",
+    "visibility",
+    "evidence_state",
+    "evidence"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "atlas-control-plane/evidence-node/v1"
+    },
+    "node_id": {
+      "type": "string",
+      "pattern": "^node:sha256:[0-9a-f]{64}$"
+    },
+    "kind": {
+      "enum": [
+        "repository",
+        "service",
+        "service-contract",
+        "commit",
+        "workflow-run",
+        "build-validation",
+        "deployment",
+        "live-release",
+        "release-verification",
+        "journey-run",
+        "reliability-result",
+        "incident",
+        "recovery",
+        "sbom",
+        "provenance-record",
+        "postmortem",
+        "adr",
+        "conformance-result",
+        "backup-evidence"
+      ]
+    },
+    "identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["key"],
+      "properties": {
+        "key": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "repository": {
+          "type": "string",
+          "pattern": "^AtlasReaper311/[A-Za-z0-9._-]+$",
+          "maxLength": 128
+        },
+        "service_id": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+          "maxLength": 64
+        },
+        "commit_sha": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "external_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        }
+      }
+    },
+    "visibility": {
+      "enum": ["public", "internal", "restricted-metadata"]
+    },
+    "evidence_state": {
+      "enum": ["verified", "unverified", "stale", "unavailable", "unknown"]
+    },
+    "evidence": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 16,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["producer", "evidence_type", "digest", "visibility"],
+        "properties": {
+          "producer": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+            "maxLength": 64
+          },
+          "evidence_type": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+            "maxLength": 64
+          },
+          "digest": {
+            "type": "string",
+            "pattern": "^sha256:[0-9a-f]{64}$"
+          },
+          "uri": {
+            "type": "string",
+            "format": "uri",
+            "pattern": "^https://[^?#]+(?:#[A-Za-z0-9._/-]+)?$",
+            "maxLength": 500
+          },
+          "observed_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "source_commit": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{40}$"
+          },
+          "visibility": {
+            "enum": ["public", "internal", "restricted-metadata"]
+          }
+        }
+      }
+    }
+  },
+  "examples": [
+    {
+      "node_id": "node:sha256:f02a8389fa7bbf4a0acce0bbb8b426623587d88640a02524940842320390eb7b",
+      "schema_version": "atlas-control-plane/evidence-node/v1",
+      "kind": "repository",
+      "identity": {
+        "key": "AtlasReaper311/atlas-api-public",
+        "repository": "AtlasReaper311/atlas-api-public"
+      },
+      "visibility": "public",
+      "evidence_state": "verified",
+      "evidence": [
+        {
+          "producer": "atlas-infra",
+          "evidence_type": "repository-authority",
+          "digest": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+          "uri": "https://github.com/AtlasReaper311/atlas-api-public",
+          "observed_at": "2026-07-21T20:15:47Z",
+          "visibility": "public"
+        }
+      ]
+    }
+  ]
+}
