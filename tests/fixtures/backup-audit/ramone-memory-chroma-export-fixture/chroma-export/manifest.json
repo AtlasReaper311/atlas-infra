@@ -1,0 +1,18 @@
+{
+  "schema_version": "atlas-backup-fixture/chroma-export/v1",
+  "exported_at": "2026-07-14T08:30:00Z",
+  "collection_count": 1,
+  "record_count": 2,
+  "files": [
+    {
+      "path": "collections.json",
+      "size_bytes": 219,
+      "sha256": "144d22916b2bd6d1b43b69c934b9371ab4a46214181bc0912f579fcd2d7f9601"
+    },
+    {
+      "path": "records.jsonl",
+      "size_bytes": 479,
+      "sha256": "72ddc2e642895a4bb6e3e62ae114e9cd813df687b66e240a6089b75eddf09f07"
+    }
+  ]
+}
