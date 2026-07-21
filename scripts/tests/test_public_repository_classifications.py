@@ -8,6 +8,7 @@ SCRIPTS = Path(__file__).resolve().parents[1]
 ROOT = SCRIPTS.parent
 sys.path.insert(0, str(SCRIPTS))
 
+import control_plane_contracts
 import public_repository_classifications
 
 
@@ -27,6 +28,15 @@ class PublicRepositoryClassificationTests(unittest.TestCase):
             encoding="utf-8"
         )
         self.assertEqual(expected, actual)
+
+    def test_projection_conforms_to_public_contract(self):
+        schema = self.load(
+            "contracts/v1/public-repository-classifications.schema.json"
+        )
+        self.assertEqual(
+            [],
+            control_plane_contracts.validate_instance(self.projection(), schema),
+        )
 
     def test_projection_is_sorted_unique_and_complete(self):
         projection = self.projection()
