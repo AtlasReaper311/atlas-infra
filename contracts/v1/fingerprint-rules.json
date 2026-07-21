@@ -44,6 +44,56 @@
       ],
       "prefix": "proposal:sha256:",
       "output_path": "proposal_id"
+    },
+    "retirement-evidence": {
+      "kind": "selected-fields",
+      "schema": "retirement-evidence.schema.json",
+      "fields": [
+        "subject",
+        "state",
+        "evidence",
+        "visibility",
+        "recorded_at",
+        "approved_by"
+      ],
+      "sort_arrays": [],
+      "prefix": "retirement:sha256:",
+      "output_path": "retirement_id"
+    },
+    "adr-runtime-relationship": {
+      "kind": "selected-fields",
+      "schema": "adr-runtime-relationship.schema.json",
+      "fields": [
+        "adr",
+        "affects.repositories",
+        "affects.services",
+        "affects.contracts",
+        "affects.policies",
+        "visibility"
+      ],
+      "sort_arrays": [
+        "affects.repositories",
+        "affects.services",
+        "affects.contracts",
+        "affects.policies"
+      ],
+      "prefix": "adrrel:sha256:",
+      "output_path": "relationship_id"
+    },
+    "model-promotion": {
+      "kind": "selected-fields",
+      "schema": "model-promotion.schema.json",
+      "fields": [
+        "capability",
+        "model",
+        "configuration",
+        "evaluation",
+        "approval",
+        "visibility"
+      ],
+      "sort_arrays": [],
+      "prefix": "promotion:sha256:",
+      "output_path": "promotion_id"
     }
   },
   "trace_rules": {
