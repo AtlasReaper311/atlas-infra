@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.atlas-systems.uk/policy/v2/public-assurance-repositories.schema.json",
+  "title": "Atlas Systems public non-runtime repository classifications v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "repositories"],
+  "properties": {
+    "schema_version": {
+      "const": "atlas-public-assurance/repositories/v2"
+    },
+    "repositories": {
+      "type": "array",
+      "minItems": 0,
+      "maxItems": 200,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["repository", "lifecycle", "scope", "provenance"],
+        "properties": {
+          "repository": {
+            "type": "string",
+            "pattern": "^AtlasReaper311/[A-Za-z0-9._-]+$",
+            "maxLength": 128
+          },
+          "lifecycle": {
+            "enum": ["production", "active", "experimental", "deprecated", "archived"]
+          },
+          "scope": {
+            "const": "public"
+          },
+          "provenance": {
+            "enum": ["original", "external-derived"]
+          }
+        }
+      }
+    }
+  }
+}
