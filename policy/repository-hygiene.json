@@ -1,0 +1,67 @@
+{
+  "schema_version": "atlas-repository-hygiene/v1",
+  "authority": "AtlasReaper311/atlas-infra",
+  "repository_projection": "policy/public-repository-classifications.json",
+  "reviewed_at": "2026-07-21",
+  "readme": {
+    "profile_repository": "AtlasReaper311/AtlasReaper311",
+    "icon_url": "https://raw.githubusercontent.com/AtlasReaper311/AtlasReaper311/main/atlas-icon-dark-256.png",
+    "standard_icon_width": 88,
+    "profile_icon_width": 120,
+    "required_banner_prefix": "ATLAS SYSTEMS //",
+    "required_heading": "## How it fits into Atlas Systems",
+    "required_footer": "Part of [atlas-systems.uk](https://atlas-systems.uk)",
+    "required_badge_label_color": "labelColor=0a0a0f",
+    "minimum_badge_count": 4,
+    "forbidden_terms": [
+      "cutting-edge",
+      "leveraged",
+      "robust",
+      "seamless",
+      "state-of-the-art",
+      "utilised"
+    ],
+    "forbid_em_dash": true
+  },
+  "metadata": {
+    "visibility": "public",
+    "default_branch": "main",
+    "homepage_required": true,
+    "allowed_homepage_domain": "atlas-systems.uk",
+    "required_topics": [
+      "atlas-systems"
+    ],
+    "description_required": true,
+    "description_max_length": 160,
+    "archived_lifecycles": [
+      "archived"
+    ]
+  },
+  "pull_request_labels": [
+    {
+      "name": "status:blocked",
+      "color": "d73a4a",
+      "description": "Progress is blocked by a concrete dependency or failure."
+    },
+    {
+      "name": "status:live-verified",
+      "color": "4ade80",
+      "description": "Live state has been independently or owner-verified after rollout."
+    },
+    {
+      "name": "status:owner-review",
+      "color": "f5a623",
+      "description": "Implementation is ready for Atlas owner review."
+    },
+    {
+      "name": "status:rollout-pending",
+      "color": "b7791f",
+      "description": "Source is merged or approved; live rollout is still pending."
+    },
+    {
+      "name": "status:superseded",
+      "color": "555560",
+      "description": "Work was replaced by a newer change and should not be merged."
+    }
+  ]
+}
