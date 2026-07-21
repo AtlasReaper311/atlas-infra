@@ -1,0 +1,25 @@
+{
+  "schema_version": "atlas-backup-audit/metadata/v1",
+  "target_id": "ramone-memory-chroma-export-fixture",
+  "service_id": "ramone-memory",
+  "repository": "AtlasReaper311/ramone-memory",
+  "backup_at": "2026-07-14T08:30:00Z",
+  "observed_at": "2026-07-14T11:00:00Z",
+  "source_type": "local-fixture",
+  "evidence_ref": "https://github.com/AtlasReaper311/atlas-infra/blob/main/tests/fixtures/backup-audit/ramone-memory-chroma-export-fixture/backup-metadata.json",
+  "digest": {
+    "algorithm": "sha-256",
+    "value": "a62c05b5a245a9e326928fe9314741992c251d1120ec6ef9842184e2f502339f",
+    "path": "chroma-export/manifest.json"
+  },
+  "retention": {
+    "expected_days": 30,
+    "retained_until": "2026-08-13T08:30:00Z"
+  },
+  "restore_source": {
+    "kind": "chroma-export",
+    "path": "chroma-export"
+  },
+  "expected_file_count": 3,
+  "expected_total_size_bytes": 1173
+}

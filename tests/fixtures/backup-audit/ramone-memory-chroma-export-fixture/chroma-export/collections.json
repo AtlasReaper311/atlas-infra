@@ -1,0 +1,11 @@
+{
+  "schema_version": "atlas-backup-fixture/chroma-collections/v1",
+  "collections": [
+    {
+      "id": "ramone-memory-fixture",
+      "name": "ramone_memory",
+      "dimension": 3,
+      "record_count": 2
+    }
+  ]
+}
