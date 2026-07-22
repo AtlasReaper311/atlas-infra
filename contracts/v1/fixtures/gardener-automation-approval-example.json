@@ -1,0 +1,53 @@
+{
+  "schema_version": "atlas-control-plane/gardener-automation-approval/v1",
+  "approval_id": "approval:sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "remediation_key": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "policy_digest": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+  "coverage_digest": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+  "bundle_digest": "sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+  "finding_fingerprint": "sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+  "proposal_id": "proposal:sha256:1111111111111111111111111111111111111111111111111111111111111111",
+  "plan_digest": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+  "repository": "AtlasReaper311/atlas-dora",
+  "classification": {
+    "lifecycle": "production",
+    "scope": "public",
+    "provenance": "original"
+  },
+  "classification_fingerprint": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+  "rule_id": "macos-metadata-ignore",
+  "fixer": {
+    "id": "macos-metadata-ignore",
+    "version": "0.1.0"
+  },
+  "base_branch": "main",
+  "base_sha": "4444444444444444444444444444444444444444",
+  "expected_head_sha": "5555555555555555555555555555555555555555",
+  "files": [
+    {
+      "path": ".gitignore",
+      "mode": "100644",
+      "before_sha256": "6666666666666666666666666666666666666666666666666666666666666666",
+      "after_sha256": "7777777777777777777777777777777777777777777777777777777777777777"
+    }
+  ],
+  "patch_digest": "sha256:8888888888888888888888888888888888888888888888888888888888888888",
+  "risk_class": "low",
+  "mode": "automerge-low-risk",
+  "source_run": {
+    "repository": "AtlasReaper311/atlas-dep-audit",
+    "workflow": ".github/workflows/audit.yml",
+    "run_id": "100",
+    "run_attempt": 1,
+    "commit": "9999999999999999999999999999999999999999"
+  },
+  "controller_run": {
+    "repository": "AtlasReaper311/atlas-gardener",
+    "workflow": ".github/workflows/controller.yml",
+    "run_id": "101",
+    "run_attempt": 1,
+    "commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "issued_at": "2026-07-22T10:15:00Z",
+  "expires_at": "2026-07-23T10:15:00Z"
+}
