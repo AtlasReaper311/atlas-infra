@@ -22,7 +22,7 @@ Adding a repository to the installation does not create a branch, commit, pull r
 
 The verified canary is `AtlasReaper311/atlas-dora`.
 
-The first low-blast-radius batch was verified on 22 July 2026 after all five selected repositories authenticated successfully with both GitHub installation-token formats:
+The low-blast-radius batch was verified on 22 July 2026 after all selected repositories authenticated successfully with both GitHub installation-token formats:
 
 - `AtlasReaper311/atlas-doc-viewer`
 - `AtlasReaper311/atlas-quota-watch`
@@ -30,7 +30,7 @@ The first low-blast-radius batch was verified on 22 July 2026 after all five sel
 - `AtlasReaper311/specular-sonify`
 - `AtlasReaper311/status`
 
-The observability batch was then verified after the same compatibility and selected-repository checks passed for:
+The observability batch was then verified under the same selected-repository and token-format checks:
 
 - `AtlasReaper311/atlas-api-index`
 - `AtlasReaper311/atlas-blackbox`
@@ -38,7 +38,7 @@ The observability batch was then verified after the same compatibility and selec
 - `AtlasReaper311/github-pulse`
 - `AtlasReaper311/specular-telemetry`
 
-The current ready batch contains operational runtimes:
+The operational runtime batch was also verified:
 
 - `AtlasReaper311/atlas-daily-digest`
 - `AtlasReaper311/atlas-notify`
@@ -48,9 +48,14 @@ The current ready batch contains operational runtimes:
 - `AtlasReaper311/ramone-voice-trigger`
 - `AtlasReaper311/specular-sentinel`
 
-The primary public API and portfolio surface remain behind separate approval. The policy file is the canonical grouping and order.
+The owner has now approved the final public-runtime batch for selected-repository installation verification:
 
-Only one batch may have status `ready`. Completed batches move to `verified` before the next batch becomes ready. The primary public surfaces retain `separate-approval` status until an explicit owner decision changes it.
+- `AtlasReaper311/atlas-api-public`
+- `AtlasReaper311/atlas-systems`
+
+These primary public surfaces retain the same App permissions and draft-PR-only execution boundary. Their higher blast radius affects future remediation review and merge decisions, not the installation probe itself.
+
+Only one batch may have status `ready`. Completed batches move to `verified` before another batch becomes ready.
 
 ## Public and private boundary
 
@@ -84,13 +89,8 @@ read -r ATLAS_GARDENER_APP_ID
 export ATLAS_GARDENER_APP_ID
 
 for repository in \
-  AtlasReaper311/atlas-daily-digest \
-  AtlasReaper311/atlas-notify \
-  AtlasReaper311/deploy-watch \
-  AtlasReaper311/ramone-edge \
-  AtlasReaper311/ramone-memory \
-  AtlasReaper311/ramone-voice-trigger \
-  AtlasReaper311/specular-sentinel
+  AtlasReaper311/atlas-api-public \
+  AtlasReaper311/atlas-systems
 do
   bash scripts/check-github-app-token-formats.sh "$repository"
 done
