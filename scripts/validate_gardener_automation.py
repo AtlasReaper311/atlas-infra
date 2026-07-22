@@ -69,6 +69,7 @@ def validate_policy(policy: dict[str, Any], coverage: dict[str, Any]) -> dict[st
             "allowed_modes",
             "write_gate_variable",
             "write_gate_enabled_value",
+            "write_targets_variable",
             "mode_variable",
             "public_coverage_policy",
             "public_coverage_source_fingerprint",
@@ -99,6 +100,8 @@ def validate_policy(policy: dict[str, Any], coverage: dict[str, Any]) -> dict[st
         raise PolicyError("unexpected write-gate variable")
     if policy["write_gate_enabled_value"] != "enabled":
         raise PolicyError("write gate must require the exact value 'enabled'")
+    if policy["write_targets_variable"] != "ATLAS_GARDENER_WRITE_TARGETS_JSON":
+        raise PolicyError("unexpected write-target variable")
 
     bundle = policy["finding_bundle"]
     _require_exact_keys(
