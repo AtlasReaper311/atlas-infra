@@ -1,0 +1,16 @@
+{
+  "description": "Two approved Python cache ignore lines may enter the target-owned automatic merge gate.",
+  "fixer": "python-cache-ignore",
+  "path": ".gitignore",
+  "mode": "100644",
+  "added_lines": [
+    "*.py[cod]",
+    "__pycache__/"
+  ],
+  "deleted_lines": [],
+  "required_checks": [
+    "CI"
+  ],
+  "ci_state": "success",
+  "expected": "automerge-eligible"
+}
