@@ -1,0 +1,89 @@
+name: Gardener automation authority
+
+on:
+  pull_request:
+    paths:
+      - "contracts/v1/gardener-automation-approval.schema.json"
+      - "contracts/v1/gardener-finding-bundle.schema.json"
+      - "docs/adrs/ADR-0003-automatic-remediation-controller.md"
+      - "docs/runbooks/gardener-automatic-remediation.md"
+      - "policy/gardener-automation.json"
+      - "policy/gardener-automation.schema.json"
+      - "policy/gardener-github-app-coverage.json"
+      - "scripts/validate_gardener_automation.py"
+      - "scripts/tests/test_validate_gardener_automation.py"
+      - ".github/workflows/gardener-automation-authority.yml"
+  push:
+    branches: [main]
+    paths:
+      - "contracts/v1/gardener-automation-approval.schema.json"
+      - "contracts/v1/gardener-finding-bundle.schema.json"
+      - "docs/adrs/ADR-0003-automatic-remediation-controller.md"
+      - "docs/runbooks/gardener-automatic-remediation.md"
+      - "policy/gardener-automation.json"
+      - "policy/gardener-automation.schema.json"
+      - "policy/gardener-github-app-coverage.json"
+      - "scripts/validate_gardener_automation.py"
+      - "scripts/tests/test_validate_gardener_automation.py"
+      - ".github/workflows/gardener-automation-authority.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.repository }}-gardener-automation-authority-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Validate automatic remediation authority
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0, Node 24
+
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0, Node 24
+        with:
+          python-version: "3.12"
+
+      - name: Parse policy and contract schemas
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          paths = [
+              "contracts/v1/gardener-automation-approval.schema.json",
+              "contracts/v1/gardener-finding-bundle.schema.json",
+              "policy/gardener-automation.json",
+              "policy/gardener-automation.schema.json",
+          ]
+          for value in paths:
+              json.loads(Path(value).read_text(encoding="utf-8"))
+          PY
+
+      - name: Compile authority validator
+        run: |
+          set -euo pipefail
+          python3 -m py_compile scripts/validate_gardener_automation.py
+
+      - name: Validate committed authority
+        run: |
+          set -euo pipefail
+          python3 scripts/validate_gardener_automation.py \
+            --report /tmp/gardener-automation-authority.json
+
+      - name: Run authority unit tests
+        run: |
+          set -euo pipefail
+          python3 -m unittest scripts.tests.test_validate_gardener_automation -v
+
+      - name: Validate ADR traceability
+        run: |
+          set -euo pipefail
+          python3 scripts/adr_trace.py check --root .
+
+      - name: Check whitespace
+        run: git diff --check
