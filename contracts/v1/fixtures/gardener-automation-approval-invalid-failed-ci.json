@@ -1,0 +1,5 @@
+{
+  "description": "A failed required check prevents automatic merge.",
+  "ci_state": "failure",
+  "expected": "refused"
+}
