@@ -1,0 +1,5 @@
+{
+  "description": "Automatic approval cannot target dependency lockfiles.",
+  "path": "package-lock.json",
+  "expected": "refused"
+}
