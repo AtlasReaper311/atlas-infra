@@ -1,0 +1,5 @@
+{
+  "description": "Experimental repositories are excluded from the initial automatic policy.",
+  "lifecycle": "experimental",
+  "expected": "refused"
+}
