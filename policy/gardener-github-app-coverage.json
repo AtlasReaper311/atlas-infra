@@ -18,7 +18,7 @@
     {
       "order": 1,
       "id": "public-runtime-low-blast-radius",
-      "status": "ready",
+      "status": "verified",
       "risk_tier": "low",
       "repositories": [
         "AtlasReaper311/atlas-doc-viewer",
@@ -31,7 +31,7 @@
     {
       "order": 2,
       "id": "public-runtime-observability",
-      "status": "planned",
+      "status": "ready",
       "risk_tier": "medium",
       "repositories": [
         "AtlasReaper311/atlas-api-index",
