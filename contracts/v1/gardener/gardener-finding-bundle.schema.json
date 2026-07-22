@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.atlas-systems.uk/control-plane/v1/gardener-finding-bundle.schema.json",
+  "title": "Atlas Gardener FindingBundle v1",
+  "description": "An attested, public-only, bounded handoff from atlas-dep-audit to atlas-gardener.",
+  "type": "object",
+  "additionalProperties": false,
+  "x-owner": {
+    "repository": "AtlasReaper311/atlas-infra",
+    "producer": "AtlasReaper311/atlas-dep-audit",
+    "consumer": "AtlasReaper311/atlas-gardener"
+  },
+  "required": [
+    "schema_version",
+    "producer",
+    "source_workflow",
+    "source_run_id",
+    "source_run_attempt",
+    "source_commit",
+    "authority_commit",
+    "policy_digest",
+    "generated_at",
+    "expires_at",
+    "public_only",
+    "source_report_digest",
+    "repository_snapshots",
+    "findings",
+    "bundle_digest"
+  ],
+  "properties": {
+    "schema_version": {"const": "atlas-control-plane/gardener-finding-bundle/v1"},
+    "producer": {"const": "AtlasReaper311/atlas-dep-audit"},
+    "source_workflow": {"const": ".github/workflows/audit.yml"},
+    "source_run_id": {"type": "string", "pattern": "^[1-9][0-9]{0,19}$"},
+    "source_run_attempt": {"type": "integer", "minimum": 1, "maximum": 100},
+    "source_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "authority_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "policy_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "generated_at": {"type": "string", "format": "date-time"},
+    "expires_at": {"type": "string", "format": "date-time"},
+    "public_only": {"const": true},
+    "source_report_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "repository_snapshots": {
+      "type": "array",
+      "maxItems": 200,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["repository", "base_branch", "base_sha"],
+        "properties": {
+          "repository": {"type": "string", "pattern": "^AtlasReaper311/[A-Za-z0-9._-]+$", "maxLength": 128},
+          "base_branch": {"type": "string", "pattern": "^[A-Za-z0-9._/-]{1,120}$"},
+          "base_sha": {"type": "string", "pattern": "^[0-9a-f]{40}$"}
+        }
+      }
+    },
+    "findings": {
+      "type": "array",
+      "maxItems": 500,
+      "items": {"$ref": "../finding.schema.json"}
+    },
+    "bundle_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+  }
+}
