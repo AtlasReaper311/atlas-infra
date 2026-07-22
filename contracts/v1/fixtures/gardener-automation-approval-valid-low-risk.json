@@ -1,0 +1,15 @@
+{
+  "description": "One additions-only .gitignore line may enter the target-owned automatic merge gate.",
+  "fixer": "macos-metadata-ignore",
+  "path": ".gitignore",
+  "mode": "100644",
+  "added_lines": [
+    ".DS_Store"
+  ],
+  "deleted_lines": [],
+  "required_checks": [
+    "CI"
+  ],
+  "ci_state": "success",
+  "expected": "automerge-eligible"
+}
