@@ -65,7 +65,7 @@
       "required": ["id", "version"],
       "properties": {
         "id": {"enum": ["macos-metadata-ignore", "python-cache-ignore", "workflow-timeout", "workflow-permissions", "action-pin-plan"]},
-        "version": {"type": "string", "pattern": "^[0-9]+\.[0-9]+\.[0-9]+$"}
+        "version": {"type": "string", "pattern": "^[0-9]+[.][0-9]+[.][0-9]+$"}
       }
     },
     "base_branch": {"type": "string", "pattern": "^[A-Za-z0-9._/-]{1,120}$"},
@@ -81,7 +81,7 @@
         "additionalProperties": false,
         "required": ["path", "mode", "before_sha256", "after_sha256"],
         "properties": {
-          "path": {"type": "string", "pattern": "^(?!/)(?!.*(?:^|/)\.\.(?:/|$))[A-Za-z0-9._/-]+$", "maxLength": 240},
+          "path": {"type": "string", "pattern": "^(?!/)(?!.*(?:^|/)[.][.](?:/|$))[A-Za-z0-9._/-]+$", "maxLength": 240},
           "mode": {"enum": ["100644", "100755"]},
           "before_sha256": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"},
           "after_sha256": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"}
@@ -103,7 +103,7 @@
       "required": ["repository", "workflow", "run_id", "run_attempt", "commit"],
       "properties": {
         "repository": {"type": "string", "pattern": "^AtlasReaper311/[A-Za-z0-9._-]+$"},
-        "workflow": {"type": "string", "pattern": "^\.github/workflows/[A-Za-z0-9._-]+\.ya?ml$"},
+        "workflow": {"type": "string", "pattern": "^[.]github/workflows/[A-Za-z0-9._-]+[.]ya?ml$"},
         "run_id": {"type": "string", "pattern": "^[1-9][0-9]{0,19}$"},
         "run_attempt": {"type": "integer", "minimum": 1, "maximum": 100},
         "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"}
