@@ -193,7 +193,7 @@ def _derived_state(blockers: list[str]) -> str:
 
 def load_external_evidence(path: Path | None, subject: dict[str, str]) -> dict[str, str]:
     if path is None:
-        return {key: "unknown" for key in sorted(EXTERNAL_KEYS)}
+        return {}
 
     value = load_json(path)
     if not isinstance(value, dict):
@@ -205,7 +205,9 @@ def load_external_evidence(path: Path | None, subject: dict[str, str]) -> dict[s
 
     result: dict[str, str] = {}
     for key in EXTERNAL_KEYS:
-        state = value.get(key, "unknown")
+        if key not in value:
+            continue
+        state = value[key]
         if state not in EVIDENCE_STATES:
             raise RetirementPlanError(f"external evidence {key} has invalid state {state!r}")
         result[key] = state
@@ -285,6 +287,11 @@ def build_plan(
             raise RetirementPlanError(
                 "external evidence cannot clear worker_allowlist_clear while the subject remains in public topology authority"
             )
+        if key == "worker_allowlist_clear" and public_allowlist_blockers:
+            # Current authority is stronger than a weaker external state. Preserve
+            # the explicit failure until the source declaration itself is removed.
+            evidence[key] = "failed"
+            continue
         evidence[key] = state
 
     blockers = {
