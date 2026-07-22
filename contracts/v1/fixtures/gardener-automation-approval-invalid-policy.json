@@ -1,0 +1,6 @@
+{
+  "description": "Automatic approval cannot be replayed after the committed policy changes.",
+  "reviewed_policy_digest": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+  "current_policy_digest": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+  "expected": "refused"
+}

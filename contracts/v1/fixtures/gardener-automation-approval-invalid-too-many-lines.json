@@ -1,0 +1,5 @@
+{
+  "description": "Automatic approval cannot exceed the two-line boundary.",
+  "changed_lines": 3,
+  "expected": "refused"
+}

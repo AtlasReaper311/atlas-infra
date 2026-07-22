@@ -1,0 +1,139 @@
+{
+  "schema_version": "atlas-gardener/automation-policy/v1",
+  "authority": "AtlasReaper311/atlas-infra",
+  "default_mode": "disabled",
+  "allowed_modes": [
+    "disabled",
+    "observe",
+    "pr-only",
+    "automerge-low-risk"
+  ],
+  "write_gate_variable": "ATLAS_GARDENER_WRITE_GATE",
+  "write_gate_enabled_value": "enabled",
+  "mode_variable": "ATLAS_GARDENER_MODE",
+  "public_coverage_policy": "policy/gardener-github-app-coverage.json",
+  "public_coverage_source_fingerprint": "sha256:96654dd254875030d59f461b70339c7f01e13ddf3eb22e34aa3c9dec88529cd5",
+  "finding_bundle": {
+    "producer": "AtlasReaper311/atlas-dep-audit",
+    "workflow": ".github/workflows/audit.yml",
+    "maximum_age_hours": 36,
+    "public_only": true,
+    "require_attestation": true,
+    "maximum_findings": 500
+  },
+  "repository_eligibility": {
+    "lifecycles": [
+      "active",
+      "production"
+    ],
+    "scopes": [
+      "internal",
+      "public"
+    ],
+    "provenance": [
+      "original"
+    ],
+    "require_verified_public_coverage": true,
+    "private_repository_policy": "source-owned-separate-approval"
+  },
+  "fixers": {
+    "macos-metadata-ignore": {
+      "risk_class": "low",
+      "minimum_mode": "pr-only",
+      "automatic_merge": true,
+      "automatic_merge_paths": [
+        ".gitignore"
+      ],
+      "automatic_merge_added_lines": [
+        "",
+        ".DS_Store"
+      ]
+    },
+    "python-cache-ignore": {
+      "risk_class": "low",
+      "minimum_mode": "pr-only",
+      "automatic_merge": true,
+      "automatic_merge_paths": [
+        ".gitignore"
+      ],
+      "automatic_merge_added_lines": [
+        "",
+        "*.py[cod]",
+        "__pycache__/"
+      ]
+    },
+    "workflow-timeout": {
+      "risk_class": "review-required",
+      "minimum_mode": "pr-only",
+      "automatic_merge": false,
+      "automatic_merge_paths": [],
+      "automatic_merge_added_lines": []
+    },
+    "workflow-permissions": {
+      "risk_class": "review-required",
+      "minimum_mode": "pr-only",
+      "automatic_merge": false,
+      "automatic_merge_paths": [],
+      "automatic_merge_added_lines": []
+    },
+    "action-pin-plan": {
+      "risk_class": "review-required",
+      "minimum_mode": "pr-only",
+      "automatic_merge": false,
+      "automatic_merge_paths": [],
+      "automatic_merge_added_lines": []
+    }
+  },
+  "automatic_merge_limits": {
+    "maximum_changed_files": 1,
+    "maximum_changed_lines": 2,
+    "additions_only": true,
+    "allowed_file_modes": [
+      "100644"
+    ],
+    "forbid_binary": true,
+    "forbid_symlink": true,
+    "forbid_generated_output": true,
+    "require_exact_base_sha": true,
+    "require_exact_head_sha": true,
+    "require_unchanged_patch_digest": true,
+    "require_required_checks": true,
+    "merge_method": "squash",
+    "delete_gardener_branch": true
+  },
+  "forbidden_path_prefixes": [
+    ".aws/",
+    ".git/",
+    ".github/workflows/",
+    ".ssh/",
+    "build/",
+    "coverage/",
+    "dist/",
+    "infrastructure/",
+    "migrations/",
+    "node_modules/",
+    "src/"
+  ],
+  "forbidden_exact_paths": [
+    ".env",
+    ".env.production",
+    "Dockerfile",
+    "package-lock.json",
+    "package.json",
+    "poetry.lock",
+    "pyproject.toml",
+    "requirements.txt",
+    "wrangler.json",
+    "wrangler.jsonc",
+    "wrangler.toml"
+  ],
+  "approval_ttl_hours": 24,
+  "evidence_retention_days": 30,
+  "notification_cooldown_hours": 24,
+  "scheduling": {
+    "controller_cron": "15 10 * * *",
+    "audit_cron": "41 8 * * 1",
+    "monday_ingest": true,
+    "daily_reconciliation": true
+  }
+}

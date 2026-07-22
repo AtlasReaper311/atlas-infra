@@ -1,0 +1,5 @@
+{
+  "description": "The controller write gate must be explicitly enabled.",
+  "write_gate": "disabled",
+  "expected": "refused"
+}

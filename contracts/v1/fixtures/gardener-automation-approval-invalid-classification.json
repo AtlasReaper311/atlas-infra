@@ -1,0 +1,6 @@
+{
+  "description": "Automatic approval cannot be replayed after classification changes.",
+  "reviewed_lifecycle": "production",
+  "current_lifecycle": "deprecated",
+  "expected": "refused"
+}

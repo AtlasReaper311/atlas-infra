@@ -35,7 +35,10 @@ class GardenerGitHubAppCoverageTests(unittest.TestCase):
         )
         self.assertEqual("valid", report["status"])
         self.assertEqual(20, report["coverage_count"])
-        self.assertEqual(1, report["ready_batch_count"])
+        self.assertEqual(0, report["ready_batch_count"])
+        self.assertTrue(
+            all(batch["status"] == "verified" for batch in report["batches"])
+        )
         self.assertEqual(
             "AtlasReaper311/atlas-dora", report["canary"]["repository"]
         )
@@ -110,7 +113,8 @@ class GardenerGitHubAppCoverageTests(unittest.TestCase):
 
     def test_only_one_batch_may_be_ready(self):
         policy = self.policy()
-        policy["batches"][1]["status"] = "ready"
+        policy["batches"][2]["status"] = "ready"
+        policy["batches"][3]["status"] = "ready"
         with self.assertRaisesRegex(
             validate_gardener_github_app_coverage.CoveragePolicyError,
             "only one coverage batch may be ready",
@@ -119,9 +123,9 @@ class GardenerGitHubAppCoverageTests(unittest.TestCase):
                 policy, self.registry()
             )
 
-    def test_verified_batches_must_precede_pending_batches(self):
+    def test_verified_batches_must_precede_unverified_batches(self):
         policy = self.policy()
-        policy["batches"][1]["status"] = "verified"
+        policy["batches"][0]["status"] = "planned"
         with self.assertRaisesRegex(
             validate_gardener_github_app_coverage.CoveragePolicyError,
             "verified coverage batches must precede",

@@ -1,0 +1,5 @@
+{
+  "description": "Unknown controller modes fail closed.",
+  "mode": "unsafe",
+  "expected": "refused"
+}

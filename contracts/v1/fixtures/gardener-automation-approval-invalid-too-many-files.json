@@ -1,0 +1,5 @@
+{
+  "description": "Automatic approval cannot exceed the one-file boundary.",
+  "changed_files": 2,
+  "expected": "refused"
+}

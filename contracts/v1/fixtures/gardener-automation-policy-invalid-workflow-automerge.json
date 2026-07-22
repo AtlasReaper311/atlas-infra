@@ -1,0 +1,8 @@
+{
+  "description": "Workflow fixer cannot become automatically mergeable.",
+  "mutation": {
+    "path": "fixers.workflow-timeout.automatic_merge",
+    "value": true
+  },
+  "expected_error": "must remain review-only"
+}

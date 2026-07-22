@@ -1,0 +1,5 @@
+{
+  "description": "Automatic merge cannot treat missing required checks as success.",
+  "required_checks": [],
+  "expected": "refused"
+}

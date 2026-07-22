@@ -1,0 +1,128 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.atlas-systems.uk/policy/v1/gardener-automation.schema.json",
+  "title": "Atlas Gardener automatic remediation policy v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "authority",
+    "default_mode",
+    "allowed_modes",
+    "write_gate_variable",
+    "write_gate_enabled_value",
+    "mode_variable",
+    "public_coverage_policy",
+    "public_coverage_source_fingerprint",
+    "finding_bundle",
+    "repository_eligibility",
+    "fixers",
+    "automatic_merge_limits",
+    "forbidden_path_prefixes",
+    "forbidden_exact_paths",
+    "approval_ttl_hours",
+    "evidence_retention_days",
+    "notification_cooldown_hours",
+    "scheduling"
+  ],
+  "properties": {
+    "schema_version": {"const": "atlas-gardener/automation-policy/v1"},
+    "authority": {"const": "AtlasReaper311/atlas-infra"},
+    "default_mode": {"const": "disabled"},
+    "allowed_modes": {
+      "const": ["disabled", "observe", "pr-only", "automerge-low-risk"]
+    },
+    "write_gate_variable": {"const": "ATLAS_GARDENER_WRITE_GATE"},
+    "write_gate_enabled_value": {"const": "enabled"},
+    "mode_variable": {"const": "ATLAS_GARDENER_MODE"},
+    "public_coverage_policy": {"const": "policy/gardener-github-app-coverage.json"},
+    "public_coverage_source_fingerprint": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "finding_bundle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["producer", "workflow", "maximum_age_hours", "public_only", "require_attestation", "maximum_findings"],
+      "properties": {
+        "producer": {"const": "AtlasReaper311/atlas-dep-audit"},
+        "workflow": {"const": ".github/workflows/audit.yml"},
+        "maximum_age_hours": {"type": "integer", "minimum": 1, "maximum": 168},
+        "public_only": {"const": true},
+        "require_attestation": {"const": true},
+        "maximum_findings": {"type": "integer", "minimum": 1, "maximum": 1000}
+      }
+    },
+    "repository_eligibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["lifecycles", "scopes", "provenance", "require_verified_public_coverage", "private_repository_policy"],
+      "properties": {
+        "lifecycles": {"const": ["active", "production"]},
+        "scopes": {"const": ["internal", "public"]},
+        "provenance": {"const": ["original"]},
+        "require_verified_public_coverage": {"const": true},
+        "private_repository_policy": {"const": "source-owned-separate-approval"}
+      }
+    },
+    "fixers": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["macos-metadata-ignore", "python-cache-ignore", "workflow-timeout", "workflow-permissions", "action-pin-plan"],
+      "properties": {
+        "macos-metadata-ignore": {"$ref": "#/$defs/fixer"},
+        "python-cache-ignore": {"$ref": "#/$defs/fixer"},
+        "workflow-timeout": {"$ref": "#/$defs/fixer"},
+        "workflow-permissions": {"$ref": "#/$defs/fixer"},
+        "action-pin-plan": {"$ref": "#/$defs/fixer"}
+      }
+    },
+    "automatic_merge_limits": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["maximum_changed_files", "maximum_changed_lines", "additions_only", "allowed_file_modes", "forbid_binary", "forbid_symlink", "forbid_generated_output", "require_exact_base_sha", "require_exact_head_sha", "require_unchanged_patch_digest", "require_required_checks", "merge_method", "delete_gardener_branch"],
+      "properties": {
+        "maximum_changed_files": {"const": 1},
+        "maximum_changed_lines": {"type": "integer", "minimum": 1, "maximum": 2},
+        "additions_only": {"const": true},
+        "allowed_file_modes": {"const": ["100644"]},
+        "forbid_binary": {"const": true},
+        "forbid_symlink": {"const": true},
+        "forbid_generated_output": {"const": true},
+        "require_exact_base_sha": {"const": true},
+        "require_exact_head_sha": {"const": true},
+        "require_unchanged_patch_digest": {"const": true},
+        "require_required_checks": {"const": true},
+        "merge_method": {"const": "squash"},
+        "delete_gardener_branch": {"const": true}
+      }
+    },
+    "forbidden_path_prefixes": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "forbidden_exact_paths": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "approval_ttl_hours": {"type": "integer", "minimum": 1, "maximum": 72},
+    "evidence_retention_days": {"type": "integer", "minimum": 1, "maximum": 90},
+    "notification_cooldown_hours": {"type": "integer", "minimum": 1, "maximum": 168},
+    "scheduling": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["controller_cron", "audit_cron", "monday_ingest", "daily_reconciliation"],
+      "properties": {
+        "controller_cron": {"const": "15 10 * * *"},
+        "audit_cron": {"const": "41 8 * * 1"},
+        "monday_ingest": {"const": true},
+        "daily_reconciliation": {"const": true}
+      }
+    }
+  },
+  "$defs": {
+    "fixer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["risk_class", "minimum_mode", "automatic_merge", "automatic_merge_paths", "automatic_merge_added_lines"],
+      "properties": {
+        "risk_class": {"enum": ["low", "review-required"]},
+        "minimum_mode": {"enum": ["observe", "pr-only", "automerge-low-risk"]},
+        "automatic_merge": {"type": "boolean"},
+        "automatic_merge_paths": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+        "automatic_merge_added_lines": {"type": "array", "uniqueItems": true, "items": {"type": "string"}}
+      }
+    }
+  }
+}

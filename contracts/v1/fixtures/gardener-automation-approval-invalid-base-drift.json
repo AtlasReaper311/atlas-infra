@@ -1,0 +1,6 @@
+{
+  "description": "Automatic approval cannot be replayed after the target base moves.",
+  "reviewed_base_sha": "1111111111111111111111111111111111111111",
+  "current_base_sha": "2222222222222222222222222222222222222222",
+  "expected": "refused"
+}

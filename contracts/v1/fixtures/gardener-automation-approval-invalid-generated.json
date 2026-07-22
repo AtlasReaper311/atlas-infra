@@ -1,0 +1,5 @@
+{
+  "description": "Automatic approval cannot target generated build output.",
+  "path": "dist/index.js",
+  "expected": "refused"
+}

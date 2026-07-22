@@ -1,0 +1,5 @@
+{
+  "description": "Repositories outside verified coverage fail closed.",
+  "repository": "AtlasReaper311/not-covered",
+  "expected": "refused"
+}
