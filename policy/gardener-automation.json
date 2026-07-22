@@ -45,6 +45,7 @@
         ".gitignore"
       ],
       "automatic_merge_added_lines": [
+        "",
         ".DS_Store"
       ]
     },
@@ -56,6 +57,7 @@
         ".gitignore"
       ],
       "automatic_merge_added_lines": [
+        "",
         "*.py[cod]",
         "__pycache__/"
       ]
