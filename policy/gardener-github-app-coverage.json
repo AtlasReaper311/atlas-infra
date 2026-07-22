@@ -44,7 +44,7 @@
     {
       "order": 3,
       "id": "public-runtime-operations",
-      "status": "ready",
+      "status": "verified",
       "risk_tier": "high",
       "repositories": [
         "AtlasReaper311/atlas-daily-digest",
@@ -59,7 +59,7 @@
     {
       "order": 4,
       "id": "primary-public-surfaces",
-      "status": "separate-approval",
+      "status": "ready",
       "risk_tier": "high",
       "repositories": [
         "AtlasReaper311/atlas-api-public",
