@@ -1,0 +1,17 @@
+{
+  "schema_version": "atlas-control-plane/gardener-finding-bundle/v1",
+  "producer": "AtlasReaper311/atlas-dep-audit",
+  "source_workflow": ".github/workflows/audit.yml",
+  "source_run_id": "100",
+  "source_run_attempt": 1,
+  "source_commit": "1111111111111111111111111111111111111111",
+  "authority_commit": "2222222222222222222222222222222222222222",
+  "policy_digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+  "generated_at": "2026-07-22T09:30:00Z",
+  "expires_at": "2026-07-23T21:30:00Z",
+  "public_only": false,
+  "source_report_digest": "sha256:4444444444444444444444444444444444444444444444444444444444444444",
+  "repository_snapshots": [],
+  "findings": [],
+  "bundle_digest": "sha256:6666666666666666666666666666666666666666666666666666666666666666"
+}
