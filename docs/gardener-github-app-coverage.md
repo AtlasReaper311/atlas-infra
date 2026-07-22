@@ -22,7 +22,7 @@ Adding a repository to the installation does not create a branch, commit, pull r
 
 The verified canary is `AtlasReaper311/atlas-dora`.
 
-The first ready batch contains lower-blast-radius public runtime surfaces:
+The first low-blast-radius batch was verified on 22 July 2026 after all five selected repositories authenticated successfully with both GitHub installation-token formats:
 
 - `AtlasReaper311/atlas-doc-viewer`
 - `AtlasReaper311/atlas-quota-watch`
@@ -30,7 +30,15 @@ The first ready batch contains lower-blast-radius public runtime surfaces:
 - `AtlasReaper311/specular-sonify`
 - `AtlasReaper311/status`
 
-Later batches cover observability services, operational runtimes, and finally the primary public API and portfolio surface. The policy file is the canonical grouping and order.
+The next ready batch contains public observability and evidence services:
+
+- `AtlasReaper311/atlas-api-index`
+- `AtlasReaper311/atlas-blackbox`
+- `AtlasReaper311/atlas-corpus`
+- `AtlasReaper311/github-pulse`
+- `AtlasReaper311/specular-telemetry`
+
+Later batches cover operational runtimes and finally the primary public API and portfolio surface. The policy file is the canonical grouping and order.
 
 Only one batch may have status `ready`. Completed batches move to `verified` before the next batch becomes ready. The primary public surfaces retain `separate-approval` status until an explicit owner decision changes it.
 
@@ -54,7 +62,7 @@ After the policy pull request is merged and current CI is green:
 8. Do not run a remediation apply merely to test installation coverage.
 9. Record the provider result, then update the completed batch to `verified` in a separate source pull request.
 
-Example local verification loop:
+Example local verification loop for the current ready batch:
 
 ```bash
 cd "$HOME/Personal/atlas-gardener"
@@ -66,11 +74,11 @@ read -r ATLAS_GARDENER_APP_ID
 export ATLAS_GARDENER_APP_ID
 
 for repository in \
-  AtlasReaper311/atlas-doc-viewer \
-  AtlasReaper311/atlas-quota-watch \
-  AtlasReaper311/site-pulse \
-  AtlasReaper311/specular-sonify \
-  AtlasReaper311/status
+  AtlasReaper311/atlas-api-index \
+  AtlasReaper311/atlas-blackbox \
+  AtlasReaper311/atlas-corpus \
+  AtlasReaper311/github-pulse \
+  AtlasReaper311/specular-telemetry
 do
   bash scripts/check-github-app-token-formats.sh "$repository"
 done
