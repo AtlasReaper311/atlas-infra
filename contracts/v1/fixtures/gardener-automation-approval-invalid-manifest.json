@@ -1,0 +1,5 @@
+{
+  "description": "Automatic approval cannot target dependency manifests.",
+  "path": "pyproject.toml",
+  "expected": "refused"
+}
