@@ -61,7 +61,9 @@ cd "$HOME/Personal/atlas-gardener"
 git switch main
 git pull --ff-only
 
-export ATLAS_GARDENER_APP_ID="$(security find-generic-password -a "$USER" -s atlas-gardener-app-id -w)"
+printf 'Enter the numeric Atlas Gardener GitHub App ID: '
+read -r ATLAS_GARDENER_APP_ID
+export ATLAS_GARDENER_APP_ID
 
 for repository in \
   AtlasReaper311/atlas-doc-viewer \
@@ -76,7 +78,7 @@ done
 unset ATLAS_GARDENER_APP_ID
 ```
 
-The App ID is not secret, but the private key and installation tokens remain outside source, logs, issues, pull requests, and chat. The example assumes the App ID is already stored in macOS Keychain; it does not request or expose a secret value.
+The App ID is not secret. The private key and installation tokens remain outside source, logs, issues, pull requests, and chat.
 
 ## Validation
 
