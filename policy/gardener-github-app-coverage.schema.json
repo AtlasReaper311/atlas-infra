@@ -77,7 +77,7 @@
             "maxLength": 80
           },
           "status": {
-            "enum": ["ready", "planned", "separate-approval"]
+            "enum": ["verified", "ready", "planned", "separate-approval"]
           },
           "risk_tier": {
             "enum": ["low", "medium", "high"]
