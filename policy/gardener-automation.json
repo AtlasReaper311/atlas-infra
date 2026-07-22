@@ -100,13 +100,13 @@
     "delete_gardener_branch": true
   },
   "forbidden_path_prefixes": [
-    ".github/workflows/",
     ".aws/",
     ".git/",
+    ".github/workflows/",
     ".ssh/",
-    "dist/",
     "build/",
     "coverage/",
+    "dist/",
     "infrastructure/",
     "migrations/",
     "node_modules/",
