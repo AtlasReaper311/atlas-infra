@@ -36,6 +36,27 @@ Disable the write gate and controller mode before reverting. Revert the squash m
 
 Disable the write gate, replace the GitHub App private key, remove affected repositories from the selected-repository installation when containment requires it, and review all Gardener-authored branches and pull requests created after the suspected compromise time. The App permission boundary must remain Metadata read, Contents write, and Pull requests write. Any permission expansion requires a separate accepted ADR and owner approval.
 
+## Verified autonomous canary
+
+The first complete autonomous canary was verified on 22 July 2026 against `AtlasReaper311/atlas-dora`.
+
+Evidence:
+
+- attested audit run: `AtlasReaper311/atlas-dep-audit` run `29962518596`;
+- controller run: `AtlasReaper311/atlas-gardener` run `29962590660`;
+- target pull request: `AtlasReaper311/atlas-dora#30`;
+- reviewed head: `2d24e6450f45869835c9694b940018bb5b54a48b`;
+- target gate run: `29964113312`;
+- automatic squash merge: `542e1647698c07e1fcdc83d84b4b508298f071d1`;
+- exact result: one `.DS_Store` addition to `.gitignore`;
+- final safety state: controller mode disabled, write gate disabled, write targets empty, audit handoff disabled, target auto-merge variable false, and repository native auto-merge false.
+
+The target gate and independent native auto-merge barrier both completed successfully. The refusal cleanup step was skipped, and GitHub merged the exact Gardener App proposal without a manual merge action.
+
+This proves the GitHub control path from attested Finding through controller approval, App-authored pull request, repository CI, target-owned validation, native auto-merge, exact merge result, and disabled cleanup. It does not prove a deployment, live service health, notification delivery, or any non-GitHub provider state.
+
+Future canaries must use the structured verifier in `AtlasReaper311/atlas-gardener` rather than matching exact strings in aggregated workflow logs.
+
 ## Recovery
 
 Restore service in stages:
