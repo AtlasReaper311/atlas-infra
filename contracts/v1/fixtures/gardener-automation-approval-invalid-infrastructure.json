@@ -1,0 +1,5 @@
+{
+  "description": "Automatic approval cannot target infrastructure configuration.",
+  "path": "infrastructure/main.tf",
+  "expected": "refused"
+}
