@@ -1,0 +1,5 @@
+{
+  "description": "Automatic approval cannot target deployment configuration.",
+  "path": "wrangler.toml",
+  "expected": "refused"
+}
