@@ -5,7 +5,7 @@ on:
     paths:
       - "contracts/v1/gardener-automation-approval.schema.json"
       - "contracts/v1/gardener-finding-bundle.schema.json"
-      - "docs/adrs/ADR-0003-automatic-remediation-controller.md"
+      - "docs/adrs/ADR-0004-automatic-remediation-controller.md"
       - "docs/runbooks/gardener-automatic-remediation.md"
       - "policy/gardener-automation.json"
       - "policy/gardener-automation.schema.json"
@@ -18,7 +18,7 @@ on:
     paths:
       - "contracts/v1/gardener-automation-approval.schema.json"
       - "contracts/v1/gardener-finding-bundle.schema.json"
-      - "docs/adrs/ADR-0003-automatic-remediation-controller.md"
+      - "docs/adrs/ADR-0004-automatic-remediation-controller.md"
       - "docs/runbooks/gardener-automatic-remediation.md"
       - "policy/gardener-automation.json"
       - "policy/gardener-automation.schema.json"
