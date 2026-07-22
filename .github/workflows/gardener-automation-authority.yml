@@ -5,7 +5,7 @@ on:
     paths:
       - "contracts/v1/gardener-automation-approval.schema.json"
       - "contracts/v1/gardener-finding-bundle.schema.json"
-      - "docs/adrs/ADR-0004-automatic-remediation-controller.md"
+      - "docs/adrs/ADR-0006-automatic-remediation-controller.md"
       - "docs/runbooks/gardener-automatic-remediation.md"
       - "policy/gardener-automation.json"
       - "policy/gardener-automation.schema.json"
@@ -18,7 +18,7 @@ on:
     paths:
       - "contracts/v1/gardener-automation-approval.schema.json"
       - "contracts/v1/gardener-finding-bundle.schema.json"
-      - "docs/adrs/ADR-0004-automatic-remediation-controller.md"
+      - "docs/adrs/ADR-0006-automatic-remediation-controller.md"
       - "docs/runbooks/gardener-automatic-remediation.md"
       - "policy/gardener-automation.json"
       - "policy/gardener-automation.schema.json"
@@ -83,12 +83,7 @@ jobs:
       - name: Validate ADR traceability
         run: |
           set -euo pipefail
-          {
-            printf '%s\n' 'ADR path inventory:'
-            grep -R -n '^id = "ADR-' docs/adrs | sort
-            printf '\n%s\n' 'ADR trace result:'
-            python3 scripts/adr_trace.py check --root .
-          } > /tmp/gardener-adr-trace.log 2>&1
+          python3 scripts/adr_trace.py check --root . > /tmp/gardener-adr-trace.log 2>&1
 
       - name: Upload failing ADR trace output
         if: failure()
