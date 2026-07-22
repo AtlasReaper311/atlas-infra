@@ -3,8 +3,7 @@ name: Gardener automation authority
 on:
   pull_request:
     paths:
-      - "contracts/v1/gardener-automation-approval.schema.json"
-      - "contracts/v1/gardener-finding-bundle.schema.json"
+      - "contracts/v1/gardener/**"
       - "docs/adrs/ADR-0006-automatic-remediation-controller.md"
       - "docs/runbooks/gardener-automatic-remediation.md"
       - "policy/gardener-automation.json"
@@ -16,8 +15,7 @@ on:
   push:
     branches: [main]
     paths:
-      - "contracts/v1/gardener-automation-approval.schema.json"
-      - "contracts/v1/gardener-finding-bundle.schema.json"
+      - "contracts/v1/gardener/**"
       - "docs/adrs/ADR-0006-automatic-remediation-controller.md"
       - "docs/runbooks/gardener-automatic-remediation.md"
       - "policy/gardener-automation.json"
@@ -55,8 +53,8 @@ jobs:
           from pathlib import Path
 
           paths = [
-              "contracts/v1/gardener-automation-approval.schema.json",
-              "contracts/v1/gardener-finding-bundle.schema.json",
+              "contracts/v1/gardener/gardener-automation-approval.schema.json",
+              "contracts/v1/gardener/gardener-finding-bundle.schema.json",
               "policy/gardener-automation.json",
               "policy/gardener-automation.schema.json",
           ]
