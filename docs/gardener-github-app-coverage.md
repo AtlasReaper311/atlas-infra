@@ -1,6 +1,6 @@
 # Atlas Gardener GitHub App coverage
 
-Atlas Gardener uses a selected-repository GitHub App installation. Coverage is expanded in reviewed batches so repository access does not grow faster than the evidence supporting it.
+Atlas Gardener uses a selected-repository GitHub App installation. Coverage was expanded in reviewed batches so repository access did not grow faster than the evidence supporting it.
 
 The authoritative public coverage policy is [`policy/gardener-github-app-coverage.json`](../policy/gardener-github-app-coverage.json). Its validator derives the eligible set from [`policy/estate-registry.json`](../policy/estate-registry.json), checks the exact permission contract, and fails if a public runtime repository is missing, duplicated, or added from outside that authority.
 
@@ -14,15 +14,19 @@ Contents: write
 Pull requests: write
 ```
 
-The installation must remain in selected-repository mode. Coverage does not grant Actions, Checks, Administration, Deployments, Environments, Issues, Secrets, Variables, Members, Billing, merge, approval, workflow-dispatch, settings, branch-deletion, or non-GitHub provider authority.
+The installation remains in selected-repository mode. Coverage does not grant Actions, Checks, Administration, Deployments, Environments, Issues, Secrets, Variables, Members, Billing, merge, approval, workflow-dispatch, settings, branch-deletion, or non-GitHub provider authority.
 
 Adding a repository to the installation does not create a branch, commit, pull request, workflow run, merge, or deployment. Gardener still requires one current proposal, one digest-bound plan, local and remote base checks, classification revalidation, a short-lived installation token, and interactive confirmation before it can open one draft pull request.
 
-## Current phased plan
+## Verified public runtime coverage
 
-The verified canary is `AtlasReaper311/atlas-dora`.
+The canary and all four public-runtime batches were verified on 22 July 2026. Every selected repository authenticated successfully with both GitHub installation-token formats, retained the exact permission boundary, and revoked each short-lived test token.
 
-The low-blast-radius batch was verified on 22 July 2026 after all selected repositories authenticated successfully with both GitHub installation-token formats:
+The verified canary is:
+
+- `AtlasReaper311/atlas-dora`
+
+The verified low-blast-radius batch is:
 
 - `AtlasReaper311/atlas-doc-viewer`
 - `AtlasReaper311/atlas-quota-watch`
@@ -30,7 +34,7 @@ The low-blast-radius batch was verified on 22 July 2026 after all selected repos
 - `AtlasReaper311/specular-sonify`
 - `AtlasReaper311/status`
 
-The observability batch was then verified under the same selected-repository and token-format checks:
+The verified observability batch is:
 
 - `AtlasReaper311/atlas-api-index`
 - `AtlasReaper311/atlas-blackbox`
@@ -38,7 +42,7 @@ The observability batch was then verified under the same selected-repository and
 - `AtlasReaper311/github-pulse`
 - `AtlasReaper311/specular-telemetry`
 
-The operational runtime batch was also verified:
+The verified operational runtime batch is:
 
 - `AtlasReaper311/atlas-daily-digest`
 - `AtlasReaper311/atlas-notify`
@@ -48,14 +52,12 @@ The operational runtime batch was also verified:
 - `AtlasReaper311/ramone-voice-trigger`
 - `AtlasReaper311/specular-sentinel`
 
-The owner has now approved the final public-runtime batch for selected-repository installation verification:
+The verified primary public surfaces are:
 
 - `AtlasReaper311/atlas-api-public`
 - `AtlasReaper311/atlas-systems`
 
-These primary public surfaces retain the same App permissions and draft-PR-only execution boundary. Their higher blast radius affects future remediation review and merge decisions, not the installation probe itself.
-
-Only one batch may have status `ready`. Completed batches move to `verified` before another batch becomes ready.
+The policy now records complete verified coverage for all 20 repositories in the declared public runtime registry. This proves installation scope and token compatibility. It does not grant unattended remediation, merge, deployment, or provider authority.
 
 ## Public and private boundary
 
@@ -63,42 +65,20 @@ This public policy lists only repositories already declared by the public runtim
 
 Private repositories remain source-owned through `.atlas/governance.json`. Any future private installation expansion requires a separate authenticated review and explicit owner approval. It must not be represented in this public policy or documentation.
 
-## Owner rollout sequence
+## Operating model
 
-After the policy pull request is merged and current CI is green:
+For each future Gardener remediation:
 
-1. Open the Atlas Gardener GitHub App installation settings.
-2. Keep repository access set to selected repositories only.
-3. Add exactly the repositories in the single `ready` batch.
-4. Confirm the permission screen still shows only Metadata read, Contents write, and Pull requests write.
-5. Confirm no webhook or automatic trigger has been enabled.
-6. From the current `atlas-gardener/main`, run the checked-in token-format and installation probe once for each newly selected repository.
-7. Confirm each probe authenticates both token formats and revokes both tokens.
-8. Do not run a remediation apply merely to test installation coverage.
-9. Record the provider result, then update the completed batch to `verified` in a separate source pull request.
+1. produce a current finding;
+2. generate a deterministic proposal;
+3. review the exact patch and plan digest;
+4. revalidate classification and the target base commit;
+5. mint one short-lived installation token restricted to the target repository;
+6. open one draft pull request after interactive confirmation;
+7. let repository-owned CI run independently;
+8. leave merge and any resulting deployment to a separate human decision.
 
-Example local verification loop for the current ready batch:
-
-```bash
-cd "$HOME/Personal/atlas-gardener"
-git switch main
-git pull --ff-only
-
-printf 'Enter the numeric Atlas Gardener GitHub App ID: '
-read -r ATLAS_GARDENER_APP_ID
-export ATLAS_GARDENER_APP_ID
-
-for repository in \
-  AtlasReaper311/atlas-api-public \
-  AtlasReaper311/atlas-systems
-do
-  bash scripts/check-github-app-token-formats.sh "$repository"
-done
-
-unset ATLAS_GARDENER_APP_ID
-```
-
-The App ID is not secret. The private key and installation tokens remain outside source, logs, issues, pull requests, and chat.
+The App installation itself is passive. No webhook or automatic trigger starts Gardener.
 
 ## Validation
 
@@ -109,4 +89,4 @@ python3 scripts/validate_gardener_github_app_coverage.py \
   --report /tmp/gardener-github-app-coverage.json
 ```
 
-The validator confirms complete public runtime coverage, a current registry fingerprint, canonical batch order, one ready batch at most, the exact permission contract, and the source-owned private repository boundary.
+The validator confirms complete public runtime coverage, a current registry fingerprint, canonical batch order, the exact permission contract, and the source-owned private repository boundary.
