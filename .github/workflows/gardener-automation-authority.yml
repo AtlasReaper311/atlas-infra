@@ -83,7 +83,12 @@ jobs:
       - name: Validate ADR traceability
         run: |
           set -euo pipefail
-          python3 scripts/adr_trace.py check --root . > /tmp/gardener-adr-trace.log 2>&1
+          {
+            printf '%s\n' 'ADR path inventory:'
+            grep -R -n '^id = "ADR-' docs/adrs | sort
+            printf '\n%s\n' 'ADR trace result:'
+            python3 scripts/adr_trace.py check --root .
+          } > /tmp/gardener-adr-trace.log 2>&1
 
       - name: Upload failing ADR trace output
         if: failure()
