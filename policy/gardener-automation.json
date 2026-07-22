@@ -10,6 +10,7 @@
   ],
   "write_gate_variable": "ATLAS_GARDENER_WRITE_GATE",
   "write_gate_enabled_value": "enabled",
+  "write_targets_variable": "ATLAS_GARDENER_WRITE_TARGETS_JSON",
   "mode_variable": "ATLAS_GARDENER_MODE",
   "public_coverage_policy": "policy/gardener-github-app-coverage.json",
   "public_coverage_source_fingerprint": "sha256:96654dd254875030d59f461b70339c7f01e13ddf3eb22e34aa3c9dec88529cd5",
