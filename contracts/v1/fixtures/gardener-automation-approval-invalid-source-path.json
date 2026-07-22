@@ -1,0 +1,5 @@
+{
+  "description": "Automatic approval cannot target application source.",
+  "path": "src/index.ts",
+  "expected": "refused"
+}
