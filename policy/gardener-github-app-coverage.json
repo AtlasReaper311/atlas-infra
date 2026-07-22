@@ -1,0 +1,71 @@
+{
+  "schema_version": "atlas-gardener/github-app-coverage/v1",
+  "authority": "AtlasReaper311/atlas-infra",
+  "source_registry": "policy/estate-registry.json",
+  "installation_mode": "selected-repositories",
+  "permissions": {
+    "metadata": "read",
+    "contents": "write",
+    "pull_requests": "write"
+  },
+  "source_fingerprint": "sha256:96654dd254875030d59f461b70339c7f01e13ddf3eb22e34aa3c9dec88529cd5",
+  "coverage_count": 20,
+  "canary": {
+    "repository": "AtlasReaper311/atlas-dora",
+    "status": "verified"
+  },
+  "batches": [
+    {
+      "order": 1,
+      "id": "public-runtime-low-blast-radius",
+      "status": "ready",
+      "risk_tier": "low",
+      "repositories": [
+        "AtlasReaper311/atlas-doc-viewer",
+        "AtlasReaper311/atlas-quota-watch",
+        "AtlasReaper311/site-pulse",
+        "AtlasReaper311/specular-sonify",
+        "AtlasReaper311/status"
+      ]
+    },
+    {
+      "order": 2,
+      "id": "public-runtime-observability",
+      "status": "planned",
+      "risk_tier": "medium",
+      "repositories": [
+        "AtlasReaper311/atlas-api-index",
+        "AtlasReaper311/atlas-blackbox",
+        "AtlasReaper311/atlas-corpus",
+        "AtlasReaper311/github-pulse",
+        "AtlasReaper311/specular-telemetry"
+      ]
+    },
+    {
+      "order": 3,
+      "id": "public-runtime-operations",
+      "status": "planned",
+      "risk_tier": "high",
+      "repositories": [
+        "AtlasReaper311/atlas-daily-digest",
+        "AtlasReaper311/atlas-notify",
+        "AtlasReaper311/deploy-watch",
+        "AtlasReaper311/ramone-edge",
+        "AtlasReaper311/ramone-memory",
+        "AtlasReaper311/ramone-voice-trigger",
+        "AtlasReaper311/specular-sentinel"
+      ]
+    },
+    {
+      "order": 4,
+      "id": "primary-public-surfaces",
+      "status": "separate-approval",
+      "risk_tier": "high",
+      "repositories": [
+        "AtlasReaper311/atlas-api-public",
+        "AtlasReaper311/atlas-systems"
+      ]
+    }
+  ],
+  "private_repository_policy": "source-owned-separate-approval"
+}

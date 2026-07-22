@@ -1,0 +1,106 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.atlas-systems.uk/policy/v1/gardener-github-app-coverage.schema.json",
+  "title": "Atlas Gardener GitHub App public coverage policy v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "authority",
+    "source_registry",
+    "installation_mode",
+    "permissions",
+    "source_fingerprint",
+    "coverage_count",
+    "canary",
+    "batches",
+    "private_repository_policy"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "atlas-gardener/github-app-coverage/v1"
+    },
+    "authority": {
+      "const": "AtlasReaper311/atlas-infra"
+    },
+    "source_registry": {
+      "const": "policy/estate-registry.json"
+    },
+    "installation_mode": {
+      "const": "selected-repositories"
+    },
+    "permissions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["metadata", "contents", "pull_requests"],
+      "properties": {
+        "metadata": {"const": "read"},
+        "contents": {"const": "write"},
+        "pull_requests": {"const": "write"}
+      }
+    },
+    "source_fingerprint": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "coverage_count": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 200
+    },
+    "canary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repository", "status"],
+      "properties": {
+        "repository": {"$ref": "#/$defs/repository"},
+        "status": {"const": "verified"}
+      }
+    },
+    "batches": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 20,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["order", "id", "status", "risk_tier", "repositories"],
+        "properties": {
+          "order": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 20
+          },
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+            "maxLength": 80
+          },
+          "status": {
+            "enum": ["verified", "ready", "planned", "separate-approval"]
+          },
+          "risk_tier": {
+            "enum": ["low", "medium", "high"]
+          },
+          "repositories": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 50,
+            "uniqueItems": true,
+            "items": {"$ref": "#/$defs/repository"}
+          }
+        }
+      }
+    },
+    "private_repository_policy": {
+      "const": "source-owned-separate-approval"
+    }
+  },
+  "$defs": {
+    "repository": {
+      "type": "string",
+      "pattern": "^AtlasReaper311/[A-Za-z0-9._-]+$",
+      "maxLength": 128
+    }
+  }
+}
