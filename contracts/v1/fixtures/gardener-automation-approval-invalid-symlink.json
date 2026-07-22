@@ -1,0 +1,6 @@
+{
+  "description": "Automatic approval cannot target a symbolic link.",
+  "path": ".gitignore",
+  "mode": "120000",
+  "expected": "refused"
+}
