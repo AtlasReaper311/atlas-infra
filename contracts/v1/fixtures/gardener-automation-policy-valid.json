@@ -1,0 +1,11 @@
+{
+  "schema_version": "atlas-gardener/automation-policy-fixture/v1",
+  "mode": "disabled",
+  "write_gate": "disabled",
+  "fixer": "macos-metadata-ignore",
+  "path": ".gitignore",
+  "added_lines": [
+    ".DS_Store"
+  ],
+  "expected": "observe-only"
+}
