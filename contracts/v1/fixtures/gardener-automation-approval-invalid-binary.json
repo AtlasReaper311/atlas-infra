@@ -1,0 +1,6 @@
+{
+  "description": "Automatic approval cannot target binary output.",
+  "path": "cache.pyc",
+  "binary": true,
+  "expected": "refused"
+}
