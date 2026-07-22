@@ -30,7 +30,7 @@ The first low-blast-radius batch was verified on 22 July 2026 after all five sel
 - `AtlasReaper311/specular-sonify`
 - `AtlasReaper311/status`
 
-The next ready batch contains public observability and evidence services:
+The observability batch was then verified after the same compatibility and selected-repository checks passed for:
 
 - `AtlasReaper311/atlas-api-index`
 - `AtlasReaper311/atlas-blackbox`
@@ -38,7 +38,17 @@ The next ready batch contains public observability and evidence services:
 - `AtlasReaper311/github-pulse`
 - `AtlasReaper311/specular-telemetry`
 
-Later batches cover operational runtimes and finally the primary public API and portfolio surface. The policy file is the canonical grouping and order.
+The current ready batch contains operational runtimes:
+
+- `AtlasReaper311/atlas-daily-digest`
+- `AtlasReaper311/atlas-notify`
+- `AtlasReaper311/deploy-watch`
+- `AtlasReaper311/ramone-edge`
+- `AtlasReaper311/ramone-memory`
+- `AtlasReaper311/ramone-voice-trigger`
+- `AtlasReaper311/specular-sentinel`
+
+The primary public API and portfolio surface remain behind separate approval. The policy file is the canonical grouping and order.
 
 Only one batch may have status `ready`. Completed batches move to `verified` before the next batch becomes ready. The primary public surfaces retain `separate-approval` status until an explicit owner decision changes it.
 
@@ -74,11 +84,13 @@ read -r ATLAS_GARDENER_APP_ID
 export ATLAS_GARDENER_APP_ID
 
 for repository in \
-  AtlasReaper311/atlas-api-index \
-  AtlasReaper311/atlas-blackbox \
-  AtlasReaper311/atlas-corpus \
-  AtlasReaper311/github-pulse \
-  AtlasReaper311/specular-telemetry
+  AtlasReaper311/atlas-daily-digest \
+  AtlasReaper311/atlas-notify \
+  AtlasReaper311/deploy-watch \
+  AtlasReaper311/ramone-edge \
+  AtlasReaper311/ramone-memory \
+  AtlasReaper311/ramone-voice-trigger \
+  AtlasReaper311/specular-sentinel
 do
   bash scripts/check-github-app-token-formats.sh "$repository"
 done
