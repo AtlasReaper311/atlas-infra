@@ -7,8 +7,11 @@ on:
       - "contracts/v1/public-interface/**"
       - "docs/adrs/ADR-0007-public-interface-contract.md"
       - "policy/atlas-owned-domains.json"
+      - "policy/browser-icons-v1.json"
       - "policy/public-interface-contract.json"
+      - "scripts/validate_browser_icons.py"
       - "scripts/validate_public_interface.py"
+      - "scripts/tests/test_validate_browser_icons.py"
       - "scripts/tests/test_validate_public_interface.py"
   push:
     branches: [main]
@@ -17,8 +20,11 @@ on:
       - "contracts/v1/public-interface/**"
       - "docs/adrs/ADR-0007-public-interface-contract.md"
       - "policy/atlas-owned-domains.json"
+      - "policy/browser-icons-v1.json"
       - "policy/public-interface-contract.json"
+      - "scripts/validate_browser_icons.py"
       - "scripts/validate_public_interface.py"
+      - "scripts/tests/test_validate_browser_icons.py"
       - "scripts/tests/test_validate_public_interface.py"
   workflow_dispatch:
 
@@ -51,15 +57,18 @@ jobs:
           for value in [
               "contracts/v1/public-interface/public-interface-surface.schema.json",
               "policy/atlas-owned-domains.json",
+              "policy/browser-icons-v1.json",
               "policy/public-interface-contract.json",
           ]:
               json.loads(Path(value).read_text(encoding="utf-8"))
           PY
 
-      - name: Compile validator
+      - name: Compile validators
         run: |
           set -euo pipefail
-          python3 -m py_compile scripts/validate_public_interface.py
+          python3 -m py_compile \
+            scripts/validate_browser_icons.py \
+            scripts/validate_public_interface.py
 
       - name: Validate committed authority
         run: |
@@ -67,11 +76,15 @@ jobs:
           python3 scripts/validate_public_interface.py \
             --root . \
             --report /tmp/public-interface-contract.json
+          python3 scripts/validate_browser_icons.py
 
       - name: Run unit tests
         run: |
           set -euo pipefail
-          python3 -m unittest scripts.tests.test_validate_public_interface -v
+          python3 -m unittest \
+            scripts.tests.test_validate_browser_icons \
+            scripts.tests.test_validate_public_interface \
+            -v
 
       - name: Validate ADR traceability
         run: |
