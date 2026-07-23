@@ -6,7 +6,7 @@ visibility = "public"
 repositories = []
 services = []
 contracts = ["atlas-control-plane/gardener-automation-approval/v1", "atlas-control-plane/gardener-finding-bundle/v1"]
-policies = ["policy/gardener-automation.json", "policy/gardener-github-app-coverage.json"]
+policies = ["policy/gardener-automation.json", "policy/gardener-github-app-coverage.json", "policy/gardener-target-readiness.json"]
 +++
 
 # ADR-0006: automatic remediation separates detection, proposal writes, and merge authority
@@ -31,10 +31,16 @@ Automatic merge is target-owned. A pinned reusable workflow runs with the target
 
 Source defaults to `disabled`. Runtime mode is the intersection of committed policy, the exact `ATLAS_GARDENER_MODE` repository variable, and the independent `ATLAS_GARDENER_WRITE_GATE=enabled` kill-switch gate. Unknown or missing values refuse writes.
 
+Production scheduling follows the evidence lifetime. The public audit runs on Monday at `08:41 UTC` and the controller reconciles the resulting attested bundle on Monday at `10:15 UTC`. Manual dispatch remains available. A daily controller is not approved while Finding bundles expire after thirty-six hours because it would spend most of the week refusing stale evidence.
+
+A repository is not production-ready merely because the target-owned caller exists. The default branch must require both its declared repository CI and `Gardener native auto-merge barrier`; squash merge must be available; repository native auto-merge and `ATLAS_GARDENER_AUTOMERGE_ENABLED` must be disabled at rest. The committed target-readiness policy declares the first bounded batch and its exact required checks. Provider configuration remains a separate owner-approved action.
+
+Completed-rollout evidence must bind workflow jobs to the exact `run_attempt`. Deployment evidence is classified separately as `automatic`, `manual`, or `not-applicable`; a source-only housekeeping merge must not be reported as a deployment failure when the target has no push deployment contract.
+
 ## Consequences
 
 Routine public housekeeping can proceed from scheduled detection to validated proposal, repository CI, native auto-merge, evidence, and notification without a local machine or per-PR confirmation. Higher-risk changes remain visible without being silently reported healthy.
 
 The architecture adds target-owned workflow callers and requires GitHub native auto-merge to be enabled as a separate rollout action. It does not require a GitHub App permission expansion. A compromised Gardener workflow could still use the App's existing content and pull-request rights on selected repositories, so repository-restricted one-operation tokens, exact endpoint allowlists, short expiry, attested inputs, digest binding, concurrency, evidence, and the independent write gate remain mandatory.
 
-Merging source does not enable live operation. Secrets, repository variables, auto-merge settings, target workflow adoption, scheduling, canaries, and mode transitions remain separate owner-approved rollout actions.
+Merging source does not enable live operation. Secrets, repository variables, auto-merge settings, branch protection, target workflow adoption, scheduling, canaries, and mode transitions remain separate owner-approved rollout actions.
