@@ -50,8 +50,8 @@ class PublicRepositoryClassificationTests(unittest.TestCase):
         repositories = [item["repository"] for item in projection["repositories"]]
         self.assertEqual(sorted(repositories), repositories)
         self.assertEqual(len(repositories), len(set(repositories)))
-        self.assertEqual(31, projection["repository_count"])
-        self.assertEqual(31, len(repositories))
+        self.assertEqual(32, projection["repository_count"])
+        self.assertEqual(32, len(repositories))
 
     def test_known_runtime_lifecycle_drift_is_resolved_at_authority(self):
         projection = self.projection()
@@ -74,6 +74,18 @@ class PublicRepositoryClassificationTests(unittest.TestCase):
             item
             for item in projection["repositories"]
             if item["repository"] == "AtlasReaper311/atlas-gardener"
+        )
+        self.assertEqual("active", entry["lifecycle"])
+        self.assertEqual("public", entry["scope"])
+        self.assertEqual("original", entry["provenance"])
+        self.assertFalse(entry["runtime_service"])
+
+    def test_interface_kit_is_registered_as_active_non_runtime_source(self):
+        projection = self.projection()
+        entry = next(
+            item
+            for item in projection["repositories"]
+            if item["repository"] == "AtlasReaper311/atlas-interface-kit"
         )
         self.assertEqual("active", entry["lifecycle"])
         self.assertEqual("public", entry["scope"])
