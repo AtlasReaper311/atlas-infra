@@ -18,13 +18,21 @@ class AdrTraceTests(unittest.TestCase):
         second, second_errors = adr_trace.build_index(ROOT)
         self.assertEqual([], first_errors)
         self.assertEqual([], second_errors)
-        self.assertEqual(6, len(first["relationships"]))
+        self.assertEqual(7, len(first["relationships"]))
         self.assertEqual(
             adr_trace.canonical_bytes(first),
             adr_trace.canonical_bytes(second),
         )
         self.assertEqual(
-            ["ADR-0001", "ADR-0002", "ADR-0003", "ADR-0004", "ADR-0006", "ADR-0007"],
+            [
+                "ADR-0001",
+                "ADR-0002",
+                "ADR-0003",
+                "ADR-0004",
+                "ADR-0006",
+                "ADR-0007",
+                "ADR-0008",
+            ],
             [item["adr"]["id"] for item in first["relationships"]],
         )
 
