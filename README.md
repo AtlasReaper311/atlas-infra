@@ -30,6 +30,12 @@ scripts/              validation, planning, and assurance utilities
 templates/            copyable workflow callers
 ```
 
+## Agent repository workflow
+
+Agents and operators creating, adopting, changing, publishing, deploying, deprecating, or retiring a repository should begin with [`docs/AGENT-REPOSITORY-COMPLIANCE.md`](docs/AGENT-REPOSITORY-COMPLIANCE.md).
+
+The document is a navigation and execution contract. Current repository truth, accepted ADRs, machine-readable policy, schemas, executable validators, and reusable workflows remain higher authority.
+
 ## CI/CD
 
 The repository owns reusable workflow shapes rather than application deployment state. Service repositories keep their own callers and credentials; shared workflows provide consistent validation and reporting.
