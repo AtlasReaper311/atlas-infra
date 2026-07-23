@@ -36,6 +36,21 @@ class AdrTraceTests(unittest.TestCase):
             [item["adr"]["id"] for item in first["relationships"]],
         )
 
+        system = next(
+            item
+            for item in first["relationships"]
+            if item["adr"]["id"] == "ADR-0008"
+        )
+        self.assertEqual("accepted", system["adr"]["status"])
+        self.assertIn(
+            "atlas-control-plane/public-interface-system/v1",
+            system["affects"]["contracts"],
+        )
+        self.assertIn(
+            "policy/public-interface-system-v2.json",
+            system["affects"]["policies"],
+        )
+
     def test_legacy_slug_keeps_existing_authority_path_valid(self) -> None:
         parsed = adr_trace.parse_adr(
             ROOT / "docs" / "adrs" / "public-private-estate-boundary.md"
