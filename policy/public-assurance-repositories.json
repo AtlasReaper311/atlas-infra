@@ -7,6 +7,7 @@
     {"repository":"AtlasReaper311/atlas-dep-audit","lifecycle":"active","scope":"public","provenance":"original"},
     {"repository":"AtlasReaper311/atlas-gardener","lifecycle":"active","scope":"public","provenance":"original"},
     {"repository":"AtlasReaper311/atlas-infra","lifecycle":"active","scope":"public","provenance":"original"},
+    {"repository":"AtlasReaper311/atlas-interface-kit","lifecycle":"active","scope":"public","provenance":"original"},
     {"repository":"AtlasReaper311/atlas-journey-watch","lifecycle":"active","scope":"public","provenance":"original"},
     {"repository":"AtlasReaper311/atlas-kit-python-rag","lifecycle":"active","scope":"public","provenance":"original"},
     {"repository":"AtlasReaper311/atlas-resource-audit","lifecycle":"active","scope":"public","provenance":"original"},
