@@ -208,12 +208,12 @@ def validate_policy(policy: dict[str, Any], coverage: dict[str, Any]) -> dict[st
     if not 1 <= policy["notification_cooldown_hours"] <= 168:
         raise PolicyError("notification cooldown is outside the bounded range")
     if policy["scheduling"] != {
-        "controller_cron": "15 10 * * *",
+        "controller_cron": "15 10 * * 1",
         "audit_cron": "41 8 * * 1",
         "monday_ingest": True,
-        "daily_reconciliation": True,
+        "daily_reconciliation": False,
     }:
-        raise PolicyError("automation scheduling no longer matches the approved audit cadence")
+        raise PolicyError("automation scheduling no longer matches the approved weekly audit cadence")
 
     if coverage.get("schema_version") != "atlas-gardener/github-app-coverage/v1":
         raise PolicyError("unsupported GitHub App coverage policy")
