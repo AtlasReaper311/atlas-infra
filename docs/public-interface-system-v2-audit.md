@@ -2,19 +2,19 @@
 
 ## Status
 
-This document is a design and information-architecture audit. It does not approve implementation, change a public interface contract, alter provider state, or claim a live rollout.
+Phase 0 is complete. The audit findings were approved by Atlas on 23 July 2026 and are implemented as source authority by accepted `ADR-0008` and `policy/public-interface-system-v2.json`.
 
-Audit date: 23 July 2026.
+This audit does not claim that any public surface already implements v2. Product migration, merge, deployment, and live verification remain separate evidence stages.
 
 ## Purpose
 
 The first public interface programme established a common outer contract across the Atlas Systems public estate: global navigation, estate search, status presentation, browser icons, page metadata, link behaviour, focus treatment, responsive safeguards, and generated-page ownership.
 
-Phase 0 asks a different question:
+Phase 0 asked:
 
 > Where do the public surfaces still drift in hierarchy, terminology, spacing, components, organisation, and interaction, and which differences are intentional product identity rather than defects?
 
-The goal is not to make every surface look identical. The goal is to make the estate feel designed as one system while preserving the distinct jobs of Work, Writing, Lab, Status, Ramone, API Docs, and CV.
+The goal is not to make every surface identical. The goal is to make the estate feel designed as one system while preserving the distinct jobs of Work, Writing, Lab, Status, Ramone, API Docs, and CV.
 
 ## Evidence inspected
 
@@ -27,34 +27,18 @@ The audit used the current repository state and accepted authority in this order
 5. the Atlas Systems Brand Reference;
 6. live HTML where it was retrievable during the audit.
 
-The audit does not treat a merged pull request as proof of live deployment. Visual implementation remains blocked until individual preview and rollout evidence exists.
+The audit does not treat a merged pull request as proof of live deployment.
 
-## Current contract versus the proposed v2 scope
+## Approved outcome
 
-The accepted v1 contract already governs:
+The accepted implementation target is recorded in:
 
-- the Atlas Systems wordmark and primary routes;
-- estate search;
-- non-home status indicators;
-- same-tab Atlas-owned navigation;
-- safe external links;
-- repository-local browser icons;
-- metadata;
-- focus and reduced motion;
-- long-form readability;
-- product-specific footers;
-- generated article ownership.
+- `docs/adrs/ADR-0008-public-interface-system-v2.md`;
+- `docs/public-interface-system-v2-approved-scope.md`;
+- `policy/public-interface-system-v2.json`;
+- `contracts/v1/public-interface/public-interface-system.schema.json`.
 
-The proposed v2 scope should extend that contract rather than replace it. It should govern:
-
-- public terminology and state vocabulary;
-- page hierarchy and information order;
-- design tokens beyond the current colour and typography baseline;
-- canonical component roles and permitted variants;
-- content organisation and route discoverability;
-- maturity labels for tools and experiments;
-- responsive verification evidence;
-- visual and semantic conformance checks.
+The current v1 shell contract remains active until repository migrations are reviewed, previewed, merged, deployed, and verified.
 
 ## Route and surface audit matrix
 
@@ -65,54 +49,39 @@ Priority meanings:
 - `P2`: useful refinement that can follow the core migration;
 - `Preserve`: intentional difference that should remain.
 
-| Surface | Owner | Current purpose | Intentional identity to preserve | Confirmed drift or risk | Recommended change | Priority |
+| Surface | Owner | Current purpose | Intentional identity to preserve | Confirmed drift or risk | Approved change | Priority |
 |---|---|---|---|---|---|---|
-| `/` | `atlas-systems` | Estate introduction and primary routing | Operational homepage treatment and existing hero identity | The homepage is the natural place to explain the estate, but the wider set of products and engineering interfaces is not exposed as a coherent directory | Add a concise route-by-intent section and link to a new `/systems/` directory; do not duplicate the status controller | P1 |
-| `/work/` | `atlas-systems` | Portfolio evidence and completed projects | Galleries, audio evidence, project-specific metrics, case-study links | Each project card presents identity, role, long summary, metrics, full stack, achievements, gallery, audio, and links at the same visual level; taxonomy and action labels vary | Rebuild the project hierarchy into identity, evidence, and supporting detail; standardise taxonomy and action labels; add stable project anchors and a compact project index | P0 |
-| `/writing/` | `atlas-systems`, generated and refreshed through the publishing pipeline | Published case studies, series, and scheduled writing | Editorial card treatment, W-number identity, scheduler-owned ordering and states | Published, next, and scheduled material share similar card weight; date and state labels vary; series structure must be inferred from card metadata | Separate Featured, Series, and All writing views; standardise scheduled and published labels; keep scheduler as the only production writer | P0 |
-| Published article routes | `atlas-article-gen` -> `atlas-scheduler` -> `atlas-systems` | Long-form technical evidence | Editorial typography, article-specific diagrams and media, scheduler footer and series navigation | Future article shells can be updated centrally, but historical content lacks canonical Markdown and requires bounded scheduler refresh paths | Define v2 article components in the generator; migrate historical shells only through scheduler-owned refresh evidence | P1 |
-| `/lab/` | `atlas-systems` | Live estate interfaces, experiments, and operational evidence | Ramone as the first major experience, dense technical instruments, System SYMPHONY identity | The page combines Ramone, signal and reliability cards, system map, activity, event log, pipeline grid, API surface, DORA, and other tools without a single public taxonomy; labels mix technical type, state, and marketing-like descriptions | Organise the landing page into Observe, Verify, Experience, and Explore; add maturity badges with defined meanings; preserve Ramone first | P0 |
-| `/lab/proof-chain/` | `atlas-systems` | Bounded source-to-service and ADR proof | Evidence-first graph and fail-closed behaviour | Needs consistent product strip, data-card, empty/error, and action language with other verification tools | Adopt shared verification-tool components without changing graph contracts | P1 |
-| `/lab/signal/` | `atlas-systems` | Interactive browser audio and DSP experiment | Purpose-specific audio controls and visualisation | Control labels and state presentation are unique; this is acceptable, but framing and maturity language should align with Lab | Keep the instrument UI; standardise outer shell, maturity badge, instructions, focus, and error states | Preserve / P1 |
-| `/lab/anomaly/` | `atlas-systems` | Telemetry-shape replay and analysis | Specialist telemetry controls and evidence display | Product name, route label, and Lab-card label do not consistently communicate the same purpose | Select one public name and use it in the Lab card, product strip, title, and contextual navigation | P0 |
-| `/lab/conformance/` | `atlas-systems` | Estate policy and coverage evidence | Dense audit evidence and weighted rules | State and finding labels should align with the public copy contract rather than local terms | Standardise evidence, pass, warning, unavailable, and freshness language | P1 |
-| `/lab/reliability/` | `atlas-systems` | Chaos and recovery evidence | Trial-specific detail and reliability evidence | “Reliability”, “trials”, “chaos evidence”, and “passed” describe different concepts but currently appear near each other without a clear hierarchy | Use one product name, one maturity label, and separate current evidence state from tool type | P0 |
-| `status.atlas-systems.uk` | `status` | Immediate estate condition and detailed reliability evidence | Operational density, bounded state semantics, activity evidence | The current interface risks presenting detailed evidence before the simple visitor question, “Is the estate working?”; service grouping and action hierarchy need a clearer public structure | Create overview-first hierarchy, then grouped service evidence, freshness, objectives, and recent events | P0 |
-| `ramone.atlas-systems.uk` | `ramone-edge` | Grounded public conversational interface | Conversation-first product layout, model and grounding behaviour | Controls, loading, errors, citations, and grounding explanation are locally defined; terminology can diverge from the estate | Preserve conversation layout; align control, state, citation, search, and footer components; add a clear public grounding-boundary explanation | P1 |
-| `api.atlas-systems.uk/v1/docs` | `atlas-api-public` | Human documentation rendered from OpenAPI authority | Contract-derived endpoint catalogue and technical density | The page is readable but acts primarily as a long catalogue; endpoint grouping, navigation, copy actions, and public/authenticated distinctions can be clearer | Add group navigation, consistent method badges, copy-path controls, parameter and response components, and a raw OpenAPI link | P1 |
-| `cv.atlas-systems.uk` | `atlas-doc-viewer` | Formal CV document gate and viewer | Deliberate PDF initialisation, download path, minimal document framing | Expansion would create duplication with About; only concise document metadata and action clarity are needed | Keep the surface minimal; standardise summary, update date, file metadata, Open CV, Download PDF, and About escape | Preserve / P2 |
-| `/404.html` and error routes | route owner | Honest route failure and recovery | Minimal fail-closed presentation | Error, unavailable, empty, and unknown states are implemented independently across products | Define canonical state components and action wording while preserving route-specific detail | P0 |
-| Proposed `/systems/` | `atlas-systems` | Human-readable directory of public products, tools, and interfaces | New route, no existing visual identity to preserve | The estate has more public surfaces than the four primary header links can expose without crowding navigation | Add a directory grouped into Portfolio, Products, and Engineering interfaces, with purpose, type, maturity, valid live state, and source links | P1 |
+| `/` | `atlas-systems` | Estate introduction and primary routing | Operational homepage treatment and existing hero identity | The wider set of products and engineering tools is not exposed as a coherent directory | Add route-by-intent improvements, preserve the main hero, and link to `/systems/` | P1 |
+| `/work/` | `atlas-systems` | Portfolio evidence and completed projects | Galleries, audio evidence, project metrics, case-study links | Each project presents identity, role, long summary, metrics, full stack, achievements, media, and links at the same level | Use selective disclosure, stable identifiers and anchors, explicit result statements, exact repository links, and Featured, All projects, In development, Experiments, and hidden-until-needed Retired sections | P0 |
+| `/writing/` | `atlas-systems`, generated and refreshed through the publishing pipeline | Published case studies, series, and scheduled writing | Editorial treatment, W-number identity, scheduler-owned ordering and states | Published, next, and scheduled material share similar card weight; state labels vary | Present Featured, Series, and All writing; show only the next article or series; use month precision for scheduled material; preserve scheduler ownership | P0 |
+| Published article routes | `atlas-article-gen` -> `atlas-scheduler` -> `atlas-systems` | Long-form technical evidence | Editorial typography, article diagrams and media, scheduler footer and series navigation | Historical content has mixed source availability | Update canonical-source articles through generator and scheduler; use bounded scheduler shell refresh where source is absent; never rewrite prose as visual migration | P1 |
+| `/lab/` | `atlas-systems` | Public products, engineering tools, experiments, and evidence | Ramone first, purpose-specific instruments, System SYMPHONY identity | The page combines too many dense views without a public taxonomy | Convert to a directory with flagships and Experience, Observe, Verify, and Explore groups; move dense views behind cards or dedicated routes | P0 |
+| `/lab/system-map/` | `atlas-systems` | Full interactive estate map | Current graph and evidence semantics | The map is useful but too dense inside the Lab landing page | Create a dedicated route and show only a compact preview on Lab and Systems | P0 |
+| `/lab/proof-chain/` | `atlas-systems` | Bounded source-to-service and ADR proof | Evidence-first graph and fail-closed behaviour | Needs consistent framing and state components | Adopt shared verification-tool components without changing proof contracts | P1 |
+| `/lab/signal/` | `atlas-systems` | Interactive browser audio and DSP experiment | Audio controls and visualisation | Outer framing and maturity language drift | Preserve the instrument; classify it as Experiment; standardise framing, data mode, focus, and error states | Preserve / P1 |
+| `/lab/anomaly/` | `atlas-systems` | Telemetry-shape replay and analysis | Specialist telemetry controls | Product naming and maturity are inconsistent | Use one public name and classify Shape Detector as Experiment | P0 |
+| `/lab/conformance/` | `atlas-systems` | Estate policy and coverage evidence | Dense audit evidence and weighted rules | State and finding labels drift from shared vocabulary | Standardise evidence, state, warning, unavailable, and freshness language | P1 |
+| `/lab/reliability/` | `atlas-systems` | Chaos and recovery evidence | Trial detail and reliability evidence | Product type, maturity, and current result are mixed | Use Reliability Trials as a Tool and separate current evidence state from maturity | P0 |
+| `status.atlas-systems.uk` | `status` | Immediate estate condition and detailed reliability evidence | Operational density and bounded state semantics | Detailed evidence can precede the visitor's primary question | Create overview-first hierarchy, then grouped service evidence, freshness, objectives, and recent events | P0 |
+| `ramone.atlas-systems.uk` | `ramone-edge` | Grounded public conversational interface | Startup sequence, conversation layout, model and grounding behaviour | Controls, loading, errors, citations, and grounding explanation are locally defined | Preserve the product experience; align shared controls and states; explain the public grounding boundary | P1 |
+| `api.atlas-systems.uk/v1/docs` | `atlas-api-public` | Human documentation rendered from OpenAPI authority | Contract-derived endpoint catalogue | Navigation and endpoint actions can be clearer | Add group navigation, method badges, copy-path controls, parameter and response components, and raw OpenAPI access | P1 |
+| `cv.atlas-systems.uk` | `atlas-doc-viewer` | Formal CV document gate and viewer | PDF initialisation, download path, minimal framing | Expansion would duplicate About | Keep it minimal; standardise summary, update date, file metadata, actions, and About escape | Preserve / P2 |
+| `/404.html` and error routes | route owner | Honest failure and recovery | Minimal fail-closed presentation | State components are implemented independently | Adopt canonical loading, empty, unavailable, unknown, and error roles | P0 |
+| `/systems/` | `atlas-systems` | Directory of visitor-facing products and engineering tools | New route | The estate has more public destinations than the old four-link header exposed | Add Portfolio, Products, and Engineering tools groups, selective runtime state, and a simplified architecture diagram | P0 |
 
 ## Cross-estate findings
 
-### 1. The outer shell is coherent, but the inner component vocabulary is not
+### Shared interface grammar
 
-The accepted contract intentionally allows repository-specific markup and CSS. That decision remains correct because a remote runtime stylesheet would create cross-repository failure coupling.
+The accepted v1 contract intentionally allows repository-specific markup and CSS. That remains correct because a remote runtime stylesheet would create cross-repository failure coupling.
 
-However, the estate currently repeats local implementations of:
+The estate repeats local implementations of product strips, page introductions, section labels, actions, cards, metrics, tags, badges, filters, dialogs, state panels, tables, and footers.
 
-- product strips;
-- page introductions;
-- section labels;
-- buttons and action links;
-- cards and metric grids;
-- tags and badges;
-- filters;
-- dialogs and search panels;
-- loading, empty, unavailable, and error states;
-- data tables;
-- footers.
+Public Interface System v2 defines shared roles and distributes deterministic repository-local bundles. It does not introduce a shared live CSS or JavaScript dependency.
 
-Recommendation: define common component roles and generate repository-local pinned copies. Do not introduce a shared live CSS dependency.
+### Public terminology
 
-### 2. Public terms are not controlled tightly enough
-
-The estate uses overlapping labels such as project, product, service, system, tool, experiment, interface, component, repository, live, operational, active, healthy, published, deployed, and merged.
-
-These labels represent different facts. Treating them as stylistic synonyms weakens the estate's evidence discipline.
-
-Recommended public vocabulary:
+Approved evidence-bearing meanings:
 
 | Term | Public meaning |
 |---|---|
@@ -133,154 +102,107 @@ Recommended public vocabulary:
 | Unavailable | The public function cannot currently be performed |
 | Unknown | Evidence is absent, stale, invalid, or failed |
 
-Recommendation: add this vocabulary to the v2 policy and test visible state labels where practical.
+Maturity labels are Production, Tool, Experiment, Preview, Planned, and Retired. Maturity and runtime state remain separate.
 
-### 3. Page hierarchy varies by surface
-
-The estate needs one default reading order:
+### Default page hierarchy
 
 1. global header;
 2. product or section identity;
-3. eyebrow or identifier;
+3. eyebrow, identifier, or route type;
 4. page title;
 5. concise purpose;
 6. primary state or action;
 7. main content;
 8. evidence and metadata;
-9. purpose-specific footer.
+9. purpose-specific footer and estate escape.
 
-Purpose-specific products may vary inside the main content area. They should not vary in the meaning or order of identity, purpose, state, and escape routes without a documented reason.
+Purpose-specific products may vary inside the main content area.
 
-### 4. Work requires hierarchy reduction, not content removal
+### Global navigation
 
-Work is the highest-priority main-site change. Current entries contain strong evidence but ask the visitor to process too much at once.
+Desktop target:
 
-Recommended card anatomy:
+- left: wordmark and aggregate status;
+- centre: Work, Writing, Lab, Systems, About;
+- right: compact Search control.
 
-- Identity: `P-NN`, title, role, one-sentence result, two or three categories.
-- Evidence: four metrics, gallery or audio evidence, one prominent outcome.
-- Detail: selected technologies, supporting achievements, source, and case study.
+The healthy label is `Operational`, and the status links directly to Status.
 
-The full stack and deeper lessons belong in the case study. Work should help a visitor choose which evidence to inspect.
+Mobile uses bottom navigation with the wordmark, status, and search icon retained above.
 
-### 5. Writing requires explicit architecture for featured, series, and archive content
+### Lab taxonomy
 
-The scheduler already owns published ordering, upcoming rotation, series metadata, and publication state. The public page should expose that structure directly.
+Experience:
 
-Recommended sections:
+- Ramone;
+- System SYMPHONY;
+- Signal Garden.
 
-- Featured;
-- Series;
-- All writing.
+Observe:
 
-Recommended card state labels:
+- System Map;
+- Status;
+- Activity;
+- Deployment evidence;
+- DORA metrics.
 
-- `Published 23 July 2026`;
-- `Scheduled 26 July 2026`;
-- `Part 1 of 3`;
-- `12 min read`.
+Verify:
 
-Avoid decorative status text such as `NEXT CHAPTER` where a precise scheduler state is available. Editorial flavour can remain in titles and summaries.
+- Proof Chain;
+- Estate Conformance;
+- Reliability Trials;
+- API Docs.
 
-### 6. Lab needs a public taxonomy
+Explore:
 
-Recommended Lab groups:
+- Shape Detector.
 
-- Observe: System Map, Status, Reliability views, Anomaly, Signal.
-- Verify: Proof Chain, Conformance, Public API evidence.
-- Experience: Ramone, System SYMPHONY, interactive demonstrations.
-- Explore: prototypes and explicitly non-production experiments.
+Ramone remains first. System SYMPHONY is Preview. Shape Detector and Signal Garden are Experiments in the first migration.
 
-Recommended maturity labels:
+### Systems directory
 
-- `Production product`;
-- `Operational tool`;
-- `Experiment`;
-- `Preview`;
-- `Planned`.
+Systems lists only meaningful visitor-facing destinations in its main body. Machine-facing systems are secondary detail. Private and local components are architecture context, not destinations.
 
-Maturity is not current runtime state. A production product can be unavailable; an experiment can be operational. These must remain separate fields.
+The page includes a simplified architecture diagram. The full interactive System Map remains a Lab tool.
 
-### 7. A Systems directory is justified
+### Tokens and components
 
-The current primary navigation is appropriately compact. Adding every product to it would create crowding and make the main routes less clear.
+Approved spacing scale: `4`, `8`, `12`, `16`, `24`, `32`, `48`, `64`, and `96` pixels.
 
-A new `/systems/` route should expose the wider public estate without becoming a second system map.
-
-The directory should show only public human-facing destinations and should group them as:
-
-- Portfolio: Work, Writing, About, CV.
-- Products: Ramone, Status, System SYMPHONY where directly accessible.
-- Engineering interfaces: Lab, API Docs, Proof Chain, Reliability, Conformance, Signal, Anomaly.
-
-Each item should include a name, one-sentence purpose, public type, maturity, valid live state where evidence exists, source repository where public, and primary action.
-
-The page must not expose private components from the estate manifest.
-
-### 8. Tokens need to expand beyond the brand essentials
-
-The Brand Reference provides the colour palette, fonts, content widths, base size, navigation height, and grid.
-
-The v2 token contract should add:
-
-- spacing scale;
-- type roles and line heights;
-- control sizes;
-- touch-target requirements;
-- card padding;
-- surface roles;
-- border and radius roles;
-- z-index layers;
-- motion duration and easing;
-- standard content widths;
-- responsive breakpoints.
-
-Recommended spacing scale: `4`, `8`, `12`, `16`, `24`, `32`, `48`, `64`, and `96` pixels.
-
-Recommended control sizes:
+Approved control sizes:
 
 - compact: 32px;
 - standard: 40px;
 - minimum touch target: 44px.
 
-These values are proposed, not accepted, until ADR-0008 is approved.
+Approved card padding:
 
-### 9. Canonical components should be role-based
+- compact: 16px;
+- standard: 24px;
+- editorial: 32px.
 
-Recommended first component set:
+Approved radius range: 4px to 8px.
 
-1. global header;
-2. product strip;
-3. page introduction;
-4. section heading;
-5. primary button;
-6. secondary button;
-7. text action;
-8. status chip;
-9. type badge;
-10. maturity badge;
-11. metric grid;
-12. standard card;
-13. editorial card;
-14. data card;
-15. interactive card frame;
-16. tag list;
-17. filter bar;
-18. table wrapper;
-19. search dialog;
-20. loading state;
-21. empty state;
-22. unavailable state;
-23. error state;
-24. footer.
+The visual direction is spacious and editorial, with slightly larger text, restrained standard motion, controlled flagship motion, one-pixel borders combined with surface depth, minimal standard shadows, and diagram-led information design.
 
-The contract should allow a small number of variants. It should reject a new one-off card class when an existing role already fits.
+The first shared component roles cover the global header, product strip, page introduction, headings, actions, badges, metrics, card roles, tags, filters, tables, search, state components, and footers.
 
-### 10. Responsive and visual evidence is incomplete
+### Distribution
 
-The first programme added responsive safeguards but did not establish a standard evidence matrix for every public route.
+`atlas-infra` owns governance.
 
-The v2 programme should require evidence at:
+A future `AtlasReaper311/atlas-interface-kit` repository is approved for source CSS, examples, build tooling, and generated bundles. Repository creation remains a separate provider action.
+
+Bundles remain repository-local, versioned, and fingerprinted. Approved releases open automated repository update pull requests. Visual changes require manual preview approval and do not auto-merge.
+
+### Evidence
+
+Required browsers:
+
+- Firefox;
+- Chrome.
+
+Required viewport matrix:
 
 - 320px;
 - 375px;
@@ -288,119 +210,65 @@ The v2 programme should require evidence at:
 - 1024px;
 - 1440px.
 
-Evidence should cover:
+Desktop is primary. Mobile remains required.
 
-- navigation density;
-- heading scale;
-- card rhythm;
-- table and code overflow;
-- dialogs;
-- touch targets;
-- keyboard focus;
-- reduced motion;
-- loading, empty, and error states.
+Every route receives semantic and accessibility checks. Representative route types receive the full viewport matrix. Every changed route receives full screenshots.
 
-## New pages considered
+Serious accessibility failures block merge. Screenshot tests use deterministic fixtures; live-data contract tests remain separate.
 
-### Recommended: `/systems/`
+## Intentional differences that remain protected
 
-Reason: the estate now has enough public surfaces that discoverability cannot be solved by the four primary links alone.
-
-### Deferred: `/principles/`
-
-Engineering principles should first appear as an evidence-linked section on About. A separate route should be added only if each principle can link to real ADRs, case studies, or operational examples.
-
-### Rejected for now
-
-- separate Contact page;
-- generic Blog page;
-- separate Projects page;
-- Skills page;
-- technology-logo catalogue;
-- duplicate system-map route;
-- timeline page.
-
-These would duplicate existing information or pull the site towards a conventional CV structure.
-
-## Intentional differences that must remain
-
-The programme must preserve:
-
+- Ramone startup and conversation experience;
+- homepage main hero character;
 - Work galleries and audio evidence;
-- Writing editorial typography and scheduler-owned structure;
-- Lab visualisations and instrument-specific controls;
-- Status evidence density and bounded state semantics;
-- Ramone conversation layout and inference behaviour;
-- API Docs OpenAPI-derived content;
+- Writing editorial character and scheduler ownership;
+- Lab instruments and visualisations;
+- Status bounded state semantics;
+- API Docs OpenAPI authority;
 - CV document gate;
-- System SYMPHONY audio behaviour and identity.
+- System SYMPHONY audio behaviour.
 
-Cohesion applies to framing, hierarchy, labels, spacing, controls, states, accessibility, and navigation. It does not remove product-specific interaction models.
+## Implementation sequence
 
-## Proposed implementation sequence after approval
+### Phase 1: authority
 
-### Phase 1: accept authority
+- accept ADR-0008;
+- commit the v2 policy and schema;
+- validate approved terminology, hierarchy, ownership, distribution, and evidence rules.
 
-- review and accept ADR-0008;
-- version the v2 policy and schemas;
-- define token, terminology, component, and evidence ownership.
+### Phase 2: interface kit
 
-### Phase 2: executable foundation
-
-- create versioned token and component source in `atlas-infra`;
-- generate repository-local pinned copies;
-- add validators and fixtures;
-- prohibit remote runtime dependency on shared presentation assets.
+- create `atlas-interface-kit` through a separately approved provider action;
+- implement tokens, shared roles, examples, bundle generation, fingerprints, and update-PR automation.
 
 ### Phase 3: primary site
 
-- homepage route-by-intent improvements;
-- Work hierarchy and taxonomy;
-- Writing architecture;
-- Lab grouping and maturity labels;
-- About structure and principles section;
-- new `/systems/` directory;
-- error-state components.
+- implement the v2 global shell;
+- restructure Lab first;
+- add Systems and the dedicated System Map route;
+- then migrate homepage, Work, Writing, About, and error states.
 
 ### Phase 4: generated writing
 
-- update `atlas-article-gen` source shell;
-- update `atlas-scheduler` preview and migration paths;
-- prove publication ownership and historical body preservation.
+- update `atlas-article-gen`;
+- update `atlas-scheduler` previews and migration paths;
+- prove body preservation and publication ownership.
 
 ### Phase 5: specialist surfaces
-
-Migrate and verify separately:
 
 1. Status;
 2. Public API Docs;
 3. Ramone;
 4. CV.
 
-### Phase 6: conformance evidence
+### Phase 6: conformance
 
-- standard viewport evidence;
-- accessibility checks;
-- token and component checks;
-- terminology checks;
-- visual comparison artifacts;
-- final public-interface conformance report.
+- complete viewport and accessibility evidence;
+- add token, terminology, component, and fingerprint checks;
+- publish the final conformance report after verified production rollouts.
 
-## Approval questions
+## Conclusion
 
-Before Phase 1 implementation, Atlas should approve or amend:
+The first programme established a credible shared shell. Public Interface System v2 governs the deeper work: information architecture, terminology, component roles, organisation, visual rhythm, and evidence.
 
-1. the proposed public vocabulary;
-2. the Lab groups and maturity labels;
-3. the `/systems/` route;
-4. Work card hierarchy;
-5. Writing sections;
-6. proposed spacing and control scales;
-7. the repository-local generated component distribution model;
-8. the migration order.
-
-## Phase 0 conclusion
-
-The estate should not be described as visually unfinished. The first programme established a credible and consistent public shell.
-
-The remaining work is deeper: information architecture, controlled terminology, component roles, hierarchy, and conformance evidence. Those changes are justified because they improve comprehension and maintenance, not because the pages need a generic redesign.
+No production surface is declared v2-conformant until its own implementation, preview, merge, deployment, and live verification are complete.
