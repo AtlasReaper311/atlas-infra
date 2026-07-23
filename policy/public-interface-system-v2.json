@@ -8,11 +8,11 @@
     "governance_repository": "AtlasReaper311/atlas-infra",
     "implementation_repository": {
       "repository": "AtlasReaper311/atlas-interface-kit",
-      "state": "approved-not-created"
+      "state": "active"
     }
   },
   "migration": {
-    "state": "approved-source-only",
+    "state": "implementation",
     "current_shell_contract_remains_active": true,
     "production_rollout_requires_separate_approval": true,
     "order": [
@@ -401,7 +401,7 @@
   "distribution": {
     "governance_owner": "AtlasReaper311/atlas-infra",
     "implementation_owner": "AtlasReaper311/atlas-interface-kit",
-    "implementation_owner_state": "approved-not-created",
+    "implementation_owner_state": "active",
     "runtime_assets": "repository-local",
     "remote_runtime_dependency_forbidden": true,
     "bundle_version_and_fingerprint_required": true,
