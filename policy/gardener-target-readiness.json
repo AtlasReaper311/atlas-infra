@@ -1,0 +1,47 @@
+{
+  "schema_version": "atlas-gardener/target-readiness-policy/v1",
+  "authority": "AtlasReaper311/atlas-infra",
+  "batch_id": "public-runtime-low-blast-radius",
+  "default_branch": "main",
+  "gate_workflow_path": ".github/workflows/gardener-remediation-gate.yml",
+  "expected_app_login": "atlas-gardener-w37-atlasreaper[bot]",
+  "target_variable": "ATLAS_GARDENER_AUTOMERGE_ENABLED",
+  "disabled_value": "false",
+  "barrier_check": "Gardener native auto-merge barrier",
+  "required_repository_settings": {
+    "allow_squash_merge": true,
+    "allow_auto_merge_at_rest": false
+  },
+  "targets": [
+    {
+      "repository": "AtlasReaper311/atlas-doc-viewer",
+      "required_checks": [
+        "Static document validation"
+      ]
+    },
+    {
+      "repository": "AtlasReaper311/atlas-quota-watch",
+      "required_checks": [
+        "validate"
+      ]
+    },
+    {
+      "repository": "AtlasReaper311/site-pulse",
+      "required_checks": [
+        "Worker validation"
+      ]
+    },
+    {
+      "repository": "AtlasReaper311/specular-sonify",
+      "required_checks": [
+        "Worker configuration validation"
+      ]
+    },
+    {
+      "repository": "AtlasReaper311/status",
+      "required_checks": [
+        "Status site validation"
+      ]
+    }
+  ]
+}
