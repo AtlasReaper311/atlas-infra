@@ -1,0 +1,47 @@
+{
+  "schema_version": "atlas-control-plane/atlas-owned-domains/v1",
+  "version": "1.0.0",
+  "status": "accepted",
+  "domains": [
+    {
+      "host": "api.atlas-systems.uk",
+      "human_html_paths": [
+        "/v1/docs"
+      ]
+    },
+    {
+      "host": "atlas-systems.uk",
+      "human_html_paths": [
+        "/"
+      ]
+    },
+    {
+      "host": "cv.atlas-systems.uk",
+      "human_html_paths": [
+        "/"
+      ]
+    },
+    {
+      "host": "ramone.atlas-systems.uk",
+      "human_html_paths": [
+        "/"
+      ]
+    },
+    {
+      "host": "status.atlas-systems.uk",
+      "human_html_paths": [
+        "/"
+      ]
+    }
+  ],
+  "rules": {
+    "atlas_owned_html_target": "same-tab",
+    "external_target": "new-tab",
+    "external_rel": [
+      "noopener",
+      "noreferrer"
+    ],
+    "machine_endpoint_default": "same-tab-when-explicitly-linked",
+    "downloads": "explicit-download-where-supported"
+  }
+}
