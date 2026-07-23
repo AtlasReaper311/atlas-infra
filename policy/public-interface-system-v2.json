@@ -1,0 +1,487 @@
+{
+  "schema_version": "atlas-control-plane/public-interface-system/v1",
+  "version": "2.0.0",
+  "status": "accepted",
+  "authority": {
+    "decision": "docs/adrs/ADR-0008-public-interface-system-v2.md",
+    "shell_contract": "policy/public-interface-contract.json",
+    "governance_repository": "AtlasReaper311/atlas-infra",
+    "implementation_repository": {
+      "repository": "AtlasReaper311/atlas-interface-kit",
+      "state": "approved-not-created"
+    }
+  },
+  "migration": {
+    "state": "approved-source-only",
+    "current_shell_contract_remains_active": true,
+    "production_rollout_requires_separate_approval": true,
+    "order": [
+      "authority",
+      "interface-kit",
+      "atlas-systems",
+      "generated-writing",
+      "status",
+      "atlas-api-public",
+      "ramone-edge",
+      "atlas-doc-viewer",
+      "conformance"
+    ]
+  },
+  "vocabulary": {
+    "definitions": {
+      "project": "A portfolio body of work.",
+      "product": "A user-facing application or experience.",
+      "service": "A deployed runtime component.",
+      "tool": "A focused operational or engineering utility.",
+      "experiment": "Exploratory work without a stable product contract.",
+      "interface": "A human-facing view over a product, service, or evidence source.",
+      "case-study": "Long-form technical explanation tied to a body of work.",
+      "article": "Editorial writing that need not map to one project.",
+      "repository": "A source-control location.",
+      "merged": "Source reached the default branch.",
+      "deployed": "A production deployment completed successfully.",
+      "published": "Writing passed through scheduler execution and is live."
+    },
+    "runtime_states": [
+      "operational",
+      "degraded",
+      "unavailable",
+      "unknown"
+    ],
+    "initial_runtime_state": "checking",
+    "maturity_labels": [
+      "Production",
+      "Tool",
+      "Experiment",
+      "Preview",
+      "Planned",
+      "Retired"
+    ],
+    "maturity_is_separate_from_runtime_state": true,
+    "identifiers_remain_visible": true
+  },
+  "navigation": {
+    "global_routes": [
+      {
+        "label": "Work",
+        "url": "https://atlas-systems.uk/work/"
+      },
+      {
+        "label": "Writing",
+        "url": "https://atlas-systems.uk/writing/"
+      },
+      {
+        "label": "Lab",
+        "url": "https://atlas-systems.uk/lab/"
+      },
+      {
+        "label": "Systems",
+        "url": "https://atlas-systems.uk/systems/"
+      },
+      {
+        "label": "About",
+        "url": "https://atlas-systems.uk/about/"
+      }
+    ],
+    "desktop": {
+      "left": [
+        "wordmark",
+        "aggregate-status"
+      ],
+      "centre": [
+        "global-routes"
+      ],
+      "right": [
+        "estate-search"
+      ],
+      "status_display": "state-only",
+      "status_healthy_label": "Operational",
+      "status_link": "https://status.atlas-systems.uk/",
+      "status_action": "direct-navigation",
+      "search_control": "compact-button-with-shortcut"
+    },
+    "mobile": {
+      "primary_navigation": "bottom-navigation",
+      "header": [
+        "wordmark",
+        "aggregate-status",
+        "search-icon"
+      ],
+      "active_route_required": true,
+      "must_not_obscure_content_or_focus": true
+    }
+  },
+  "systems_directory": {
+    "route": "https://atlas-systems.uk/systems/",
+    "groups": [
+      "Portfolio",
+      "Products",
+      "Engineering tools"
+    ],
+    "human_facing_primary": true,
+    "machine_facing_access": "secondary-detail",
+    "private_components_as_context_only": true,
+    "selective_runtime_state": true,
+    "simplified_architecture_diagram": true,
+    "full_system_map_route": "https://atlas-systems.uk/lab/system-map/",
+    "retired_model_reserved": true,
+    "hide_empty_retired_section": true
+  },
+  "lab": {
+    "landing_mode": "directory-with-flagships",
+    "ramone_first_major_experience": true,
+    "featured": [
+      {
+        "name": "System Map",
+        "maturity": "Tool"
+      },
+      {
+        "name": "Proof Chain",
+        "maturity": "Tool"
+      },
+      {
+        "name": "Signal Garden",
+        "maturity": "Experiment"
+      },
+      {
+        "name": "System SYMPHONY",
+        "maturity": "Preview"
+      }
+    ],
+    "groups": {
+      "Experience": [
+        "Ramone",
+        "System SYMPHONY",
+        "Signal Garden"
+      ],
+      "Observe": [
+        "System Map",
+        "Status",
+        "Activity",
+        "Deployment evidence",
+        "DORA metrics"
+      ],
+      "Verify": [
+        "Proof Chain",
+        "Estate Conformance",
+        "Reliability Trials",
+        "API Docs"
+      ],
+      "Explore": [
+        "Shape Detector"
+      ]
+    },
+    "shape_detector_maturity": "Experiment",
+    "system_map_dedicated_route": "https://atlas-systems.uk/lab/system-map/",
+    "move_dense_views_behind_cards_or_dedicated_routes": true,
+    "experiment_data_mode_required": true
+  },
+  "page_hierarchy": [
+    "global-header",
+    "product-or-section-identity",
+    "eyebrow-identifier-or-route-type",
+    "page-title",
+    "concise-purpose",
+    "primary-state-or-action",
+    "main-content",
+    "supporting-evidence-and-metadata",
+    "purpose-specific-footer-and-estate-escape"
+  ],
+  "components": {
+    "roles": [
+      "global-header",
+      "product-strip",
+      "page-introduction",
+      "section-heading",
+      "primary-action",
+      "secondary-action",
+      "text-action",
+      "status-chip",
+      "type-badge",
+      "maturity-badge",
+      "metric-grid",
+      "standard-card",
+      "editorial-card",
+      "data-card",
+      "interactive-card-frame",
+      "tag-list",
+      "filter-bar",
+      "table-wrapper",
+      "search-dialog",
+      "loading-state",
+      "empty-state",
+      "unavailable-state",
+      "unknown-state",
+      "error-state",
+      "footer"
+    ],
+    "product_specific_components_remain_local": true,
+    "experimental_layout_freedom": true,
+    "experimental_baseline_still_required": [
+      "global-header",
+      "visible-focus",
+      "keyboard-access",
+      "contrast",
+      "reduced-motion",
+      "maturity-and-runtime-language",
+      "honest-data-mode",
+      "estate-escape"
+    ]
+  },
+  "work": {
+    "disclosure": "selective",
+    "card_layers": [
+      "identity",
+      "primary-evidence",
+      "supporting-detail"
+    ],
+    "permanent_project_identifiers": true,
+    "display_order_independent_from_identifier": true,
+    "display_order_independent_from_publication_order": true,
+    "sections": [
+      "Featured work",
+      "All projects",
+      "In development",
+      "Experiments",
+      "Retired work"
+    ],
+    "hide_empty_retired_section": true,
+    "technology_pill_limit": 6,
+    "full_achievements_move_to_case_study": true,
+    "explicit_result_statement_required": true,
+    "exact_repository_links_required_where_public": true,
+    "stable_anchors_required": true,
+    "anchor_safeguards": [
+      "unique-ids",
+      "scroll-margin-top",
+      "automated-anchor-tests"
+    ],
+    "private_work_visibility": "none",
+    "wip_visibility": "lab-or-work-only-with-public-evidence-and-maturity"
+  },
+  "writing": {
+    "sections": [
+      "Featured",
+      "Series",
+      "All writing"
+    ],
+    "scheduler_owns_order_and_upcoming_visibility": true,
+    "only_next_or_next_series_visible": true,
+    "scheduled_date_precision": "month",
+    "completed_series_uses_group_card": true,
+    "individual_articles_remain_in_all_writing": true,
+    "action_label_by_content_type": true,
+    "primary_categories": [
+      "AI Systems",
+      "Infrastructure",
+      "Automation",
+      "Observability",
+      "Audio Systems",
+      "Game Development",
+      "Hardware",
+      "Engineering Practice"
+    ],
+    "secondary_tags_remain_generator_owned": true,
+    "series_position_format": "Part 1 of 3",
+    "archive_threshold_published_articles": {
+      "minimum": 15,
+      "maximum": 20
+    },
+    "historical_visual_migration": {
+      "canonical_source": "regenerate-through-generator-and-scheduler",
+      "missing_canonical_source": "bounded-scheduler-shell-refresh-only",
+      "article_prose_rewrite_forbidden": true
+    }
+  },
+  "about": {
+    "identity_order": [
+      "Systems Engineer",
+      "Software and AI Engineer",
+      "Audio Systems Specialist",
+      "Game Developer"
+    ],
+    "personal_narrative": true,
+    "aeronautical_engineering_route_in_detail": true,
+    "employer_name_public": false,
+    "heritage_public": false,
+    "saltire_scholarship_public": true,
+    "priorities": [
+      "production-grade automation and governance",
+      "local AI and grounded retrieval",
+      "public observability and evidence systems",
+      "interactive audio systems",
+      "portfolio-grade infrastructure engineering"
+    ],
+    "principles_remain_on_about": true,
+    "contacts": [
+      "email",
+      "GitHub",
+      "LinkedIn"
+    ],
+    "visual": "photograph-plus-lightly-animated-topology",
+    "reduced_motion_fallback_required": true
+  },
+  "visual": {
+    "density": "spacious-editorial",
+    "body_text_px": {
+      "minimum": 15,
+      "preferred": 16
+    },
+    "supporting_text_px": {
+      "minimum": 13,
+      "preferred": 14
+    },
+    "metadata_text_px": {
+      "minimum": 11
+    },
+    "tiny_text_px": {
+      "minimum": 9,
+      "maximum": 10,
+      "nonessential_only": true
+    },
+    "spacing_scale_px": [
+      4,
+      8,
+      12,
+      16,
+      24,
+      32,
+      48,
+      64,
+      96
+    ],
+    "control_height_px": {
+      "compact": 32,
+      "standard": 40,
+      "touch_target_minimum": 44
+    },
+    "card_padding_px": {
+      "compact": 16,
+      "standard": 24,
+      "editorial": 32
+    },
+    "radius_px": {
+      "minimum": 4,
+      "maximum": 8
+    },
+    "one_pixel_border_remains_primary": true,
+    "nested_surface_depth_allowed": true,
+    "heavy_glassmorphism_forbidden": true,
+    "shadows": {
+      "standard_cards": "none-or-minimal",
+      "floating-ui": "subtle",
+      "flagship-experiences": "controlled-atmospheric"
+    },
+    "accent": {
+      "brand": "amber",
+      "semantic_default": {
+        "green": "operational",
+        "red": "unavailable",
+        "blue": "informational"
+      },
+      "controlled_secondary_accents_for_flagships_and_diagrams": true
+    },
+    "typography": {
+      "brand_and_editorial_headings": "DM Serif Display",
+      "operational_and_dense_tools": "IBM Plex Mono or approved restrained companion",
+      "flagship_product_typography_allowed": true,
+      "shared_scale_and_spacing_required": true
+    },
+    "motion": {
+      "standard": "restrained",
+      "featured": "expressive-within-product-boundary",
+      "reduced_motion_required": true
+    },
+    "imagery": {
+      "diagrams_encouraged": true,
+      "decorative_images_outside_work": false,
+      "information_first": true
+    }
+  },
+  "distribution": {
+    "governance_owner": "AtlasReaper311/atlas-infra",
+    "implementation_owner": "AtlasReaper311/atlas-interface-kit",
+    "implementation_owner_state": "approved-not-created",
+    "runtime_assets": "repository-local",
+    "remote_runtime_dependency_forbidden": true,
+    "bundle_version_and_fingerprint_required": true,
+    "update_delivery": "automated-pull-requests",
+    "visual_merge_approval": "manual",
+    "estate_wide_release_then_repository_reviews": true,
+    "overrides": {
+      "mode": "allowlisted-brand-expression-only",
+      "immutable": [
+        "focus-visibility",
+        "semantic-state-colours",
+        "minimum-text-contrast",
+        "minimum-touch-target",
+        "spacing-scale-values",
+        "base-breakpoints",
+        "global-header-contract",
+        "z-index-layer-meanings",
+        "reduced-motion-behaviour"
+      ]
+    }
+  },
+  "evidence": {
+    "browsers": [
+      "Firefox",
+      "Chrome"
+    ],
+    "desktop_primary": true,
+    "mobile_required_after_desktop": true,
+    "viewports_px": [
+      320,
+      375,
+      768,
+      1024,
+      1440
+    ],
+    "representative_routes": [
+      "homepage",
+      "work",
+      "writing",
+      "article",
+      "lab",
+      "lab-tool",
+      "status",
+      "ramone",
+      "api-docs",
+      "cv",
+      "systems",
+      "error"
+    ],
+    "all_changed_routes_require_full_screenshots": true,
+    "all_routes_require_semantic_and_accessibility_checks": true,
+    "manual_visual_approval_required": true,
+    "minor_nonvisual_changes_may_skip_manual_screenshot_review": true,
+    "serious_accessibility_failures_block_merge": true,
+    "serious_accessibility_failures": [
+      "keyboard-trap",
+      "missing-visible-focus",
+      "invalid-heading-or-landmark-structure",
+      "missing-accessible-control-name",
+      "contrast-failure",
+      "hidden-focused-element",
+      "fixed-navigation-obscures-focus"
+    ],
+    "screenshots_use_deterministic_fixtures": true,
+    "live_data_contract_tests_are_separate": true
+  },
+  "editorial": {
+    "substantive_portfolio_claims_require_owner_approval": true,
+    "personal_narrative_requires_owner_approval": true,
+    "summary_shortening_requires_owner_approval": true
+  },
+  "protected_identity": [
+    "ramone-startup-experience",
+    "homepage-primary-hero-character",
+    "work-galleries-and-audio-evidence",
+    "writing-editorial-character",
+    "lab-purpose-specific-instruments",
+    "status-bounded-state-semantics",
+    "api-docs-openapi-authority",
+    "cv-document-gate",
+    "system-symphony-audio-behaviour"
+  ]
+}

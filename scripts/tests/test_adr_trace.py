@@ -18,14 +18,37 @@ class AdrTraceTests(unittest.TestCase):
         second, second_errors = adr_trace.build_index(ROOT)
         self.assertEqual([], first_errors)
         self.assertEqual([], second_errors)
-        self.assertEqual(6, len(first["relationships"]))
+        self.assertEqual(7, len(first["relationships"]))
         self.assertEqual(
             adr_trace.canonical_bytes(first),
             adr_trace.canonical_bytes(second),
         )
         self.assertEqual(
-            ["ADR-0001", "ADR-0002", "ADR-0003", "ADR-0004", "ADR-0006", "ADR-0007"],
+            [
+                "ADR-0001",
+                "ADR-0002",
+                "ADR-0003",
+                "ADR-0004",
+                "ADR-0006",
+                "ADR-0007",
+                "ADR-0008",
+            ],
             [item["adr"]["id"] for item in first["relationships"]],
+        )
+
+        system = next(
+            item
+            for item in first["relationships"]
+            if item["adr"]["id"] == "ADR-0008"
+        )
+        self.assertEqual("accepted", system["adr"]["status"])
+        self.assertIn(
+            "atlas-control-plane/public-interface-system/v1",
+            system["affects"]["contracts"],
+        )
+        self.assertIn(
+            "policy/public-interface-system-v2.json",
+            system["affects"]["policies"],
         )
 
     def test_legacy_slug_keeps_existing_authority_path_valid(self) -> None:
