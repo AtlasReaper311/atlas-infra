@@ -3,10 +3,10 @@ id = "ADR-0007"
 date = 2026-07-23
 status = "accepted"
 visibility = "public"
-repositories = ["AtlasReaper311/atlas-api-public", "AtlasReaper311/atlas-article-gen", "AtlasReaper311/atlas-doc-viewer", "AtlasReaper311/atlas-infra", "AtlasReaper311/atlas-scheduler", "AtlasReaper311/atlas-systems", "AtlasReaper311/ramone-edge", "AtlasReaper311/status"]
+repositories = ["AtlasReaper311/atlas-api-public", "AtlasReaper311/atlas-doc-viewer", "AtlasReaper311/atlas-infra", "AtlasReaper311/atlas-systems", "AtlasReaper311/ramone-edge", "AtlasReaper311/status"]
 services = []
-contracts = []
-policies = ["policy/atlas-owned-domains.json", "policy/public-interface-contract.json"]
+contracts = ["atlas-control-plane/public-interface-surface/v1"]
+policies = ["policy/atlas-owned-domains.json", "policy/browser-icons-v1.json", "policy/public-interface-contract.json"]
 +++
 
 # ADR-0007: Public interface contract
@@ -38,7 +38,7 @@ The homepage keeps its existing operational treatment and must not receive a dup
 
 Implementation assets remain local to each repository. Synchronised assets use deterministic manifests and checksums. Source repositories may express the contract with different markup and CSS where their product purpose requires it, but repository-native tests and the shared validator must prove the same behavioural outcomes.
 
-Generated article shell changes originate in `atlas-article-gen`, pass through `atlas-scheduler`, and reach `atlas-systems` only through the established publication path. Machine-facing endpoints remain outside the visual interface contract.
+Generated article shell changes originate in `atlas-article-gen`, pass through `atlas-scheduler`, and reach `atlas-systems` only through the established publication path. Those private authoring repositories remain outside the public repository projection and are named here only to document the protected pipeline boundary. Machine-facing endpoints remain outside the visual interface contract.
 
 ## Consequences
 
