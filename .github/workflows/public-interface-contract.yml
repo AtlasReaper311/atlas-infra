@@ -6,9 +6,13 @@ on:
       - ".github/workflows/public-interface-contract.yml"
       - "contracts/v1/public-interface/**"
       - "docs/adrs/ADR-0007-public-interface-contract.md"
+      - "docs/adrs/ADR-0008-public-interface-system-v2.md"
+      - "docs/public-interface-system-v2-audit.md"
+      - "docs/public-interface-system-v2-approved-scope.md"
       - "policy/atlas-owned-domains.json"
       - "policy/browser-icons-v1.json"
       - "policy/public-interface-contract.json"
+      - "policy/public-interface-system-v2.json"
       - "scripts/validate_browser_icons.py"
       - "scripts/validate_public_interface.py"
       - "scripts/tests/test_validate_browser_icons.py"
@@ -19,9 +23,13 @@ on:
       - ".github/workflows/public-interface-contract.yml"
       - "contracts/v1/public-interface/**"
       - "docs/adrs/ADR-0007-public-interface-contract.md"
+      - "docs/adrs/ADR-0008-public-interface-system-v2.md"
+      - "docs/public-interface-system-v2-audit.md"
+      - "docs/public-interface-system-v2-approved-scope.md"
       - "policy/atlas-owned-domains.json"
       - "policy/browser-icons-v1.json"
       - "policy/public-interface-contract.json"
+      - "policy/public-interface-system-v2.json"
       - "scripts/validate_browser_icons.py"
       - "scripts/validate_public_interface.py"
       - "scripts/tests/test_validate_browser_icons.py"
@@ -56,9 +64,11 @@ jobs:
 
           for value in [
               "contracts/v1/public-interface/public-interface-surface.schema.json",
+              "contracts/v1/public-interface/public-interface-system.schema.json",
               "policy/atlas-owned-domains.json",
               "policy/browser-icons-v1.json",
               "policy/public-interface-contract.json",
+              "policy/public-interface-system-v2.json",
           ]:
               json.loads(Path(value).read_text(encoding="utf-8"))
           PY
