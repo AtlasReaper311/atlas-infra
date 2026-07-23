@@ -1,0 +1,340 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://atlas-systems.uk/contracts/v1/public-interface/public-interface-system.schema.json",
+  "title": "Atlas Systems Public Interface System policy",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "version",
+    "status",
+    "authority",
+    "migration",
+    "vocabulary",
+    "navigation",
+    "systems_directory",
+    "lab",
+    "page_hierarchy",
+    "components",
+    "work",
+    "writing",
+    "about",
+    "visual",
+    "distribution",
+    "evidence",
+    "editorial",
+    "protected_identity"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "atlas-control-plane/public-interface-system/v1"
+    },
+    "version": {
+      "const": "2.0.0"
+    },
+    "status": {
+      "const": "accepted"
+    },
+    "authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "decision",
+        "shell_contract",
+        "governance_repository",
+        "implementation_repository"
+      ],
+      "properties": {
+        "decision": {
+          "const": "docs/adrs/ADR-0008-public-interface-system-v2.md"
+        },
+        "shell_contract": {
+          "const": "policy/public-interface-contract.json"
+        },
+        "governance_repository": {
+          "const": "AtlasReaper311/atlas-infra"
+        },
+        "implementation_repository": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "repository",
+            "state"
+          ],
+          "properties": {
+            "repository": {
+              "const": "AtlasReaper311/atlas-interface-kit"
+            },
+            "state": {
+              "enum": [
+                "approved-not-created",
+                "active"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "migration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "state",
+        "current_shell_contract_remains_active",
+        "production_rollout_requires_separate_approval",
+        "order"
+      ],
+      "properties": {
+        "state": {
+          "enum": [
+            "approved-source-only",
+            "implementation",
+            "rollout",
+            "complete"
+          ]
+        },
+        "current_shell_contract_remains_active": {
+          "type": "boolean"
+        },
+        "production_rollout_requires_separate_approval": {
+          "const": true
+        },
+        "order": {
+          "type": "array",
+          "minItems": 9,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "vocabulary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "definitions",
+        "runtime_states",
+        "initial_runtime_state",
+        "maturity_labels",
+        "maturity_is_separate_from_runtime_state",
+        "identifiers_remain_visible"
+      ],
+      "properties": {
+        "definitions": {
+          "type": "object",
+          "minProperties": 12,
+          "additionalProperties": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "runtime_states": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "operational",
+              "degraded",
+              "unavailable",
+              "unknown"
+            ]
+          }
+        },
+        "initial_runtime_state": {
+          "const": "checking"
+        },
+        "maturity_labels": {
+          "type": "array",
+          "minItems": 6,
+          "maxItems": 6,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "Production",
+              "Tool",
+              "Experiment",
+              "Preview",
+              "Planned",
+              "Retired"
+            ]
+          }
+        },
+        "maturity_is_separate_from_runtime_state": {
+          "const": true
+        },
+        "identifiers_remain_visible": {
+          "const": true
+        }
+      }
+    },
+    "navigation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "global_routes",
+        "desktop",
+        "mobile"
+      ],
+      "properties": {
+        "global_routes": {
+          "type": "array",
+          "minItems": 5,
+          "maxItems": 5,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "label",
+              "url"
+            ],
+            "properties": {
+              "label": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string",
+                "format": "uri",
+                "pattern": "^https://"
+              }
+            }
+          }
+        },
+        "desktop": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "left",
+            "centre",
+            "right",
+            "status_display",
+            "status_healthy_label",
+            "status_link",
+            "status_action",
+            "search_control"
+          ],
+          "properties": {
+            "left": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "centre": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "right": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "status_display": {
+              "const": "state-only"
+            },
+            "status_healthy_label": {
+              "const": "Operational"
+            },
+            "status_link": {
+              "const": "https://status.atlas-systems.uk/"
+            },
+            "status_action": {
+              "const": "direct-navigation"
+            },
+            "search_control": {
+              "const": "compact-button-with-shortcut"
+            }
+          }
+        },
+        "mobile": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "primary_navigation",
+            "header",
+            "active_route_required",
+            "must_not_obscure_content_or_focus"
+          ],
+          "properties": {
+            "primary_navigation": {
+              "const": "bottom-navigation"
+            },
+            "header": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "active_route_required": {
+              "const": true
+            },
+            "must_not_obscure_content_or_focus": {
+              "const": true
+            }
+          }
+        }
+      }
+    },
+    "systems_directory": {
+      "$ref": "#/$defs/freeObject"
+    },
+    "lab": {
+      "$ref": "#/$defs/freeObject"
+    },
+    "page_hierarchy": {
+      "type": "array",
+      "minItems": 9,
+      "maxItems": 9,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "components": {
+      "$ref": "#/$defs/freeObject"
+    },
+    "work": {
+      "$ref": "#/$defs/freeObject"
+    },
+    "writing": {
+      "$ref": "#/$defs/freeObject"
+    },
+    "about": {
+      "$ref": "#/$defs/freeObject"
+    },
+    "visual": {
+      "$ref": "#/$defs/freeObject"
+    },
+    "distribution": {
+      "$ref": "#/$defs/freeObject"
+    },
+    "evidence": {
+      "$ref": "#/$defs/freeObject"
+    },
+    "editorial": {
+      "$ref": "#/$defs/freeObject"
+    },
+    "protected_identity": {
+      "type": "array",
+      "minItems": 9,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "$defs": {
+    "freeObject": {
+      "type": "object",
+      "minProperties": 1
+    }
+  }
+}
