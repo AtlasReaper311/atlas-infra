@@ -1,0 +1,173 @@
+{
+  "schema_version": "atlas-control-plane/public-interface-contract/v1",
+  "version": "1.0.0",
+  "status": "accepted",
+  "baseline": {
+    "accessibility": "WCAG 2.2 AA",
+    "runtime_assets": "repository-local",
+    "javascript": "vanilla-unless-repository-established-otherwise",
+    "free_tier_required": true
+  },
+  "global_header": {
+    "wordmark": "Atlas Systems",
+    "routes": [
+      {
+        "label": "Work",
+        "url": "https://atlas-systems.uk/work/"
+      },
+      {
+        "label": "Writing",
+        "url": "https://atlas-systems.uk/writing/"
+      },
+      {
+        "label": "Lab",
+        "url": "https://atlas-systems.uk/lab/"
+      },
+      {
+        "label": "About",
+        "url": "https://atlas-systems.uk/about/"
+      }
+    ],
+    "search_required": true,
+    "non_home_status_required": true,
+    "homepage_duplicate_status_forbidden": true
+  },
+  "status_indicator": {
+    "source": "https://api.atlas-systems.uk/v1/stats",
+    "fields": [
+      "estate.operational",
+      "estate.total_components",
+      "estate.checked_at"
+    ],
+    "stale_after_seconds": 1200,
+    "link": "https://status.atlas-systems.uk/",
+    "labels": {
+      "initial": "checking",
+      "all_operational": "nominal",
+      "partial_majority_operational": "degraded",
+      "half_or_fewer_operational": "unavailable",
+      "missing_invalid_failed_or_stale": "unknown"
+    },
+    "aria_live": "off"
+  },
+  "estate_search": {
+    "required": true,
+    "production_primary_endpoint": "https://api.atlas-systems.uk/v1/search",
+    "runtime_distribution": "versioned-repository-local-copy",
+    "remote_shared_script_forbidden": true,
+    "failure_state_required": true,
+    "keyboard": [
+      "Control+K",
+      "Meta+K",
+      "/",
+      "Escape",
+      "ArrowDown",
+      "ArrowUp",
+      "Enter",
+      "Tab"
+    ]
+  },
+  "lab": {
+    "ramone_first_major_experience": true,
+    "contextual_navigation_after_ramone": true,
+    "contextual_navigation_replaces_global_navigation": false
+  },
+  "link_policy": {
+    "domains_authority": "policy/atlas-owned-domains.json",
+    "atlas_owned_html_target": "same-tab",
+    "external_target": "_blank",
+    "external_rel": "noopener noreferrer"
+  },
+  "browser_icons": {
+    "canonical_manifest": "policy/browser-icons-v1.json",
+    "local_copy_required": true,
+    "required_files": [
+      "favicon.ico",
+      "favicon-16x16.png",
+      "favicon-32x32.png",
+      "apple-touch-icon.png",
+      "android-chrome-192x192.png",
+      "android-chrome-512x512.png",
+      "site.webmanifest"
+    ],
+    "logo_redesign_forbidden_without_approval": true
+  },
+  "metadata": {
+    "required": [
+      "title",
+      "description",
+      "canonical",
+      "theme-color",
+      "icons",
+      "og:type",
+      "og:title",
+      "og:description",
+      "og:url",
+      "og:site_name",
+      "og:image",
+      "og:image:width",
+      "og:image:height",
+      "og:image:alt",
+      "twitter:card",
+      "twitter:title",
+      "twitter:description",
+      "twitter:image"
+    ],
+    "cv_robots": "noindex, follow",
+    "error_page_robots": "noindex, nofollow",
+    "unsupported_claims_forbidden": true,
+    "private_architecture_forbidden": true
+  },
+  "interaction": {
+    "visible_focus": true,
+    "focus_outline": "2px solid #f5a623",
+    "focus_outline_offset_px": 3,
+    "minimum_touch_target_px": 24,
+    "preferred_touch_target_px": 44,
+    "reduced_motion_required": true,
+    "fixed_navigation_must_not_obscure_focus": true
+  },
+  "readability": {
+    "long_form_body_font_px": 15,
+    "long_form_line_height": 1.8,
+    "long_form_max_width_px": 720,
+    "required_text_uses_faint_token": false,
+    "route_specific_evidence_required": true
+  },
+  "footers": {
+    "identical_footer_required": false,
+    "purpose_specific": true,
+    "estate_escape_required": true,
+    "shared_link_and_focus_rules": true
+  },
+  "generated_content": {
+    "article_generator": "AtlasReaper311/atlas-article-gen",
+    "publisher": "AtlasReaper311/atlas-scheduler",
+    "published_repository": "AtlasReaper311/atlas-systems",
+    "hand_edit_generated_article_html_forbidden": true,
+    "scheduler_markers_must_remain_intact": true
+  },
+  "protected_boundaries": [
+    "security-headers-and-csp",
+    "public-private-boundary",
+    "homepage-semantic-state-ownership",
+    "transition-driven-accessibility-announcements",
+    "proof-chain-schema",
+    "api-and-telemetry-contracts",
+    "audio-systems",
+    "ramone-operational-behaviour",
+    "publishing-ownership",
+    "deployment-and-automation"
+  ],
+  "excluded_machine_surfaces": [
+    "json-api",
+    "health-endpoint",
+    "meta-endpoint",
+    "registry-response",
+    "topology-response",
+    "trace-response",
+    "reliability-response",
+    "badge-response",
+    "openapi-document"
+  ]
+}

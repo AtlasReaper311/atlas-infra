@@ -1,0 +1,104 @@
+name: Public interface contract
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/public-interface-contract.yml"
+      - "contracts/v1/public-interface/**"
+      - "docs/adrs/ADR-0007-public-interface-contract.md"
+      - "policy/atlas-owned-domains.json"
+      - "policy/browser-icons-v1.json"
+      - "policy/public-interface-contract.json"
+      - "scripts/validate_browser_icons.py"
+      - "scripts/validate_public_interface.py"
+      - "scripts/tests/test_validate_browser_icons.py"
+      - "scripts/tests/test_validate_public_interface.py"
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/public-interface-contract.yml"
+      - "contracts/v1/public-interface/**"
+      - "docs/adrs/ADR-0007-public-interface-contract.md"
+      - "policy/atlas-owned-domains.json"
+      - "policy/browser-icons-v1.json"
+      - "policy/public-interface-contract.json"
+      - "scripts/validate_browser_icons.py"
+      - "scripts/validate_public_interface.py"
+      - "scripts/tests/test_validate_browser_icons.py"
+      - "scripts/tests/test_validate_public_interface.py"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.repository }}-public-interface-contract-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Validate public interface authority
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0, Node 24
+
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0, Node 24
+        with:
+          python-version: "3.12"
+
+      - name: Parse committed JSON
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          for value in [
+              "contracts/v1/public-interface/public-interface-surface.schema.json",
+              "policy/atlas-owned-domains.json",
+              "policy/browser-icons-v1.json",
+              "policy/public-interface-contract.json",
+          ]:
+              json.loads(Path(value).read_text(encoding="utf-8"))
+          PY
+
+      - name: Compile validators
+        run: |
+          set -euo pipefail
+          python3 -m py_compile \
+            scripts/validate_browser_icons.py \
+            scripts/validate_public_interface.py
+
+      - name: Validate committed authority
+        run: |
+          set -euo pipefail
+          python3 scripts/validate_public_interface.py \
+            --root . \
+            --report /tmp/public-interface-contract.json
+          python3 scripts/validate_browser_icons.py
+
+      - name: Run unit tests
+        run: |
+          set -euo pipefail
+          python3 -m unittest \
+            scripts.tests.test_validate_browser_icons \
+            scripts.tests.test_validate_public_interface \
+            -v
+
+      - name: Validate ADR traceability
+        run: |
+          set -euo pipefail
+          python3 scripts/adr_trace.py check --root .
+
+      - name: Check whitespace
+        run: git diff --check
+
+      - name: Upload contract report
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: public-interface-contract-report
+          path: /tmp/public-interface-contract.json
+          if-no-files-found: warn
+          retention-days: 7

@@ -1,0 +1,76 @@
+{
+  "schema_version": "atlas-control-plane/browser-icons/v1",
+  "version": "1.0.0",
+  "status": "accepted",
+  "source": {
+    "repository": "AtlasReaper311/atlas-systems",
+    "commit": "36a74e6893fe2469805b269102faf9b29b43c3b2"
+  },
+  "binary_assets": [
+    {
+      "target": "favicon.ico",
+      "source_path": "favicon.ico",
+      "git_blob_sha1": "2468910ca2d8dc84ca514ea523c1a84c00f6d461",
+      "content_type": "image/x-icon"
+    },
+    {
+      "target": "favicon-16x16.png",
+      "source_path": "favicon_io/favicon-16x16.png",
+      "git_blob_sha1": "5ba64366a4505a2f035b681e09397fbd9b7aa151",
+      "content_type": "image/png",
+      "dimensions": [16, 16]
+    },
+    {
+      "target": "favicon-32x32.png",
+      "source_path": "favicon_io/favicon-32x32.png",
+      "git_blob_sha1": "75c3a6deeeb99084adb68a72723100888aefb444",
+      "content_type": "image/png",
+      "dimensions": [32, 32]
+    },
+    {
+      "target": "apple-touch-icon.png",
+      "source_path": "favicon_io/apple-touch-icon.png",
+      "git_blob_sha1": "d609442d082dab39173f3af3b330717c3b85961e",
+      "content_type": "image/png",
+      "dimensions": [180, 180]
+    },
+    {
+      "target": "android-chrome-192x192.png",
+      "source_path": "favicon_io/android-chrome-192x192.png",
+      "git_blob_sha1": "3b61207a3b6117c12c1c49ba7cab234dd8f87830",
+      "content_type": "image/png",
+      "dimensions": [192, 192]
+    },
+    {
+      "target": "android-chrome-512x512.png",
+      "source_path": "favicon_io/android-chrome-512x512.png",
+      "git_blob_sha1": "fcaa170e5d0c47a0a416d1069d4c829fdd4b4f56",
+      "content_type": "image/png",
+      "dimensions": [512, 512]
+    }
+  ],
+  "manifest_contract": {
+    "target": "site.webmanifest",
+    "required_fields": [
+      "name",
+      "short_name",
+      "icons",
+      "theme_color",
+      "background_color",
+      "display"
+    ],
+    "theme_color": "#0a0a0f",
+    "background_color": "#0a0a0f",
+    "required_icon_sizes": [
+      "192x192",
+      "512x512"
+    ],
+    "product_specific_names_allowed": true
+  },
+  "distribution": {
+    "runtime": "repository-local",
+    "synchronization": "copy exact binary assets from the pinned source commit",
+    "drift_detection": "compare Git blob SHA-1 values and validate the local web manifest contract",
+    "remote_runtime_dependency_forbidden": true
+  }
+}

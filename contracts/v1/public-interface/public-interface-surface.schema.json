@@ -1,0 +1,139 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://atlas-systems.uk/contracts/v1/public-interface/public-interface-surface.schema.json",
+  "title": "Atlas Systems public interface surface manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "repository",
+    "surfaces"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "atlas-control-plane/public-interface-surface/v1"
+    },
+    "repository": {
+      "type": "string",
+      "pattern": "^AtlasReaper311/[A-Za-z0-9._-]+$"
+    },
+    "surfaces": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/surface"
+      }
+    },
+    "machine_surface_exclusions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    }
+  },
+  "$defs": {
+    "surface": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "url",
+        "source",
+        "kind",
+        "indexing",
+        "global_header",
+        "search",
+        "status_indicator",
+        "icons",
+        "metadata",
+        "footer",
+        "link_policy"
+      ],
+      "properties": {
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^https://"
+        },
+        "source": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "enum": [
+            "homepage",
+            "standard",
+            "lab-home",
+            "lab-tool",
+            "article",
+            "status",
+            "cv",
+            "product",
+            "api-docs",
+            "error"
+          ]
+        },
+        "indexing": {
+          "enum": [
+            "index",
+            "noindex, follow",
+            "noindex, nofollow"
+          ]
+        },
+        "global_header": {
+          "type": "boolean"
+        },
+        "search": {
+          "type": "boolean"
+        },
+        "status_indicator": {
+          "enum": [
+            "homepage-owned",
+            "aggregate-link",
+            "none"
+          ]
+        },
+        "contextual_navigation": {
+          "type": "boolean"
+        },
+        "icons": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "metadata": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "footer": {
+          "type": "string",
+          "minLength": 1
+        },
+        "link_policy": {
+          "const": "atlas-owned-same-tab-external-safe-new-tab"
+        },
+        "generated_owner": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  }
+}
