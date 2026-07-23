@@ -9,8 +9,11 @@ on:
       - "policy/gardener-automation.json"
       - "policy/gardener-automation.schema.json"
       - "policy/gardener-github-app-coverage.json"
+      - "policy/gardener-target-readiness.json"
       - "scripts/validate_gardener_automation.py"
+      - "scripts/validate_gardener_target_readiness.py"
       - "scripts/tests/test_validate_gardener_automation.py"
+      - "scripts/tests/test_validate_gardener_target_readiness.py"
       - ".github/workflows/gardener-automation-authority.yml"
   push:
     branches: [main]
@@ -21,8 +24,11 @@ on:
       - "policy/gardener-automation.json"
       - "policy/gardener-automation.schema.json"
       - "policy/gardener-github-app-coverage.json"
+      - "policy/gardener-target-readiness.json"
       - "scripts/validate_gardener_automation.py"
+      - "scripts/validate_gardener_target_readiness.py"
       - "scripts/tests/test_validate_gardener_automation.py"
+      - "scripts/tests/test_validate_gardener_target_readiness.py"
       - ".github/workflows/gardener-automation-authority.yml"
   workflow_dispatch:
 
@@ -57,26 +63,31 @@ jobs:
               "contracts/v1/gardener/gardener-finding-bundle.schema.json",
               "policy/gardener-automation.json",
               "policy/gardener-automation.schema.json",
+              "policy/gardener-target-readiness.json",
           ]
           for value in paths:
               json.loads(Path(value).read_text(encoding="utf-8"))
           PY
 
-      - name: Compile authority validator
+      - name: Compile authority validators
         run: |
           set -euo pipefail
           python3 -m py_compile scripts/validate_gardener_automation.py
+          python3 -m py_compile scripts/validate_gardener_target_readiness.py
 
       - name: Validate committed authority
         run: |
           set -euo pipefail
           python3 scripts/validate_gardener_automation.py \
             --report /tmp/gardener-automation-authority.json
+          python3 scripts/validate_gardener_target_readiness.py \
+            --report /tmp/gardener-target-readiness.json
 
       - name: Run authority unit tests
         run: |
           set -euo pipefail
           python3 -m unittest scripts.tests.test_validate_gardener_automation -v
+          python3 -m unittest scripts.tests.test_validate_gardener_target_readiness -v
 
       - name: Validate ADR traceability
         run: |
