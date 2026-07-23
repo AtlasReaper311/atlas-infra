@@ -53,9 +53,35 @@ Evidence:
 
 The target gate and independent native auto-merge barrier both completed successfully. The refusal cleanup step was skipped, and GitHub merged the exact Gardener App proposal without a manual merge action.
 
-This proves the GitHub control path from attested Finding through controller approval, App-authored pull request, repository CI, target-owned validation, native auto-merge, exact merge result, and disabled cleanup. It does not prove a deployment, live service health, notification delivery, or any non-GitHub provider state.
+## Verified bounded production proof
 
-Future canaries must use the structured verifier in `AtlasReaper311/atlas-gardener` rather than matching exact strings in aggregated workflow logs.
+The first bounded batch-one `automerge-low-risk` proof was verified on 23 July 2026 against `AtlasReaper311/specular-sonify`.
+
+Evidence:
+
+- controller run: `AtlasReaper311/atlas-gardener` run `29972373628`;
+- target pull request: `AtlasReaper311/specular-sonify#9`;
+- reviewed head: `2daa1b41a2aa832dba1e8260cc8febac32d8d3d9`;
+- target gate run: `29972390426`;
+- automatic squash merge: `33ebfca292c6a099f3face8b04f244942d19f2dc`;
+- exact result: a blank separator and `.DS_Store` added to `.gitignore`;
+- deployment classification: `not-applicable`, because the repository has no push-to-main deployment workflow and the patch changes no runtime source or configuration;
+- final safety state: controller mode disabled, write gate disabled, write targets empty, audit handoff disabled, target auto-merge variable false, and repository native auto-merge false.
+
+The proof exposed three permanent verification requirements: bind jobs to the exact Actions `run_attempt`, accept both authority-approved `.DS_Store` patch forms, and classify deployment evidence rather than assuming every merge deploys.
+
+## Production readiness
+
+Before enabling a target batch, run the committed source-policy validator and the read-only target-readiness verifier. Every target must have:
+
+- the pinned target-owned Gardener caller;
+- its declared repository CI check required on `main`;
+- `Gardener native auto-merge barrier` required on `main`;
+- squash merge enabled;
+- repository native auto-merge disabled at rest;
+- `ATLAS_GARDENER_AUTOMERGE_ENABLED=false` at rest.
+
+The scheduled production cadence is Monday audit ingestion at `08:41 UTC`, followed by controller reconciliation at `10:15 UTC`. Manual dispatch remains available. Do not enable a daily controller against a thirty-six-hour Finding lifetime.
 
 ## Recovery
 
@@ -68,4 +94,4 @@ Restore service in stages:
 5. expand to a limited repository batch;
 6. expand to the verified 20-repository public runtime set.
 
-A merged source change, successful dry run, target workflow installation, or enabled repository setting does not prove live automatic operation. Live completion requires one real eligible Finding, automatic pull-request creation, required target CI, automatic squash merge, result notification, and bounded evidence.
+A merged source change, successful dry run, target workflow installation, or enabled repository setting does not prove live automatic operation. Live completion requires one real eligible Finding, automatic pull-request creation, required target CI, automatic squash merge, result notification, bounded evidence, and an explicit deployment classification.

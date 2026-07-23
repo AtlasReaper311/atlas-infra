@@ -132,9 +132,9 @@
   "evidence_retention_days": 30,
   "notification_cooldown_hours": 24,
   "scheduling": {
-    "controller_cron": "15 10 * * *",
+    "controller_cron": "15 10 * * 1",
     "audit_cron": "41 8 * * 1",
     "monday_ingest": true,
-    "daily_reconciliation": true
+    "daily_reconciliation": false
   }
 }
