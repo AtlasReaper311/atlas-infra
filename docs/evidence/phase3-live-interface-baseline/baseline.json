@@ -1,0 +1,1045 @@
+{
+  "schema_version": "atlas-systems/phase3-live-interface-baseline/v1",
+  "generated_at": "2026-07-24T19:40:12.927Z",
+  "budget_policy": "measurement-only; blocking thresholds are deferred until owner review",
+  "targets": [
+    {
+      "id": "atlas-home",
+      "label": "Atlas Systems home",
+      "url": "https://atlas-systems.uk/",
+      "headers": {
+        "ok": true,
+        "status": 200,
+        "final_url": "https://atlas-systems.uk/?phase3-audit=1784922012927",
+        "headers": {
+          "cache-control": "no-cache, max-age=0, must-revalidate",
+          "content-security-policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://static.cloudflareinsights.com; worker-src 'self' blob:; style-src 'self' 'unsafe-inline'; font-src 'self'; connect-src 'self' https://api.atlas-systems.uk https://ramone.atlas-systems.uk https://corpus.atlas-systems.uk https://static.cloudflareinsights.com; img-src 'self' data: https://res.cloudinary.com;",
+          "content-type": "text/html; charset=utf-8",
+          "permissions-policy": "camera=(), microphone=(), geolocation=()",
+          "referrer-policy": "strict-origin-when-cross-origin",
+          "strict-transport-security": "max-age=31536000; includeSubDomains",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY"
+        },
+        "missing_security_headers": []
+      },
+      "profiles": {
+        "chromium-desktop": {
+          "ok": true,
+          "status": 200,
+          "final_url": "https://atlas-systems.uk/?phase3-browser=1784922013364",
+          "screenshot": "screenshots/atlas-home-chromium-desktop.png",
+          "document": {
+            "title": "Atlas Systems",
+            "lang": "en",
+            "h1_count": 1,
+            "main_count": 1,
+            "horizontal_overflow_px": 0,
+            "active_element": "BODY"
+          },
+          "accessibility": {
+            "violation_count": 0,
+            "affected_node_count": 0,
+            "impact_counts": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0,
+              "unknown": 0
+            },
+            "violations": []
+          },
+          "performance": {
+            "response_start_ms": 77,
+            "dom_content_loaded_ms": 288,
+            "load_event_ms": 388,
+            "first_contentful_paint_ms": 220,
+            "request_count": 39,
+            "transfer_size_bytes": 137008,
+            "encoded_body_bytes": 128908,
+            "decoded_body_bytes": 245274
+          },
+          "console_errors": [],
+          "page_errors": [],
+          "failed_requests": []
+        },
+        "chromium-mobile": {
+          "ok": true,
+          "status": 200,
+          "final_url": "https://atlas-systems.uk/?phase3-browser=1784922017136",
+          "screenshot": "screenshots/atlas-home-chromium-mobile.png",
+          "document": {
+            "title": "Atlas Systems",
+            "lang": "en",
+            "h1_count": 1,
+            "main_count": 1,
+            "horizontal_overflow_px": 0,
+            "active_element": "BODY"
+          },
+          "accessibility": {
+            "violation_count": 0,
+            "affected_node_count": 0,
+            "impact_counts": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0,
+              "unknown": 0
+            },
+            "violations": []
+          },
+          "performance": null,
+          "console_errors": [],
+          "page_errors": [],
+          "failed_requests": []
+        },
+        "firefox-desktop": {
+          "ok": true,
+          "status": 200,
+          "final_url": "https://atlas-systems.uk/?phase3-browser=1784922021709",
+          "screenshot": "screenshots/atlas-home-firefox-desktop.png",
+          "document": {
+            "title": "Atlas Systems",
+            "lang": "en",
+            "h1_count": 1,
+            "main_count": 1,
+            "horizontal_overflow_px": 0,
+            "active_element": "BODY"
+          },
+          "accessibility": {
+            "violation_count": 0,
+            "affected_node_count": 0,
+            "impact_counts": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0,
+              "unknown": 0
+            },
+            "violations": []
+          },
+          "performance": null,
+          "console_errors": [],
+          "page_errors": [],
+          "failed_requests": []
+        }
+      }
+    },
+    {
+      "id": "atlas-systems",
+      "label": "Systems directory",
+      "url": "https://atlas-systems.uk/systems/",
+      "headers": {
+        "ok": true,
+        "status": 200,
+        "final_url": "https://atlas-systems.uk/systems/?phase3-audit=1784922025906",
+        "headers": {
+          "cache-control": "no-cache, max-age=0, must-revalidate",
+          "content-security-policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://static.cloudflareinsights.com; worker-src 'self' blob:; style-src 'self' 'unsafe-inline'; font-src 'self'; connect-src 'self' https://api.atlas-systems.uk https://ramone.atlas-systems.uk https://corpus.atlas-systems.uk https://static.cloudflareinsights.com; img-src 'self' data: https://res.cloudinary.com;",
+          "content-type": "text/html; charset=utf-8",
+          "permissions-policy": "camera=(), microphone=(), geolocation=()",
+          "referrer-policy": "strict-origin-when-cross-origin",
+          "strict-transport-security": "max-age=31536000; includeSubDomains",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY"
+        },
+        "missing_security_headers": []
+      },
+      "profiles": {
+        "chromium-desktop": {
+          "ok": true,
+          "status": 200,
+          "final_url": "https://atlas-systems.uk/systems/?phase3-browser=1784922026092",
+          "screenshot": "screenshots/atlas-systems-chromium-desktop.png",
+          "document": {
+            "title": "Systems // Atlas Systems",
+            "lang": "en",
+            "h1_count": 1,
+            "main_count": 1,
+            "horizontal_overflow_px": 0,
+            "active_element": "BODY"
+          },
+          "accessibility": {
+            "violation_count": 0,
+            "affected_node_count": 0,
+            "impact_counts": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0,
+              "unknown": 0
+            },
+            "violations": []
+          },
+          "performance": {
+            "response_start_ms": 66,
+            "dom_content_loaded_ms": 200,
+            "load_event_ms": 247,
+            "first_contentful_paint_ms": 204,
+            "request_count": 21,
+            "transfer_size_bytes": 101711,
+            "encoded_body_bytes": 96011,
+            "decoded_body_bytes": 207669
+          },
+          "console_errors": [],
+          "page_errors": [],
+          "failed_requests": []
+        },
+        "chromium-mobile": {
+          "ok": true,
+          "status": 200,
+          "final_url": "https://atlas-systems.uk/systems/?phase3-browser=1784922029962",
+          "screenshot": "screenshots/atlas-systems-chromium-mobile.png",
+          "document": {
+            "title": "Systems // Atlas Systems",
+            "lang": "en",
+            "h1_count": 1,
+            "main_count": 1,
+            "horizontal_overflow_px": 0,
+            "active_element": "BODY"
+          },
+          "accessibility": {
+            "violation_count": 0,
+            "affected_node_count": 0,
+            "impact_counts": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0,
+              "unknown": 0
+            },
+            "violations": []
+          },
+          "performance": null,
+          "console_errors": [],
+          "page_errors": [],
+          "failed_requests": []
+        },
+        "firefox-desktop": {
+          "ok": true,
+          "status": 200,
+          "final_url": "https://atlas-systems.uk/systems/?phase3-browser=1784922035065",
+          "screenshot": "screenshots/atlas-systems-firefox-desktop.png",
+          "document": {
+            "title": "Systems // Atlas Systems",
+            "lang": "en",
+            "h1_count": 1,
+            "main_count": 1,
+            "horizontal_overflow_px": 0,
+            "active_element": "BODY"
+          },
+          "accessibility": {
+            "violation_count": 0,
+            "affected_node_count": 0,
+            "impact_counts": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0,
+              "unknown": 0
+            },
+            "violations": []
+          },
+          "performance": null,
+          "console_errors": [],
+          "page_errors": [],
+          "failed_requests": []
+        }
+      }
+    },
+    {
+      "id": "atlas-proof-chain",
+      "label": "Proof Chain",
+      "url": "https://atlas-systems.uk/lab/proof-chain/",
+      "headers": {
+        "ok": true,
+        "status": 200,
+        "final_url": "https://atlas-systems.uk/lab/proof-chain/?phase3-audit=1784922039129",
+        "headers": {
+          "cache-control": "no-cache, max-age=0, must-revalidate",
+          "content-security-policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://static.cloudflareinsights.com; worker-src 'self' blob:; style-src 'self' 'unsafe-inline'; font-src 'self'; connect-src 'self' https://api.atlas-systems.uk https://ramone.atlas-systems.uk https://corpus.atlas-systems.uk https://static.cloudflareinsights.com; img-src 'self' data: https://res.cloudinary.com;",
+          "content-type": "text/html; charset=utf-8",
+          "permissions-policy": "camera=(), microphone=(), geolocation=()",
+          "referrer-policy": "strict-origin-when-cross-origin",
+          "strict-transport-security": "max-age=31536000; includeSubDomains",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY"
+        },
+        "missing_security_headers": []
+      },
+      "profiles": {
+        "chromium-desktop": {
+          "ok": true,
+          "status": 200,
+          "final_url": "https://atlas-systems.uk/lab/proof-chain/?phase3-browser=1784922039318&service=atlas-api-index",
+          "screenshot": "screenshots/atlas-proof-chain-chromium-desktop.png",
+          "document": {
+            "title": "Proof Chain // Atlas Systems",
+            "lang": "en",
+            "h1_count": 1,
+            "main_count": 1,
+            "horizontal_overflow_px": 0,
+            "active_element": "BODY"
+          },
+          "accessibility": {
+            "violation_count": 0,
+            "affected_node_count": 0,
+            "impact_counts": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0,
+              "unknown": 0
+            },
+            "violations": []
+          },
+          "performance": {
+            "response_start_ms": 40,
+            "dom_content_loaded_ms": 270,
+            "load_event_ms": 278,
+            "first_contentful_paint_ms": 188,
+            "request_count": 26,
+            "transfer_size_bytes": 102865,
+            "encoded_body_bytes": 96565,
+            "decoded_body_bytes": 193705
+          },
+          "console_errors": [],
+          "page_errors": [],
+          "failed_requests": []
+        },
+        "chromium-mobile": {
+          "ok": true,
+          "status": 200,
+          "final_url": "https://atlas-systems.uk/lab/proof-chain/?phase3-browser=1784922042701&service=atlas-api-index",
+          "screenshot": "screenshots/atlas-proof-chain-chromium-mobile.png",
+          "document": {
+            "title": "Proof Chain // Atlas Systems",
+            "lang": "en",
+            "h1_count": 1,
+            "main_count": 1,
+            "horizontal_overflow_px": 0,
+            "active_element": "BODY"
+          },
+          "accessibility": {
+            "violation_count": 0,
+            "affected_node_count": 0,
+            "impact_counts": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0,
+              "unknown": 0
+            },
+            "violations": []
+          },
+          "performance": null,
+          "console_errors": [],
+          "page_errors": [],
+          "failed_requests": []
+        },
+        "firefox-desktop": {
+          "ok": true,
+          "status": 200,
+          "final_url": "https://atlas-systems.uk/lab/proof-chain/?phase3-browser=1784922046877&service=atlas-api-index",
+          "screenshot": "screenshots/atlas-proof-chain-firefox-desktop.png",
+          "document": {
+            "title": "Proof Chain // Atlas Systems",
+            "lang": "en",
+            "h1_count": 1,
+            "main_count": 1,
+            "horizontal_overflow_px": 0,
+            "active_element": "BODY"
+          },
+          "accessibility": {
+            "violation_count": 0,
+            "affected_node_count": 0,
+            "impact_counts": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0,
+              "unknown": 0
+            },
+            "violations": []
+          },
+          "performance": null,
+          "console_errors": [],
+          "page_errors": [],
+          "failed_requests": []
+        }
+      }
+    },
+    {
+      "id": "status",
+      "label": "Status",
+      "url": "https://status.atlas-systems.uk/",
+      "headers": {
+        "ok": true,
+        "status": 200,
+        "final_url": "https://status.atlas-systems.uk/?phase3-audit=1784922050721",
+        "headers": {
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-security-policy": "default-src 'self'; base-uri 'self'; connect-src 'self' https://api.atlas-systems.uk; font-src 'self'; form-action 'none'; frame-ancestors 'none'; img-src 'self' data:; object-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'",
+          "content-type": "text/html; charset=utf-8",
+          "permissions-policy": "camera=(), geolocation=(), microphone=(), payment=(), usb=()",
+          "referrer-policy": "no-referrer",
+          "strict-transport-security": "max-age=63072000; includeSubDomains",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY"
+        },
+        "missing_security_headers": []
+      },
+      "profiles": {
+        "chromium-desktop": {
+          "ok": true,
+          "status": 200,
+          "final_url": "https://status.atlas-systems.uk/?phase3-browser=1784922050979",
+          "screenshot": "screenshots/status-chromium-desktop.png",
+          "document": {
+            "title": "Status // Atlas Systems",
+            "lang": "en",
+            "h1_count": 1,
+            "main_count": 1,
+            "horizontal_overflow_px": 0,
+            "active_element": "BODY"
+          },
+          "accessibility": {
+            "violation_count": 1,
+            "affected_node_count": 1,
+            "impact_counts": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 1,
+              "minor": 0,
+              "unknown": 0
+            },
+            "violations": [
+              {
+                "id": "region",
+                "impact": "moderate",
+                "help": "All page content should be contained by landmarks",
+                "help_url": "https://dequeuniversity.com/rules/axe/4.12/region?application=playwright",
+                "nodes": [
+                  {
+                    "target": [
+                      ".atlas-product-strip"
+                    ],
+                    "summary": "Fix any of the following:\n  Some page content is not contained by landmarks"
+                  }
+                ]
+              }
+            ]
+          },
+          "performance": {
+            "response_start_ms": 65,
+            "dom_content_loaded_ms": 327,
+            "load_event_ms": 327,
+            "first_contentful_paint_ms": 204,
+            "request_count": 29,
+            "transfer_size_bytes": 105649,
+            "encoded_body_bytes": 101449,
+            "decoded_body_bytes": 156073
+          },
+          "console_errors": [
+            "Loading the script 'https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496' violates the following Content Security Policy directive: \"script-src 'self' 'unsafe-inline'\". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback. The action has been blocked.",
+            "Access to fetch at 'https://api.atlas-systems.uk/specular' from origin 'https://status.atlas-systems.uk' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+            "Failed to load resource: net::ERR_FAILED"
+          ],
+          "page_errors": [],
+          "failed_requests": [
+            {
+              "url": "https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496",
+              "error": "csp"
+            },
+            {
+              "url": "https://api.atlas-systems.uk/specular",
+              "error": "net::ERR_FAILED"
+            }
+          ]
+        },
+        "chromium-mobile": {
+          "ok": true,
+          "status": 200,
+          "final_url": "https://status.atlas-systems.uk/?phase3-browser=1784922054891",
+          "screenshot": "screenshots/status-chromium-mobile.png",
+          "document": {
+            "title": "Status // Atlas Systems",
+            "lang": "en",
+            "h1_count": 1,
+            "main_count": 1,
+            "horizontal_overflow_px": 0,
+            "active_element": "BODY"
+          },
+          "accessibility": {
+            "violation_count": 1,
+            "affected_node_count": 1,
+            "impact_counts": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 1,
+              "minor": 0,
+              "unknown": 0
+            },
+            "violations": [
+              {
+                "id": "region",
+                "impact": "moderate",
+                "help": "All page content should be contained by landmarks",
+                "help_url": "https://dequeuniversity.com/rules/axe/4.12/region?application=playwright",
+                "nodes": [
+                  {
+                    "target": [
+                      ".atlas-product-strip"
+                    ],
+                    "summary": "Fix any of the following:\n  Some page content is not contained by landmarks"
+                  }
+                ]
+              }
+            ]
+          },
+          "performance": null,
+          "console_errors": [
+            "Loading the script 'https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496' violates the following Content Security Policy directive: \"script-src 'self' 'unsafe-inline'\". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback. The action has been blocked.",
+            "Access to fetch at 'https://api.atlas-systems.uk/specular' from origin 'https://status.atlas-systems.uk' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+            "Failed to load resource: net::ERR_FAILED"
+          ],
+          "page_errors": [],
+          "failed_requests": [
+            {
+              "url": "https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496",
+              "error": "csp"
+            },
+            {
+              "url": "https://api.atlas-systems.uk/specular",
+              "error": "net::ERR_FAILED"
+            }
+          ]
+        },
+        "firefox-desktop": {
+          "ok": true,
+          "status": 200,
+          "final_url": "https://status.atlas-systems.uk/?phase3-browser=1784922059642",
+          "screenshot": "screenshots/status-firefox-desktop.png",
+          "document": {
+            "title": "Status // Atlas Systems",
+            "lang": "en",
+            "h1_count": 1,
+            "main_count": 1,
+            "horizontal_overflow_px": 0,
+            "active_element": "BODY"
+          },
+          "accessibility": {
+            "violation_count": 1,
+            "affected_node_count": 1,
+            "impact_counts": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 1,
+              "minor": 0,
+              "unknown": 0
+            },
+            "violations": [
+              {
+                "id": "region",
+                "impact": "moderate",
+                "help": "All page content should be contained by landmarks",
+                "help_url": "https://dequeuniversity.com/rules/axe/4.12/region?application=playwright",
+                "nodes": [
+                  {
+                    "target": [
+                      ".atlas-product-strip"
+                    ],
+                    "summary": "Fix any of the following:\n  Some page content is not contained by landmarks"
+                  }
+                ]
+              }
+            ]
+          },
+          "performance": null,
+          "console_errors": [
+            "[JavaScript Error: \"Content-Security-Policy: The page’s settings blocked a script (script-src-elem) at https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496 from being executed because it violates the following directive: “script-src 'self' 'unsafe-inline'”\" {file: \"https://status.atlas-systems.uk/?phase3-browser=1784922059642\" line: 0}]",
+            "[JavaScript Error: \"Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at https://api.atlas-systems.uk/specular. (Reason: CORS header ‘Access-Control-Allow-Origin’ missing). Status code: 200.\"]"
+          ],
+          "page_errors": [],
+          "failed_requests": []
+        }
+      }
+    },
+    {
+      "id": "ramone",
+      "label": "Ramone",
+      "url": "https://ramone.atlas-systems.uk/",
+      "headers": {
+        "ok": true,
+        "status": 200,
+        "final_url": "https://ramone.atlas-systems.uk/?phase3-audit=1784922063984",
+        "headers": {
+          "cache-control": "public, max-age=300",
+          "content-security-policy": "default-src 'none'; base-uri 'self'; connect-src 'self' https://api.atlas-systems.uk; font-src 'self'; form-action 'none'; frame-ancestors 'none'; img-src 'self' data: https://atlas-systems.uk; manifest-src 'self'; script-src 'unsafe-inline'; style-src 'unsafe-inline'",
+          "content-type": "text/html; charset=utf-8",
+          "permissions-policy": "camera=(), geolocation=(), microphone=(), payment=(), usb=()",
+          "referrer-policy": "no-referrer",
+          "strict-transport-security": "max-age=63072000; includeSubDomains",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY"
+        },
+        "missing_security_headers": []
+      },
+      "profiles": {
+        "chromium-desktop": {
+          "ok": true,
+          "status": 200,
+          "final_url": "https://ramone.atlas-systems.uk/?phase3-browser=1784922064177",
+          "screenshot": "screenshots/ramone-chromium-desktop.png",
+          "document": {
+            "title": "Ramone // Atlas Systems",
+            "lang": "en",
+            "h1_count": 1,
+            "main_count": 1,
+            "horizontal_overflow_px": 0,
+            "active_element": "BODY"
+          },
+          "accessibility": {
+            "violation_count": 0,
+            "affected_node_count": 0,
+            "impact_counts": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0,
+              "unknown": 0
+            },
+            "violations": []
+          },
+          "performance": {
+            "response_start_ms": 46,
+            "dom_content_loaded_ms": 101,
+            "load_event_ms": 153,
+            "first_contentful_paint_ms": 156,
+            "request_count": 9,
+            "transfer_size_bytes": 105918,
+            "encoded_body_bytes": 104118,
+            "decoded_body_bytes": 173974
+          },
+          "console_errors": [
+            "Loading the script 'https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496' violates the following Content Security Policy directive: \"script-src 'unsafe-inline'\". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback. The action has been blocked.",
+            "Loading the script 'https://ramone.atlas-systems.uk/cdn-cgi/challenge-platform/scripts/jsd/main.js' violates the following Content Security Policy directive: \"script-src 'unsafe-inline'\". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback. The action has been blocked."
+          ],
+          "page_errors": [],
+          "failed_requests": [
+            {
+              "url": "https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496",
+              "error": "csp"
+            },
+            {
+              "url": "https://ramone.atlas-systems.uk/cdn-cgi/challenge-platform/scripts/jsd/main.js",
+              "error": "csp"
+            }
+          ]
+        },
+        "chromium-mobile": {
+          "ok": true,
+          "status": 200,
+          "final_url": "https://ramone.atlas-systems.uk/?phase3-browser=1784922067302",
+          "screenshot": "screenshots/ramone-chromium-mobile.png",
+          "document": {
+            "title": "Ramone // Atlas Systems",
+            "lang": "en",
+            "h1_count": 1,
+            "main_count": 1,
+            "horizontal_overflow_px": 0,
+            "active_element": "BODY"
+          },
+          "accessibility": {
+            "violation_count": 0,
+            "affected_node_count": 0,
+            "impact_counts": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0,
+              "unknown": 0
+            },
+            "violations": []
+          },
+          "performance": null,
+          "console_errors": [
+            "Loading the script 'https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496' violates the following Content Security Policy directive: \"script-src 'unsafe-inline'\". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback. The action has been blocked.",
+            "Loading the script 'https://ramone.atlas-systems.uk/cdn-cgi/challenge-platform/scripts/jsd/main.js' violates the following Content Security Policy directive: \"script-src 'unsafe-inline'\". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback. The action has been blocked."
+          ],
+          "page_errors": [],
+          "failed_requests": [
+            {
+              "url": "https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496",
+              "error": "csp"
+            },
+            {
+              "url": "https://ramone.atlas-systems.uk/cdn-cgi/challenge-platform/scripts/jsd/main.js",
+              "error": "csp"
+            }
+          ]
+        },
+        "firefox-desktop": {
+          "ok": true,
+          "status": 200,
+          "final_url": "https://ramone.atlas-systems.uk/?phase3-browser=1784922071306",
+          "screenshot": "screenshots/ramone-firefox-desktop.png",
+          "document": {
+            "title": "Ramone // Atlas Systems",
+            "lang": "en",
+            "h1_count": 1,
+            "main_count": 1,
+            "horizontal_overflow_px": 0,
+            "active_element": "BODY"
+          },
+          "accessibility": {
+            "violation_count": 0,
+            "affected_node_count": 0,
+            "impact_counts": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0,
+              "unknown": 0
+            },
+            "violations": []
+          },
+          "performance": null,
+          "console_errors": [
+            "[JavaScript Error: \"Content-Security-Policy: The page’s settings blocked a script (script-src-elem) at https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496 from being executed because it violates the following directive: “script-src 'unsafe-inline'”\" {file: \"https://ramone.atlas-systems.uk/?phase3-browser=1784922071306\" line: 0}]",
+            "[JavaScript Error: \"Content-Security-Policy: The page’s settings blocked a script (script-src-elem) at https://ramone.atlas-systems.uk/cdn-cgi/challenge-platform/scripts/jsd/main.js from being executed because it violates the following directive: “script-src 'unsafe-inline'”\" {file: \"about:blank line 1943 > injectedScript\" line: 1}]"
+          ],
+          "page_errors": [],
+          "failed_requests": []
+        }
+      }
+    },
+    {
+      "id": "api-docs",
+      "label": "Public API Docs",
+      "url": "https://api.atlas-systems.uk/v1/docs",
+      "headers": {
+        "ok": true,
+        "status": 200,
+        "final_url": "https://api.atlas-systems.uk/v1/docs?phase3-audit=1784922074796",
+        "headers": {
+          "cache-control": "public, max-age=300",
+          "content-security-policy": "default-src 'none'; base-uri 'self'; connect-src 'self'; font-src 'self'; form-action 'none'; frame-ancestors 'none'; img-src 'self' data:; manifest-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'",
+          "content-type": "text/html; charset=utf-8",
+          "permissions-policy": "camera=(), geolocation=(), microphone=(), payment=(), usb=()",
+          "referrer-policy": "no-referrer",
+          "strict-transport-security": "max-age=63072000; includeSubDomains",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY"
+        },
+        "missing_security_headers": []
+      },
+      "profiles": {
+        "chromium-desktop": {
+          "ok": true,
+          "status": 200,
+          "final_url": "https://api.atlas-systems.uk/v1/docs?phase3-browser=1784922074959",
+          "screenshot": "screenshots/api-docs-chromium-desktop.png",
+          "document": {
+            "title": "Public API // Atlas Systems",
+            "lang": "en",
+            "h1_count": 1,
+            "main_count": 1,
+            "horizontal_overflow_px": 0,
+            "active_element": "BODY"
+          },
+          "accessibility": {
+            "violation_count": 1,
+            "affected_node_count": 1,
+            "impact_counts": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 1,
+              "minor": 0,
+              "unknown": 0
+            },
+            "violations": [
+              {
+                "id": "region",
+                "impact": "moderate",
+                "help": "All page content should be contained by landmarks",
+                "help_url": "https://dequeuniversity.com/rules/axe/4.12/region?application=playwright",
+                "nodes": [
+                  {
+                    "target": [
+                      ".atlas-product-strip"
+                    ],
+                    "summary": "Fix any of the following:\n  Some page content is not contained by landmarks"
+                  }
+                ]
+              }
+            ]
+          },
+          "performance": {
+            "response_start_ms": 30,
+            "dom_content_loaded_ms": 75,
+            "load_event_ms": 106,
+            "first_contentful_paint_ms": 116,
+            "request_count": 10,
+            "transfer_size_bytes": 72646,
+            "encoded_body_bytes": 70246,
+            "decoded_body_bytes": 111727
+          },
+          "console_errors": [
+            "Loading the script 'https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496' violates the following Content Security Policy directive: \"script-src 'self'\". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback. The action has been blocked.",
+            "Executing inline script violates the following Content Security Policy directive 'script-src 'self''. Either the 'unsafe-inline' keyword, a hash ('sha256-bV6fQ0oFd8jYwb9e7KfmOGFOMk/fKy8w8XJGNPpfF4s='), or a nonce ('nonce-...') is required to enable inline execution. The action has been blocked."
+          ],
+          "page_errors": [],
+          "failed_requests": [
+            {
+              "url": "https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496",
+              "error": "csp"
+            }
+          ]
+        },
+        "chromium-mobile": {
+          "ok": true,
+          "status": 200,
+          "final_url": "https://api.atlas-systems.uk/v1/docs?phase3-browser=1784922078356",
+          "screenshot": "screenshots/api-docs-chromium-mobile.png",
+          "document": {
+            "title": "Public API // Atlas Systems",
+            "lang": "en",
+            "h1_count": 1,
+            "main_count": 1,
+            "horizontal_overflow_px": 0,
+            "active_element": "BODY"
+          },
+          "accessibility": {
+            "violation_count": 1,
+            "affected_node_count": 1,
+            "impact_counts": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 1,
+              "minor": 0,
+              "unknown": 0
+            },
+            "violations": [
+              {
+                "id": "region",
+                "impact": "moderate",
+                "help": "All page content should be contained by landmarks",
+                "help_url": "https://dequeuniversity.com/rules/axe/4.12/region?application=playwright",
+                "nodes": [
+                  {
+                    "target": [
+                      ".atlas-product-strip"
+                    ],
+                    "summary": "Fix any of the following:\n  Some page content is not contained by landmarks"
+                  }
+                ]
+              }
+            ]
+          },
+          "performance": null,
+          "console_errors": [
+            "Loading the script 'https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496' violates the following Content Security Policy directive: \"script-src 'self'\". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback. The action has been blocked.",
+            "Executing inline script violates the following Content Security Policy directive 'script-src 'self''. Either the 'unsafe-inline' keyword, a hash ('sha256-xzZ2NvLRxqW5NjzyqXoqASyhLVI4cqknFwVSYnGqXyU='), or a nonce ('nonce-...') is required to enable inline execution. The action has been blocked."
+          ],
+          "page_errors": [],
+          "failed_requests": [
+            {
+              "url": "https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496",
+              "error": "csp"
+            }
+          ]
+        },
+        "firefox-desktop": {
+          "ok": true,
+          "status": 200,
+          "final_url": "https://api.atlas-systems.uk/v1/docs?phase3-browser=1784922082559",
+          "screenshot": "screenshots/api-docs-firefox-desktop.png",
+          "document": {
+            "title": "Public API // Atlas Systems",
+            "lang": "en",
+            "h1_count": 1,
+            "main_count": 1,
+            "horizontal_overflow_px": 0,
+            "active_element": "BODY"
+          },
+          "accessibility": {
+            "violation_count": 1,
+            "affected_node_count": 1,
+            "impact_counts": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 1,
+              "minor": 0,
+              "unknown": 0
+            },
+            "violations": [
+              {
+                "id": "region",
+                "impact": "moderate",
+                "help": "All page content should be contained by landmarks",
+                "help_url": "https://dequeuniversity.com/rules/axe/4.12/region?application=playwright",
+                "nodes": [
+                  {
+                    "target": [
+                      ".atlas-product-strip"
+                    ],
+                    "summary": "Fix any of the following:\n  Some page content is not contained by landmarks"
+                  }
+                ]
+              }
+            ]
+          },
+          "performance": null,
+          "console_errors": [
+            "[JavaScript Error: \"Content-Security-Policy: The page’s settings blocked an inline script (script-src-elem) from being executed because it violates the following directive: “script-src 'self'”. Consider using a hash ('sha256-pvDL9Pa6jESIj/0HQJPN2cuiPNn00gUbInIWtHoGH6I=') or a nonce.\" {file: \"https://api.atlas-systems.uk/v1/docs?phase3-browser=1784922082559\" line: 348}]",
+            "[JavaScript Error: \"Content-Security-Policy: The page’s settings blocked a script (script-src-elem) at https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496 from being executed because it violates the following directive: “script-src 'self'”\" {file: \"https://api.atlas-systems.uk/v1/docs?phase3-browser=1784922082559\" line: 0}]"
+          ],
+          "page_errors": [],
+          "failed_requests": []
+        }
+      }
+    },
+    {
+      "id": "cv",
+      "label": "CV",
+      "url": "https://cv.atlas-systems.uk/",
+      "headers": {
+        "ok": true,
+        "status": 200,
+        "final_url": "https://cv.atlas-systems.uk/?phase3-audit=1784922086372",
+        "headers": {
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-security-policy": "default-src 'self'; base-uri 'self'; connect-src 'self' https://api.atlas-systems.uk; font-src 'self'; form-action 'none'; frame-ancestors 'none'; img-src 'self' data:; object-src 'self'; script-src 'self'; style-src 'self'",
+          "content-type": "text/html; charset=utf-8",
+          "permissions-policy": "camera=(), geolocation=(), microphone=(), payment=(), usb=()",
+          "referrer-policy": "no-referrer",
+          "strict-transport-security": "max-age=63072000; includeSubDomains",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY"
+        },
+        "missing_security_headers": []
+      },
+      "profiles": {
+        "chromium-desktop": {
+          "ok": true,
+          "status": 200,
+          "final_url": "https://cv.atlas-systems.uk/?phase3-browser=1784922086565",
+          "screenshot": "screenshots/cv-chromium-desktop.png",
+          "document": {
+            "title": "CV // Atlas Systems",
+            "lang": "en",
+            "h1_count": 1,
+            "main_count": 1,
+            "horizontal_overflow_px": 0,
+            "active_element": "BODY"
+          },
+          "accessibility": {
+            "violation_count": 0,
+            "affected_node_count": 0,
+            "impact_counts": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0,
+              "unknown": 0
+            },
+            "violations": []
+          },
+          "performance": {
+            "response_start_ms": 33,
+            "dom_content_loaded_ms": 222,
+            "load_event_ms": 238,
+            "first_contentful_paint_ms": 264,
+            "request_count": 14,
+            "transfer_size_bytes": 71838,
+            "encoded_body_bytes": 68538,
+            "decoded_body_bytes": 107145
+          },
+          "console_errors": [
+            "Executing inline script violates the following Content Security Policy directive 'script-src 'self''. Either the 'unsafe-inline' keyword, a hash ('sha256-ibtGa9T5EN9jBXZG4cB+4oKL5fFOUeO5N9UkX9DjSuE='), or a nonce ('nonce-...') is required to enable inline execution. The action has been blocked.",
+            "Loading the script 'https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496' violates the following Content Security Policy directive: \"script-src 'self'\". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback. The action has been blocked."
+          ],
+          "page_errors": [],
+          "failed_requests": [
+            {
+              "url": "https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496",
+              "error": "csp"
+            }
+          ]
+        },
+        "chromium-mobile": {
+          "ok": true,
+          "status": 200,
+          "final_url": "https://cv.atlas-systems.uk/?phase3-browser=1784922089704",
+          "screenshot": "screenshots/cv-chromium-mobile.png",
+          "document": {
+            "title": "CV // Atlas Systems",
+            "lang": "en",
+            "h1_count": 1,
+            "main_count": 1,
+            "horizontal_overflow_px": 0,
+            "active_element": "BODY"
+          },
+          "accessibility": {
+            "violation_count": 0,
+            "affected_node_count": 0,
+            "impact_counts": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0,
+              "unknown": 0
+            },
+            "violations": []
+          },
+          "performance": null,
+          "console_errors": [
+            "Executing inline script violates the following Content Security Policy directive 'script-src 'self''. Either the 'unsafe-inline' keyword, a hash ('sha256-b9qq1WxxsoKcEBkjF9+xKwgC96HU5f+srsYC5w7M6/o='), or a nonce ('nonce-...') is required to enable inline execution. The action has been blocked.",
+            "Loading the script 'https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496' violates the following Content Security Policy directive: \"script-src 'self'\". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback. The action has been blocked."
+          ],
+          "page_errors": [],
+          "failed_requests": [
+            {
+              "url": "https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496",
+              "error": "csp"
+            }
+          ]
+        },
+        "firefox-desktop": {
+          "ok": true,
+          "status": 200,
+          "final_url": "https://cv.atlas-systems.uk/?phase3-browser=1784922093585",
+          "screenshot": "screenshots/cv-firefox-desktop.png",
+          "document": {
+            "title": "CV // Atlas Systems",
+            "lang": "en",
+            "h1_count": 1,
+            "main_count": 1,
+            "horizontal_overflow_px": 0,
+            "active_element": "BODY"
+          },
+          "accessibility": {
+            "violation_count": 0,
+            "affected_node_count": 0,
+            "impact_counts": {
+              "critical": 0,
+              "serious": 0,
+              "moderate": 0,
+              "minor": 0,
+              "unknown": 0
+            },
+            "violations": []
+          },
+          "performance": null,
+          "console_errors": [
+            "[JavaScript Error: \"Content-Security-Policy: The page’s settings blocked an inline script (script-src-elem) from being executed because it violates the following directive: “script-src 'self'”. Consider using a hash ('sha256-FfqEW4Im46urXtyq0l7BmpERLvpvwHNouF47b0srcRc=') or a nonce.\" {file: \"https://cv.atlas-systems.uk/?phase3-browser=1784922093585\" line: 157}]",
+            "[JavaScript Error: \"Content-Security-Policy: The page’s settings blocked a script (script-src-elem) at https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496 from being executed because it violates the following directive: “script-src 'self'”\" {file: \"https://cv.atlas-systems.uk/?phase3-browser=1784922093585\" line: 0}]"
+          ],
+          "page_errors": [],
+          "failed_requests": []
+        }
+      }
+    }
+  ]
+}
