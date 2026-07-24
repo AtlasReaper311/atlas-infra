@@ -19,8 +19,8 @@ class PublicInterfaceImplementationStateTests(unittest.TestCase):
         self.assertEqual("active", implementation["state"])
         self.assertEqual("active", self.system["distribution"]["implementation_owner_state"])
 
-    def test_migration_has_entered_implementation(self) -> None:
-        self.assertEqual("implementation", self.system["migration"]["state"])
+    def test_approved_migration_is_complete(self) -> None:
+        self.assertEqual("complete", self.system["migration"]["state"])
         self.assertTrue(self.system["migration"]["current_shell_contract_remains_active"])
         self.assertTrue(
             self.system["migration"]["production_rollout_requires_separate_approval"]

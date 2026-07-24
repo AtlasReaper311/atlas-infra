@@ -412,7 +412,7 @@ def _route_labels(routes: Any) -> tuple[str | None, ...]:
 
 
 def validate_system(doc: dict[str, Any]) -> ValidationResult:
-    """Validate the accepted v2 target without declaring migrations complete."""
+    """Validate the accepted v2 target and its bounded migration state."""
 
     errors: list[str] = []
     require(
@@ -432,7 +432,7 @@ def validate_system(doc: dict[str, Any]) -> ValidationResult:
     )
     require(
         authority.get("shell_contract") == "policy/public-interface-contract.json",
-        "v1 shell authority must remain explicit during migration",
+        "v1 shell authority must remain explicit across migration states",
         errors,
     )
     require(
@@ -465,7 +465,7 @@ def validate_system(doc: dict[str, Any]) -> ValidationResult:
     )
     require(
         migration.get("current_shell_contract_remains_active") is True,
-        "current shell contract must remain active until migration",
+        "current shell contract must remain active",
         errors,
     )
     require(

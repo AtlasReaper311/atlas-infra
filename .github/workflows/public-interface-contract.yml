@@ -9,6 +9,7 @@ on:
       - "docs/adrs/ADR-0008-public-interface-system-v2.md"
       - "docs/public-interface-system-v2-audit.md"
       - "docs/public-interface-system-v2-approved-scope.md"
+      - "docs/public-interface-system-v2-completion.md"
       - "policy/atlas-owned-domains.json"
       - "policy/browser-icons-v1.json"
       - "policy/public-interface-contract.json"
@@ -16,6 +17,7 @@ on:
       - "scripts/validate_browser_icons.py"
       - "scripts/validate_public_interface.py"
       - "scripts/tests/test_validate_browser_icons.py"
+      - "scripts/tests/test_public_interface_implementation_state.py"
       - "scripts/tests/test_validate_public_interface.py"
   push:
     branches: [main]
@@ -26,6 +28,7 @@ on:
       - "docs/adrs/ADR-0008-public-interface-system-v2.md"
       - "docs/public-interface-system-v2-audit.md"
       - "docs/public-interface-system-v2-approved-scope.md"
+      - "docs/public-interface-system-v2-completion.md"
       - "policy/atlas-owned-domains.json"
       - "policy/browser-icons-v1.json"
       - "policy/public-interface-contract.json"
@@ -33,6 +36,7 @@ on:
       - "scripts/validate_browser_icons.py"
       - "scripts/validate_public_interface.py"
       - "scripts/tests/test_validate_browser_icons.py"
+      - "scripts/tests/test_public_interface_implementation_state.py"
       - "scripts/tests/test_validate_public_interface.py"
   workflow_dispatch:
 
@@ -93,6 +97,7 @@ jobs:
           set -euo pipefail
           python3 -m unittest \
             scripts.tests.test_validate_browser_icons \
+            scripts.tests.test_public_interface_implementation_state \
             scripts.tests.test_validate_public_interface \
             -v
 

@@ -12,7 +12,7 @@
     }
   },
   "migration": {
-    "state": "implementation",
+    "state": "complete",
     "current_shell_contract_remains_active": true,
     "production_rollout_requires_separate_approval": true,
     "order": [
