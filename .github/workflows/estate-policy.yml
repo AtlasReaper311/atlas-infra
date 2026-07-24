@@ -34,6 +34,7 @@ jobs:
           python3 -m py_compile scripts/estate_repo_diff.py
           python3 -m py_compile scripts/estate_policy.py
           python3 -m py_compile scripts/github_api.py
+          python3 -m py_compile scripts/github_conformance_scoreboard.py
           python3 -m py_compile scripts/chaos_harness.py
           python3 -m py_compile scripts/public_boundary_audit.py
           python3 -m py_compile scripts/public_repository_classifications.py

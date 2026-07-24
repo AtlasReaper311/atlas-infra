@@ -1,0 +1,48 @@
+name: GitHub conformance scoreboard
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "37 8 * * 4"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: github-conformance-scoreboard
+  cancel-in-progress: false
+
+jobs:
+  scoreboard:
+    name: Build public GitHub conformance scoreboard
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out Atlas Infra
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0, Node 24
+
+      - name: Validate scoreboard tooling
+        run: |
+          set -euo pipefail
+          python3 -m py_compile scripts/github_api.py scripts/github_conformance_scoreboard.py
+          python3 -m unittest scripts.tests.test_github_conformance_scoreboard -v
+          python3 scripts/public_repository_classifications.py --check
+
+      - name: Build scoreboard
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p reports
+          python3 scripts/github_conformance_scoreboard.py \
+            --json-out reports/github-conformance-scoreboard.json \
+            --markdown-out reports/github-conformance-scoreboard.md
+          cat reports/github-conformance-scoreboard.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload scoreboard report
+        if: always() && hashFiles('reports/github-conformance-scoreboard.*') != ''
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1, Node 24
+        with:
+          name: github-conformance-scoreboard-${{ github.run_id }}
+          path: reports/github-conformance-scoreboard.*
+          retention-days: 30

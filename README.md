@@ -53,6 +53,7 @@ Every workflow uses explicit permissions, bounded runner time, and immutable thi
 ### Scheduled assurance
 
 - `estate-policy.yml`: public-estate conformance audit.
+- `github-conformance-scoreboard.yml`: public GitHub hygiene, security, release, and branch-guard evidence scoreboard.
 - [`atlas-dep-audit`](https://github.com/AtlasReaper311/atlas-dep-audit): dependency, SBOM, OSV, action pin, and provenance assurance.
 - [`atlas-journey-watch`](https://github.com/AtlasReaper311/atlas-journey-watch): synthetic journeys across public estate surfaces.
 

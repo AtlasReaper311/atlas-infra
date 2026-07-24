@@ -1,6 +1,7 @@
 {
   "schema_version": "atlas-public-assurance/repositories/v2",
   "repositories": [
+    {"repository":"AtlasReaper311/.github","lifecycle":"active","scope":"public","provenance":"original"},
     {"repository":"AtlasReaper311/AtlasReaper311","lifecycle":"active","scope":"public","provenance":"original"},
     {"repository":"AtlasReaper311/atlas-badges","lifecycle":"active","scope":"public","provenance":"original"},
     {"repository":"AtlasReaper311/atlas-bootstrap","lifecycle":"active","scope":"public","provenance":"original"},
