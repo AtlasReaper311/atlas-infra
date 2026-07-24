@@ -1,0 +1,125 @@
+name: Phase 3 live interface baseline
+
+on:
+  push:
+    branches: [audit/phase3-live-interface-baseline]
+    paths:
+      - ".github/workflows/phase3-live-interface-baseline.yml"
+      - "scripts/phase3_live_interface_audit.mjs"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.repository }}-phase3-live-interface-baseline-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Check out exact audit branch
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0, Node 24
+        with:
+          ref: ${{ github.sha }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0, Node 24
+        with:
+          node-version: "22"
+
+      - name: Install pinned audit tooling
+        run: |
+          set -euo pipefail
+          audit_root="${RUNNER_TEMP}/phase3-audit-runner"
+          mkdir -p "${audit_root}"
+          cp scripts/phase3_live_interface_audit.mjs "${audit_root}/"
+          cd "${audit_root}"
+          npm init -y >/dev/null
+          npm pkg set type=module
+          npm install --save-exact playwright@1.61.1 @axe-core/playwright@4.12.1
+          npm audit --audit-level=high
+          npx playwright install --with-deps chromium firefox
+
+      - name: Capture live headers, performance, accessibility, and screenshots
+        env:
+          REPORT_ROOT: ${{ runner.temp }}/phase3-live-interface-baseline
+        working-directory: ${{ runner.temp }}/phase3-audit-runner
+        run: node phase3_live_interface_audit.mjs
+
+      - name: Audit explicit Node 20 workflow pins
+        env:
+          REPORT_ROOT: ${{ runner.temp }}/phase3-live-interface-baseline
+        run: |
+          set -euo pipefail
+          clone_root="${RUNNER_TEMP}/phase3-repositories"
+          mkdir -p "${clone_root}"
+          for repository in \
+            atlas-systems \
+            atlas-interface-kit \
+            atlas-infra \
+            status \
+            ramone-edge \
+            atlas-api-public \
+            atlas-doc-viewer
+          do
+            git clone --depth=1 "https://github.com/AtlasReaper311/${repository}.git" "${clone_root}/${repository}"
+          done
+          CLONE_ROOT="${clone_root}" REPORT_ROOT="${REPORT_ROOT}" python3 - <<'PY'
+          import json
+          import os
+          import re
+          from pathlib import Path
+
+          clone_root = Path(os.environ["CLONE_ROOT"])
+          report_root = Path(os.environ["REPORT_ROOT"])
+          findings = []
+          patterns = [
+              re.compile(r"node-version\s*:\s*['\"]?20(?:\.|['\"\s]|$)", re.IGNORECASE),
+              re.compile(r"#.*node\s*20", re.IGNORECASE),
+          ]
+          for repository in sorted(path for path in clone_root.iterdir() if path.is_dir()):
+              workflow_root = repository / ".github" / "workflows"
+              if not workflow_root.exists():
+                  continue
+              for workflow in sorted(workflow_root.glob("*.y*ml")):
+                  for number, line in enumerate(workflow.read_text(encoding="utf-8").splitlines(), start=1):
+                      if any(pattern.search(line) for pattern in patterns):
+                          findings.append({
+                              "repository": repository.name,
+                              "path": workflow.relative_to(repository).as_posix(),
+                              "line": number,
+                              "content": line.strip(),
+                          })
+          report_root.mkdir(parents=True, exist_ok=True)
+          (report_root / "node20-workflow-pins.json").write_text(
+              json.dumps({"schema_version": "atlas-systems/node20-workflow-audit/v1", "findings": findings}, indent=2) + "\n",
+              encoding="utf-8",
+          )
+          lines = ["# Explicit Node 20 workflow pins", ""]
+          if findings:
+              for item in findings:
+                  lines.append(f"- `{item['repository']}/{item['path']}:{item['line']}`: `{item['content']}`")
+          else:
+              lines.append("No explicit Node 20 workflow pins or Node 20 action comments were found in the audited repositories.")
+          (report_root / "node20-workflow-pins.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
+          print(f"Recorded {len(findings)} explicit Node 20 workflow finding(s)")
+          PY
+
+      - name: Publish audit summary
+        env:
+          REPORT_ROOT: ${{ runner.temp }}/phase3-live-interface-baseline
+        run: |
+          set -euo pipefail
+          cat "${REPORT_ROOT}/baseline.md" >> "${GITHUB_STEP_SUMMARY}"
+          printf '\n' >> "${GITHUB_STEP_SUMMARY}"
+          cat "${REPORT_ROOT}/node20-workflow-pins.md" >> "${GITHUB_STEP_SUMMARY}"
+
+      - name: Upload exact live baseline evidence
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1, Node 24
+        with:
+          name: phase3-live-interface-baseline
+          path: ${{ runner.temp }}/phase3-live-interface-baseline
+          if-no-files-found: error
+          retention-days: 14
