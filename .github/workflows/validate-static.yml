@@ -46,6 +46,11 @@ on:
         required: false
         default: false
         type: boolean
+      publish_exclude_file:
+        description: "Optional repository-relative rsync exclude file used to stage the Pages publish directory."
+        required: false
+        default: ""
+        type: string
     secrets:
       CF_PAGES_DEPLOY_TOKEN:
         required: true
@@ -124,6 +129,35 @@ jobs:
           sed -i "0,/<\/head>/s||  <meta name=\"build-commit\" content=\"${COMMIT_SHA}\">\n  <meta name=\"build-time\" content=\"${BUILT}\">\n|" index.html
           echo "Injected build-commit=${COMMIT_SHA} build-time=${BUILT}"
 
+      - name: Prepare Pages publish directory
+        id: publish_directory
+        env:
+          PUBLISH_EXCLUDE_FILE: ${{ inputs.publish_exclude_file }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "${PUBLISH_EXCLUDE_FILE}" ]; then
+            echo "directory=." >> "${GITHUB_OUTPUT}"
+            exit 0
+          fi
+
+          case "${PUBLISH_EXCLUDE_FILE}" in
+            /*|../*|*/../*|*/..)
+              echo "::error::publish_exclude_file must stay inside the repository"
+              exit 1
+              ;;
+          esac
+
+          test -f "${PUBLISH_EXCLUDE_FILE}"
+          publish_directory="${RUNNER_TEMP}/pages-publish"
+          mkdir -p "${publish_directory}"
+          rsync -a \
+            --exclude=".git/" \
+            --exclude-from="${PUBLISH_EXCLUDE_FILE}" \
+            ./ "${publish_directory}/"
+          test -f "${publish_directory}/index.html"
+          echo "directory=${publish_directory}" >> "${GITHUB_OUTPUT}"
+
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0, Node 24
         with:
           node-version: "22"
@@ -134,9 +168,10 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CF_PAGES_DEPLOY_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
           PROJECT_NAME: ${{ inputs.project_name }}
+          PUBLISH_DIRECTORY: ${{ steps.publish_directory.outputs.directory }}
         run: |
           set -euo pipefail
-          npx --yes wrangler@4 pages deploy . \
+          npx --yes wrangler@4 pages deploy "$PUBLISH_DIRECTORY" \
             --project-name "$PROJECT_NAME" \
             --branch main \
             --commit-dirty=true
