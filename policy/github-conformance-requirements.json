@@ -38,6 +38,12 @@
         "reason": "The profile repository does not build, publish, or deploy software."
       }
     },
+    "AtlasReaper311/atlas-bootstrap": {
+      "codeql": {
+        "disposition": "not_applicable",
+        "reason": "The bootstrap implementation is PowerShell and Bash, which are not supported CodeQL analysis languages."
+      }
+    },
     "AtlasReaper311/atlas-dep-audit": {
       "dependabot": {
         "disposition": "exception",
