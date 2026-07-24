@@ -8,7 +8,7 @@ on:
       - "scripts/phase3_live_interface_audit.mjs"
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: ${{ github.repository }}-phase3-live-interface-baseline-${{ github.ref }}
@@ -22,7 +22,8 @@ jobs:
       - name: Check out exact audit branch
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0, Node 24
         with:
-          ref: ${{ github.sha }}
+          ref: audit/phase3-live-interface-baseline
+          fetch-depth: 0
 
       - name: Set up Node.js
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0, Node 24
@@ -115,6 +116,21 @@ jobs:
           cat "${REPORT_ROOT}/baseline.md" >> "${GITHUB_STEP_SUMMARY}"
           printf '\n' >> "${GITHUB_STEP_SUMMARY}"
           cat "${REPORT_ROOT}/node20-workflow-pins.md" >> "${GITHUB_STEP_SUMMARY}"
+
+      - name: Commit temporary exact evidence to the audit branch
+        env:
+          REPORT_ROOT: ${{ runner.temp }}/phase3-live-interface-baseline
+        run: |
+          set -euo pipefail
+          evidence_root="docs/evidence/phase3-live-interface-baseline"
+          rm -rf "${evidence_root}"
+          mkdir -p "${evidence_root}"
+          cp -R "${REPORT_ROOT}/." "${evidence_root}/"
+          git add "${evidence_root}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "audit: record Phase 3 live interface baseline"
+          git push origin HEAD:audit/phase3-live-interface-baseline
 
       - name: Upload exact live baseline evidence
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1, Node 24
