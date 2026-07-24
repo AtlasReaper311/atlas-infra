@@ -43,7 +43,7 @@ The repository owns reusable workflow shapes rather than application deployment 
 ### Reusable workflows
 
 - `deploy-worker.yml`: validate, deploy, and report a Cloudflare Worker.
-- `validate-static.yml`: validate and publish a static site.
+- `validate-static.yml`: validate and publish a static site, optionally staging it through a repository-owned rsync exclusion file so source-only tooling does not enter the Pages artifact.
 - `change-impact.yml`: read-only pull request impact analysis.
 - `dependabot-review.yml`: bounded Dependabot review policy.
 - `validate-private-governance.yml`: validate source-owned governance inside a private Atlas Systems repository without publishing its identity here.

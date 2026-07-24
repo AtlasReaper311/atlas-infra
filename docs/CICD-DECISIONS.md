@@ -64,6 +64,11 @@ strings are still acceptable for emergency one-off fixes, but the pipeline
 purge is the structural guardrail: a changed asset should not depend on a human
 remembering to change `/file.js?v=...`.
 
+Callers that contain source-only files may pass `publish_exclude_file`. The
+reusable workflow then copies the checkout into a temporary directory with
+`rsync --exclude-from` and publishes that staged directory. Validation still
+runs against the complete source checkout; only the Pages artifact is filtered.
+
 ## Discord routing
 
 | Channel | Receives | Secret |
