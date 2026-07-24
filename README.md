@@ -64,6 +64,10 @@ The implementation and adoption rules live in [`docs/ESTATE-ASSURANCE.md`](docs/
 
 The public registry is deliberately not a complete list of everything the owner operates. A repository or Worker does not become public merely because it exists in the GitHub or Cloudflare account.
 
+Public Interface System v2 has completed its approved migration scope. The
+bounded source, deployment, and live-route evidence is recorded in
+[`docs/public-interface-system-v2-completion.md`](docs/public-interface-system-v2-completion.md).
+
 Validate the public runtime contract set without network access:
 
 ```bash
