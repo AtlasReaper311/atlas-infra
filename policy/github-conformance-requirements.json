@@ -1,0 +1,68 @@
+{
+  "schema_version": "atlas-github-conformance-requirements/v1",
+  "authority": "AtlasReaper311/atlas-infra",
+  "defaults": {
+    "description": "required",
+    "topics": "required",
+    "license": "required",
+    "dependabot": "required",
+    "codeql": "required",
+    "scorecard": "required",
+    "security_contact": "required",
+    "release_workflow": "not_applicable",
+    "release_history": "not_applicable",
+    "default_branch_guard": "required"
+  },
+  "repositories": {
+    "AtlasReaper311/.github": {
+      "dependabot": {
+        "disposition": "not_applicable",
+        "reason": "The owner-wide community defaults repository has no dependency manifest or releaseable software surface."
+      },
+      "codeql": {
+        "disposition": "not_applicable",
+        "reason": "The owner-wide community defaults repository contains policy and templates rather than analyzable product code."
+      },
+      "scorecard": {
+        "disposition": "not_applicable",
+        "reason": "The owner-wide community defaults repository has no build or publication workflow to score."
+      }
+    },
+    "AtlasReaper311/AtlasReaper311": {
+      "codeql": {
+        "disposition": "not_applicable",
+        "reason": "The profile repository is a presentation surface without executable product code."
+      },
+      "scorecard": {
+        "disposition": "not_applicable",
+        "reason": "The profile repository does not build, publish, or deploy software."
+      }
+    },
+    "AtlasReaper311/atlas-dep-audit": {
+      "dependabot": {
+        "disposition": "exception",
+        "reason": "The accepted Dependabot rollout policy explicitly excludes atlas-dep-audit to preserve scanner independence."
+      }
+    },
+    "AtlasReaper311/atlas-interface-kit": {
+      "release_workflow": {
+        "disposition": "required",
+        "reason": "The interface kit is a versioned distributable consumed as pinned repository-local assets."
+      },
+      "release_history": {
+        "disposition": "deferred",
+        "reason": "The first owner-approved release has not been created yet."
+      }
+    },
+    "AtlasReaper311/worker-meta-kit": {
+      "release_workflow": {
+        "disposition": "required",
+        "reason": "The Worker metadata kit is a versioned distributable template."
+      },
+      "release_history": {
+        "disposition": "deferred",
+        "reason": "The first owner-approved release has not been created yet."
+      }
+    }
+  }
+}
