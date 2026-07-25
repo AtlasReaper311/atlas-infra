@@ -44,7 +44,7 @@ on:
         default: false
         type: boolean
       require_openapi:
-        description: "Fail validation unless the Wrangler deploy bundle contains the public OpenAPI contract and /v1/openapi.json route."
+        description: "Fail validation unless the public OpenAPI contract and /v1/openapi.json route exist."
         required: false
         default: false
         type: boolean
@@ -175,8 +175,8 @@ jobs:
           REF_NAME: ${{ github.ref_name }}
         run: |
           if [ "$REF_NAME" = "main" ]; then
-            echo "Deploying $REF_NAME to production"
-            npx wrangler deploy
+            echo "Deploying $REF_NAME to the top-level production environment"
+            npx wrangler deploy --env=""
             echo "target_env=production" >> "$GITHUB_OUTPUT"
           else
             echo "Deploying $REF_NAME to the dev environment"
