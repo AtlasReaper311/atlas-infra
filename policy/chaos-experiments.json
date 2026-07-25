@@ -1,10 +1,25 @@
 {
   "schema": "atlas-chaos-policy/v1",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "defaults": {
     "scheduled_mode": "simulate",
     "maximum_duration_seconds": 300,
     "live_requires_protected_environment": true
+  },
+  "target_capabilities": {
+    "specular-edge": {
+      "live_faults": [
+        "status_503",
+        "latency",
+        "kv_write_reject"
+      ],
+      "test_only_faults": [
+        "stale_response",
+        "webhook_drop"
+      ],
+      "single_active_lease": true,
+      "coordination": "single-controller-with-target-rejection"
+    }
   },
   "experiments": [
     {
