@@ -44,7 +44,7 @@ on:
         default: false
         type: boolean
       require_openapi:
-        description: "Fail validation unless the public OpenAPI contract and /v1/openapi.json route exist."
+        description: "Fail validation unless the Wrangler deploy bundle contains the public OpenAPI contract and /v1/openapi.json route."
         required: false
         default: false
         type: boolean
