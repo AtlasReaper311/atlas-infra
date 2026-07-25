@@ -38,6 +38,8 @@ jobs:
         env:
           EXPERIMENT: ${{ inputs.experiment }}
         run: |
+          python3 scripts/chaos_evidence.py validate \
+            --policy policy/chaos-experiments.json
           python3 scripts/chaos_harness.py validate \
             --policy policy/chaos-experiments.json
           if [ -n "${EXPERIMENT:-}" ]; then
@@ -54,6 +56,10 @@ jobs:
               --output reports/chaos-report.json \
               --markdown reports/chaos-report.md
           fi
+          python3 scripts/chaos_evidence.py stamp \
+            --policy policy/chaos-experiments.json \
+            --report reports/chaos-report.json \
+            --markdown reports/chaos-report.md
           cat reports/chaos-report.md >> "$GITHUB_STEP_SUMMARY"
 
       - name: Publish simulation evidence
@@ -117,12 +123,18 @@ jobs:
         env:
           ATLAS_CHAOS_TOKEN: ${{ secrets.ATLAS_CHAOS_TOKEN }}
         run: |
+          python3 scripts/chaos_evidence.py validate \
+            --policy policy/chaos-experiments.json
           python3 scripts/chaos_harness.py run \
             --policy policy/chaos-experiments.json \
             --experiment specular-route-503-v1 \
             --mode live \
             --confirm-live \
             --output reports/chaos-report.json \
+            --markdown reports/chaos-report.md
+          python3 scripts/chaos_evidence.py stamp \
+            --policy policy/chaos-experiments.json \
+            --report reports/chaos-report.json \
             --markdown reports/chaos-report.md
           cat reports/chaos-report.md >> "$GITHUB_STEP_SUMMARY"
 
@@ -167,12 +179,18 @@ jobs:
             echo "Live mode requires one explicit experiment id."
             exit 1
           fi
+          python3 scripts/chaos_evidence.py validate \
+            --policy policy/chaos-experiments.json
           python3 scripts/chaos_harness.py run \
             --policy policy/chaos-experiments.json \
             --experiment "$EXPERIMENT" \
             --mode live \
             --confirm-live \
             --output reports/chaos-report.json \
+            --markdown reports/chaos-report.md
+          python3 scripts/chaos_evidence.py stamp \
+            --policy policy/chaos-experiments.json \
+            --report reports/chaos-report.json \
             --markdown reports/chaos-report.md
           cat reports/chaos-report.md >> "$GITHUB_STEP_SUMMARY"
 
