@@ -73,6 +73,14 @@ deployment then refreshed the existing corpus through its established workflow.
 - Production rollout still requires separate owner approval for future
   changes.
 
+## Subsequent programme
+
+The evidence-backed programme opened on 28 July 2026 is recorded in
+[`docs/public-interface-programme.md`](public-interface-programme.md). That
+record begins at a new Approval Gate 0 and does not invalidate this completed
+v2 migration evidence. It does not authorise source implementation, release,
+deployment, provider mutation, scheduler execution, or article publication.
+
 ## Rollback
 
 Runtime rollback remains per repository: revert the relevant product merge and
