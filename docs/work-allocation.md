@@ -35,6 +35,16 @@ Entry format:
 - **Last updated:** 2026-07-28
 - **Summary:** Execute the evidence-backed public interface programme one approved phase at a time. Preserve independent deployment, publication, runtime, security, product identity, and AtlasField boundaries while producing focused draft pull requests and exact-head evidence.
 
+### SPECULAR-CORE pending rollout
+
+- **Repo(s):** `atlas-dep-audit`, `atlas-postmortem`, `atlas-blackbox`, `atlas-corpus`, `atlas-eval-harness`, `atlas-api-public`, `atlas-infra`, `ramone-memory`, `atlas-owui-tools`
+- **Agent:** ChatGPT with Atlas operating on SPECULAR-CORE
+- **Status:** active
+- **Started:** 2026-07-28
+- **Last updated:** 2026-07-28
+- **Summary:** Complete the remaining SPECULAR-CORE rollout threads independently and one state-changing thread at a time. Thread A is complete using scheduled dependency-audit run `30263775549` against `fc565353c83f19d117ed3c3173d667429a672f66`, with retained SBOM, provenance, OSV, secret-watch, attestation, and Gardener evidence. Thread B will inspect the existing separate `ramone-postmortem` Open WebUI preset before deciding whether to retain, adapt, or replace that path, and will add bounded private postmortem capability without treating it as the Ramone Agent. `atlas-postmortem` retains ownership of evidence retrieval, prompting, drafting, linting, local output, and processed-state recording. The public-interface programme remains separately owned by Codex; its branches, pull requests, previews, and evidence are out of scope.
+- **Current thread:** Thread B, existing `ramone-postmortem` preset inspection, postmortem source inspection, and bounded Open WebUI integration design.
+
 ## Paused work
 
 _(none currently tracked)_
