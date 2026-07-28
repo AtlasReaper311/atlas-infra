@@ -1,0 +1,225 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://atlas-systems.uk/contracts/v1/public-interface/public-interface-foundation-extension.schema.json",
+  "title": "Atlas Systems measured public interface foundation extension",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "version",
+    "status",
+    "authority",
+    "evidence_basis",
+    "components",
+    "evidence",
+    "distribution",
+    "excluded"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "atlas-control-plane/public-interface-foundation-extension/v1"
+    },
+    "version": {
+      "const": "1.0.0"
+    },
+    "status": {
+      "const": "accepted"
+    },
+    "authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "decision",
+        "measured_extension_record",
+        "base_policy",
+        "governance_repository",
+        "implementation_repository"
+      ],
+      "properties": {
+        "decision": {
+          "const": "docs/adrs/ADR-0008-public-interface-system-v2.md"
+        },
+        "measured_extension_record": {
+          "const": "docs/public-interface-phase-4-authority-extension.md"
+        },
+        "base_policy": {
+          "const": "policy/public-interface-system-v2.json"
+        },
+        "governance_repository": {
+          "const": "AtlasReaper311/atlas-infra"
+        },
+        "implementation_repository": {
+          "const": "AtlasReaper311/atlas-interface-kit"
+        }
+      }
+    },
+    "evidence_basis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "atlas_systems_phase_2_pull_request",
+        "phase_3_closeout",
+        "blocking_findings",
+        "reporting_findings"
+      ],
+      "properties": {
+        "atlas_systems_phase_2_pull_request": {
+          "const": "AtlasReaper311/atlas-systems#168"
+        },
+        "phase_3_closeout": {
+          "const": "docs/public-interface-phase-3-closeout.md"
+        },
+        "blocking_findings": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "p0",
+            "p1"
+          ],
+          "properties": {
+            "p0": {
+              "const": 0
+            },
+            "p1": {
+              "const": 0
+            }
+          }
+        },
+        "reporting_findings": {
+          "type": "array",
+          "minItems": 5,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "components": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "breadcrumb_navigation",
+        "status_announcement",
+        "dense_data_overflow"
+      ],
+      "properties": {
+        "breadcrumb_navigation": {
+          "$ref": "#/$defs/nonEmptyObject"
+        },
+        "status_announcement": {
+          "$ref": "#/$defs/nonEmptyObject"
+        },
+        "dense_data_overflow": {
+          "$ref": "#/$defs/nonEmptyObject"
+        }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "blocking_viewports_px",
+        "reporting_only_viewports_px",
+        "reporting_only_is_breakpoint",
+        "reporting_only_is_budget",
+        "reporting_only_changes_content_width",
+        "reporting_only_changes_layout_tokens"
+      ],
+      "properties": {
+        "blocking_viewports_px": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "const": 320
+            },
+            {
+              "const": 375
+            },
+            {
+              "const": 768
+            },
+            {
+              "const": 1024
+            },
+            {
+              "const": 1440
+            }
+          ],
+          "minItems": 5,
+          "maxItems": 5
+        },
+        "reporting_only_viewports_px": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "const": 1920
+            }
+          ],
+          "minItems": 1,
+          "maxItems": 1
+        },
+        "reporting_only_is_breakpoint": {
+          "const": false
+        },
+        "reporting_only_is_budget": {
+          "const": false
+        },
+        "reporting_only_changes_content_width": {
+          "const": false
+        },
+        "reporting_only_changes_layout_tokens": {
+          "const": false
+        }
+      }
+    },
+    "distribution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "intended_interface_kit_release",
+        "repository_local_assets_required",
+        "remote_runtime_dependency_forbidden",
+        "consumer_adoption_requires_separate_pull_request",
+        "consumer_rollout_requires_separate_approval",
+        "visual_merge_approval_required"
+      ],
+      "properties": {
+        "intended_interface_kit_release": {
+          "const": "0.3.0"
+        },
+        "repository_local_assets_required": {
+          "const": true
+        },
+        "remote_runtime_dependency_forbidden": {
+          "const": true
+        },
+        "consumer_adoption_requires_separate_pull_request": {
+          "const": true
+        },
+        "consumer_rollout_requires_separate_approval": {
+          "const": true
+        },
+        "visual_merge_approval_required": {
+          "const": true
+        }
+      }
+    },
+    "excluded": {
+      "type": "array",
+      "minItems": 10,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "$defs": {
+    "nonEmptyObject": {
+      "type": "object",
+      "minProperties": 1
+    }
+  }
+}
