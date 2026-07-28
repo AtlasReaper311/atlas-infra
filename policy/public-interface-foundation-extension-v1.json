@@ -1,0 +1,128 @@
+{
+  "schema_version": "atlas-control-plane/public-interface-foundation-extension/v1",
+  "version": "1.0.0",
+  "status": "accepted",
+  "authority": {
+    "decision": "docs/adrs/ADR-0008-public-interface-system-v2.md",
+    "measured_extension_record": "docs/public-interface-phase-4-authority-extension.md",
+    "base_policy": "policy/public-interface-system-v2.json",
+    "governance_repository": "AtlasReaper311/atlas-infra",
+    "implementation_repository": "AtlasReaper311/atlas-interface-kit"
+  },
+  "evidence_basis": {
+    "atlas_systems_phase_2_pull_request": "AtlasReaper311/atlas-systems#168",
+    "phase_3_closeout": "docs/public-interface-phase-3-closeout.md",
+    "blocking_findings": {
+      "p0": 0,
+      "p1": 0
+    },
+    "reporting_findings": [
+      "horizontal-overflow",
+      "scroll-region-focusability",
+      "route-context",
+      "status-announcement-coverage",
+      "1920-pixel-layout-observation"
+    ]
+  },
+  "components": {
+    "breadcrumb_navigation": {
+      "role": "breadcrumb-navigation",
+      "selector": ".atlas-breadcrumbs",
+      "required": false,
+      "applies_to": "hierarchical-human-facing-routes",
+      "landmark": "nav",
+      "accessible_name_required": true,
+      "ordered_list_required": true,
+      "current_page": [
+        "text",
+        "aria-current=page"
+      ],
+      "homepage_forbidden": true,
+      "machine_surfaces_excluded": true,
+      "purpose_specific_opt_out_allowed": true
+    },
+    "status_announcement": {
+      "role": "status-announcement",
+      "selector": ".atlas-status-announcement",
+      "required": false,
+      "default_semantics": {
+        "role": "status",
+        "aria_live": "polite",
+        "aria_atomic": "true"
+      },
+      "blocking_failure_semantics": {
+        "role": "alert",
+        "use": "immediate-blocking-failure-only"
+      },
+      "announce_on": [
+        "meaningful-user-visible-state-transition"
+      ],
+      "silent_on": [
+        "initial-poll",
+        "unchanged-poll",
+        "routine-refresh"
+      ],
+      "wording_owner": "consumer",
+      "trigger_owner": "consumer",
+      "shared_runtime_javascript_forbidden": true,
+      "global_header_status_remains_aria_live_off": true
+    },
+    "dense_data_overflow": {
+      "extends_role": "table-wrapper",
+      "selector": ".atlas-table-wrap",
+      "applies_to": [
+        "table",
+        "code",
+        "preformatted-output",
+        "dense-data-region"
+      ],
+      "when_overflowing": {
+        "accessible_name_required": true,
+        "keyboard_focus_required": true,
+        "visible_focus_required": true,
+        "local_horizontal_scroll_required": true
+      },
+      "when_not_overflowing": {
+        "unnecessary_tab_stop_forbidden": true
+      },
+      "content_and_rendering_owner": "consumer"
+    }
+  },
+  "evidence": {
+    "blocking_viewports_px": [
+      320,
+      375,
+      768,
+      1024,
+      1440
+    ],
+    "reporting_only_viewports_px": [
+      1920
+    ],
+    "reporting_only_is_breakpoint": false,
+    "reporting_only_is_budget": false,
+    "reporting_only_changes_content_width": false,
+    "reporting_only_changes_layout_tokens": false
+  },
+  "distribution": {
+    "intended_interface_kit_release": "0.3.0",
+    "repository_local_assets_required": true,
+    "remote_runtime_dependency_forbidden": true,
+    "consumer_adoption_requires_separate_pull_request": true,
+    "consumer_rollout_requires_separate_approval": true,
+    "visual_merge_approval_required": true
+  },
+  "excluded": [
+    "footer-slots-and-variants",
+    "consumer-touch-target-remediation",
+    "colour-token-changes",
+    "spacing-token-changes",
+    "typography-token-changes",
+    "breakpoint-token-changes",
+    "consumer-source-changes",
+    "provider-settings",
+    "secrets",
+    "runtime-routing",
+    "model-or-inference-behaviour"
+  ]
+}
