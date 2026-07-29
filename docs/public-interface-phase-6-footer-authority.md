@@ -1,14 +1,32 @@
 # Public interface programme Phase 6 footer authority
 
-Status: Phase 6A authority implementation prepared for review. Phase 6B has not begun.
+Status: Phase 6A complete at its authority review and merge gate. Phase 6B has not begun.
 
 Opened: 29 July 2026.
+
+Closed: 29 July 2026.
 
 ## Purpose
 
 Phase 6 defines the shared structural contract for purpose-specific Atlas Systems footers without making every product, tool, or article footer identical.
 
 ADR-0008 already requires a purpose-specific footer and an estate escape. The base policies preserve local product identity, repository-local assets, independent deployment, shared focus behaviour, and same-tab navigation across Atlas-owned HTML surfaces. This phase converts that accepted direction into an executable slot and variant contract.
+
+## Closeout receipt
+
+Phase 6A was reviewed through `AtlasReaper311/atlas-infra` PR #87 at exact head `ba611253d3806e21feb9c15b6607ddc49a2178aa` and squash-merged into `main` as `8d050790fbf08eb1ae41e2a9b47c1b2fa70d2c1a` on 29 July 2026.
+
+The exact-head pull-request checks passed:
+
+- Public interface contract;
+- Contract registry CI;
+- Pull request impact;
+- CodeQL;
+- OpenSSF Scorecard.
+
+The Dependabot review policy was skipped as intended for a non-Dependabot pull request. No review threads remained open.
+
+The merge established governance authority only. It did not change `atlas-interface-kit`, update a consumer, alter generated article output, run the scheduler, publish a release, dispatch a workflow manually, deploy a runtime, or modify provider settings or secrets.
 
 ## Evidence inspected
 
@@ -30,7 +48,7 @@ The inspection found four real footer families:
 3. tool footers on Lab tools and experiments;
 4. editorial footers whose previous and next links are computed by the publishing pipeline.
 
-The current interface kit provides the `.atlas-footer` role and outer spacing only. It does not yet define internal slots or variants.
+At the time of Phase 6A inspection, the interface kit provided the `.atlas-footer` role and outer spacing only. It did not yet define internal slots or variants.
 
 ## Accepted contract
 
@@ -154,6 +172,6 @@ Pull-request checks remain authoritative for the exact branch bytes.
 
 ## Next gate
 
-After this authority pull request is reviewed and merged, Phase 6B requires separate approval to update `atlas-interface-kit`, prepare `v0.4.0`, validate deterministic output, and open a draft pull request.
+Phase 6B requires separate explicit approval to inspect current `atlas-interface-kit/main`, implement the accepted footer selectors and variants, prepare `v0.4.0`, validate deterministic output, and open a draft pull request.
 
 No consumer, generator, scheduler, release, preview, deployment, or production action is authorised by this record.
