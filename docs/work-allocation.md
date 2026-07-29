@@ -30,10 +30,11 @@ Entry format:
 
 - **Repo(s):** `atlas-infra`, `atlas-systems`, `atlas-interface-kit`, `atlas-api-public`, `atlas-api-index`, `status`, `atlas-doc-viewer`, `ramone-edge`, `atlas-article-gen`, `atlas-scheduler`
 - **Agent:** Codex
-- **Status:** active
+- **Status:** blocked
 - **Started:** 2026-07-28
-- **Last updated:** 2026-07-28
-- **Summary:** Execute the evidence-backed public interface programme one approved phase at a time. Preserve independent deployment, publication, runtime, security, product identity, and AtlasField boundaries while producing focused draft pull requests and exact-head evidence.
+- **Last updated:** 2026-07-29
+- **Summary:** Phases 0 through 4B are complete. The `atlas-interface-kit` `0.3.0` candidate at `630c8060ebe61b3f2234cd73ae983b5b41564c3b` reproduces the reviewed deterministic release fingerprints from Git's canonical tree. Phase 4C remains blocked because the programme requires production deployment receipts and current live-route verification for the Phase 1 and Phase 3 merge commits before tag creation.
+- **Resume point:** Attach the successful push-triggered deployment run, deployed revision evidence, and read-only live-route result for `atlas-systems`, `status`, `atlas-doc-viewer`, `ramone-edge`, and `atlas-api-index`. Review and merge the Phase 4C documentation pull request, then request separate approval to create annotated tag `v0.3.0`. Do not update consumers or begin Phase 5 before the immutable release is published and verified.
 
 ### SPECULAR-CORE pending rollout
 
