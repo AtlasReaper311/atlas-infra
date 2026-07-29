@@ -1,6 +1,6 @@
 # Public interface programme Phase 6D closeout
 
-Status: complete at source implementation and queue-handoff gates.
+Status: complete through source implementation, queue handoff, consumer asset readiness, and production verification. No article publication or published-article refresh occurred.
 
 Recorded: 29 July 2026.
 
@@ -70,7 +70,7 @@ Its verified identities are:
 
 No append-only production refresh request was added. The bundle is evidence and preparation input only.
 
-## Preserved boundaries
+## Phase 6D preserved boundaries
 
 Phase 6D did not:
 
@@ -83,10 +83,55 @@ Phase 6D did not:
 - deploy anything;
 - modify provider settings or secrets.
 
-At closeout, `atlas-systems/main` remained `7e21a276a97bb0322272cc2aa09cd649cbe84d6c` and still carried the prior v0.3.0 interface-kit adoption.
+At the Phase 6D source and queue-handoff closeout, `atlas-systems/main` remained `7e21a276a97bb0322272cc2aa09cd649cbe84d6c` and still carried the prior v0.3.0 interface-kit adoption.
+
+## Subsequent `atlas-systems` asset-readiness gate
+
+The separately approved consumer gate added the immutable `atlas-interface-kit v0.4.0` release to the repository-local `atlas-systems` static asset tree without switching existing routes from the v0.3.0 estate shell.
+
+### Pull request and exact-head evidence
+
+- Pull request: `AtlasReaper311/atlas-systems` PR #172.
+- Reviewed head: `7858b739f0df9a92a4b89c81cd84c9b43b1cfad1`.
+- Pull request CI run: `30474063486`, success.
+- Public interface conformance run: `30474063284`, success.
+- CodeQL run: `30474063677`, success.
+- OpenSSF Scorecard run: `30474063709`, success.
+- Approved Public interface preview run: `30474525147`, success.
+- Preview validation artifact: `8733042322`, SHA-256 `a993d19cefc30d2c58a40de92469e61f98953d025dd60b6fdda4b71ef06b65fb`.
+- Route-derived visual and accessibility evidence artifact: `8733548497`, SHA-256 `8801e616b09f6151b81b940aed49ab701b9fc9fb487d256c96299b28c3e432c7`.
+- Batch H visual and accessibility evidence artifact: `8733549346`, SHA-256 `b8dd34f34023bac1991457dd6eddfe794f7cc3b1fc0db324f35e1f40fa183939`.
+- No review submissions or unresolved review threads remained.
+
+The preview workflow validated the repository, published the isolated `interface-pr-172` Cloudflare Pages branch preview, verified the production boundary, exercised the governed routes across the deterministic browser evidence matrix, and uploaded the evidence packages against the exact reviewed head.
+
+### Merge and production verification
+
+- Squash merge commit: `d671bf0af5441f417daac4a454d00c4021488a6c`.
+- Merge date: 29 July 2026.
+- Commit title: `Add atlas-interface-kit v0.4.0 asset readiness (#172)`.
+- The owner confirmed that the exact-commit `Deploy` workflow completed successfully after the merge.
+
+The checked-in deployment contract requires the filtered Pages artifact to pass validation, Cloudflare Pages production deployment to succeed, the custom domain to expose the exact commit, the Systems route marker to remain live, and the homepage AtlasField and System Symphony browser smoke checks to pass before the guarded Corpus refresh job can run.
+
+The successful workflow therefore closes the production deployment and live-verification gate for commit `d671bf0af5441f417daac4a454d00c4021488a6c`. The guarded Corpus refresh job is fail-soft: a green workflow proves that the job completed, but does not by itself prove that the refresh endpoint returned HTTP 202. That response code was not independently captured in this closeout record.
+
+Existing site routes remain pinned to `atlas-interface-kit v0.3.0`. The v0.4.0 files are now available at stable same-origin paths for scheduler-generated editorial output.
+
+## Boundaries after asset readiness
+
+Across the Phase 6D source work and the later asset-readiness gate:
+
+- no scheduler production workflow was dispatched;
+- no append-only production article-refresh request was created;
+- no queue entry was consumed;
+- no article was published or refreshed;
+- no generated article HTML or metadata was hand-edited;
+- no provider setting or secret changed;
+- the W-05 published-shell migration remained separate and unapproved.
 
 ## Next gate
 
-The next controlled stage is additive `atlas-systems` adoption of the immutable `atlas-interface-kit v0.4.0` repository-local assets required by the queued articles. Existing site routes may remain on their current v0.3.0 foundations during that asset-readiness change.
+The next controlled stage begins with fresh inspection of current `atlas-scheduler/main`, the checked-in queue, effective publication dates, the production-shaped dry-run path, and current `atlas-systems/main` at `d671bf0af5441f417daac4a454d00c4021488a6c`.
 
-The W-05 published-shell migration remains separate because the current refresh contract preserves the complete existing footer. Any change to preserve only scheduler-owned sequence content requires its own scheduler source PR, tests, preparation evidence, merge approval, production request, execution approval, deployment verification, and live verification.
+Inspection may identify the next due article and its complete simulated site effects. Any workflow dispatch, production scheduler execution, queue consumption, article publication, published-article refresh, W-05 migration, provider write, or secret change remains separately approval-gated.
