@@ -414,3 +414,21 @@ The programme is complete only after:
 PR #84 is a documentation-only Phase 4C record. It must be reviewed and merged only after explicit approval.
 
 After that merge, the owner may separately authorise creation of annotated tag `v0.3.0` at `630c8060ebe61b3f2234cd73ae983b5b41564c3b`. Tag push, release workflow review, GitHub Release publication, consumer adoption, and deployment remain separate gates.
+
+## Historical Approval Gate 0
+
+Phase 0 originally authorised only the programme documentation record and the active Work Allocation entry. Its restrictions remain historical evidence of the starting boundary; the current boundary above supersedes it.
+
+At Gate 0, the following were not authorised:
+
+- Phase 1 source changes;
+- rebasing or modifying PR #158;
+- modifying PRs #119 or #125;
+- workflow dispatch;
+- preview creation outside existing pull-request automation;
+- merge;
+- release;
+- deployment;
+- provider settings or secret changes;
+- scheduler production execution;
+- article publication.
