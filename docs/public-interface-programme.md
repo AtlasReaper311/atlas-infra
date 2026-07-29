@@ -1,8 +1,14 @@
 # Atlas Systems public interface programme
 
-Status: active at Approval Gate 0.
+Status: active at Phase 4C documentation review and immutable release gate.
 
 Started: 28 July 2026.
+
+## Current programme state
+
+Phases 0 through 4B are complete. Draft `atlas-infra` PR #84 records the reproducible `atlas-interface-kit` `0.3.0` candidate, successful deployment provenance for the exact Phase 1 and Phase 3 merge commits, and current read-only verification of the five public product roots.
+
+The next boundary is review and merge of PR #84. Annotated tag creation, tag push, release workflow review, GitHub Release publication, and Phase 5 consumer adoption remain separately approval-gated.
 
 ## Mission
 
@@ -341,16 +347,13 @@ The programme will produce, as applicable:
 
 ## Current risks
 
-1. PR #158 is behind current `atlas-systems/main`. Its stated validation count and cache question are stale until the branch is deliberately rebased and revalidated.
-2. Current `atlas-systems/main` contains Symphony production evidence added after the plan snapshot. Phase 1 must preserve it.
-3. The current shared evidence authority stops at 1440 pixels. Adding 1920 pixel evidence is coverage expansion, not permission to change visual tokens.
-4. The existing kit has a general footer role but not the proposed complete slot and variant contract. Phase 6 depends on measured evidence and accepted authority.
-5. Breadcrumb and live-region rules are not explicit enough for the proposed programme. Phase 4 may need a bounded authority amendment.
-6. Work Allocation existed in supplied project context but not in current `atlas-infra` GitHub source. Phase 0 materialises a repository-local coordination copy without granting it policy authority.
-7. The user-supplied route list can become stale. Phase 2 must derive the actual matrix from repository truth and sitemap output.
-8. A merge into several consumer repositories can deploy production. Source approval and rollout approval must remain separate.
-9. Article appearance changes cross generator, scheduler, and live-site ownership. Hand-editing generated output would violate the publication contract.
-10. Browser evidence frameworks already exist in several repositories. The programme must extend them rather than create competing stacks.
+1. The original current-state table is a dated 28 July snapshot and must not be treated as live evidence for later phases.
+2. The shared interface release remains unpublished until Phase 4C completes its separate tag and release gates.
+3. The 1920-pixel viewport remains reporting-only and is not an accepted breakpoint or blocking budget.
+4. Footer slot and variant authority remains a later Phase 6 concern.
+5. A merge into a consumer repository may deploy production. Source approval and rollout approval remain separate.
+6. Article appearance changes cross generator, scheduler, and live-site ownership. Generated article output must not be hand-edited.
+7. Browser evidence frameworks already exist in several repositories. Later phases must extend them rather than create competing stacks.
 
 ## Excluded work
 
@@ -406,11 +409,17 @@ The programme is complete only after:
 - every production deployment is verified from Actions and live routes;
 - remaining differences are documented as intentional.
 
-## Approval Gate 0
+## Current approval boundary
 
-Phase 0 authorises only this documentation record and the active Work Allocation entry.
+PR #84 is a documentation-only Phase 4C record. It must be reviewed and merged only after explicit approval.
 
-Not authorised:
+After that merge, the owner may separately authorise creation of annotated tag `v0.3.0` at `630c8060ebe61b3f2234cd73ae983b5b41564c3b`. Tag push, release workflow review, GitHub Release publication, consumer adoption, and deployment remain separate gates.
+
+## Historical Approval Gate 0
+
+Phase 0 originally authorised only the programme documentation record and the active Work Allocation entry. Its restrictions remain historical evidence of the starting boundary; the current boundary above supersedes it.
+
+At Gate 0, the following were not authorised:
 
 - Phase 1 source changes;
 - rebasing or modifying PR #158;

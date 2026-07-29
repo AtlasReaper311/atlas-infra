@@ -32,8 +32,9 @@ Entry format:
 - **Agent:** Codex
 - **Status:** active
 - **Started:** 2026-07-28
-- **Last updated:** 2026-07-28
-- **Summary:** Execute the evidence-backed public interface programme one approved phase at a time. Preserve independent deployment, publication, runtime, security, product identity, and AtlasField boundaries while producing focused draft pull requests and exact-head evidence.
+- **Last updated:** 2026-07-29
+- **Summary:** Phases 0 through 4B are complete. Draft `atlas-infra` PR #84 records the reproducible `atlas-interface-kit` `0.3.0` candidate at `630c8060ebe61b3f2234cd73ae983b5b41564c3b`, successful deployment provenance for the exact Phase 1 and Phase 3 merge commits, and current read-only verification of all five public routes. The evidence prerequisites for Phase 4C tag consideration are complete.
+- **Current thread:** Review draft PR #84 and merge it only after explicit approval. After the documentation merge, request separate approval to create annotated tag `v0.3.0`. Do not publish a GitHub Release, update consumers, begin Phase 5, or deploy anything without the later approval gates.
 
 ### SPECULAR-CORE pending rollout
 
