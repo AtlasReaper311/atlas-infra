@@ -10,9 +10,23 @@ from pathlib import Path
 from typing import Any
 
 SCHEMA_VERSION = "atlas-control-plane/public-interface-footer-extension/v1"
-VERSION = "1.0.0"
+VERSION = "1.1.0"
 SLOTS = {"identity", "context", "evidence", "sequence", "estate_escape"}
 VARIANTS = {"estate", "product", "tool", "editorial"}
+CLASSIC_WRITING_SERIES = {"W-01", "W-02", "W-03", "W-04", "W-05", "W-06", "W-07"}
+CLASSIC_WRITING_REPOSITORIES = {
+    "AtlasReaper311/atlas-article-gen",
+    "AtlasReaper311/atlas-scheduler",
+    "AtlasReaper311/atlas-systems",
+}
+CLASSIC_WRITING_FORBIDDEN_STRUCTURE = {
+    ".atlas-footer",
+    ".atlas-footer--editorial",
+    ".atlas-footer__identity",
+    ".atlas-footer__context",
+    ".atlas-footer__sequence",
+    ".atlas-footer__estate-escape",
+}
 REQUIRED_EXCLUSIONS = {
     "interface-kit-source-changes",
     "interface-kit-release-publication",
@@ -61,13 +75,18 @@ def validate_footer_extension(doc: dict[str, Any]) -> ValidationResult:
     errors: list[str] = []
 
     require(doc.get("schema_version") == SCHEMA_VERSION, "invalid footer extension schema", errors)
-    require(doc.get("version") == VERSION, "footer extension version must be 1.0.0", errors)
+    require(doc.get("version") == VERSION, "footer extension version must be 1.1.0", errors)
     require(doc.get("status") == "accepted", "footer extension must be accepted", errors)
 
     authority = doc.get("authority", {})
     require(
         authority.get("decision") == "docs/adrs/ADR-0008-public-interface-system-v2.md",
-        "ADR-0008 must remain the decision authority",
+        "ADR-0008 must remain the base decision authority",
+        errors,
+    )
+    require(
+        authority.get("exception_decision") == "docs/adrs/ADR-0009-classic-writing-footer-exception.md",
+        "ADR-0009 must remain the classic Writing exception authority",
         errors,
     )
     require(
@@ -109,7 +128,7 @@ def validate_footer_extension(doc: dict[str, Any]) -> ValidationResult:
     )
     require(
         evidence.get("blocking_findings") == {"p0": 0, "p1": 0},
-        "Phase 6 authority must start with an empty P0/P1 backlog",
+        "Phase 6 authority must keep an empty P0/P1 backlog",
         errors,
     )
 
@@ -159,6 +178,87 @@ def validate_footer_extension(doc: dict[str, Any]) -> ValidationResult:
             errors,
         )
         require(required_slots | optional_slots | forbidden_slots == SLOTS, f"{name} must classify every slot", errors)
+
+    differences = doc.get("intentional_differences", {})
+    require(
+        set(differences) == {"classic_writing_articles"},
+        "only the classic Writing article difference is accepted",
+        errors,
+    )
+    classic = differences.get("classic_writing_articles", {})
+    require(classic.get("status") == "accepted", "classic Writing difference must be accepted", errors)
+    require(
+        classic.get("decision") == "docs/adrs/ADR-0009-classic-writing-footer-exception.md",
+        "classic Writing difference must cite ADR-0009",
+        errors,
+    )
+    require(
+        classic.get("profile") == "classic-writing-article-footer",
+        "classic Writing profile drifted",
+        errors,
+    )
+    scope = classic.get("scope", {})
+    require(scope.get("surface") == "published Writing article pages", "classic Writing surface drifted", errors)
+    require(
+        set(scope.get("repositories", [])) == CLASSIC_WRITING_REPOSITORIES,
+        "classic Writing repository scope drifted",
+        errors,
+    )
+    require(
+        set(scope.get("permanent_series", [])) == CLASSIC_WRITING_SERIES,
+        "classic Writing permanent series scope drifted",
+        errors,
+    )
+    require(
+        scope.get("current_generator_output_until") == "Phase 10 editorial surface review",
+        "classic Writing generator review gate drifted",
+        errors,
+    )
+    structure = classic.get("required_structure", {})
+    require(structure.get("container_element") == "div", "classic Writing container must remain div", errors)
+    require(
+        structure.get("container_selector") == ".article-footer",
+        "classic Writing selector must remain .article-footer",
+        errors,
+    )
+    require(
+        structure.get("single_scheduler_placeholder_required") is True,
+        "classic Writing shell must retain one scheduler placeholder",
+        errors,
+    )
+    require(
+        structure.get("published_content")
+        == "scheduler-owned previous and next article links, or Latest article",
+        "classic Writing published content drifted",
+        errors,
+    )
+    require(
+        set(classic.get("forbidden_structure", [])) == CLASSIC_WRITING_FORBIDDEN_STRUCTURE,
+        "classic Writing forbidden structure drifted",
+        errors,
+    )
+    classic_ownership = classic.get("ownership", {})
+    require(
+        classic_ownership.get("shell") == "AtlasReaper311/atlas-article-gen",
+        "classic Writing shell ownership drifted",
+        errors,
+    )
+    require(
+        classic_ownership.get("sequence") == "AtlasReaper311/atlas-scheduler",
+        "classic Writing sequence ownership drifted",
+        errors,
+    )
+    require(
+        classic_ownership.get("publication") == "AtlasReaper311/atlas-scheduler",
+        "classic Writing publication ownership drifted",
+        errors,
+    )
+    require(classic.get("non_transferable") is True, "classic Writing difference must remain non-transferable", errors)
+    require(
+        classic.get("interface_kit_variant_created") is False,
+        "classic Writing difference must not create an interface-kit variant",
+        errors,
+    )
 
     behaviour = doc.get("behaviour", {})
     required_true = (
@@ -221,7 +321,7 @@ def validate_footer_extension(doc: dict[str, Any]) -> ValidationResult:
         require(distribution.get(key) is True, f"{key} must remain true", errors)
 
     exclusions = set(doc.get("excluded", []))
-    require(REQUIRED_EXCLUSIONS.issubset(exclusions), "Phase 6A exclusions are incomplete", errors)
+    require(REQUIRED_EXCLUSIONS.issubset(exclusions), "Phase 6 exclusions are incomplete", errors)
 
     return ValidationResult(tuple(errors))
 

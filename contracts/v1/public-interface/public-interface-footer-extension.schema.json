@@ -13,6 +13,7 @@
     "component",
     "slots",
     "variants",
+    "intentional_differences",
     "behaviour",
     "ownership",
     "distribution",
@@ -23,7 +24,7 @@
       "const": "atlas-control-plane/public-interface-footer-extension/v1"
     },
     "version": {
-      "const": "1.0.0"
+      "const": "1.1.0"
     },
     "status": {
       "const": "accepted"
@@ -86,6 +87,18 @@
         },
         "editorial": {
           "$ref": "#/$defs/variant"
+        }
+      }
+    },
+    "intentional_differences": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "classic_writing_articles"
+      ],
+      "properties": {
+        "classic_writing_articles": {
+          "$ref": "#/$defs/classicWritingArticles"
         }
       }
     },
@@ -153,6 +166,146 @@
           "sequence",
           "estate_escape"
         ]
+      }
+    },
+    "classicWritingArticles": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "decision",
+        "profile",
+        "scope",
+        "required_structure",
+        "forbidden_structure",
+        "ownership",
+        "non_transferable",
+        "interface_kit_variant_created"
+      ],
+      "properties": {
+        "status": {
+          "const": "accepted"
+        },
+        "decision": {
+          "const": "docs/adrs/ADR-0009-classic-writing-footer-exception.md"
+        },
+        "profile": {
+          "const": "classic-writing-article-footer"
+        },
+        "scope": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "surface",
+            "repositories",
+            "permanent_series",
+            "current_generator_output_until"
+          ],
+          "properties": {
+            "surface": {
+              "const": "published Writing article pages"
+            },
+            "repositories": {
+              "type": "array",
+              "uniqueItems": true,
+              "minItems": 3,
+              "maxItems": 3,
+              "items": {
+                "enum": [
+                  "AtlasReaper311/atlas-article-gen",
+                  "AtlasReaper311/atlas-scheduler",
+                  "AtlasReaper311/atlas-systems"
+                ]
+              }
+            },
+            "permanent_series": {
+              "type": "array",
+              "uniqueItems": true,
+              "minItems": 7,
+              "maxItems": 7,
+              "items": {
+                "enum": [
+                  "W-01",
+                  "W-02",
+                  "W-03",
+                  "W-04",
+                  "W-05",
+                  "W-06",
+                  "W-07"
+                ]
+              }
+            },
+            "current_generator_output_until": {
+              "const": "Phase 10 editorial surface review"
+            }
+          }
+        },
+        "required_structure": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "container_element",
+            "container_selector",
+            "single_scheduler_placeholder_required",
+            "published_content"
+          ],
+          "properties": {
+            "container_element": {
+              "const": "div"
+            },
+            "container_selector": {
+              "const": ".article-footer"
+            },
+            "single_scheduler_placeholder_required": {
+              "const": true
+            },
+            "published_content": {
+              "const": "scheduler-owned previous and next article links, or Latest article"
+            }
+          }
+        },
+        "forbidden_structure": {
+          "type": "array",
+          "uniqueItems": true,
+          "minItems": 6,
+          "maxItems": 6,
+          "items": {
+            "enum": [
+              ".atlas-footer",
+              ".atlas-footer--editorial",
+              ".atlas-footer__identity",
+              ".atlas-footer__context",
+              ".atlas-footer__sequence",
+              ".atlas-footer__estate-escape"
+            ]
+          }
+        },
+        "ownership": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "shell",
+            "sequence",
+            "publication"
+          ],
+          "properties": {
+            "shell": {
+              "const": "AtlasReaper311/atlas-article-gen"
+            },
+            "sequence": {
+              "const": "AtlasReaper311/atlas-scheduler"
+            },
+            "publication": {
+              "const": "AtlasReaper311/atlas-scheduler"
+            }
+          }
+        },
+        "non_transferable": {
+          "const": true
+        },
+        "interface_kit_variant_created": {
+          "const": false
+        }
       }
     }
   }

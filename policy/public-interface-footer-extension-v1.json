@@ -1,9 +1,10 @@
 {
   "schema_version": "atlas-control-plane/public-interface-footer-extension/v1",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "status": "accepted",
   "authority": {
     "decision": "docs/adrs/ADR-0008-public-interface-system-v2.md",
+    "exception_decision": "docs/adrs/ADR-0009-classic-writing-footer-exception.md",
     "phase_record": "docs/public-interface-phase-6-footer-authority.md",
     "base_policy": "policy/public-interface-system-v2.json",
     "shell_contract": "policy/public-interface-contract.json",
@@ -137,6 +138,52 @@
       "intended_surfaces": [
         "Writing articles and ordered editorial series"
       ]
+    }
+  },
+  "intentional_differences": {
+    "classic_writing_articles": {
+      "status": "accepted",
+      "decision": "docs/adrs/ADR-0009-classic-writing-footer-exception.md",
+      "profile": "classic-writing-article-footer",
+      "scope": {
+        "surface": "published Writing article pages",
+        "repositories": [
+          "AtlasReaper311/atlas-article-gen",
+          "AtlasReaper311/atlas-scheduler",
+          "AtlasReaper311/atlas-systems"
+        ],
+        "permanent_series": [
+          "W-01",
+          "W-02",
+          "W-03",
+          "W-04",
+          "W-05",
+          "W-06",
+          "W-07"
+        ],
+        "current_generator_output_until": "Phase 10 editorial surface review"
+      },
+      "required_structure": {
+        "container_element": "div",
+        "container_selector": ".article-footer",
+        "single_scheduler_placeholder_required": true,
+        "published_content": "scheduler-owned previous and next article links, or Latest article"
+      },
+      "forbidden_structure": [
+        ".atlas-footer",
+        ".atlas-footer--editorial",
+        ".atlas-footer__identity",
+        ".atlas-footer__context",
+        ".atlas-footer__sequence",
+        ".atlas-footer__estate-escape"
+      ],
+      "ownership": {
+        "shell": "AtlasReaper311/atlas-article-gen",
+        "sequence": "AtlasReaper311/atlas-scheduler",
+        "publication": "AtlasReaper311/atlas-scheduler"
+      },
+      "non_transferable": true,
+      "interface_kit_variant_created": false
     }
   },
   "behaviour": {
