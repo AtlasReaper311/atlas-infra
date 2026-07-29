@@ -29,12 +29,12 @@ Entry format:
 ### Public interface programme
 
 - **Repo(s):** `atlas-infra`, `atlas-systems`, `atlas-interface-kit`, `atlas-api-public`, `atlas-api-index`, `status`, `atlas-doc-viewer`, `ramone-edge`, `atlas-article-gen`, `atlas-scheduler`
-- **Agent:** Codex
-- **Status:** blocked
+- **Agent:** ChatGPT
+- **Status:** active
 - **Started:** 2026-07-28
 - **Last updated:** 2026-07-29
-- **Summary:** Phases 0 through 5 are complete at their defined gates. `atlas-interface-kit v0.3.0` remains published from immutable tag `v0.3.0` at `630c8060ebe61b3f2234cd73ae983b5b41564c3b`. `atlas-systems` PR #171 adopted the verified repository-local bundle from reviewed head `79698d735b3cd63855fa2736e8018203aad60041` and squash-merged as `7e21a276a97bb0322272cc2aa09cd649cbe84d6c`. Production deployment run `30447108923` succeeded, proved the exact commit on `atlas-systems.uk`, passed the Systems route, homepage AtlasField, and System Symphony production checks, uploaded evidence artifacts `8721931893` and `8722069829`, and received HTTP `202` from the guarded Corpus refresh.
-- **Resume point:** Review and merge the Phase 5 closeout documentation pull request only after explicit approval. Begin Phase 6 only under a separate approval after fresh Part 0 inspection of current footer authority, interface-kit, generator, scheduler, consumer, preview, deployment, generated-output, and ownership state. Do not begin Phase 6 implementation, update another consumer, dispatch workflows, merge product code, deploy anything, run the scheduler, or modify provider settings from this closeout branch.
+- **Summary:** Phases 0 through 5 are complete at their defined gates. Phase 6A is implementing the footer authority in `atlas-infra` on branch `policy/public-interface-footer-extension`. The authority defines estate, product, tool, and editorial variants; identity, context, evidence, sequence, and estate-escape slots; shared accessibility, responsive, and link behaviour; and explicit interface-kit, generator, scheduler, and consumer ownership. Phase 6B and all source adoption remain separately approval-gated.
+- **Resume point:** Review the Phase 6A draft pull request and its exact-head checks. Do not merge without explicit approval. Do not modify `atlas-interface-kit`, update a consumer, alter generated article output, run the scheduler, dispatch workflows, publish a release, deploy anything, begin Phase 6B, or modify provider settings from this authority branch.
 
 ### SPECULAR-CORE pending rollout
 
@@ -43,7 +43,7 @@ Entry format:
 - **Status:** active
 - **Started:** 2026-07-28
 - **Last updated:** 2026-07-29
-- **Summary:** Complete the remaining SPECULAR-CORE rollout threads independently and one state-changing thread at a time. Thread A is complete using scheduled dependency-audit run `30263775549` against `fc565353c83f19d117ed3c3173d667429a672f66`. Thread B source implementation is complete and merged through `atlas-postmortem` PR #8 at `8cf8c0d2bec00dfc415dd76dcbaf3b3a65810491` and `atlas-owui-tools` PR #1 at `e35c9ff6913aecad027e297cb71e34993a5ad141`. The existing separate `ramone-postmortem` Open WebUI preset remains the conversational controller and is not the Ramone Agent. `atlas-postmortem` retains ownership of evidence retrieval, Corpus context, Ollama drafting, linting, local output, and processed-state recording. The controlled live rollout is prepared but has not been executed. The public-interface programme remains separately owned by Codex; its branches, pull requests, previews, and evidence are out of scope.
+- **Summary:** Complete the remaining SPECULAR-CORE rollout threads independently and one state-changing thread at a time. Thread A is complete using scheduled dependency-audit run `30263775549` against `fc565353c83f19d117ed3c3173d667429a672f66`. Thread B source implementation is complete and merged through `atlas-postmortem` PR #8 at `8cf8c0d2bec00dfc415dd76dcbaf3b3a65810491` and `atlas-owui-tools` PR #1 at `e35c9ff6913aecad027e297cb71e34993a5ad141`. The existing separate `ramone-postmortem` Open WebUI preset remains the conversational controller and is not the Ramone Agent. `atlas-postmortem` retains ownership of evidence retrieval, Corpus context, Ollama drafting, linting, local output, and processed-state recording. The controlled live rollout is prepared but has not been executed. The public-interface programme remains separately owned; its branches, pull requests, previews, and evidence are out of scope.
 - **Current thread:** Thread B controlled live-rollout preparation and owner-run execution, with no service, secret, Open WebUI database, model assignment, or incident state changed yet.
 
 ## Paused work
