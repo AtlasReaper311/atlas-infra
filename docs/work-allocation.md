@@ -30,11 +30,11 @@ Entry format:
 
 - **Repo(s):** `atlas-infra`, `atlas-systems`, `atlas-interface-kit`, `atlas-api-public`, `atlas-api-index`, `status`, `atlas-doc-viewer`, `ramone-edge`, `atlas-article-gen`, `atlas-scheduler`
 - **Agent:** Codex
-- **Status:** blocked
+- **Status:** active
 - **Started:** 2026-07-28
 - **Last updated:** 2026-07-29
-- **Summary:** Phases 0 through 4B are complete. The `atlas-interface-kit` `0.3.0` candidate at `630c8060ebe61b3f2234cd73ae983b5b41564c3b` reproduces the reviewed deterministic release fingerprints from Git's canonical tree. The exact Phase 1 and Phase 3 merge commits have successful repository-owned deployment receipts recorded in draft `atlas-infra` PR #84. Phase 4C now waits only for current read-only checks of the five public routes and review and merge of that documentation pull request.
-- **Resume point:** Record HTTP and content-type results for `atlas-systems.uk`, `status.atlas-systems.uk`, `cv.atlas-systems.uk`, `ramone.atlas-systems.uk`, and the JSON-only root at `api.atlas-systems.uk`. Update and review PR #84, merge it only after approval, then request separate approval to create annotated tag `v0.3.0`. Do not update consumers or begin Phase 5 before the immutable release is published and verified.
+- **Summary:** Phases 0 through 4B are complete. Draft `atlas-infra` PR #84 records the reproducible `atlas-interface-kit` `0.3.0` candidate at `630c8060ebe61b3f2234cd73ae983b5b41564c3b`, successful deployment provenance for the exact Phase 1 and Phase 3 merge commits, and current read-only verification of all five public routes. The evidence prerequisites for Phase 4C tag consideration are complete.
+- **Current thread:** Review draft PR #84 and merge it only after explicit approval. After the documentation merge, request separate approval to create annotated tag `v0.3.0`. Do not publish a GitHub Release, update consumers, begin Phase 5, or deploy anything without the later approval gates.
 
 ### SPECULAR-CORE pending rollout
 
