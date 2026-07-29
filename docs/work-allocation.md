@@ -30,11 +30,11 @@ Entry format:
 
 - **Repo(s):** `atlas-infra`, `atlas-systems`, `atlas-interface-kit`, `atlas-api-public`, `atlas-api-index`, `status`, `atlas-doc-viewer`, `ramone-edge`, `atlas-article-gen`, `atlas-scheduler`
 - **Agent:** ChatGPT
-- **Status:** active
+- **Status:** blocked
 - **Started:** 2026-07-28
 - **Last updated:** 2026-07-29
-- **Summary:** Phases 0 through 5 are complete at their defined gates. Phase 6A is implementing the footer authority in `atlas-infra` on branch `policy/public-interface-footer-extension`. The authority defines estate, product, tool, and editorial variants; identity, context, evidence, sequence, and estate-escape slots; shared accessibility, responsive, and link behaviour; and explicit interface-kit, generator, scheduler, and consumer ownership. Phase 6B and all source adoption remain separately approval-gated.
-- **Resume point:** Review the Phase 6A draft pull request and its exact-head checks. Do not merge without explicit approval. Do not modify `atlas-interface-kit`, update a consumer, alter generated article output, run the scheduler, dispatch workflows, publish a release, deploy anything, begin Phase 6B, or modify provider settings from this authority branch.
+- **Summary:** Phases 0 through 5 are complete at their defined gates. Phase 6A footer authority is complete and merged through `atlas-infra` PR #87 from reviewed head `ba611253d3806e21feb9c15b6607ddc49a2178aa` as squash commit `8d050790fbf08eb1ae41e2a9b47c1b2fa70d2c1a`. The accepted authority defines estate, product, tool, and editorial variants; identity, context, evidence, sequence, and estate-escape slots; shared accessibility, responsive, and link behaviour; and explicit interface-kit, generator, scheduler, and consumer ownership. Phase 6B and all source adoption remain separately approval-gated.
+- **Resume point:** Await explicit Phase 6B approval. On approval, inspect current `atlas-interface-kit/main`, implement the accepted footer selectors and variants, update deterministic output and tests, prepare `v0.4.0`, and open a draft pull request. Do not update a consumer, alter generated article output, run the scheduler, dispatch workflows manually, publish a release, deploy anything, or modify provider settings without their separate gates.
 
 ### SPECULAR-CORE pending rollout
 
