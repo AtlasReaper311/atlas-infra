@@ -1,6 +1,6 @@
 # Public interface programme Phase 4C release preflight
 
-Status: release candidate technically reproducible; immutable release remains blocked until production deployment receipts and live-route verification are attached.
+Status: release candidate technically reproducible and historical deployment receipts attached; immutable release remains blocked until current live-route verification is recorded and this pull request is merged.
 
 Recorded: 29 July 2026.
 
@@ -37,23 +37,37 @@ The Windows-backed WSL checkout produced different hashes because `LICENSE` and 
 | Ramone | `AtlasReaper311/ramone-edge#28` | `4d50f1a5e19d689ade1b8e08730f9463d0e5f81b` | `db55cd96408ddf9eebb4d935b19966c64f060597` | `https://ramone-interface-pr-28.anonymous30141592654.workers.dev` |
 | API index | `AtlasReaper311/atlas-api-index#17` | `fc62fa768c5dbcc455757c0b49047a2171354aac` | `96cd81f643429895847a1c2f143084d6e995005c` | JSON contract evidence only; no visual preview required |
 
-The preview receipts above prove the reviewed pull-request heads only. They do not prove production deployment of the squash-merge commits.
+The preview receipts above prove the reviewed pull-request heads. The production receipts below separately prove that each squash-merge commit entered its repository-owned deployment workflow.
 
-## Production deployment receipt inspection
+## Production deployment receipts
 
-The connected GitHub Actions reader available during this reconciliation returned no push-triggered runs for the merge commits. It is documented to enumerate pull-request-triggered runs only. The execution environment also could not resolve the Atlas public domains, so no production route response, deployed revision, or live browser state was invented.
+An owner-run `gh run list --commit` query identified the push-triggered deployment run for each exact merge commit. Connected GitHub job inspection then confirmed successful provider deployment steps against those commits.
 
-The following evidence therefore remains required before release approval:
+| Repository | Merge commit | Deployment run | Result | Deployment evidence |
+| --- | --- | ---: | --- | --- |
+| `atlas-systems` | `1622b9dcc485282daeec4ed04934dd21a17ce341` | `30372973035` | success | Pages validation and deployment succeeded. The production verification job confirmed that `atlas-systems.uk` served the exact merge commit, confirmed the Systems route marker, and passed live homepage AtlasField and System Symphony browser smoke. |
+| `status` | `2e9d993193b2823e06ff104eec9f80f9928065aa` | `30405665618` | success | The deployment job checked out the exact merge commit, validated the static site, deployed through Wrangler to Cloudflare Pages, purged the edge cache, and completed reporting successfully. |
+| `atlas-doc-viewer` | `dde4faea6d1277bfe4a4a458a3c663a8940edac0` | `30405681772` | success | The deployment job checked out the exact merge commit, validated the static site, deployed through Wrangler to Cloudflare Pages, purged the edge cache, and completed reporting successfully. |
+| `ramone-edge` | `db55cd96408ddf9eebb4d935b19966c64f060597` | `30405696420` | success | The Worker deployment job checked out and resolved the exact merge commit, deployed through the pinned Wrangler action, and persisted the deployment event successfully. |
+| `atlas-api-index` | `96cd81f643429895847a1c2f143084d6e995005c` | `30405710114` | success | Validation, pinned metadata contract checks, Wrangler deployment, and deployment reporting succeeded against the exact merge commit. |
 
-| Repository | Required production evidence |
-| --- | --- |
-| `atlas-systems` | successful push deployment run for `1622b9dcc485282daeec4ed04934dd21a17ce341`, exact deployed commit verification, and live `https://atlas-systems.uk/` smoke |
-| `status` | successful push deployment run for `2e9d993193b2823e06ff104eec9f80f9928065aa` and live `https://status.atlas-systems.uk/` smoke |
-| `atlas-doc-viewer` | successful push deployment run for `dde4faea6d1277bfe4a4a458a3c663a8940edac0` and live `https://cv.atlas-systems.uk/` smoke preserving protected-document behaviour |
-| `ramone-edge` | successful push deployment run for `db55cd96408ddf9eebb4d935b19966c64f060597` and live `https://ramone.atlas-systems.uk/` smoke without inference mutation |
-| `atlas-api-index` | successful push deployment run for `96cd81f643429895847a1c2f143084d6e995005c` and live JSON contract check at `https://api.atlas-systems.uk/` |
+These receipts satisfy the historical deployment-provenance requirement. They do not claim that each merge commit remains the current deployed revision because later production deployments may have superseded it.
 
-A later deployment may have superseded these commits. In that case, the receipt must show that the relevant merge commit entered the deployment chain and that the current live revision contains it. Current health alone is not a substitute for deployment provenance.
+## Current live-route verification
+
+The assistant execution environment could not resolve the Atlas public domains during this reconciliation. Current route health or content was therefore not invented.
+
+The remaining read-only checks are:
+
+| Product | Route | Required observation |
+| --- | --- | --- |
+| Main site | `https://atlas-systems.uk/` | HTTP success and HTML response. The current build may supersede `1622b9dcc485282daeec4ed04934dd21a17ce341`. |
+| Status | `https://status.atlas-systems.uk/` | HTTP success and HTML response. No mutation endpoint is called. |
+| CV viewer | `https://cv.atlas-systems.uk/` | HTTP success and HTML response. Do not initialise the protected PDF during this route check. |
+| Ramone | `https://ramone.atlas-systems.uk/` | HTTP success and HTML response. Do not call `/ask` or send an inference request. |
+| API index | `https://api.atlas-systems.uk/` | HTTP 200, JSON content type, and JSON body. No HTML shell is permitted. |
+
+A current-route observation proves present reachability only. The deployment run table remains the provenance record for the Phase 1 and Phase 3 commits.
 
 ## Security and privacy boundary
 
@@ -65,10 +79,9 @@ The production checks remain read-only. Ramone verification must not send a ques
 
 Phase 4C may proceed to tag creation only after:
 
-1. the five production deployment receipts are attached or an evidence-backed superseding deployment chain is recorded;
-2. the five current live routes are verified read-only;
-3. this documentation pull request is reviewed and merged;
-4. the owner separately authorises annotated tag creation.
+1. the five current live-route checks are recorded;
+2. this documentation pull request is reviewed and merged;
+3. the owner separately authorises annotated tag creation.
 
 Tag creation, tag push, release workflow review, and GitHub Release publication remain separate approval gates. Phase 5 consumer adoption remains prohibited until the immutable release is published and verified.
 
