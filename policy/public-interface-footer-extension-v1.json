@@ -1,0 +1,239 @@
+{
+  "schema_version": "atlas-control-plane/public-interface-footer-extension/v1",
+  "version": "1.0.0",
+  "status": "accepted",
+  "authority": {
+    "decision": "docs/adrs/ADR-0008-public-interface-system-v2.md",
+    "phase_record": "docs/public-interface-phase-6-footer-authority.md",
+    "base_policy": "policy/public-interface-system-v2.json",
+    "shell_contract": "policy/public-interface-contract.json",
+    "governance_repository": "AtlasReaper311/atlas-infra",
+    "implementation_repository": "AtlasReaper311/atlas-interface-kit"
+  },
+  "evidence_basis": {
+    "phase_5_closeout": "docs/public-interface-phase-5-closeout.md",
+    "inspected_consumers": [
+      "AtlasReaper311/atlas-systems",
+      "AtlasReaper311/status",
+      "AtlasReaper311/atlas-api-public",
+      "AtlasReaper311/ramone-edge",
+      "AtlasReaper311/atlas-doc-viewer"
+    ],
+    "publishing_owners": [
+      "AtlasReaper311/atlas-article-gen",
+      "AtlasReaper311/atlas-scheduler"
+    ],
+    "observed_families": [
+      "estate",
+      "product",
+      "tool",
+      "editorial"
+    ],
+    "blocking_findings": {
+      "p0": 0,
+      "p1": 0
+    }
+  },
+  "component": {
+    "role": "footer",
+    "selector": ".atlas-footer",
+    "semantic_element": "footer",
+    "single_primary_footer_required": true,
+    "accessible_name_required_when_multiple": true,
+    "empty_footer_forbidden": true,
+    "empty_slots_forbidden": true
+  },
+  "slots": {
+    "identity": {
+      "required": true,
+      "purpose": "Names the owning estate, product, tool, section, or editorial surface.",
+      "content_owner": "consumer"
+    },
+    "context": {
+      "required": false,
+      "purpose": "Provides purpose-specific local destinations without duplicating the complete global navigation.",
+      "content_owner": "consumer"
+    },
+    "evidence": {
+      "required": false,
+      "purpose": "Links to relevant source, status, documentation, or operational evidence.",
+      "content_owner": "consumer"
+    },
+    "sequence": {
+      "required": false,
+      "purpose": "Provides ordered previous and next navigation where the content model has a real sequence.",
+      "content_owner": "consumer-or-publisher",
+      "article_owner": "AtlasReaper311/atlas-scheduler"
+    },
+    "estate_escape": {
+      "required": true,
+      "purpose": "Provides a clear route from the local surface into the wider Atlas Systems estate.",
+      "content_owner": "consumer"
+    }
+  },
+  "variants": {
+    "estate": {
+      "required_slots": [
+        "identity",
+        "estate_escape"
+      ],
+      "optional_slots": [
+        "context",
+        "evidence"
+      ],
+      "forbidden_slots": [
+        "sequence"
+      ],
+      "intended_surfaces": [
+        "atlas-systems estate pages"
+      ]
+    },
+    "product": {
+      "required_slots": [
+        "identity",
+        "estate_escape"
+      ],
+      "optional_slots": [
+        "context",
+        "evidence"
+      ],
+      "forbidden_slots": [
+        "sequence"
+      ],
+      "intended_surfaces": [
+        "status",
+        "public API docs",
+        "Ramone",
+        "CV"
+      ]
+    },
+    "tool": {
+      "required_slots": [
+        "identity",
+        "context",
+        "estate_escape"
+      ],
+      "optional_slots": [
+        "evidence"
+      ],
+      "forbidden_slots": [
+        "sequence"
+      ],
+      "intended_surfaces": [
+        "Lab tools and experiments"
+      ]
+    },
+    "editorial": {
+      "required_slots": [
+        "identity",
+        "sequence",
+        "estate_escape"
+      ],
+      "optional_slots": [
+        "context",
+        "evidence"
+      ],
+      "forbidden_slots": [],
+      "intended_surfaces": [
+        "Writing articles and ordered editorial series"
+      ]
+    }
+  },
+  "behaviour": {
+    "global_navigation_duplication_forbidden": true,
+    "purpose_specific_labels_required": true,
+    "atlas_owned_html_same_tab_required": true,
+    "external_links_new_tab_required": true,
+    "external_links_rel": "noopener noreferrer",
+    "visible_focus_required": true,
+    "minimum_touch_target_px": 44,
+    "mobile_wrap_required": true,
+    "fixed_bottom_navigation_clearance_required": true,
+    "reduced_motion_required": true,
+    "remote_runtime_dependency_forbidden": true,
+    "shared_runtime_javascript_forbidden": true
+  },
+  "ownership": {
+    "governance": {
+      "repository": "AtlasReaper311/atlas-infra",
+      "owns": [
+        "policy",
+        "schema",
+        "validator",
+        "release approval"
+      ]
+    },
+    "implementation": {
+      "repository": "AtlasReaper311/atlas-interface-kit",
+      "owns": [
+        "selectors",
+        "layout foundations",
+        "responsive behaviour",
+        "focus foundations"
+      ],
+      "must_not_own": [
+        "consumer wording",
+        "consumer destinations",
+        "publication sequencing",
+        "runtime data"
+      ]
+    },
+    "generator": {
+      "repository": "AtlasReaper311/atlas-article-gen",
+      "owns": [
+        "article shell",
+        "single scheduler footer placeholder",
+        "generator tests"
+      ],
+      "must_not_own": [
+        "due-date selection",
+        "published previous-next chaining",
+        "production writes"
+      ]
+    },
+    "publisher": {
+      "repository": "AtlasReaper311/atlas-scheduler",
+      "owns": [
+        "published article footer chaining",
+        "previous-next labels",
+        "series sequencing",
+        "only write path into atlas-systems"
+      ],
+      "production_execution_requires_separate_approval": true
+    },
+    "consumers": {
+      "own": [
+        "footer content",
+        "variant selection",
+        "local links",
+        "local rendering integration",
+        "repository-native tests and previews"
+      ],
+      "adoption_requires_separate_pull_request": true,
+      "rollout_requires_separate_approval": true,
+      "visual_merge_approval_required": true
+    }
+  },
+  "distribution": {
+    "intended_interface_kit_release": "0.4.0",
+    "repository_local_assets_required": true,
+    "fingerprint_verification_required": true,
+    "consumer_adoption_after_immutable_release_only": true
+  },
+  "excluded": [
+    "interface-kit-source-changes",
+    "interface-kit-release-publication",
+    "consumer-source-changes",
+    "generated-article-output-edits",
+    "scheduler-production-execution",
+    "publication-execution",
+    "workflow-dispatch",
+    "deployment",
+    "provider-settings",
+    "secrets",
+    "runtime-routing",
+    "content-rewriting",
+    "global-navigation-redesign",
+    "phase-6b"
+  ]
+}
