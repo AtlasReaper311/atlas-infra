@@ -1,6 +1,6 @@
 # Public interface programme Phase 4C release preflight
 
-Status: release candidate technically reproducible and historical deployment receipts attached; immutable release remains blocked until current live-route verification is recorded and this pull request is merged.
+Status: release candidate technically reproducible, historical deployment receipts attached, and current live routes verified. Documentation review and merge remain required before separately approved tag creation.
 
 Recorded: 29 July 2026.
 
@@ -55,33 +55,30 @@ These receipts satisfy the historical deployment-provenance requirement. They do
 
 ## Current live-route verification
 
-The assistant execution environment could not resolve the Atlas public domains during this reconciliation. Current route health or content was therefore not invented.
+Atlas ran a bounded read-only route check from SPECULAR-CORE on 29 July 2026. The script requested only each product root. It did not initialise the protected CV document, call Ramone `/ask`, send an inference request, dispatch a workflow, or call any mutation endpoint.
 
-The remaining read-only checks are:
+| Product | Route result | Content result | Revision evidence |
+| --- | --- | --- | --- |
+| Main site | HTTP 200; 22,248 bytes | `text/html; charset=utf-8`; title `Atlas Systems` | Exposed build commit `f82527fcfd4c62cb7cd0983b267cf4b3d639e9b8`. GitHub comparison proves it is five commits ahead of, and descends from, the Phase 1 merge commit `1622b9dcc485282daeec4ed04934dd21a17ce341`. |
+| Status | HTTP 200; 25,747 bytes | `text/html; charset=utf-8`; title `Status // Atlas Systems` | The route does not expose a build commit. Historical provenance remains deployment run `30405665618`. |
+| CV viewer | HTTP 200; 9,329 bytes | `text/html; charset=utf-8`; title `CV // Atlas Systems` | The root route was checked without initialising or requesting the protected PDF. Historical provenance remains deployment run `30405681772`. |
+| Ramone | HTTP 200; 94,648 bytes | `text/html; charset=utf-8`; title `Ramone // Atlas Systems` | The root route was checked without calling `/ask` or sending inference input. Historical provenance remains deployment run `30405696420`. |
+| API index | HTTP 200; 19,211 bytes | `application/json; charset=utf-8`; valid object with no HTML shell | Top-level keys observed: `counts`, `discovery_warnings`, `generated_at`, `service`, and `workers`. Historical provenance remains deployment run `30405710114`. |
 
-| Product | Route | Required observation |
-| --- | --- | --- |
-| Main site | `https://atlas-systems.uk/` | HTTP success and HTML response. The current build may supersede `1622b9dcc485282daeec4ed04934dd21a17ce341`. |
-| Status | `https://status.atlas-systems.uk/` | HTTP success and HTML response. No mutation endpoint is called. |
-| CV viewer | `https://cv.atlas-systems.uk/` | HTTP success and HTML response. Do not initialise the protected PDF during this route check. |
-| Ramone | `https://ramone.atlas-systems.uk/` | HTTP success and HTML response. Do not call `/ask` or send an inference request. |
-| API index | `https://api.atlas-systems.uk/` | HTTP 200, JSON content type, and JSON body. No HTML shell is permitted. |
-
-A current-route observation proves present reachability only. The deployment run table remains the provenance record for the Phase 1 and Phase 3 commits.
+The five products were reachable and preserved their intended HTML or JSON boundary. A current-route observation proves present reachability only. The deployment run table remains the provenance record for the Phase 1 and Phase 3 commits.
 
 ## Security and privacy boundary
 
 This reconciliation performed no workflow dispatch, deployment, provider write, secret access, inference request, protected-document request, release, tag creation, consumer update, or merge.
 
-The production checks remain read-only. Ramone verification must not send a question to `/ask`. CV verification must preserve explicit visitor initiation before the protected PDF is requested. API index verification remains JSON-only.
+The route checks were read-only. Ramone verification did not send a question to `/ask`. CV verification preserved explicit visitor initiation before any protected PDF request. API index verification remained JSON-only.
 
 ## Release boundary
 
-Phase 4C may proceed to tag creation only after:
+The evidence prerequisites for Phase 4C tag consideration are now complete. Phase 4C may proceed only after:
 
-1. the five current live-route checks are recorded;
-2. this documentation pull request is reviewed and merged;
-3. the owner separately authorises annotated tag creation.
+1. this documentation pull request is reviewed and merged;
+2. the owner separately authorises annotated tag creation against `630c8060ebe61b3f2234cd73ae983b5b41564c3b`.
 
 Tag creation, tag push, release workflow review, and GitHub Release publication remain separate approval gates. Phase 5 consumer adoption remains prohibited until the immutable release is published and verified.
 
