@@ -220,7 +220,7 @@ Phase 0  programme control and rebaseline
   -> Phase 3  cross-product baseline evidence
   -> Phase 4  authority extension and interface-kit release
   -> Phase 5  atlas-systems shared foundation adoption
-  -> Phase 6  footer authority, primitive, generator and consumers
+  -> Phase 6  footer authority, primitive, and consumers
   -> Phase 7  metadata and browser identity
   -> Phase 8  accessibility and responsive correction
   -> Phase 9  Systems detail surfaces
