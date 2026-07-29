@@ -1,10 +1,8 @@
 # Public interface programme Phase 6 footer authority
 
-Status: Phase 6A complete at its authority review and merge gate. Phase 6B has not begun.
+Status: Phases 6A through 6C complete. Phase 6D has begun at Part 0 inspection only.
 
 Opened: 29 July 2026.
-
-Closed: 29 July 2026.
 
 ## Purpose
 
@@ -12,7 +10,7 @@ Phase 6 defines the shared structural contract for purpose-specific Atlas System
 
 ADR-0008 already requires a purpose-specific footer and an estate escape. The base policies preserve local product identity, repository-local assets, independent deployment, shared focus behaviour, and same-tab navigation across Atlas-owned HTML surfaces. This phase converts that accepted direction into an executable slot and variant contract.
 
-## Closeout receipt
+## Phase 6A authority closeout
 
 Phase 6A was reviewed through `AtlasReaper311/atlas-infra` PR #87 at exact head `ba611253d3806e21feb9c15b6607ddc49a2178aa` and squash-merged into `main` as `8d050790fbf08eb1ae41e2a9b47c1b2fa70d2c1a` on 29 July 2026.
 
@@ -26,7 +24,63 @@ The exact-head pull-request checks passed:
 
 The Dependabot review policy was skipped as intended for a non-Dependabot pull request. No review threads remained open.
 
-The merge established governance authority only. It did not change `atlas-interface-kit`, update a consumer, alter generated article output, run the scheduler, publish a release, dispatch a workflow manually, deploy a runtime, or modify provider settings or secrets.
+## Phase 6B implementation closeout
+
+`AtlasReaper311/atlas-interface-kit` PR #13 implemented the accepted footer authority as `v0.4.0`.
+
+- Reviewed head: `519124ab11d8217ca0516dd475271270426bc337`.
+- Squash merge commit: `c38b5b3edd631999dfad838c4fb70e505a9860cf`.
+- Merge date: 29 July 2026.
+- Exact-head CI, CodeQL, and OpenSSF Scorecard checks passed.
+- No review threads remained open.
+
+The implementation added estate, product, tool, and editorial variants; identity, context, evidence, sequence, and estate-escape slots; responsive layout and focus foundations; machine-readable footer semantics; deterministic release coverage; and explicit scheduler and consumer ownership boundaries.
+
+## Phase 6C immutable release closeout
+
+The immutable `atlas-interface-kit v0.4.0` release was published and independently verified on 29 July 2026.
+
+### Source and tag
+
+- Source commit: `c38b5b3edd631999dfad838c4fb70e505a9860cf`.
+- Annotated tag: `v0.4.0`.
+- The tag resolves exactly to the source commit with zero commit difference.
+
+### Release workflow
+
+- Workflow: `Release`.
+- Run ID: `30458258099`.
+- Trigger: tag push.
+- Head branch: `v0.4.0`.
+- Head SHA: `c38b5b3edd631999dfad838c4fb70e505a9860cf`.
+- Conclusion: success.
+- Run URL: `https://github.com/AtlasReaper311/atlas-interface-kit/actions/runs/30458258099`.
+
+### Independent verification
+
+A fresh local deterministic build was compared byte-for-byte with the workflow artifact and the subsequently published GitHub Release assets.
+
+- Archive: `atlas-interface-kit-0.4.0.tar.gz`.
+- Archive SHA-256: `6b72d8acb07230f0b25d4b78b5c5b081ab09a296f11ad3ac1b1f5cb493cac9b9`.
+- Archive size: `102698` bytes.
+- Release manifest: `atlas-interface-kit-0.4.0.release-manifest.json`.
+- Manifest SHA-256: `86fcd399a451f99175cffc8e44abf4f404495f409fc1bfd751d95dfd1b86bbb3`.
+- Manifest size: `3260` bytes.
+- Verified release file count: `19`.
+- `docs/FOOTER_EXTENSION.md` was present.
+
+The published asset digests match the independent verification hashes exactly.
+
+### Published release
+
+- Name: `atlas-interface-kit v0.4.0`.
+- Tag: `v0.4.0`.
+- Published: `2026-07-29T13:55:22Z`.
+- Draft: false.
+- Prerelease: false.
+- Release URL: `https://github.com/AtlasReaper311/atlas-interface-kit/releases/tag/v0.4.0`.
+
+Phase 6C changed no consumer source, generated Writing output, scheduler state, runtime deployment, provider setting, or secret.
 
 ## Evidence inspected
 
@@ -47,8 +101,6 @@ The inspection found four real footer families:
 2. product footers on Status, Public API Docs, Ramone, and CV;
 3. tool footers on Lab tools and experiments;
 4. editorial footers whose previous and next links are computed by the publishing pipeline.
-
-At the time of Phase 6A inspection, the interface kit provided the `.atlas-footer` role and outer spacing only. It did not yet define internal slots or variants.
 
 ## Accepted contract
 
@@ -101,7 +153,7 @@ Owns policy, schema, validation, release approval, and accepted architecture tra
 
 ### `atlas-interface-kit`
 
-May implement selectors, layout foundations, responsive behaviour, and focus foundations after a separate Phase 6B approval.
+Owns selectors, layout foundations, responsive behaviour, focus foundations, and immutable repository-local distribution.
 
 It must not own consumer wording, consumer destinations, publication sequencing, or runtime data.
 
@@ -125,31 +177,13 @@ Every adoption requires a separate pull request, visual review, merge approval, 
 
 ## Distribution
 
-The intended implementation release is `atlas-interface-kit v0.4.0`.
+The accepted implementation release is `atlas-interface-kit v0.4.0`.
 
-This document does not create that release. Phase 6B must update the kit source, deterministic output, tests, version declarations, release evidence, and immutable distribution under a separate approval.
-
-Consumers may adopt only after the immutable release is published and independently verified.
-
-## Exclusions
-
-Phase 6A does not authorise:
-
-- interface-kit source changes or release publication;
-- consumer source changes;
-- generated article output edits;
-- scheduler or publication execution;
-- workflow dispatch;
-- deployment;
-- provider-setting or secret changes;
-- runtime routing changes;
-- content rewriting;
-- global-navigation redesign;
-- Phase 6B.
+Consumers may adopt only from that immutable release and must verify copied repository-local files against its published manifest.
 
 ## Validation
 
-Repository-native validation for this authority change is:
+Repository-native validation for this authority record remains:
 
 ```bash
 python3 -m py_compile \
@@ -172,6 +206,6 @@ Pull-request checks remain authoritative for the exact branch bytes.
 
 ## Next gate
 
-Phase 6B requires separate explicit approval to inspect current `atlas-interface-kit/main`, implement the accepted footer selectors and variants, prepare `v0.4.0`, validate deterministic output, and open a draft pull request.
+Phase 6D begins with fresh inspection of current `atlas-article-gen/main` and `atlas-scheduler/main`, including their canonical authoring and publishing contracts, tests, workflows, current footer placeholder, and current sequencing implementation.
 
-No consumer, generator, scheduler, release, preview, deployment, or production action is authorised by this record.
+Implementation must proceed in dependency order: generator shell and tests first, then scheduler rendering and tests. A scheduler dry run and any production publication remain separate approval gates. No generated article output may be hand-edited.
