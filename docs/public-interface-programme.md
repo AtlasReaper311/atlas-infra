@@ -1,14 +1,18 @@
 # Atlas Systems public interface programme
 
-Status: active at Phase 4C documentation review and immutable release gate.
+Status: active at Phase 5 closeout documentation review. Phase 6 has not begun.
 
 Started: 28 July 2026.
 
 ## Current programme state
 
-Phases 0 through 4B are complete. Draft `atlas-infra` PR #84 records the reproducible `atlas-interface-kit` `0.3.0` candidate, successful deployment provenance for the exact Phase 1 and Phase 3 merge commits, and current read-only verification of the five public product roots.
+Phases 0 through 5 are complete at their implementation, release, consumer-adoption, production-deployment, and live-verification gates.
 
-The next boundary is review and merge of PR #84. Annotated tag creation, tag push, release workflow review, GitHub Release publication, and Phase 5 consumer adoption remain separately approval-gated.
+`atlas-interface-kit v0.3.0` remains the immutable shared-foundation release at source commit `630c8060ebe61b3f2234cd73ae983b5b41564c3b`. `atlas-systems` PR #171 adopted that release on repository-owned surfaces from reviewed head `79698d735b3cd63855fa2736e8018203aad60041` and squash-merged as `7e21a276a97bb0322272cc2aa09cd649cbe84d6c`.
+
+Production deployment run `30447108923` validated the Pages output, deployed through the pinned `atlas-infra` static-site workflow, proved that `atlas-systems.uk` served the exact merge commit, confirmed the Systems route marker, passed live homepage AtlasField and System Symphony browser smoke, uploaded production evidence, and received HTTP `202` from the guarded Corpus refresh.
+
+The next boundary is review and merge of the Phase 5 closeout documentation pull request. Phase 6 footer work requires a separate approval and fresh Part 0 inspection of current authority, interface-kit, generator, scheduler, consumer, preview, deployment, generated-output, and ownership state.
 
 ## Mission
 
@@ -59,6 +63,8 @@ The following snapshot was recorded from current GitHub state on 28 July 2026. E
 | `ramone-edge` | `c0c8028e06e21e71f1fef6f950d46d49f673dba2` | Browser product is in scope. Inference routing, private tunnel, Turnstile, rate limiting, SSE, wake-state decisions, grounding, bindings, secrets, and `/ask` and `/status` contracts are excluded. | Worker deployment remains separate. Existing preview is isolated, binding-free, inference-free, deterministic, and offline by design. | `0.2.0`, repository-local, fingerprinted, and embedded. | Generated interface module is derived. Runtime bindings, secrets, and inference contracts are protected. |
 | `atlas-article-gen` | `ec03263172dfb829b92ba2b8525b55f24f5a7adb` | Generator owns article templates, parser, markup, and generated draft folders. | `build-articles.yml` validates on pull requests, builds on `main`, and may sync finished folders to the scheduler. It never writes to the live site. | Article template adoption is a later programme phase. | `drafts/scheduled/` is generated from canonical Markdown. `build_article.py` is parser authority. Generated HTML and metadata are not hand-edited. |
 | `atlas-scheduler` | `596967f57d2ca68021f5da41073efdee7b8bd8c0` | Scheduler owns the queue, dates, previous and next links, coming-soon rotation, optional Work insertion, refresh receipts, and the only write path to `atlas-systems`. | `publish.yml` runs at 09:00 UTC and supports bounded manual modes. Production execution requires separate approval. | Article output may consume accepted foundations only through the owned pipeline. | Scheduled queue, sequencing, publication output, refresh requests, and receipts remain scheduler-owned. |
+
+The table above remains the original 28 July rebaseline. Current Phase 5 truth supersedes its `atlas-systems` and `atlas-interface-kit` rows: `atlas-interface-kit v0.3.0` is published and verified, and `atlas-systems/main` contains the verified Phase 5 adoption at `7e21a276a97bb0322272cc2aa09cd649cbe84d6c`.
 
 GitHub does not expose another operator's local worktree state. This programme records exact remote main commits and overlapping pull requests. Every implementation phase must still inspect the executing checkout for branch and dirty-state evidence before editing.
 
@@ -136,12 +142,12 @@ ADR-0008 and `policy/public-interface-system-v2.json` already govern most propos
 | Base responsive breakpoints | Covered and non-overridable | Use current authority unless measured evidence requires an accepted amendment. |
 | Reduced motion | Covered and non-overridable | Preserve meaningful static states. |
 | Loading, empty, unavailable, unknown, and error states | Covered | Extend vocabulary only when measured gaps are real. |
-| Table wrapper | Covered | Measure whether dense-data continuation, labelled local overflow, and keyboard scrolling need stronger authority. |
+| Table wrapper | Covered by the base authority and foundation extension | Apply accessible naming, keyboard focus, visible focus, and local scrolling only while a dense region actually overflows. |
 | Search dialog | Covered | Correct source semantics and interaction defects without moving product-specific search logic. |
 | Footer role | Covered at a high level | Phase 6 may add slot and variant authority if measured evidence proves the existing role is insufficient. |
-| Breadcrumbs | Not explicit | Candidate Phase 4 authority extension after measured evidence. |
-| Live-region and status announcement strategy | Not explicit enough for the proposed programme | Candidate Phase 4 authority extension after measured evidence. |
-| 1920 pixel evidence | Not in the current v2 matrix | Add first as evidence coverage, not as a visual token or budget. |
+| Breadcrumbs | Covered by `public-interface-foundation-extension-v1` | Optional on appropriate hierarchical human-facing routes; forbidden where they duplicate primary navigation or do not fit the product. |
+| Live-region and status announcement strategy | Covered by `public-interface-foundation-extension-v1` | Announce meaningful post-load state transitions only; keep initial and unchanged polling silent and preserve the global header status as `aria-live="off"`. |
+| 1920 pixel evidence | Covered by `public-interface-foundation-extension-v1` | Reporting-only evidence coverage, not a breakpoint, layout token, content-width permission, or blocking budget. |
 
 No new ADR is required at Gate 0. Any lasting architecture change discovered after measured evidence should amend accepted authority or create a focused ADR only when the decision cannot be represented by the current contract.
 
@@ -348,9 +354,9 @@ The programme will produce, as applicable:
 ## Current risks
 
 1. The original current-state table is a dated 28 July snapshot and must not be treated as live evidence for later phases.
-2. The shared interface release remains unpublished until Phase 4C completes its separate tag and release gates.
+2. `atlas-systems` now consumes `atlas-interface-kit v0.3.0`, but later consumers remain independently approval-gated and must inspect their current local bundle before adoption.
 3. The 1920-pixel viewport remains reporting-only and is not an accepted breakpoint or blocking budget.
-4. Footer slot and variant authority remains a later Phase 6 concern.
+4. Footer slot and variant authority remains a Phase 6 concern and must not be inferred from the Phase 5 foundation release.
 5. A merge into a consumer repository may deploy production. Source approval and rollout approval remain separate.
 6. Article appearance changes cross generator, scheduler, and live-site ownership. Generated article output must not be hand-edited.
 7. Browser evidence frameworks already exist in several repositories. Later phases must extend them rather than create competing stacks.
@@ -411,9 +417,9 @@ The programme is complete only after:
 
 ## Current approval boundary
 
-PR #84 is a documentation-only Phase 4C record. It must be reviewed and merged only after explicit approval.
+The Phase 5 closeout branch is documentation-only. It may record reviewed source, preview, merge, production-deployment, live-route, browser-smoke, evidence-artifact, and Corpus-refresh receipts, then stop at a draft pull request.
 
-After that merge, the owner may separately authorise creation of annotated tag `v0.3.0` at `630c8060ebe61b3f2234cd73ae983b5b41564c3b`. Tag push, release workflow review, GitHub Release publication, consumer adoption, and deployment remain separate gates.
+Review and merge of that closeout pull request require separate approval. Phase 6 must not begin until the closeout record is merged and the owner separately approves a fresh Part 0 inspection. Footer authority changes, interface-kit source changes, release creation, generator or scheduler changes, consumer adoption, merges, deployments, workflow dispatches, publication execution, and provider writes remain outside the current gate.
 
 ## Historical Approval Gate 0
 
