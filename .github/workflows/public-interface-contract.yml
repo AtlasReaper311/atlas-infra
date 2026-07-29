@@ -8,20 +8,24 @@ on:
       - "docs/adrs/ADR-0007-public-interface-contract.md"
       - "docs/adrs/ADR-0008-public-interface-system-v2.md"
       - "docs/public-interface-phase-4-authority-extension.md"
+      - "docs/public-interface-phase-6-footer-authority.md"
       - "docs/public-interface-system-v2-audit.md"
       - "docs/public-interface-system-v2-approved-scope.md"
       - "docs/public-interface-system-v2-completion.md"
       - "policy/atlas-owned-domains.json"
       - "policy/browser-icons-v1.json"
       - "policy/public-interface-contract.json"
+      - "policy/public-interface-footer-extension-v1.json"
       - "policy/public-interface-foundation-extension-v1.json"
       - "policy/public-interface-system-v2.json"
       - "scripts/validate_browser_icons.py"
       - "scripts/validate_public_interface.py"
+      - "scripts/validate_public_interface_footer_extension.py"
       - "scripts/validate_public_interface_foundation_extension.py"
       - "scripts/tests/test_validate_browser_icons.py"
       - "scripts/tests/test_public_interface_implementation_state.py"
       - "scripts/tests/test_validate_public_interface.py"
+      - "scripts/tests/test_validate_public_interface_footer_extension.py"
       - "scripts/tests/test_validate_public_interface_foundation_extension.py"
   push:
     branches: [main]
@@ -31,20 +35,24 @@ on:
       - "docs/adrs/ADR-0007-public-interface-contract.md"
       - "docs/adrs/ADR-0008-public-interface-system-v2.md"
       - "docs/public-interface-phase-4-authority-extension.md"
+      - "docs/public-interface-phase-6-footer-authority.md"
       - "docs/public-interface-system-v2-audit.md"
       - "docs/public-interface-system-v2-approved-scope.md"
       - "docs/public-interface-system-v2-completion.md"
       - "policy/atlas-owned-domains.json"
       - "policy/browser-icons-v1.json"
       - "policy/public-interface-contract.json"
+      - "policy/public-interface-footer-extension-v1.json"
       - "policy/public-interface-foundation-extension-v1.json"
       - "policy/public-interface-system-v2.json"
       - "scripts/validate_browser_icons.py"
       - "scripts/validate_public_interface.py"
+      - "scripts/validate_public_interface_footer_extension.py"
       - "scripts/validate_public_interface_foundation_extension.py"
       - "scripts/tests/test_validate_browser_icons.py"
       - "scripts/tests/test_public_interface_implementation_state.py"
       - "scripts/tests/test_validate_public_interface.py"
+      - "scripts/tests/test_validate_public_interface_footer_extension.py"
       - "scripts/tests/test_validate_public_interface_foundation_extension.py"
   workflow_dispatch:
 
@@ -77,10 +85,12 @@ jobs:
           for value in [
               "contracts/v1/public-interface/public-interface-surface.schema.json",
               "contracts/v1/public-interface/public-interface-system.schema.json",
+              "contracts/v1/public-interface/public-interface-footer-extension.schema.json",
               "contracts/v1/public-interface/public-interface-foundation-extension.schema.json",
               "policy/atlas-owned-domains.json",
               "policy/browser-icons-v1.json",
               "policy/public-interface-contract.json",
+              "policy/public-interface-footer-extension-v1.json",
               "policy/public-interface-foundation-extension-v1.json",
               "policy/public-interface-system-v2.json",
           ]:
@@ -93,6 +103,7 @@ jobs:
           python3 -m py_compile \
             scripts/validate_browser_icons.py \
             scripts/validate_public_interface.py \
+            scripts/validate_public_interface_footer_extension.py \
             scripts/validate_public_interface_foundation_extension.py
 
       - name: Validate committed authority
@@ -104,6 +115,9 @@ jobs:
           python3 scripts/validate_public_interface_foundation_extension.py \
             --root . \
             --report /tmp/public-interface-foundation-extension.json
+          python3 scripts/validate_public_interface_footer_extension.py \
+            --root . \
+            --report /tmp/public-interface-footer-extension.json
           python3 scripts/validate_browser_icons.py
 
       - name: Run unit tests
@@ -113,6 +127,7 @@ jobs:
             scripts.tests.test_validate_browser_icons \
             scripts.tests.test_public_interface_implementation_state \
             scripts.tests.test_validate_public_interface \
+            scripts.tests.test_validate_public_interface_footer_extension \
             scripts.tests.test_validate_public_interface_foundation_extension \
             -v
 
@@ -131,6 +146,7 @@ jobs:
           name: public-interface-contract-reports
           path: |
             /tmp/public-interface-contract.json
+            /tmp/public-interface-footer-extension.json
             /tmp/public-interface-foundation-extension.json
           if-no-files-found: warn
           retention-days: 7
