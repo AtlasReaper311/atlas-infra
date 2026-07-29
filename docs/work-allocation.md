@@ -30,11 +30,11 @@ Entry format:
 
 - **Repo(s):** `atlas-infra`, `atlas-systems`, `atlas-interface-kit`, `atlas-api-public`, `atlas-api-index`, `status`, `atlas-doc-viewer`, `ramone-edge`, `atlas-article-gen`, `atlas-scheduler`
 - **Agent:** ChatGPT
-- **Status:** blocked
+- **Status:** active
 - **Started:** 2026-07-28
 - **Last updated:** 2026-07-29
-- **Summary:** Phases 0 through 5 are complete at their defined gates. Phase 6A footer authority is complete and merged through `atlas-infra` PR #87 from reviewed head `ba611253d3806e21feb9c15b6607ddc49a2178aa` as squash commit `8d050790fbf08eb1ae41e2a9b47c1b2fa70d2c1a`. The accepted authority defines estate, product, tool, and editorial variants; identity, context, evidence, sequence, and estate-escape slots; shared accessibility, responsive, and link behaviour; and explicit interface-kit, generator, scheduler, and consumer ownership. Phase 6B and all source adoption remain separately approval-gated.
-- **Resume point:** Await explicit Phase 6B approval. On approval, inspect current `atlas-interface-kit/main`, implement the accepted footer selectors and variants, update deterministic output and tests, prepare `v0.4.0`, and open a draft pull request. Do not update a consumer, alter generated article output, run the scheduler, dispatch workflows manually, publish a release, deploy anything, or modify provider settings without their separate gates.
+- **Summary:** Phases 0 through 5 are complete at their defined gates. Phase 6A authority is merged through `atlas-infra` PR #87. Phase 6B implementation is merged through `atlas-interface-kit` PR #13 from reviewed head `519124ab11d8217ca0516dd475271270426bc337` as squash commit `c38b5b3edd631999dfad838c4fb70e505a9860cf`. Phase 6C published and independently verified immutable release `v0.4.0`; Release workflow run `30458258099` succeeded, archive SHA-256 is `6b72d8acb07230f0b25d4b78b5c5b081ab09a296f11ad3ac1b1f5cb493cac9b9`, and manifest SHA-256 is `86fcd399a451f99175cffc8e44abf4f404495f409fc1bfd751d95dfd1b86bbb3`. Phase 6D has begun at fresh repository inspection only.
+- **Current thread:** Inspect `atlas-article-gen` and `atlas-scheduler` in dependency order. Confirm the generator-owned article shell and single scheduler placeholder, then confirm scheduler-owned footer chaining, tests, workflows, and dry-run contract. Do not edit generated article output, run the scheduler, publish, deploy, or update independent consumers without their separate gates.
 
 ### SPECULAR-CORE pending rollout
 
