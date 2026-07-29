@@ -30,11 +30,11 @@ Entry format:
 
 - **Repo(s):** `atlas-infra`, `atlas-systems`, `atlas-interface-kit`, `atlas-api-public`, `atlas-api-index`, `status`, `atlas-doc-viewer`, `ramone-edge`, `atlas-article-gen`, `atlas-scheduler`
 - **Agent:** Codex
-- **Status:** active
+- **Status:** blocked
 - **Started:** 2026-07-28
 - **Last updated:** 2026-07-29
-- **Summary:** Phases 0 through 4B are complete. Draft `atlas-infra` PR #84 records the reproducible `atlas-interface-kit` `0.3.0` candidate at `630c8060ebe61b3f2234cd73ae983b5b41564c3b`, successful deployment provenance for the exact Phase 1 and Phase 3 merge commits, and current read-only verification of all five public routes. The evidence prerequisites for Phase 4C tag consideration are complete.
-- **Current thread:** Review draft PR #84 and merge it only after explicit approval. After the documentation merge, request separate approval to create annotated tag `v0.3.0`. Do not publish a GitHub Release, update consumers, begin Phase 5, or deploy anything without the later approval gates.
+- **Summary:** Phases 0 through 4 are complete. `atlas-interface-kit v0.3.0` is published from immutable tag `v0.3.0` at commit `630c8060ebe61b3f2234cd73ae983b5b41564c3b`. Release workflow run `30436445914` succeeded, and the published archive and release manifest were downloaded and matched the reviewed SHA-256 fingerprints `60dd4a6b4dc308c65aea1b86c01043fe81beab30861058fb3f03f6cdcb393ec4` and `77886d2236bc65de0f3812c4c086775a8ef9d2ba08fc4daa5e93f40192a8df2f`. No consumer has adopted the release, and Phase 5 has not begun.
+- **Resume point:** Review and merge the Phase 4 closeout documentation pull request only after explicit approval. Begin Phase 5 only under a separate approval with fresh Part 0 inspection of current `atlas-systems`. Do not update consumers, dispatch workflows, merge consumer code, or deploy anything from this closeout branch.
 
 ### SPECULAR-CORE pending rollout
 
