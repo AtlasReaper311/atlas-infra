@@ -1,6 +1,6 @@
 # Public interface programme Phase 4C release preflight
 
-Status: release candidate technically reproducible, historical deployment receipts attached, and current live routes verified. Documentation review and merge remain required before separately approved tag creation.
+Status: immutable `atlas-interface-kit` `v0.3.0` release published and independently verified. Phase 4 closeout now waits only for review and merge of this documentation pull request; Phase 5 remains separately approval-gated.
 
 Recorded: 29 July 2026.
 
@@ -8,13 +8,13 @@ Recorded: 29 July 2026.
 
 Phase 4A authority is merged in `atlas-infra` at `6b373af7eed8b617e1d121032031d0892e655778`.
 
-Phase 4B implementation is merged in `atlas-interface-kit` at `630c8060ebe61b3f2234cd73ae983b5b41564c3b`. The repository version is `0.3.0`. The proposed immutable release mapping is:
+Phase 4B implementation is merged in `atlas-interface-kit` at `630c8060ebe61b3f2234cd73ae983b5b41564c3b`. The repository version is `0.3.0`. The immutable release mapping is:
 
 ```text
 v0.3.0 -> 630c8060ebe61b3f2234cd73ae983b5b41564c3b
 ```
 
-No `v0.3.0` tag or GitHub Release existed when this preflight was recorded. No consumer repository has adopted `0.3.0`.
+The annotated tag and GitHub Release now exist. No consumer repository had adopted `0.3.0` when this closeout was recorded.
 
 ## Deterministic release evidence
 
@@ -25,7 +25,33 @@ A canonical Git-tree build from `630c8060ebe61b3f2234cd73ae983b5b41564c3b` repro
 | `atlas-interface-kit-0.3.0.tar.gz` | `60dd4a6b4dc308c65aea1b86c01043fe81beab30861058fb3f03f6cdcb393ec4` |
 | `atlas-interface-kit-0.3.0.release-manifest.json` | `77886d2236bc65de0f3812c4c086775a8ef9d2ba08fc4daa5e93f40192a8df2f` |
 
-The Windows-backed WSL checkout produced different hashes because `LICENSE` and `docs/BRAND_REFERENCE.md` were materialised with platform line endings. Git's canonical stored tree reproduced the CI bytes exactly. The tag-triggered Ubuntu release workflow remains the publication authority.
+The Windows-backed WSL checkout produced different hashes because `LICENSE` and `docs/BRAND_REFERENCE.md` were materialised with platform line endings. Git's canonical stored tree reproduced the CI bytes exactly. The tag-triggered Ubuntu release workflow is the publication build authority.
+
+## Immutable release publication
+
+The owner created and pushed annotated tag `v0.3.0` only after the Phase 4C evidence record was merged. GitHub Actions release run `30436445914` then validated the tag and version, validated the bundle, built the release files, and uploaded workflow artifact `atlas-interface-kit-v0.3.0` successfully.
+
+| Field | Verified value |
+| --- | --- |
+| Tag | `v0.3.0` |
+| Source commit | `630c8060ebe61b3f2234cd73ae983b5b41564c3b` |
+| Release workflow run | `30436445914` |
+| Workflow artifact | `atlas-interface-kit-v0.3.0` |
+| Workflow artifact ID | `8717601241` |
+| Workflow ZIP digest | `sha256:213d293bcee6f133d4c6fbb1599bbcb6bb41a9f51f664e767a6a2c7e0ceb3ad0` |
+| GitHub Release | `https://github.com/AtlasReaper311/atlas-interface-kit/releases/tag/v0.3.0` |
+| Published at | `2026-07-29T08:44:18Z` |
+| Draft | `false` |
+| Prerelease | `false` |
+
+The GitHub Release contains exactly the deterministic archive and release manifest. Atlas downloaded both published assets after publication and verified them independently against the reviewed fingerprints:
+
+| Published asset | Asset ID | Size | Verified SHA-256 |
+| --- | ---: | ---: | --- |
+| `atlas-interface-kit-0.3.0.tar.gz` | `493814640` | 100,378 bytes | `60dd4a6b4dc308c65aea1b86c01043fe81beab30861058fb3f03f6cdcb393ec4` |
+| `atlas-interface-kit-0.3.0.release-manifest.json` | `493814642` | 3,101 bytes | `77886d2236bc65de0f3812c4c086775a8ef9d2ba08fc4daa5e93f40192a8df2f` |
+
+GitHub reports `targetCommitish` as `main` in release metadata. The immutable annotated tag remains the release identity and resolves to the exact reviewed source commit above; later movement of `main` does not change the release.
 
 ## Phase 1 and Phase 3 merge evidence
 
@@ -69,19 +95,16 @@ The five products were reachable and preserved their intended HTML or JSON bound
 
 ## Security and privacy boundary
 
-This reconciliation performed no workflow dispatch, deployment, provider write, secret access, inference request, protected-document request, release, tag creation, consumer update, or merge.
+Tag creation and GitHub Release publication were performed only under their explicit owner approvals. This closeout branch performs documentation writes only.
 
-The route checks were read-only. Ramone verification did not send a question to `/ask`. CV verification preserved explicit visitor initiation before any protected PDF request. API index verification remained JSON-only.
+No consumer repository was updated. Phase 5 did not begin. No product workflow was dispatched, no interface was deployed, no provider setting or secret changed, no Ramone inference request was sent, and no protected CV document was requested.
 
-## Release boundary
+## Phase boundary
 
-The evidence prerequisites for Phase 4C tag consideration are now complete. Phase 4C may proceed only after:
+Phase 4 authority, implementation, immutable release creation, publication, and verification are complete. Closing Phase 4 requires only review and merge of this documentation pull request.
 
-1. this documentation pull request is reviewed and merged;
-2. the owner separately authorises annotated tag creation against `630c8060ebe61b3f2234cd73ae983b5b41564c3b`.
-
-Tag creation, tag push, release workflow review, and GitHub Release publication remain separate approval gates. Phase 5 consumer adoption remains prohibited until the immutable release is published and verified.
+Phase 5 remains a separate programme gate. It must begin with fresh Part 0 inspection of the current `atlas-systems` repository, overlapping branches and pull requests, repository-local bundle state, validation, preview contracts, deployment behaviour, generated paths, and protected product boundaries. No consumer adoption, source change, preview, merge, workflow dispatch, or deployment is authorised by this closeout record.
 
 ## Rollback
 
-This file is documentation only. Before merge, close the pull request or delete its branch. After merge, revert the documentation commit. No provider, runtime, data, secret, release, or consumer rollback is required.
+This file is documentation only. Before merge, close the pull request or delete its branch. After merge, revert the documentation commit. The immutable release is not modified by this closeout and requires no runtime or provider rollback.
