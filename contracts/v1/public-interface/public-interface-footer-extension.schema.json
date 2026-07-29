@@ -1,0 +1,159 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://atlas-systems.uk/contracts/v1/public-interface/public-interface-footer-extension.schema.json",
+  "title": "Atlas Systems public interface footer extension",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "version",
+    "status",
+    "authority",
+    "evidence_basis",
+    "component",
+    "slots",
+    "variants",
+    "behaviour",
+    "ownership",
+    "distribution",
+    "excluded"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "atlas-control-plane/public-interface-footer-extension/v1"
+    },
+    "version": {
+      "const": "1.0.0"
+    },
+    "status": {
+      "const": "accepted"
+    },
+    "authority": {
+      "$ref": "#/$defs/nonEmptyObject"
+    },
+    "evidence_basis": {
+      "$ref": "#/$defs/nonEmptyObject"
+    },
+    "component": {
+      "$ref": "#/$defs/nonEmptyObject"
+    },
+    "slots": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "identity",
+        "context",
+        "evidence",
+        "sequence",
+        "estate_escape"
+      ],
+      "properties": {
+        "identity": {
+          "$ref": "#/$defs/nonEmptyObject"
+        },
+        "context": {
+          "$ref": "#/$defs/nonEmptyObject"
+        },
+        "evidence": {
+          "$ref": "#/$defs/nonEmptyObject"
+        },
+        "sequence": {
+          "$ref": "#/$defs/nonEmptyObject"
+        },
+        "estate_escape": {
+          "$ref": "#/$defs/nonEmptyObject"
+        }
+      }
+    },
+    "variants": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "estate",
+        "product",
+        "tool",
+        "editorial"
+      ],
+      "properties": {
+        "estate": {
+          "$ref": "#/$defs/variant"
+        },
+        "product": {
+          "$ref": "#/$defs/variant"
+        },
+        "tool": {
+          "$ref": "#/$defs/variant"
+        },
+        "editorial": {
+          "$ref": "#/$defs/variant"
+        }
+      }
+    },
+    "behaviour": {
+      "$ref": "#/$defs/nonEmptyObject"
+    },
+    "ownership": {
+      "$ref": "#/$defs/nonEmptyObject"
+    },
+    "distribution": {
+      "$ref": "#/$defs/nonEmptyObject"
+    },
+    "excluded": {
+      "type": "array",
+      "minItems": 12,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "$defs": {
+    "nonEmptyObject": {
+      "type": "object",
+      "minProperties": 1
+    },
+    "variant": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "required_slots",
+        "optional_slots",
+        "forbidden_slots",
+        "intended_surfaces"
+      ],
+      "properties": {
+        "required_slots": {
+          "$ref": "#/$defs/slotList"
+        },
+        "optional_slots": {
+          "$ref": "#/$defs/slotList"
+        },
+        "forbidden_slots": {
+          "$ref": "#/$defs/slotList"
+        },
+        "intended_surfaces": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "slotList": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "identity",
+          "context",
+          "evidence",
+          "sequence",
+          "estate_escape"
+        ]
+      }
+    }
+  }
+}
