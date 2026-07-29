@@ -6,6 +6,8 @@ import unittest
 from pathlib import Path
 
 from scripts.validate_public_interface_footer_extension import (
+    CLASSIC_WRITING_FORBIDDEN_STRUCTURE,
+    CLASSIC_WRITING_SERIES,
     REQUIRED_EXCLUSIONS,
     load_json,
     validate_footer_extension,
@@ -46,7 +48,42 @@ class FooterExtensionValidationTests(unittest.TestCase):
         candidate = copy.deepcopy(self.policy)
         candidate["excluded"] = sorted(REQUIRED_EXCLUSIONS - {"deployment"})
         result = validate_footer_extension(candidate)
-        self.assertIn("Phase 6A exclusions are incomplete", result.errors)
+        self.assertIn("Phase 6 exclusions are incomplete", result.errors)
+
+    def test_rejects_classic_writing_series_scope_drift(self) -> None:
+        candidate = copy.deepcopy(self.policy)
+        candidate["intentional_differences"]["classic_writing_articles"]["scope"][
+            "permanent_series"
+        ] = sorted(CLASSIC_WRITING_SERIES - {"W-07"})
+        result = validate_footer_extension(candidate)
+        self.assertIn("classic Writing permanent series scope drifted", result.errors)
+
+    def test_rejects_transferable_classic_writing_difference(self) -> None:
+        candidate = copy.deepcopy(self.policy)
+        candidate["intentional_differences"]["classic_writing_articles"][
+            "non_transferable"
+        ] = False
+        result = validate_footer_extension(candidate)
+        self.assertIn("classic Writing difference must remain non-transferable", result.errors)
+
+    def test_rejects_interface_kit_variant_for_classic_writing(self) -> None:
+        candidate = copy.deepcopy(self.policy)
+        candidate["intentional_differences"]["classic_writing_articles"][
+            "interface_kit_variant_created"
+        ] = True
+        result = validate_footer_extension(candidate)
+        self.assertIn(
+            "classic Writing difference must not create an interface-kit variant",
+            result.errors,
+        )
+
+    def test_rejects_incomplete_classic_forbidden_structure(self) -> None:
+        candidate = copy.deepcopy(self.policy)
+        candidate["intentional_differences"]["classic_writing_articles"][
+            "forbidden_structure"
+        ] = sorted(CLASSIC_WRITING_FORBIDDEN_STRUCTURE - {".atlas-footer"})
+        result = validate_footer_extension(candidate)
+        self.assertIn("classic Writing forbidden structure drifted", result.errors)
 
     def test_schema_is_valid_json_and_targets_policy(self) -> None:
         schema_path = (
@@ -59,6 +96,7 @@ class FooterExtensionValidationTests(unittest.TestCase):
             self.policy["schema_version"],
         )
         self.assertEqual(schema["properties"]["version"]["const"], self.policy["version"])
+        self.assertIn("intentional_differences", schema["required"])
 
 
 if __name__ == "__main__":
