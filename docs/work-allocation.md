@@ -26,16 +26,6 @@ Entry format:
 
 ## Active work
 
-### Public interface programme
-
-- **Repo(s):** `atlas-infra`, `atlas-systems`, `atlas-interface-kit`, `atlas-api-public`, `atlas-api-index`, `status`, `atlas-doc-viewer`, `ramone-edge`, `atlas-article-gen`, `atlas-scheduler`
-- **Agent:** ChatGPT
-- **Status:** active
-- **Started:** 2026-07-28
-- **Last updated:** 2026-07-30
-- **Summary:** Phases 0 through 6 are closed. Phase 7 implementation is merged through `atlas-article-gen` PR #39 at `9de98a02fc9bdf4430624d2383aafc2528529d61`, generator regeneration commit `5c32b7109be2e9772a3d7e03142bfabb78032bae`, scheduler sync commit `ec901c6a087ce01ad13a1d9dceae15e5c85b8fd4`, `atlas-systems` PR #178 at `8154b47e2ba62cbc89d893d06acbf97e73ed3b62`, `status` PR #32 at `4ee696150006dd72fe7b0d75eb0b5c5199f36747`, `atlas-doc-viewer` PR #31 at `ccf1b036d98cf0b1404089b561dbfe47c2f07432`, `ramone-edge` PR #30 at `e0e02775587178670aba09ddf49c37238b3f3e4a`, and `atlas-api-public` PR #52 at `5b970a9bf3b66b5469ce883aacec4a4b496e72cc`. The API index remains an intentional no-change result. Generator output synchronized only unpublished queue entries; the scheduler publication workflow was not dispatched and `atlas-systems` received no scheduler publication commit before its separate Phase 7 merge.
-- **Current thread:** Obtain and record push-run and live custom-domain evidence for the main site, Status, CV, Ramone, and Public API documentation. Do not declare Phase 7 closed or begin Phase 8 until exact production deployment and representative live-route checks are recorded. Do not run the scheduler in production, publish or refresh articles, modify provider settings, or change secrets.
-
 ### SPECULAR-CORE pending rollout
 
 - **Repo(s):** `atlas-dep-audit`, `atlas-postmortem`, `atlas-blackbox`, `atlas-corpus`, `atlas-eval-harness`, `atlas-api-public`, `atlas-infra`, `ramone-memory`, `atlas-owui-tools`
@@ -52,7 +42,14 @@ _(none currently tracked)_
 
 ## Recently completed
 
-_(none currently tracked)_
+### Public interface programme Phase 7
+
+- **Repo(s):** `atlas-infra`, `atlas-systems`, `atlas-interface-kit`, `atlas-api-public`, `atlas-api-index`, `status`, `atlas-doc-viewer`, `ramone-edge`, `atlas-article-gen`, `atlas-scheduler`
+- **Agent:** ChatGPT with Atlas performing live review
+- **Status:** done
+- **Started:** 2026-07-28
+- **Last updated:** 2026-07-30
+- **Summary:** Phases 0 through 7 are closed through `atlas-infra` PR #94. Phase 7 merged the exact browser-identity implementation, deployed the bounded Status, CV, Ramone, and Public API documentation error behavior, corrected the live Status wordmark and aggregate-status presentation, and refreshed published W-05 through W-07 through the generator-to-scheduler production contract. The three article receipts record `exact_deployment_verified: true`; article prose, publication dates, indexes, classic footer state, machine API behavior, CV loading boundaries, Ramone inference boundaries, provider settings, and secrets were preserved. Phase 8 has not started and requires a new current-state inspection and allocation entry.
 
 ## Standing ownership
 
