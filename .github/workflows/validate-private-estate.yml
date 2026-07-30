@@ -20,9 +20,15 @@ name: Validate private repository estate
 # Tooling revisions are preserved exactly as the source workflows pinned them:
 #   - readme, metadata, labels tooling: atlas-infra @ job.workflow_sha, the
 #     exact revision of this workflow (as in the originals).
-#   - estate policy tooling: atlas-infra @ 3b93154177dc7cfedd4fa8d0edbc909b08f1185e,
-#     the hardcoded pin from validate-private-estate-policy.yml. This is
-#     deliberately NOT job.workflow_sha and must not be "modernised".
+#   - estate policy tooling: atlas-infra @ c43148d8fc7bbaecf79753f612ea44593459dbe8,
+#     a hardcoded pin distinct from job.workflow_sha. It previously pinned
+#     3b93154177dc7cfedd4fa8d0edbc909b08f1185e, which existed only on the
+#     unmerged branch feat/private-public-boundary; deleting that branch would
+#     have made the commit unreachable and broken this checkout. c43148d8 is on
+#     main and carries byte-identical scripts/estate_policy.py and
+#     policy/estate-policy.json, so estate policy behaviour is unchanged.
+#     Keep this pin main-reachable; it is still deliberately not
+#     job.workflow_sha.
 #
 # The supply-chain audit is intentionally excluded. It is owned by
 # atlas-dep-audit and stays a separate caller job so that ownership boundary
@@ -64,7 +70,7 @@ jobs:
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0, Node 24
         with:
           repository: AtlasReaper311/atlas-infra
-          ref: 3b93154177dc7cfedd4fa8d0edbc909b08f1185e
+          ref: c43148d8fc7bbaecf79753f612ea44593459dbe8
           path: .atlas-infra
           persist-credentials: false
 
