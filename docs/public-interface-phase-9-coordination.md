@@ -1,6 +1,6 @@
 # Public interface programme Phase 9 coordination
 
-Status: active. Part 0 inspection complete. Source implementation not yet approved for merge.
+Status: active. Part 0 inspection complete. Source and isolated preview approved for merge; production rollout remains separate.
 
 Recorded: 30 July 2026.
 
