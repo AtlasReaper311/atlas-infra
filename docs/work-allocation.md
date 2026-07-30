@@ -26,7 +26,14 @@ Entry format:
 
 ## Active work
 
-No active multi-session work is recorded in this file.
+### Public interface programme Phase 10
+
+- **Repo(s):** `atlas-infra`, `atlas-article-gen`, `atlas-scheduler`, `atlas-systems`
+- **Agent:** ChatGPT with Atlas approving protected article, publication, and architecture gates
+- **Status:** active
+- **Started:** 2026-07-30
+- **Last updated:** 2026-07-30
+- **Summary:** Phase 10 owns the generated article reading contract, scheduler sequencing and preview parity, and the Writing directory. Part 0 found a current fenced-code parser defect affecting queued articles and published W-06, stale cross-repository scheduler pins, targeted preview drift from the production editorial adapter, incorrect type-filter semantics, and stale browser-only series compatibility. Routine source corrections, validation, ready-for-review transitions, and merges are authorised. Future-footer architecture, material changes to protected W-01 through W-07 presentation, published-article refreshes, production scheduler execution, publication timing, provider writes, and secrets remain separately approval-gated. The detailed inspection and implementation order are recorded in `docs/public-interface-phase-10-coordination.md`.
 
 ## Paused work
 
