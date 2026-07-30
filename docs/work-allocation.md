@@ -26,15 +26,7 @@ Entry format:
 
 ## Active work
 
-### Public interface programme Phase 8
-
-- **Repo(s):** `atlas-infra`, `atlas-systems`, `status`; measured no-change review also covers `atlas-interface-kit`, `atlas-api-public`, `atlas-api-index`, `atlas-doc-viewer`, and `ramone-edge`
-- **Agent:** ChatGPT with Atlas approving preview and rollout gates
-- **Status:** active
-- **Started:** 2026-07-30
-- **Last updated:** 2026-07-30
-- **Summary:** Execute the accepted measured accessibility and responsive correction phase one repository at a time. Current evidence narrows source changes to Status global-header touch targets and the carried `atlas-systems` accessibility, contrast, dense-overflow, and narrow-layout findings. Ramone's Phase 6 evidence clears its earlier footer targets; CV and Public API documentation have no carried blocking accessibility findings; API index remains JSON-only; no interface-kit release is currently justified.
-- **Current thread:** `atlas-systems` Phase 8 source correction is merged. Follow-up PR #182 corrects homepage routes and removes duplicated route labels; it must complete exact-head browser evidence, merge approval, production deployment verification, and live-route verification before Phase 8 closeout is recorded in `atlas-infra` PR #95.
+No active multi-session work is recorded in this file.
 
 ## Paused work
 
@@ -49,6 +41,15 @@ Entry format:
 - **Resume point:** Begin only after every public-interface programme phase, consumer merge, production deployment, and live-verification gate is complete. Reinspect current GitHub source and deployed surfaces rather than relying on programme-era screenshots or memory.
 
 ## Recently completed
+
+### Public interface programme Phase 8
+
+- **Repo(s):** `atlas-infra`, `atlas-systems`, `status`; measured no-change review also covered `atlas-interface-kit`, `atlas-api-public`, `atlas-api-index`, `atlas-doc-viewer`, and `ramone-edge`
+- **Agent:** ChatGPT with Atlas approving preview and rollout gates
+- **Status:** done
+- **Started:** 2026-07-30
+- **Last updated:** 2026-07-30
+- **Summary:** Completed the accepted measured accessibility and responsive correction phase. `status#34` corrected global-header touch targets and merged as `1894baf27418dd8a2e073bac4b4a6c0bab7fb7de`. `atlas-systems#180` corrected the carried target, contrast, dense-overflow, and narrow-layout findings and merged as `54cb0bd892d0eb4b90d926393b5a9968a92f84df`. Follow-up `atlas-systems#182` removed duplicated route labels and corrected homepage destinations, with 348 Chrome and Firefox cases, zero blocking failures, 56 Batch H cases, and zero Batch H findings; it merged as `b559641cc663512de9775ea7e355e32b4b6346a9`. Atlas confirmed production deployment and live verification. The formal receipts are recorded in `docs/public-interface-phase-8-inspection.md`.
 
 ### Public interface programme Phase 7
 
