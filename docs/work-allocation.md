@@ -26,14 +26,7 @@ Entry format:
 
 ## Active work
 
-### Public interface programme Phase 9
-
-- **Repo(s):** `atlas-infra`, `atlas-systems`
-- **Agent:** ChatGPT with Atlas approving preview and rollout gates
-- **Status:** active
-- **Started:** 2026-07-30
-- **Last updated:** 2026-07-30
-- **Summary:** Phase 9 owns the Reliability, Observability, and Evidence detail surfaces in `atlas-systems`. The implementation will replace their repeated section cadence with a clearer analytical sequence for current observations, reliability evaluation, and supporting proof while preserving existing public endpoint boundaries, stale and unknown handling, accessibility contracts, exact-route AtlasField compositions, footer ownership, and deployment separation.
+No active multi-session work is recorded in this file.
 
 ## Paused work
 
@@ -48,6 +41,15 @@ Entry format:
 - **Resume point:** Begin only after every public-interface programme phase, consumer merge, production deployment, and live-verification gate is complete. Reinspect current GitHub source and deployed surfaces rather than relying on programme-era screenshots or memory.
 
 ## Recently completed
+
+### Public interface programme Phase 9
+
+- **Repo(s):** `atlas-infra`, `atlas-systems`
+- **Agent:** ChatGPT with Atlas approving preview, merge, and rollout gates
+- **Status:** done
+- **Started:** 2026-07-30
+- **Last updated:** 2026-07-30
+- **Summary:** Completed the Reliability, Observability, and Evidence detail-surface refactor. Coordination PR `atlas-infra#96` merged as `c43148d8fc7bbaecf79753f612ea44593459dbe8`. Source PR `atlas-systems#183` merged as `4dd5827b922832efacba4e20146de8dc2e95a1e7` after exact-head preview run `30580400479` passed candidate validation, isolated publication, deterministic route-and-viewport evidence, accessibility checks, and Batch H assertions. Production run `30582815398` deployed the exact merge commit, verified it on the custom domain, confirmed the Systems route and footer assets, passed homepage AtlasField and System Symphony live smoke, and completed the guarded corpus refresh. The formal receipts are recorded in `docs/public-interface-phase-9-coordination.md`.
 
 ### Public interface programme Phase 8
 
