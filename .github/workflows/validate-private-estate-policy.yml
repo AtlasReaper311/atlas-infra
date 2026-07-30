@@ -20,7 +20,7 @@ jobs:
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0, Node 24
         with:
           repository: AtlasReaper311/atlas-infra
-          ref: 3b93154177dc7cfedd4fa8d0edbc909b08f1185e
+          ref: c43148d8fc7bbaecf79753f612ea44593459dbe8
           path: .atlas-infra
           persist-credentials: false
 
