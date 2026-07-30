@@ -26,6 +26,16 @@ Entry format:
 
 ## Active work
 
+### Public interface programme Phase 8
+
+- **Repo(s):** `atlas-infra`, `atlas-systems`, `status`; measured no-change review also covers `atlas-interface-kit`, `atlas-api-public`, `atlas-api-index`, `atlas-doc-viewer`, and `ramone-edge`
+- **Agent:** ChatGPT with Atlas approving preview and rollout gates
+- **Status:** active
+- **Started:** 2026-07-30
+- **Last updated:** 2026-07-30
+- **Summary:** Execute the accepted measured accessibility and responsive correction phase one repository at a time. Current evidence narrows source changes to Status global-header touch targets and the carried `atlas-systems` accessibility, contrast, dense-overflow, and narrow-layout findings. Ramone's Phase 6 evidence clears its earlier footer targets; CV and Public API documentation have no carried blocking accessibility findings; API index remains JSON-only; no interface-kit release is currently justified.
+- **Current thread:** `status` draft PR #34 at exact head `1e5af184f3480bf912882e66cb5eec5e4c79b20c`. Repository-native validation is running. Preview publication and deterministic Chrome and Firefox evidence require the separate `interface-preview-approved` provider-write gate. Do not merge, deploy, modify provider settings, or begin the `atlas-systems` correction until the Status evidence gate is complete.
+
 ### SPECULAR-CORE pending rollout
 
 - **Repo(s):** `atlas-dep-audit`, `atlas-postmortem`, `atlas-blackbox`, `atlas-corpus`, `atlas-eval-harness`, `atlas-api-public`, `atlas-infra`, `ramone-memory`, `atlas-owui-tools`
@@ -49,7 +59,7 @@ _(none currently tracked)_
 - **Status:** done
 - **Started:** 2026-07-28
 - **Last updated:** 2026-07-30
-- **Summary:** Phases 0 through 7 are closed through `atlas-infra` PR #94. Phase 7 merged the exact browser-identity implementation, deployed the bounded Status, CV, Ramone, and Public API documentation error behavior, corrected the live Status wordmark and aggregate-status presentation, and refreshed published W-05 through W-07 through the generator-to-scheduler production contract. The three article receipts record `exact_deployment_verified: true`; article prose, publication dates, indexes, classic footer state, machine API behavior, CV loading boundaries, Ramone inference boundaries, provider settings, and secrets were preserved. Phase 8 has not started and requires a new current-state inspection and allocation entry.
+- **Summary:** Phases 0 through 7 are closed through `atlas-infra` PR #94. Phase 7 merged the exact browser-identity implementation, deployed the bounded Status, CV, Ramone, and Public API documentation error behavior, corrected the live Status wordmark and aggregate-status presentation, and refreshed published W-05 through W-07 through the generator-to-scheduler production contract. The three article receipts record `exact_deployment_verified: true`; article prose, publication dates, indexes, classic footer state, machine API behavior, CV loading boundaries, Ramone inference boundaries, provider settings, and secrets were preserved.
 
 ## Standing ownership
 
