@@ -1,0 +1,334 @@
+name: Validate private repository estate
+
+# Consolidates the five Atlas Infra private-repository validators into a single
+# job. Each validator previously ran as its own reusable workflow, so a run
+# doing well under a minute of work billed five separate rounded-up minutes.
+# The checks themselves are unchanged: the same scripts run against the same
+# inputs, and every validator still executes on every run.
+#
+# The five original workflows remain in place and are still callable. This
+# workflow is additive; consumers migrate one at a time.
+#
+# Signal preservation:
+#   - Every validation step sets continue-on-error, so one failure never masks
+#     another. All five run on every invocation.
+#   - The final aggregation gate inspects each step's `outcome` and fails the
+#     job if any validator failed, reporting all failures together.
+#   - Evidence artifacts keep their original names, paths, action pins and
+#     retention.
+#
+# Tooling revisions are preserved exactly as the source workflows pinned them:
+#   - readme, metadata, labels tooling: atlas-infra @ job.workflow_sha, the
+#     exact revision of this workflow (as in the originals).
+#   - estate policy tooling: atlas-infra @ 3b93154177dc7cfedd4fa8d0edbc909b08f1185e,
+#     the hardcoded pin from validate-private-estate-policy.yml. This is
+#     deliberately NOT job.workflow_sha and must not be "modernised".
+#
+# The supply-chain audit is intentionally excluded. It is owned by
+# atlas-dep-audit and stays a separate caller job so that ownership boundary
+# is not inverted.
+
+on:
+  workflow_call:
+
+# Minimum union of the five source workflows: contents: read for all of them,
+# plus issues: read required only by the label contract validator.
+permissions:
+  contents: read
+  issues: read
+
+concurrency:
+  group: ${{ github.repository }}-private-estate-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Private estate validation
+    runs-on: ubuntu-latest
+    # Real work is well under a minute; the five source jobs declared 10/10/10/10/15.
+    # This bounds the consolidated job generously without summing those naively.
+    timeout-minutes: 20
+    steps:
+      - name: Check out caller repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0, Node 24
+
+      - name: Check out the exact Atlas Infra workflow revision
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0, Node 24
+        with:
+          repository: AtlasReaper311/atlas-infra
+          ref: ${{ job.workflow_sha }}
+          path: .atlas-infra-tooling
+          persist-credentials: false
+
+      - name: Check out pinned Atlas policy tooling
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0, Node 24
+        with:
+          repository: AtlasReaper311/atlas-infra
+          ref: 3b93154177dc7cfedd4fa8d0edbc909b08f1185e
+          path: .atlas-infra
+          persist-credentials: false
+
+      # ---------------------------------------------------------------- governance
+      - name: Validate source-owned governance contract
+        id: governance
+        continue-on-error: true
+        shell: bash
+        env:
+          EXPECTED_REPOSITORY: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+
+          python3 - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          path = Path('.atlas/governance.json')
+          if not path.is_file():
+              raise SystemExit('missing .atlas/governance.json')
+
+          try:
+              document = json.loads(path.read_text(encoding='utf-8'))
+          except json.JSONDecodeError as error:
+              raise SystemExit(
+                  f'invalid .atlas/governance.json at line {error.lineno}, column {error.colno}'
+              ) from error
+
+          required = {
+              'schema_version',
+              'repository',
+              'visibility',
+              'estate_membership',
+              'lifecycle',
+              'provenance',
+              'public_projection',
+              'anonymous_aggregate_metrics',
+              'runtime_service',
+              'service_ids',
+          }
+          allowed = required
+
+          missing = sorted(required - set(document))
+          unexpected = sorted(set(document) - allowed)
+          if missing:
+              raise SystemExit('missing governance fields: ' + ', '.join(missing))
+          if unexpected:
+              raise SystemExit('unexpected governance fields: ' + ', '.join(unexpected))
+
+          expected_repository = os.environ['EXPECTED_REPOSITORY']
+          if document['schema_version'] != 'atlas-repository-governance/v1':
+              raise SystemExit('unsupported governance schema_version')
+          if document['repository'] != expected_repository:
+              raise SystemExit(
+                  f"governance repository must equal {expected_repository}"
+              )
+          if document['visibility'] != 'private':
+              raise SystemExit('private governance requires visibility=private')
+          if document['estate_membership'] != 'internal':
+              raise SystemExit('private governance requires estate_membership=internal')
+          if document['lifecycle'] not in {'production', 'active', 'experimental'}:
+              raise SystemExit('invalid private repository lifecycle')
+          if document['provenance'] != 'original':
+              raise SystemExit('private Atlas Systems repositories must declare provenance=original')
+          if document['public_projection'] is not False:
+              raise SystemExit('private repositories must declare public_projection=false')
+          if not isinstance(document['anonymous_aggregate_metrics'], bool):
+              raise SystemExit('anonymous_aggregate_metrics must be boolean')
+          if not isinstance(document['runtime_service'], bool):
+              raise SystemExit('runtime_service must be boolean')
+
+          service_ids = document['service_ids']
+          if not isinstance(service_ids, list):
+              raise SystemExit('service_ids must be an array')
+          if service_ids != sorted(service_ids):
+              raise SystemExit('service_ids must be sorted')
+          if len(service_ids) != len(set(service_ids)):
+              raise SystemExit('service_ids must be unique')
+          for service_id in service_ids:
+              if not isinstance(service_id, str) or not service_id:
+                  raise SystemExit('service_ids must contain non-empty strings')
+              if not all(
+                  part and part.replace('-', '').isalnum() and part.lower() == part
+                  for part in [service_id]
+              ):
+                  raise SystemExit(f'invalid service_id: {service_id}')
+
+          if document['runtime_service'] and not service_ids:
+              raise SystemExit('runtime_service=true requires at least one service_id')
+          if not document['runtime_service'] and service_ids:
+              raise SystemExit('runtime_service=false requires an empty service_ids array')
+
+          print(
+              'private governance valid:',
+              expected_repository,
+              f"lifecycle={document['lifecycle']}",
+              f"runtime_service={document['runtime_service']}",
+              f"anonymous_aggregate_metrics={document['anonymous_aggregate_metrics']}",
+          )
+          PY
+
+      # -------------------------------------------------------------------- readme
+      - name: Validate source-local README
+        id: readme
+        continue-on-error: true
+        env:
+          TARGET_REPOSITORY: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          python3 .atlas-infra-tooling/scripts/readme_contract.py check-local \
+            --repository "$TARGET_REPOSITORY" \
+            --readme README.md \
+            --license LICENSE \
+            --policy .atlas-infra-tooling/policy/repository-hygiene.json
+
+      # ------------------------------------------------------------------ metadata
+      - name: Validate source-local repository metadata
+        id: metadata
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/private-repository-metadata"
+          python3 .atlas-infra-tooling/scripts/repository_metadata.py audit-private \
+            --governance .atlas/governance.json \
+            --mode enforce \
+            --json-out "$RUNNER_TEMP/private-repository-metadata/report.json" \
+            --markdown-out "$RUNNER_TEMP/private-repository-metadata/report.md"
+          cat "$RUNNER_TEMP/private-repository-metadata/report.md" >> "$GITHUB_STEP_SUMMARY"
+
+      # -------------------------------------------------------------------- labels
+      - name: Validate source-local repository labels
+        id: labels
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/private-repository-labels"
+          python3 .atlas-infra-tooling/scripts/repository_labels.py audit-private \
+            --governance .atlas/governance.json \
+            --mode enforce \
+            --json-out "$RUNNER_TEMP/private-repository-labels/report.json" \
+            --markdown-out "$RUNNER_TEMP/private-repository-labels/report.md"
+          cat "$RUNNER_TEMP/private-repository-labels/report.md" >> "$GITHUB_STEP_SUMMARY"
+
+      # ------------------------------------------------------------- estate policy
+      - name: Build source-local audit manifest
+        id: manifest
+        continue-on-error: true
+        env:
+          TARGET_REPOSITORY: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          manifest = {
+              "repositories": [
+                  {"repository": os.environ["TARGET_REPOSITORY"]}
+              ]
+          }
+          Path("private-estate-manifest.json").write_text(
+              json.dumps(manifest, indent=2, sort_keys=True) + "\n",
+              encoding="utf-8",
+          )
+          PY
+
+      - name: Validate source-local estate conformance
+        id: estate-policy
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python3 .atlas-infra/scripts/estate_policy.py \
+            --manifest private-estate-manifest.json \
+            --policy .atlas-infra/policy/estate-policy.json \
+            --markdown private-estate-policy.md \
+            --json private-estate-policy.json
+          cat private-estate-policy.md >> "$GITHUB_STEP_SUMMARY"
+
+      # ----------------------------------------------------------------- artifacts
+      - name: Upload private metadata evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1, Node 24
+        with:
+          name: private-repository-metadata-${{ github.run_id }}
+          path: ${{ runner.temp }}/private-repository-metadata
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Upload private label evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1, Node 24
+        with:
+          name: private-repository-labels-${{ github.run_id }}
+          path: ${{ runner.temp }}/private-repository-labels
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Upload private conformance evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: private-estate-policy-${{ github.run_id }}
+          path: |
+            private-estate-policy.md
+            private-estate-policy.json
+          if-no-files-found: error
+          retention-days: 30
+
+      # ----------------------------------------------------------- aggregation gate
+      # continue-on-error above means each step's `conclusion` is success even when
+      # it failed, so the gate reads `outcome`, which retains the true result. Every
+      # failed validator is listed before the job fails, so simultaneous failures
+      # are all reported in a single run.
+      - name: Aggregate private estate validation
+        if: always()
+        shell: bash
+        env:
+          GOVERNANCE: ${{ steps.governance.outcome }}
+          README: ${{ steps.readme.outcome }}
+          METADATA: ${{ steps.metadata.outcome }}
+          LABELS: ${{ steps.labels.outcome }}
+          MANIFEST: ${{ steps.manifest.outcome }}
+          ESTATE_POLICY: ${{ steps.estate-policy.outcome }}
+        run: |
+          set -uo pipefail
+
+          failed=0
+          {
+            echo "### Private estate validation"
+            echo
+            echo "| Validator | Result |"
+            echo "| --- | --- |"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          check() {
+            local label="$1" outcome="$2"
+            if [ "$outcome" = "success" ]; then
+              echo "| $label | pass |" >> "$GITHUB_STEP_SUMMARY"
+              echo "PASS: $label"
+            else
+              echo "| $label | FAIL ($outcome) |" >> "$GITHUB_STEP_SUMMARY"
+              echo "FAIL: $label ($outcome)"
+              failed=1
+            fi
+          }
+
+          check "Governance contract" "$GOVERNANCE"
+          check "README contract" "$README"
+          check "Repository metadata contract" "$METADATA"
+          check "Repository label contract" "$LABELS"
+          check "Estate manifest" "$MANIFEST"
+          check "Estate conformance" "$ESTATE_POLICY"
+
+          if [ "$failed" -ne 0 ]; then
+            echo "::error::One or more private estate validators failed. See the table above for every failure in this run."
+            exit 1
+          fi
+
+          echo "All private estate validators passed."
