@@ -34,21 +34,19 @@ Entry format:
 - **Started:** 2026-07-30
 - **Last updated:** 2026-07-30
 - **Summary:** Execute the accepted measured accessibility and responsive correction phase one repository at a time. Current evidence narrows source changes to Status global-header touch targets and the carried `atlas-systems` accessibility, contrast, dense-overflow, and narrow-layout findings. Ramone's Phase 6 evidence clears its earlier footer targets; CV and Public API documentation have no carried blocking accessibility findings; API index remains JSON-only; no interface-kit release is currently justified.
-- **Current thread:** `status` draft PR #34 at exact head `1e5af184f3480bf912882e66cb5eec5e4c79b20c`. Repository-native validation is running. Preview publication and deterministic Chrome and Firefox evidence require the separate `interface-preview-approved` provider-write gate. Do not merge, deploy, modify provider settings, or begin the `atlas-systems` correction until the Status evidence gate is complete.
-
-### SPECULAR-CORE pending rollout
-
-- **Repo(s):** `atlas-dep-audit`, `atlas-postmortem`, `atlas-blackbox`, `atlas-corpus`, `atlas-eval-harness`, `atlas-api-public`, `atlas-infra`, `ramone-memory`, `atlas-owui-tools`
-- **Agent:** ChatGPT with Atlas operating on SPECULAR-CORE
-- **Status:** active
-- **Started:** 2026-07-28
-- **Last updated:** 2026-07-29
-- **Summary:** Complete the remaining SPECULAR-CORE rollout threads independently and one state-changing thread at a time. Thread A is complete using scheduled dependency-audit run `30263775549` against `fc565353c83f19d117ed3c3173d667429a672f66`. Thread B source implementation is complete and merged through `atlas-postmortem` PR #8 at `8cf8c0d2bec00dfc415dd76dcbaf3b3a65810491` and `atlas-owui-tools` PR #1 at `e35c9ff6913aecad027e297cb71e34993a5ad141`. The existing separate `ramone-postmortem` Open WebUI preset remains the conversational controller and is not the Ramone Agent. `atlas-postmortem` retains ownership of evidence retrieval, Corpus context, Ollama drafting, linting, local output, and processed-state recording. The controlled live rollout is prepared but has not been executed. The public-interface programme remains separately owned; its branches, pull requests, previews, and evidence are out of scope.
-- **Current thread:** Thread B controlled live-rollout preparation and owner-run execution, with no service, secret, Open WebUI database, model assignment, or incident state changed yet.
+- **Current thread:** `atlas-systems` Phase 8 source correction is merged. Follow-up PR #182 corrects homepage routes and removes duplicated route labels; it must complete exact-head browser evidence, merge approval, production deployment verification, and live-route verification before Phase 8 closeout is recorded in `atlas-infra` PR #95.
 
 ## Paused work
 
-_(none currently tracked)_
+### Post-programme cross-page conformance audit
+
+- **Repo(s):** all public browser-facing Atlas Systems surfaces, beginning with `atlas-systems`, `status`, `atlas-doc-viewer`, `ramone-edge`, and human-facing `atlas-api-public` documentation
+- **Agent:** unassigned until the public-interface programme is fully closed
+- **Status:** paused
+- **Started:** 2026-07-30
+- **Last updated:** 2026-07-30
+- **Summary:** Required estate-wide follow-up after the complete public-interface programme. Audit and correct global navigation, active-route treatment, Lab and Systems context navigation, route labels and breadcrumbs, shared shell/search/footer behaviour, spacing and heading hierarchy, canonical card destinations, and accidental page-to-page drift while preserving intentional product identities.
+- **Resume point:** Begin only after every public-interface programme phase, consumer merge, production deployment, and live-verification gate is complete. Reinspect current GitHub source and deployed surfaces rather than relying on programme-era screenshots or memory.
 
 ## Recently completed
 
