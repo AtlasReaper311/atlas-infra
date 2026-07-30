@@ -26,7 +26,14 @@ Entry format:
 
 ## Active work
 
-No active multi-session work is recorded in this file.
+### Public interface programme Phase 9
+
+- **Repo(s):** `atlas-infra`, `atlas-systems`
+- **Agent:** ChatGPT with Atlas approving preview and rollout gates
+- **Status:** active
+- **Started:** 2026-07-30
+- **Last updated:** 2026-07-30
+- **Summary:** Phase 9 owns the Reliability, Observability, and Evidence detail surfaces in `atlas-systems`. The implementation will replace their repeated section cadence with a clearer analytical sequence for current observations, reliability evaluation, and supporting proof while preserving existing public endpoint boundaries, stale and unknown handling, accessibility contracts, exact-route AtlasField compositions, footer ownership, and deployment separation.
 
 ## Paused work
 
