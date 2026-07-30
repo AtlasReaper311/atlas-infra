@@ -60,6 +60,21 @@ Console, page-error, and failed-request records remain diagnostic evidence. Phas
 5. Capture route-derived Chrome and Firefox evidence for every changed route.
 6. Return the exact remaining merge, deployment, live-verification, and closeout gates.
 
+## Required post-programme conformance follow-up
+
+After the complete public-interface programme is closed and its final production state is verified, run a dedicated estate-wide cross-page conformance audit. This is a required follow-up, not optional polish.
+
+The audit must compare current deployed surfaces and repository source for:
+
+- global navigation order, labels, active-route state, same-tab Atlas-owned destinations, and mobile treatment;
+- Lab and Systems context navigation, route discoverability, overflow, and current-page indication;
+- route-context labels and breadcrumbs, removing duplication where they do not improve wayfinding;
+- shared shell, search, footer, spacing, heading hierarchy, and interaction behaviour;
+- card and status-rail destinations, with anchor jumps replaced by canonical product or evidence routes where appropriate;
+- intentional product-specific differences, documented explicitly so visual identity is preserved without accidental drift.
+
+Do not treat this follow-up as part of Phase 8 unless a finding is specifically an accessibility or responsive defect owned by Phase 8. Begin it only after all programme phases, merges, deployments, and live verification are complete, using fresh GitHub and browser evidence rather than remembered page behaviour.
+
 ## Protected boundaries
 
 Phase 8 does not authorize:
