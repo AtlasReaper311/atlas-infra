@@ -4,7 +4,7 @@ Living coordination document for agents currently working on Atlas Systems. This
 
 This file only has value while it remains current. Update or remove an entry as soon as its status changes.
 
-Last updated: 2026-07-29.
+Last updated: 2026-07-30.
 
 ## How to use this file
 
@@ -30,11 +30,11 @@ Entry format:
 
 - **Repo(s):** `atlas-infra`, `atlas-systems`, `atlas-interface-kit`, `atlas-api-public`, `atlas-api-index`, `status`, `atlas-doc-viewer`, `ramone-edge`, `atlas-article-gen`, `atlas-scheduler`
 - **Agent:** ChatGPT
-- **Status:** active
+- **Status:** blocked
 - **Started:** 2026-07-28
-- **Last updated:** 2026-07-29
-- **Summary:** Phases 0 through 6C are closed. The Writing rollout is complete through `atlas-article-gen` PR #36 at `6f0a0a48fd6e608d2f81f5e021c130de20aecb05`, generated draft refresh `a492c599cdb7055ca4e8aebd8dd5a4d74ec30d82`, and `atlas-scheduler` PR #41 at `1abb026aa166235a7182000c20e85406e62ab028`. W-05, W-06, and W-07 were published through scheduler requests `b723f8ddfb30ca39e307c43b4ca078c07186cae4`, `5c5cdd798cc39cdace6824f5aa8bd98484260bca`, and `a5cb581d03d0cc484a82b5f6bccefd12c25a683a`; their receipts record `exact_deployment_verified: true`. A fresh Phase 6 closeout inspection found that the accepted semantic editorial footer authority conflicts with the owner-approved classic `<div class="article-footer">` used by W-01 through W-07. The current authority branch defines a non-transferable classic Writing exception, keeps `atlas-interface-kit v0.4.0` unchanged, and adds fail-closed policy, schema, validator, test, ADR, and CI coverage. No generated article output, queue state, publication state, consumer source, workflow dispatch, deployment, provider setting, or secret was changed.
-- **Current thread:** Review and merge the focused `atlas-infra` authority reconciliation pull request. Downstream `atlas-article-gen`, `atlas-scheduler`, and consumer footer branches must not treat the exception as accepted authority until that pull request is merged. After authority acceptance, continue in dependency order and stop each repository at a validated draft pull request. `/lab/console/` remains deferred to Phase 11. Do not merge downstream pull requests, deploy previews or production, dispatch workflows, publish or refresh articles, run the scheduler in production, modify provider settings, or change secrets without separate approval.
+- **Last updated:** 2026-07-30
+- **Summary:** Phases 0 through 5 are closed. Phase 6 authority, immutable `atlas-interface-kit v0.4.0`, consumer adoption, Writing footer restoration, and W-05 through W-07 deployment receipts are substantially complete. Phase 6 is not formally closed because `atlas-article-gen` draft PR #37 at `6f5da05c3a074eec0610b58dca93b2a8d8b645fe` and `atlas-scheduler` draft PR #44 at `4060d5e356ec3ff80fdb90955e0fcdf15e9a1994` remain open. Both exact heads are mergeable, have successful checks, and have no unresolved review threads. The current Phase 0 rebaseline is recorded in `docs/public-interface-phase-7-rebaseline.md` on `docs/public-interface-programme`.
+- **Resume point:** Review and separately approve the exact heads of `atlas-article-gen` PR #37 and `atlas-scheduler` PR #44. After their approved merges, record merge and no-publication evidence, then review and merge the Phase 0 rebaseline pull request. Only then begin fresh repository-specific Part 0 inspections for Phase 7 `fix/browser-identity-contract` branches. Do not create Phase 7 source branches, add preview labels, merge consumer work, deploy, dispatch workflows, publish or refresh articles, run the scheduler in production, modify provider settings, or change secrets before those gates are complete.
 
 ### SPECULAR-CORE pending rollout
 
