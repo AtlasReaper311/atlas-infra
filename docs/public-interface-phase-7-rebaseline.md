@@ -1,6 +1,6 @@
-# Public interface programme Phase 7 rebaseline
+# Public interface programme Phase 6 closeout and Phase 7 start
 
-Status: Phase 0 control record for the transition from Phase 6 to Phase 7.
+Status: Phase 6 closed. Phase 7 active at repository-specific Part 0 inspection.
 
 Recorded: 30 July 2026.
 
@@ -8,258 +8,195 @@ This record supersedes the dated current-state, current-risk, and current-approv
 
 ## Current state
 
-Phase 6 is substantially implemented and distributed, but it is not closed.
+Phases 0 through 6 are closed at their approved source, authority, immutable-release, consumer-adoption, publication-pipeline, and recorded rollout gates.
 
-The shared footer authority is accepted in `atlas-infra`. `atlas-interface-kit v0.4.0` is the immutable implementation release. The main site, Status, CV, Ramone, and Public API documentation have merged consumer adoption. The approved W-01 through W-07 classic Writing footer has been restored through the generator and scheduler-owned publication path.
+The Phase 6 footer system now has one coherent authority chain:
 
-Two programme-owned Phase 6 draft pull requests remain open:
+- `atlas-infra` owns the normal footer contract and ADR-0009 bounded classic Writing exception;
+- immutable `atlas-interface-kit v0.4.0` implements the normal estate, product, tool, and editorial variants;
+- `atlas-systems`, Status, CV, Ramone, and Public API documentation contain their approved consumer footers;
+- `atlas-article-gen` emits the accepted classic Writing article footer with one scheduler placeholder;
+- `atlas-scheduler` validates the normal semantic editorial profile and the bounded classic Writing profile explicitly and fail-closed;
+- W-01 through W-07 retain the approved classic published structure.
 
-- `atlas-article-gen` PR #37, `docs/phase-6-classic-writing-footer-authority`, exact head `6f5da05c3a074eec0610b58dca93b2a8d8b645fe`;
-- `atlas-scheduler` PR #44, `fix/phase-6-classic-writing-footer-validation`, exact head `4060d5e356ec3ff80fdb90955e0fcdf15e9a1994`.
+Phase 7 may begin through fresh repository-specific Part 0 inspections and separate `fix/browser-identity-contract` draft pull requests. Phase 7 source approval does not authorize consumer merges, production deployment, scheduler execution, publication, provider writes, or secret changes.
 
-Both pull requests are mergeable, have successful exact-head validation, and have no unresolved review threads. They remain draft and unmerged. Phase 7 source work is therefore blocked.
+## Phase 6 final merge receipts
 
-### Repository rebaseline
+| Repository | Pull request | Reviewed head | Merge commit | Result |
+| --- | ---: | --- | --- | --- |
+| `atlas-infra` | #91 | `0e9b390e7a346dece0f787e46015918b642d461e` | `3870790c58ee239006535d4597ea6a3c31353037` | Accepted ADR-0009 and the non-transferable classic Writing exception. |
+| `atlas-article-gen` | #37 | `6f5da05c3a074eec0610b58dca93b2a8d8b645fe` | `fb4b83bc07a204204383ee321a73a4a4dec6eea8` | Aligned canonical guidance and generator tests with ADR-0009. |
+| `atlas-scheduler` | #44 | `4060d5e356ec3ff80fdb90955e0fcdf15e9a1994` | `933dbe9df333342600a2c04f1162d73f1e1c06f6` | Added explicit queued and published validation for both accepted Writing footer profiles. |
+| `atlas-infra` | #92 | `357a944367cac984885847ebbfe82001517bd0f5` | `49f44980014028b98aa08637d3efb8ca313fc28f` | Merged the Phase 7 transition rebaseline. |
+| `atlas-article-gen` | #38 | `9627b67cf361098e895a33440b8aae5821fe4bb9` | `8b8467a30985372e23bc65f4740363d60d3a2ff9` | Corrected the canonical ADR filename and added a negative regression assertion for the obsolete path. |
 
-| Repository | Current `main` SHA | Programme state | Relevant open pull requests | Protected boundary |
-| --- | --- | --- | --- | --- |
-| `atlas-infra` | `3870790c58ee239006535d4597ea6a3c31353037` | ADR-0009 and the bounded classic Writing footer exception are merged. Existing interface authority already covers Phase 7 metadata and icon requirements. | PR #79 is unrelated chaos-assurance documentation. | Policy inputs, schemas, validators, ADRs, generated classifications, and scheduled provider-writing workflows remain separately governed. |
-| `atlas-systems` | `8bfb54d1bd7a1abb62bb7aca99a7e997c82788c1` | Phase 6 consumer adoption and footer production-readiness fixes are on `main`. | None. | Generated article output, System Symphony audio and renderer contracts, AtlasField assets, provider settings, and production deployment remain independently owned. |
-| `atlas-interface-kit` | `c38b5b3edd631999dfad838c4fb70e505a9860cf` | Immutable source release `v0.4.0`. No Phase 7 kit change is currently justified. | None. | Generated `dist/`, fingerprints, font licences, tags, and release assets remain immutable. |
-| `atlas-api-public` | `9218ce9d325e401d5197b3b43cc0c98bddf10cdc` | Human documentation is in browser-identity scope. The JSON API remains contract-owned. | PR #5 is unrelated read-only Ramone control-plane work and must not be combined with Phase 7. | API schemas, registry projection, Worker bindings, schedules, rate limits, and provider settings remain outside browser-identity work. |
-| `atlas-api-index` | `96cd81f643429895847a1c2f143084d6e995005c` | JSON-only registry contract evidence is established. | None. | No HTML shell, visual metadata, footer, navigation, or browser application is permitted. |
-| `status` | `73fb6f4ed9114c227b1138e3f39ac22dba8b9aba` | Governed Phase 6 footer and corrected Public API documentation destination are on `main`. | None. | Visitor-side checks, API-derived reliability verdicts, SLO policy projection, stale evidence, and event-feed ownership remain local. |
-| `atlas-doc-viewer` | `70697ffea56fff6fdad4eb7108fe2ee76f191a8b` | Governed Phase 6 CV footer is on `main`. | None. | About remains active. `noindex, follow`, explicit initialisation, desktop embed, mobile native handoff, focus return, local PDF, and independent deployment remain protected. |
-| `ramone-edge` | `46b90342f7d9316bc4a2f5da1891e823494b8538` | Governed Phase 6 Ramone footer is on `main`. | None. | Inference, private tunnel, Turnstile, rate limiting, SSE, wake-state decisions, grounding, bindings, secrets, and `/ask` and `/status` contracts remain excluded. |
-| `atlas-article-gen` | `a492c599cdb7055ca4e8aebd8dd5a4d74ec30d82` | Generator output uses the accepted classic Writing footer. Guidance and tests still need the ADR-0009 alignment in PR #37. | PR #37. | `scripts/build_article.py` remains parser authority. Markdown, generated HTML, metadata, dates, and publication state must not be hand-edited. |
-| `atlas-scheduler` | `f1426043ad265d90a809fb3ba62412fda894a9e1` | W-05 through W-07 restore receipts are recorded. Explicit fail-closed classic-profile validation remains in PR #44. | PR #44. | Queue state, publication timing, sequencing, refresh requests, receipts, and the only production write path into `atlas-systems` remain scheduler-owned. |
+PR #38 was required because PR #37 referenced the non-existent filename `ADR-0009-classic-writing-article-footer-exception.md`. The accepted authority file is `docs/adrs/ADR-0009-classic-writing-footer-exception.md`. The correction changes no parser, template, generated article, queue, workflow, or provider path.
 
-GitHub proves remote repository and pull-request state. It does not prove another operator's local worktree state. The executing checkout must still be inspected before every implementation branch.
+## No-publication and no-provider-write evidence
 
-## Evidence inspected
-
-### Programme and authority
-
-- `docs/public-interface-programme.md`;
-- `docs/work-allocation.md`;
-- `docs/public-interface-contract.md`;
-- `policy/public-interface-system-v2.json`;
-- ADR-0008 and ADR-0009 authority referenced by current policy and merged pull requests;
-- `.github/workflows/public-interface-contract.yml`.
-
-### Phase 6 implementation and distribution
-
-- current `main` commits for all ten programme repositories;
-- merged `atlas-infra` PR #91;
-- merged `atlas-interface-kit` PR #13 and repository `VERSION` value `0.4.0`;
-- merged `atlas-systems` PRs #174 and #176;
-- merged Status PRs #30 and #31;
-- merged CV PR #30;
-- merged Ramone PR #29;
-- merged Public API documentation PR #50;
-- generator and scheduler publication receipts for W-05 through W-07;
-- open generator PR #37 and scheduler PR #44;
-- exact-head workflow results and review-thread state for PRs #37 and #44.
-
-### Preview and deployment boundaries
-
-The existing repository preview and deployment workflows were inspected from current repository evidence. No workflow was dispatched. No preview or production deployment was created by this rebaseline.
-
-The current runtime could not independently reach the Atlas custom domains or create a local Git checkout. This record therefore does not claim new live-route verification, local worktree cleanliness, or local repository-native test execution.
-
-## Phase 6 closeout finding
-
-Phase 6 may be declared closed only after both remaining pull requests are reviewed and separately approved for merge:
-
-1. `atlas-article-gen` PR #37 aligns the canonical case-study guidance and executable tests with ADR-0009 without changing parser source or generated output.
-2. `atlas-scheduler` PR #44 adds explicit fail-closed validation for the bounded classic Writing profile without changing queue entries, publication dates, receipts, production state, or provider configuration.
-
-Required closeout evidence for each pull request:
-
-- exact reviewed head SHA;
-- successful repository-native checks;
-- no unresolved review threads;
-- changed-path review;
-- merge commit after explicit approval;
-- confirmation that the merge did not trigger an unauthorised publication or provider write;
-- updated Work Allocation and programme handoff.
-
-No article refresh or scheduler production execution is required to close these documentation and validation changes.
-
-## Existing Phase 7 authority
-
-No new ADR is required before Phase 7.
-
-The accepted public interface contract already requires, for indexable HTML pages:
-
-- descriptive titles;
-- meta descriptions;
-- canonical URLs;
-- theme colour;
-- complete local icon declarations;
-- Open Graph type, title, description, URL, site name, image, image dimensions, and image alt;
-- equivalent Twitter metadata.
-
-It also requires local copies of the canonical icon package, preserves `noindex, follow` for the CV, keeps the 404 route `noindex`, assigns generated article metadata to `atlas-article-gen`, and excludes machine-facing JSON surfaces from the visual contract.
-
-Phase 7 is therefore an implementation and evidence phase against accepted authority, not an authority-design phase.
-
-## Phase 7 execution map
-
-After Phase 6 closeout and approval of this rebaseline, each repository receives a fresh Part 0 inspection and a separate `fix/browser-identity-contract` branch.
-
-### `atlas-systems`
-
-Audit and correct repository-owned HTML routes for:
-
-- page-first title grammar;
-- descriptions;
-- canonical URLs;
-- Open Graph and Twitter metadata;
-- social images, dimensions, and alt text;
-- favicons, Apple touch icon, manifest, and theme colour;
-- structured data;
-- sitemap coverage;
-- 404 and other noindex routes;
-- recently promoted routes, including Speculum;
-- browser-tab evidence without runtime JavaScript dependency.
-
-Generated article metadata must not be edited in published HTML. Any article metadata defect routes upstream to `atlas-article-gen`.
+The Phase 6 closeout merges did not publish or refresh an article and did not write a public provider resource.
 
 ### `atlas-article-gen`
 
-Inspect `docs/CASE_STUDY_INSTRUCTIONS.md`, relevant templates, `scripts/build_article.py`, metadata fixtures, and generated contract tests before deciding whether a Phase 7 generator PR is required.
+`Build & Sync Articles` runs on pushes to `main` only when `articles/**.md`, `data/**`, `scripts/**`, or `templates/**` changes. PR #37 changed documentation and a test. PR #38 changed the same documentation and test boundary. Neither merge matched the main-branch generation and scheduler-sync path filter.
 
-Only generator-owned article metadata may change. Article prose, dates, publication order, scheduler queue state, and live output remain unchanged.
+The repository's pull-request checks still ran the complete article tests, isolated builds, publication-plan validation, refresh-export validation, and private preview evidence. Those checks are read-only with respect to `atlas-systems`.
 
-### `status`
+### `atlas-scheduler`
 
-Preserve Status-specific social identity while applying the shared icon package, manifest contract, canonical URL, title grammar, local asset verification, and error-page identity.
+The production publication workflow runs only on the daily 09:00 UTC schedule or explicit `workflow_dispatch`. It does not run on a merge to `main`.
 
-### `atlas-doc-viewer`
+PR #44 merged at 10:12 UTC on 30 July 2026, after the day's scheduled 09:00 UTC execution boundary. No workflow was manually dispatched as part of the closeout.
 
-Preserve `og:type=profile`, `noindex, follow`, CV-specific social card, canonical URL, About relationship, protected PDF behaviour, and independent deployment.
+### `atlas-systems`
 
-### `ramone-edge`
+`atlas-systems/main` remained at `8bfb54d1bd7a1abb62bb7aca99a7e997c82788c1` after the generator, scheduler, rebaseline, and ADR-reference merges. No scheduler-generated site commit followed those merges.
 
-Verify product title, description, canonical URL, social image, theme colour, icons, offline-error metadata, and local asset declarations without disclosing private inference details or modifying runtime decisions.
+## Footer alignment review
 
-### `atlas-api-public`
+### Authority
 
-Apply Phase 7 only to the human documentation surface. Preserve API response contracts, schemas, cache policy, CORS, method behaviour, and provider boundaries.
+ADR-0009 defines:
 
-### `atlas-api-index`
+```html
+<div class="article-footer">
+  <!-- exactly one scheduler-owned footer placeholder in generated output -->
+</div>
+```
 
-No visual pull request. Confirm JSON content type, cache headers, CORS, method behaviour, bounded errors, and absence of an HTML shell or visual metadata.
+Published content is limited to scheduler-owned previous and next article links, or `Latest article`. The classic profile forbids the normal `.atlas-footer` wrapper and named slots. The exception applies only to the three-repository Writing pipeline and cannot be reused by other consumers.
 
-## Proposed Phase 7 dependency order
+### Generator
 
-1. Close `atlas-article-gen` PR #37.
-2. Close `atlas-scheduler` PR #44.
-3. Review and merge this Phase 0 rebaseline after explicit approval.
-4. Inspect `atlas-article-gen` metadata authority and tests.
-5. Inspect and prepare the `atlas-systems` browser-identity draft PR.
-6. Prepare independent Status, CV, Ramone, and Public API documentation draft PRs where current evidence proves changes are needed.
-7. Prepare API index contract-only evidence if the current contract suite has a measured gap.
-8. Stop with one exact-head draft PR per affected repository. Do not merge or deploy under Phase 7 implementation approval.
+Current `atlas-article-gen` output contains exactly one `<div class="article-footer">` and exactly one `AUTO-FOOTER` placeholder. Generator tests reject semantic footer wrappers and all governed variant classes inside that classic container.
 
-Non-overlapping consumer branches may proceed in parallel after steps 1 through 3, but each repository still requires its own Part 0 inspection and approval report.
+The canonical guidance now points to the real ADR path and rejects the obsolete filename.
 
-## Changes
+### Scheduler
 
-This Phase 0 branch changes documentation only:
+Current `atlas-scheduler/scripts/publish_editorial.py`:
 
-- `docs/public-interface-phase-7-rebaseline.md` records the current ten-repository state, remaining Phase 6 blockers, existing Phase 7 authority, execution map, risks, and approval boundary;
-- `docs/work-allocation.md` records the current programme owner and exact resume point.
+- accepts exactly one normal semantic editorial footer or one bounded classic Writing footer;
+- requires the classic container to use only `class="article-footer"`;
+- requires one placeholder in queued output;
+- rejects mixed semantic and classic markup;
+- rejects forbidden identity, context, sequence, and estate-escape tokens in the classic profile;
+- verifies rendered previous and next, or latest, navigation after replacement.
 
-Deliberately untouched:
+A permissive legacy bypass no longer exists.
 
-- ADRs;
-- policy and schemas;
-- validators and workflows;
-- `atlas-interface-kit` source, generated bundle, tag, and release;
-- consumer source and generated assets;
-- article Markdown, generated HTML, metadata, dates, queue state, and publication state;
-- Cloudflare configuration, provider settings, secrets, runtime bindings, and live routes.
+### Published site
 
-## Validation
+Current `atlas-systems` source exposes `article-footer` on the seven published Writing articles and contains no `atlas-footer--editorial` occurrence in published Writing HTML. W-05, W-06, and W-07 show the same classic sequence structure as W-01 through W-04.
 
-### Observed before branch creation
+## Repository rebaseline
 
-- all ten repository `main` SHAs were read from GitHub;
-- open pull requests were inspected in every programme repository;
-- PR #37 exact-head workflows succeeded: Build and Sync Articles, Private Atlas assurance, and Article interface preview evidence;
-- PR #44 exact-head workflows succeeded: Validate and Private Atlas assurance;
-- both remaining Phase 6 pull requests are mergeable and have no unresolved review threads;
-- the interface contract and current `v0.4.0` release identity were inspected.
+| Repository | Current `main` SHA before this closeout branch | Phase 7 role | Relevant open work | Protected boundary |
+| --- | --- | --- | --- | --- |
+| `atlas-infra` | `49f44980014028b98aa08637d3efb8ca313fc28f` | Authority and programme coordination only. Existing authority already covers metadata and browser identity. | PR #79 is unrelated chaos-assurance documentation. | ADRs, policy, schemas, validators, generated classifications, and provider-writing workflows remain separately governed. |
+| `atlas-systems` | `8bfb54d1bd7a1abb62bb7aca99a7e997c82788c1` | Main repository-owned HTML routes, error identity, sitemap, structured data, and browser evidence. | None. | Generated articles, System Symphony audio and renderer contracts, AtlasField assets, provider settings, and production deployment remain independently owned. |
+| `atlas-interface-kit` | `c38b5b3edd631999dfad838c4fb70e505a9860cf` | No Phase 7 change currently justified. | None. | `v0.4.0`, generated `dist/`, fingerprints, font licences, tag, and release assets remain immutable. |
+| `atlas-api-public` | `9218ce9d325e401d5197b3b43cc0c98bddf10cdc` | Human API documentation only. | PR #5 is unrelated read-only Ramone control-plane work. | API schemas, registry projection, Worker behavior, bindings, schedules, rate limits, and provider settings remain excluded. |
+| `atlas-api-index` | `96cd81f643429895847a1c2f143084d6e995005c` | Contract-only evidence. No visual pull request unless a measured machine-interface regression exists. | None. | JSON-only root, content type, CORS, cache, GET-only behavior, bounded errors, and absence of HTML remain protected. |
+| `status` | `73fb6f4ed9114c227b1138e3f39ac22dba8b9aba` | Product metadata, icons, canonical identity, social preview, and error identity. | None. | Visitor-side checks, API-derived verdicts, SLO projection, stale evidence, and event-feed ownership remain local. |
+| `atlas-doc-viewer` | `70697ffea56fff6fdad4eb7108fe2ee76f191a8b` | CV metadata, icons, canonical identity, social preview, and error identity. | None. | `noindex, follow`, About active state, explicit initialization, desktop embed, mobile native handoff, focus return, local PDF, and independent deployment remain protected. |
+| `ramone-edge` | `46b90342f7d9316bc4a2f5da1891e823494b8538` | Product metadata, icons, canonical identity, social preview, and offline error identity. | None. | Inference, private tunnel, Turnstile, rate limiting, SSE, wake-state decisions, grounding, bindings, secrets, and `/ask` and `/status` remain excluded. |
+| `atlas-article-gen` | `8b8467a30985372e23bc65f4740363d60d3a2ff9` | Generator-owned article metadata and generated browser-identity tests. | None. | Markdown prose, publication dates, queue state, generated output ownership, and publication remain separate. |
+| `atlas-scheduler` | `933dbe9df333342600a2c04f1162d73f1e1c06f6` | No Phase 7 source change unless metadata sequencing or generated-output validation proves a scheduler-owned defect. | None. | Queue state, timing, sequencing, receipts, and the only production write path into `atlas-systems` remain scheduler-owned. |
 
-### Branch validation boundary
+GitHub proves remote repository and pull-request state. It does not prove another operator's local worktree state. Every Phase 7 implementation branch must inspect the executing checkout before editing.
 
-Local validation was unavailable because the execution runtime could not resolve GitHub for a checkout. Pull-request checks are authoritative for the committed branch bytes.
+## Existing Phase 7 authority
 
-Expected repository checks include Markdown and text policy, pull-request impact, CodeQL, OpenSSF Scorecard, estate conformity where configured, and `git diff --check`. No test result is claimed until GitHub reports it against the exact branch head.
+No new ADR or interface-kit release is required before Phase 7.
 
-## Browser evidence
+The accepted public interface contract requires indexable HTML pages to provide:
 
-No new browser preview was created because this is documentation-only Phase 0 work.
+- descriptive page-first titles;
+- meta descriptions;
+- canonical URLs;
+- theme colour;
+- complete local browser-icon declarations;
+- Open Graph type, title, description, URL, site name, image, image dimensions, and image alt;
+- equivalent Twitter metadata.
 
-No new live verification is claimed. Previously recorded Phase 6 preview and deployment evidence remains historical evidence only and must not be treated as a new 30 July live check.
+The contract also:
+
+- requires repository-local copies of the canonical icon package;
+- preserves `noindex, follow` for the CV landing page;
+- keeps 404 pages `noindex`;
+- assigns generated article metadata to `atlas-article-gen`;
+- excludes machine-facing JSON surfaces from the visual contract;
+- keeps runtime loading of shared assets from another deployment prohibited.
+
+Phase 7 is implementation and evidence against accepted authority, not authority design.
+
+## Phase 7 execution order
+
+1. Inspect `atlas-article-gen` metadata generation, templates, fixtures, and contract tests.
+2. Inspect `atlas-systems` route inventory, current metadata generation, static assets, social images, structured data, sitemap generation, 404 behavior, and browser evidence harness.
+3. Prepare an `atlas-systems:fix/browser-identity-contract` draft pull request only for measured repository-owned gaps.
+4. Prepare an `atlas-article-gen:fix/browser-identity-contract` draft pull request only for measured generator-owned article gaps.
+5. Inspect and prepare independent Status, CV, Ramone, and Public API documentation pull requests where current evidence proves changes are required.
+6. Confirm the API index machine-interface contract without introducing an HTML shell.
+7. Stop with one exact-head draft pull request per affected repository and a measured no-change record for repositories already conforming.
+
+Non-overlapping consumer branches may proceed independently after their own Part 0 inspections. Two branches must not edit overlapping files in the same repository at the same time.
+
+## Phase 7 validation requirements
+
+Each affected repository must use its own inspected commands and existing evidence framework. Required evidence includes, where applicable:
+
+- exact base and head SHAs;
+- titles, descriptions, canonicals, icons, manifest, theme colour, Open Graph, and Twitter metadata;
+- social-image existence, dimensions, and alt text;
+- structured-data validity;
+- sitemap and error-route identity;
+- Chrome and Firefox evidence at 320, 375, 768, 1024, and 1440 pixels;
+- reporting-only 1920-pixel evidence where the existing harness supports it;
+- no-JavaScript and 200-percent text-zoom evidence where already contracted;
+- serious and critical accessibility findings blocking;
+- console, page-error, failed-request, and overflow evidence;
+- unchanged CSP, privacy, public/private, operational, inference, and protected-document boundaries;
+- repository-local asset verification with no cross-deployment runtime dependency.
+
+Static drift remains blocking. Browser performance remains reporting-only until Phase 14 accepts specific budgets.
 
 ## Security and privacy review
 
-Actions performed:
+This closeout and alignment work changed documentation and one cross-repository ADR reference only.
 
-- read repository files, commits, pull requests, review threads, and workflow results through the connected GitHub application;
-- reset the closed historical Phase 0 documentation branch to current `atlas-infra/main`;
-- write only the two documentation paths listed above;
-- open a draft documentation pull request.
-
-Actions not performed:
-
-- no secret was requested, read, logged, or changed;
-- no mutation endpoint, inference endpoint, protected PDF, or internal service route was called;
-- no workflow was manually dispatched;
-- no preview, deployment, release, scheduler run, article refresh, or publication was triggered;
-- no provider setting, binding, variable, environment, or repository setting was changed;
-- no Phase 6 or Phase 7 product pull request was modified or merged.
+No secret was requested, read, logged, or changed. No workflow was manually dispatched. No preview-approval label was added. No article was regenerated, refreshed, queued, published, or written to `atlas-systems`. No Worker or Pages deployment, provider setting, binding, variable, environment, repository setting, inference route, protected PDF, or internal service route changed.
 
 ## Risks
 
-1. Phase 6 is not closed while generator PR #37 and scheduler PR #44 remain open.
-2. The historical master programme document still contains dated status sections. This rebaseline explicitly supersedes those sections and should be linked or folded into the master record during the next documentation closeout.
-3. GitHub remote state does not prove local worktree cleanliness.
-4. Current custom-domain behaviour was not independently reproduced from this runtime.
-5. Merging consumer Phase 7 pull requests may trigger production deployment. Source approval and rollout approval remain separate.
-6. Generated article metadata crosses generator and scheduler ownership. Published HTML must not be hand-edited.
-7. `atlas-api-public` PR #5 and `atlas-infra` PR #79 are unrelated open work and must not be rebased, modified, or combined with this programme.
-
-## Rollback
-
-Before merge, close the draft pull request and reset or delete `docs/public-interface-programme`.
-
-After merge, revert the documentation commit. No runtime, provider, data, release, publication, or secret rollback is required.
+1. `docs/public-interface-programme.md` retains historical dated sections. This current closeout record explicitly supersedes its current-state, current-risk, and current-approval text.
+2. GitHub remote state does not prove local worktree cleanliness.
+3. Current custom-domain behavior was not independently reproduced from this runtime during closeout.
+4. Merging a Phase 7 consumer pull request may trigger production deployment. Source review and rollout approval remain separate.
+5. Generated article metadata crosses generator and scheduler ownership. Published HTML must not be hand-edited.
+6. `atlas-api-public` PR #5 and `atlas-infra` PR #79 are unrelated and must not be combined with this programme.
 
 ## Approval boundary
 
-Ready:
+Authorized now:
 
-- current Phase 0 repository rebaseline;
-- evidence-backed identification of the two remaining Phase 6 obligations;
-- confirmation that existing authority covers Phase 7;
-- repository and dependency map for Phase 7.
+- Phase 7 repository-specific Part 0 inspections;
+- source changes on separate `fix/browser-identity-contract` branches where current evidence proves a gap;
+- repository-native validation;
+- draft pull requests;
+- existing pull-request validation and read-only evidence jobs.
 
-Not authorised:
+Not authorized by this record:
 
-- merging PR #37 or PR #44;
-- merging this Phase 0 pull request;
-- creating a Phase 7 branch in any consumer or pipeline repository;
-- changing metadata, icons, manifests, social images, structured data, sitemap output, or error pages;
-- adding preview-approval labels;
-- dispatching workflows;
+- merging Phase 7 consumer or pipeline pull requests;
+- adding preview-approval labels that create provider resources;
+- manually dispatching workflows;
 - creating releases;
 - deploying Workers or Pages;
-- running the scheduler;
+- running the scheduler in production;
 - refreshing or publishing articles;
-- changing provider settings, bindings, variables, repository settings, or secrets.
+- changing provider settings, bindings, variables, environments, repository settings, or secrets.
 
-Phase 7 begins only after Phase 6 is formally closed and this rebaseline is reviewed and approved.
+Phase 7 stops at exact-head draft pull requests and evidence review unless Atlas separately approves a later merge and rollout gate.
