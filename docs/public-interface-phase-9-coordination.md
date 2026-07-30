@@ -1,90 +1,121 @@
-# Public interface programme Phase 9 coordination
+# Public interface programme Phase 9 closeout
 
-Status: active. Part 0 inspection complete. Source and isolated preview approved for merge; production rollout remains separate.
+Status: complete.
 
 Recorded: 30 July 2026.
 
 ## Outcome
 
-Phase 9 will make the three focused Systems detail routes analytically stronger and easier to scan without changing their evidence sources, public API boundaries, runtime decisions, or accessibility foundations.
-
-The intended relationship is explicit:
+Phase 9 replaced the repeated section cadence on the focused Systems detail routes with one explicit analytical sequence:
 
 1. Observability answers what is happening now.
 2. Reliability answers whether the measured behaviour supports the reliability claims.
 3. Evidence answers what records prove the public claims.
 
-## Current repository state
+The three routes now provide semantic Systems breadcrumbs, route-specific evidence boundaries, a shared three-question sequence, stronger primary-versus-supporting hierarchy, clearer freshness and provenance presentation, and responsive narrow-layout ordering.
 
-- `atlas-systems/main`: `ede5b95874ace4154d6a6f8f8370892d6476e172`.
-- Current main includes the completed Phase 8 correction, the route cleanup, and the restored dedicated Blackbox route.
-- Phase 9 implementation branch: `refactor/systems-detail-surfaces`, to be created from the exact current main commit.
-- No current Phase 9 implementation commit, preview, or pull request existed at inspection time.
-- Draft pull request `atlas-systems#179` is stale, diverged, and not mergeable. It must not be reused, rebased into Phase 9, or merged.
-- No open pull request was found that overlaps the Reliability, Observability, Evidence, or proposed Phase 9 stylesheet paths.
+## Coordination receipt
 
-## Evidence inspected
+The accepted scope and protected boundaries were recorded through `AtlasReaper311/atlas-infra` pull request #96.
 
-- current `atlas-systems` default branch and recent commits;
+- Reviewed head: `7e7cd8d31b71c85d88bc2a098259150713fa60f0`.
+- Merge commit: `c43148d8fc7bbaecf79753f612ea44593459dbe8`.
+- Changed paths: `docs/public-interface-phase-9-coordination.md` and `docs/work-allocation.md`.
+
+The coordination merge changed documentation only. It did not deploy a consumer, publish content, dispatch a workflow, modify a provider, or change a secret.
+
+## Source implementation receipt
+
+The implementation was reviewed through `AtlasReaper311/atlas-systems` pull request #183.
+
+- Branch: `refactor/systems-detail-surfaces`.
+- Reviewed head: `46eadf4f2322b87f6b35cf3d6891d646a5201470`.
+- Merge commit: `4dd5827b922832efacba4e20146de8dc2e95a1e7`.
+- Changed paths: six.
+
+The six-path source boundary was:
+
 - `systems/reliability/index.html`;
 - `systems/observability/index.html`;
 - `systems/evidence/index.html`;
-- `static/css/systems-focus.css`;
-- `static/js/focused-systems-shell.js`;
-- `static/js/secondary-surface-fields.js`;
-- `static/js/atlas-field-composition-registry.js`;
-- current page scripts and their fixed public endpoint boundaries;
-- pull request and preview workflows;
-- repository-native validation commands;
-- ADR-0008 and the accepted public-interface foundation extension;
-- Phase 8 closeout receipts and current Work Allocation state.
+- `static/css/systems-detail-surfaces.css`;
+- `js/tests/phase-9-systems-detail-surfaces.test.mjs`;
+- `docs/PHASE-9-SYSTEMS-DETAIL-SURFACES.md`.
 
-## Measured problem
+No route JavaScript, endpoint, request method, field allowlist, response parser, workflow, deployment configuration, provider setting, binding, secret, generated Writing output, publication path, or System Symphony runtime changed.
 
-The three pages already preserve sound public data boundaries, honest stale and unknown states, fixed allowlists, semantic dense-data wrappers, and exact-route AtlasField compositions.
+Stale pull request `atlas-systems#179` was not reused or merged.
 
-The remaining problem is presentation. Each page uses a long sequence of nearly identical hero, summary, section heading, table, list, and source rail blocks. The repetition weakens analytical hierarchy and obscures the relationship between observation, reliability evaluation, and proof.
+## Exact-head validation and preview evidence
 
-## Accepted implementation boundary
+The source head passed the repository-native HTML, JavaScript, Lab, System Symphony, sitemap, static-performance, Pages-output, social-preview, JSON, whitespace, offline-link, public-interface conformance, CodeQL, and OpenSSF gates.
 
-Phase 9 may change:
+The approved isolated preview ran as GitHub Actions run `30580400479` against exact head `46eadf4f2322b87f6b35cf3d6891d646a5201470`.
 
-- semantic breadcrumb presentation on the three hierarchical routes;
-- page purpose and evidence-boundary presentation;
-- a shared three-question Systems detail sequence;
-- section order and visual hierarchy;
-- source and freshness explanation;
-- responsive ordering;
-- table and provenance placement;
-- related Status and Lab route placement;
-- a repository-local Phase 9 stylesheet;
-- route-specific hierarchy tests and implementation documentation.
+All preview jobs succeeded:
 
-Phase 9 must preserve:
+- Validate interface preview candidate;
+- Require approved browser evidence;
+- Publish non-production interface preview;
+- Capture deterministic interface evidence.
 
-- all existing endpoint URLs and request methods;
+The deterministic evidence job completed the route-derived browser and viewport matrix, Batch H product assertions, System Map AtlasField pixel checks, directory-header AtlasField checks, and visual and accessibility uploads.
+
+Preview artifacts:
+
+- validation artifact `8774372662`, digest `sha256:dff57243f7cd5bfe07020a61d28b4c204fc92278a9e6ad5a1a6725be77246611`;
+- route-derived evidence artifact `8774909887`, digest `sha256:51bfa086ec72555365c1d8a185c52f13cdeadd74543d9b0d72f6fc3a05eee3a1`;
+- Batch H evidence artifact `8774910647`, digest `sha256:47394fefcbd2a00d3c0ecb8f1565775c36bbad940251da29d17d7a162a271886`.
+
+The isolated preview was `https://interface-pr-183.atlas-systems-44t.pages.dev` and remained separate from production until merge approval.
+
+## Production deployment and live verification
+
+Merging source pull request #183 triggered repository-owned production run `30582815398` on `atlas-systems/main` at exact merge commit `4dd5827b922832efacba4e20146de8dc2e95a1e7`.
+
+Every production job completed successfully:
+
+- Verify Pages output contract, job `91007031570`;
+- deploy / Validate HTML and links, job `91007077355`;
+- deploy / Deploy to Cloudflare Pages, job `91007160368`;
+- deploy / Report to Discord, job `91007246035`;
+- Verify production custom domain, job `91007289765`;
+- refresh-corpus / refresh, job `91008469397`.
+
+The custom-domain job confirmed that `https://atlas-systems.uk` served build commit `4dd5827b922832efacba4e20146de8dc2e95a1e7`. It also confirmed the live Systems route marker and the governed Phase 6 footer assets.
+
+The same job passed the production homepage AtlasField smoke and the live System Symphony Atlas APU, topology-map, and 32-bar loudness smoke against the exact deployment commit.
+
+Production artifacts:
+
+- homepage AtlasField smoke artifact `8775320803`, digest `sha256:6d7ad5aff8e8d55dd9e0d91878a88ae1f9764babd014e04f1292c86e01512162`;
+- System Symphony smoke artifact `8775441001`, digest `sha256:27fa88beeead8babe4029bdaf9ab55eb86177784d17c5e00974981920cdfef55`.
+
+The route-specific Observability, Reliability, and Evidence presentation was already exercised on the exact reviewed source head by the deterministic preview matrix. Production then proved that the merge commit containing those exact route bytes was served by the custom domain. No deployment result is inferred from merge state alone.
+
+## Preserved boundaries
+
+Phase 9 preserved:
+
+- all existing endpoint URLs, methods, fetch timing, and response parsing;
 - fixed field allowlists and `textContent` rendering;
 - stale, malformed, unavailable, unmeasured, and insufficient-evidence semantics;
-- current dynamic element identifiers used by route scripts;
-- no broad provider-response rendering;
-- no internal route, credential, or private repository disclosure;
-- current table semantics and dense-data overflow behaviour;
+- script-owned dynamic identifiers;
+- table semantics and dense-data overflow behaviour;
 - current footer installation and tool variant;
-- exact-route AtlasField composition names, seeds, host selector, pointer transparency, and reduced-motion behaviour;
-- System Symphony, Writing, publication, provider, binding, secret, and deployment contracts.
+- exact-route AtlasField compositions, seeds, host selector, pointer transparency, and reduced-motion behaviour;
+- System Symphony audio and telemetry behaviour;
+- Writing generation, scheduler sequencing, publication timing, and generated article ownership;
+- provider configuration, bindings, repository settings, and secrets.
 
-## Branch and pull request plan
+## Closeout decision
 
-1. Create `refactor/systems-detail-surfaces` from exact `atlas-systems/main`.
-2. Refactor all three HTML entrypoints while preserving script-owned IDs and public source boundaries.
-3. Add one Phase 9 stylesheet layered after the existing Systems foundation stylesheet.
-4. Add focused contract tests for hierarchy, breadcrumbs, route sequence, preserved IDs, and AtlasField host continuity.
-5. Add a concise repository implementation record.
-6. Run repository-native validation.
-7. Fetch current main, rebase if required, rerun validation, and inspect every changed path.
-8. Open one draft pull request unless the final measured diff becomes too difficult to review.
-9. Stop before adding `interface-preview-approved`, publishing a preview, merging, deploying, or changing any provider state.
+Phase 9 is complete.
 
-## Approval boundary
+The accepted six-path implementation is merged, the exact source head passed its deterministic preview and accessibility evidence gates, production run `30582815398` deployed the exact merge commit, the custom domain exposed that commit, and the repository-owned live smoke checks passed.
 
-This coordination record authorises source preparation on a fresh branch only. It does not authorise preview publication, pull request merge, production deployment, provider writes, workflow dispatch, article publication, secret changes, or any modification of stale pull request #179.
+Phase 10 may begin only through a fresh Part 0 inspection of the current Writing pipeline and published reading surfaces. No Phase 10 source change, generator build, scheduler synchronization, publication, workflow dispatch, provider write, or secret change is authorised by this closeout.
+
+## Rollback
+
+A source rollback requires a reviewed revert in `atlas-systems`, the normal production deployment, exact-commit custom-domain verification, and representative live browser evidence. This documentation record can be reverted independently if any receipt is later shown to be inaccurate.
