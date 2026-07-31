@@ -4,7 +4,7 @@ Living coordination document for agents currently working on Atlas Systems. This
 
 This file only has value while it remains current. Update or remove an entry as soon as its status changes.
 
-Last updated: 2026-07-30.
+Last updated: 2026-07-31.
 
 ## How to use this file
 
@@ -25,6 +25,15 @@ Entry format:
 ```
 
 ## Active work
+
+### GitHub conformance Phase II closeout
+
+- **Repo(s):** `atlas-infra`
+- **Agent:** ChatGPT with Atlas approving merge and later provider or release writes
+- **Status:** active
+- **Started:** 2026-07-31
+- **Last updated:** 2026-07-31
+- **Summary:** Record the successful 30 July policy-aware scoreboard as the closing evidence for the read-only source-conformance phase. The report checked 33 public repositories, produced 233 required passes and zero required failures, and separated 27 unreadable branch-guard outcomes plus one deferred `worker-meta-kit` release from source remediation. The closeout must not change rulesets, branch protection, token permissions, releases, tags, deployments, or private-repository scope.
 
 ### Public interface programme Phase 10
 
