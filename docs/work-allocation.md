@@ -26,6 +26,16 @@ Entry format:
 
 ## Active work
 
+### GitHub provider guard audit
+
+- **Repo(s):** `atlas-infra` plus the 33 repositories in the authoritative public projection
+- **Agent:** ChatGPT with Atlas providing owner-authenticated read-only evidence and approving any later provider write
+- **Status:** active
+- **Started:** 2026-07-31
+- **Last updated:** 2026-07-31
+- **Summary:** The owner-authenticated audit resolved all 27 Phase II branch-guard unknowns. Six repositories have a qualifying active ruleset, five have classic protection without pull-request review protection, and 22 have no qualifying default-branch guard. The evidence digests, exact repository classifications, and a one-repository `atlas-badges` canary plan are recorded in `docs/github-provider-guard-audit.md`. No ruleset, branch-protection, token, repository, release, tag, workflow, deployment, or secret change has been performed.
+- **Resume point:** Review and merge `atlas-infra#103`, then obtain separate approval before opening the bounded `atlas-badges` validation pull request or creating the canary ruleset.
+
 ### Public interface programme Phase 10
 
 - **Repo(s):** `atlas-infra`, `atlas-article-gen`, `atlas-scheduler`, `atlas-systems`
