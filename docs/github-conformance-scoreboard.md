@@ -2,6 +2,12 @@
 
 The GitHub conformance scoreboard is a read-only assurance report for repositories listed in `policy/public-repository-classifications.json`.
 
+## Programme state
+
+Phase II of the July 2026 GitHub conformance programme is in closeout. The scheduled run on 30 July 2026 reported zero policy failures across all 33 repositories in the authoritative public projection.
+
+The verified evidence, policy interpretation, residual boundaries, and next-phase separation are recorded in [`github-conformance-phase-ii-closeout.md`](github-conformance-phase-ii-closeout.md).
+
 It reports two related views:
 
 - raw evidence inventory, which records whether GitHub evidence was observed;
