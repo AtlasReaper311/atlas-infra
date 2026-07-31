@@ -10,7 +10,41 @@ Atlas Systems uses bounded experiments to test one declared recovery claim at a 
 - `CHAOS_FREEZE=true` blocks scheduled and manual live execution.
 - Manual live execution requires one named experiment and the `production-chaos` environment.
 
-Scheduled live execution remains disabled until the target control contract and one manual canary have both been verified.
+Scheduled live execution is enabled after the target control contract and a protected manual live canary were both verified.
+
+## Current rollout state
+
+Phase I chaos assurance is complete.
+
+The source contract, target-side control contract, protected manual `specular-route-503-v1` canary, and first scheduled workflow proof have all been verified. The weekly schedule remains responsible for deterministic simulation evidence. The first Wednesday of each UTC month remains the only scheduled live-eligible window, subject to the enabled schedule, freeze gate, successful simulation, and protected environment.
+
+The first monthly live-eligible date after Phase I closure is Wednesday, 5 August 2026. That run is ongoing operational assurance and is not a remaining Phase I closure gate.
+
+## Phase I scheduled proof
+
+The scheduled workflow run on Wednesday, 29 July 2026 completed successfully:
+
+- workflow run: [`30446405193`](https://github.com/AtlasReaper311/atlas-infra/actions/runs/30446405193)
+- source branch: `main`
+- source commit: `138bbbc3e7cb396c4acca856a401757305a1c804`
+- policy version: `1.1.0`
+- simulation job: passed
+- scheduled live-window check: passed
+- approved live experiment job: skipped as expected
+- monthly canary job: skipped as expected because 29 July was not the first Wednesday of the UTC month
+- report verdict: passed
+- report fingerprint: `e02f96099b63af6863728cf1e4281d39cbe0d9c188f5b17e4e178c1f77dca838`
+- retained artifact: `chaos-simulation-30446405193`, artifact ID `8721598950`
+- artifact digest: `sha256:7072308b0f30ae3a7b35ee08456a77709dbb8590f8aa6b3724f4ee24cae6730b`
+- artifact expiry: 27 October 2026
+
+The scheduled simulation passed all three declared experiments:
+
+- `specular-route-503-v1` using `status_503`
+- `specular-latency-v1` using `latency`
+- `specular-kv-reject-v1` using `kv_write_reject`
+
+The workflow also published the stamped chaos evidence successfully. This proves the weekly scheduled simulation and gating path against the hardened source without claiming that a live fault ran on 29 July.
 
 ## Capability classes
 
@@ -85,14 +119,12 @@ The `specular-telemetry` Worker tests separately prove disabled mode, authentica
 
 ## Operating sequence
 
-1. Keep scheduled live execution disabled.
-2. Merge and observe weekly simulations.
-3. Verify the target control endpoint implements the live control contract.
-4. Review source-only and non-production evidence.
-5. Run `specular-route-503-v1` manually through the protected environment only after separate approval.
-6. Confirm detection, notification, rollback, recovery, and published evidence.
-7. Set `CHAOS_SCHEDULE_ENABLED=true` only after review.
-8. Set `CHAOS_FREEZE=true` during incidents, deploy freezes, or target maintenance.
+1. Run all declared experiments in simulation mode on the weekly schedule.
+2. Permit the monthly live canary only when simulation passes, `CHAOS_SCHEDULE_ENABLED=true`, `CHAOS_FREEZE` is not `true`, and the date is the first Wednesday of the UTC month.
+3. Keep scheduled live execution limited to the policy-authorised `specular-route-503-v1` experiment and the protected `production-chaos` environment.
+4. Review detection, notification, rollback, recovery, provenance, and report fingerprints after every live run.
+5. Set `CHAOS_FREEZE=true` during incidents, deploy freezes, or target maintenance.
+6. Treat failed or missing scheduled evidence as an incomplete assurance cycle rather than a successful run.
 
 ## Emergency response
 
