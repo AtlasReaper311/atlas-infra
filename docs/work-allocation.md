@@ -4,7 +4,7 @@ Living coordination document for agents currently working on Atlas Systems. This
 
 This file only has value while it remains current. Update or remove an entry as soon as its status changes.
 
-Last updated: 2026-07-30.
+Last updated: 2026-07-31.
 
 ## How to use this file
 
@@ -48,6 +48,15 @@ Entry format:
 - **Resume point:** Begin only after every public-interface programme phase, consumer merge, production deployment, and live-verification gate is complete. Reinspect current GitHub source and deployed surfaces rather than relying on programme-era screenshots or memory.
 
 ## Recently completed
+
+### GitHub conformance Phase II closeout
+
+- **Repo(s):** `atlas-infra`
+- **Agent:** ChatGPT with Atlas approving the closeout merge
+- **Status:** done
+- **Started:** 2026-07-31
+- **Last updated:** 2026-07-31
+- **Summary:** Closed the read-only public-repository source-conformance phase through `atlas-infra#102`. The verified 30 July scheduled scoreboard checked 33 public repositories, recorded 233 required passes and zero required failures, and preserved 27 unreadable branch-guard outcomes plus one deferred `worker-meta-kit` release as separate provider and release work. The formal evidence, contract-continuity check, and closure boundary are recorded in `docs/github-conformance-phase-ii-closeout.md`.
 
 ### Public interface programme Phase 9
 
