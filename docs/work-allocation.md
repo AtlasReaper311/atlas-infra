@@ -26,6 +26,16 @@ Entry format:
 
 ## Active work
 
+### GitHub provider guard audit
+
+- **Repo(s):** `atlas-infra` plus the 27 public repositories with unreadable `default_branch_guard` evidence in scoreboard run `30535544793`
+- **Agent:** ChatGPT with Atlas providing owner-authenticated read-only evidence and approving any later provider write
+- **Status:** active
+- **Started:** 2026-07-31
+- **Last updated:** 2026-07-31
+- **Summary:** Resolve the Phase II branch-guard unknowns without assuming protection is present or absent. Part 0 confirmed that Atlas Infra already queries repository rulesets and classic branch protection correctly, while the scheduled token and connected GitHub tool cannot read the required provider surfaces. The current phase records the exact scope and owner-authenticated local evidence procedure in `docs/github-provider-guard-audit.md`. No ruleset, branch-protection, token, repository, release, tag, workflow, deployment, or secret change is authorised.
+- **Resume point:** Run the existing policy-aware scoreboard locally with an owner-authenticated `gh` session, provide the generated JSON and Markdown evidence, classify all 27 repositories, and return any proposed canary for separate approval.
+
 ### Public interface programme Phase 10
 
 - **Repo(s):** `atlas-infra`, `atlas-article-gen`, `atlas-scheduler`, `atlas-systems`
