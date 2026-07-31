@@ -1,199 +1,182 @@
-# Public interface programme Phase 10 coordination
+# Public interface programme Phase 10 closeout
 
-Status: active. Part 0 inspection complete. Routine source corrections are authorised; protected article refreshes, production publication, and future-footer architecture remain separately approval-gated.
+Status: completed.
 
 Recorded: 30 July 2026.
+Closed: 31 July 2026.
 
 ## Outcome
 
-Phase 10 will improve the Writing directory, generated article reading contract, and scheduler-owned editorial navigation without repeating the formatting and rollout failures encountered during the Phase 6 and Phase 7 Writing work.
+Phase 10 corrected the Writing directory state model, repaired generated fenced-code rendering, aligned previews with the production publication adapter, refreshed the malformed published W-06 code examples through the controlled generator-to-scheduler path, and established the compact sequence-only classic Writing footer as the sole active footer profile.
 
-The work spans four authority layers:
+The work preserved scheduler ownership of publication, protected published article content, and the distinction between source validation, preview evidence, scheduler execution, site deployment, and live verification.
 
-1. `atlas-infra` records the accepted programme boundary and ADR-0009 protection.
-2. `atlas-article-gen` owns Markdown parsing, validation, templates, generated HTML, metadata, and queue sync.
-3. `atlas-scheduler` owns queue validation, coming-soon state, previous and next links, series navigation, Work insertion, publication planning, and the only production write path into `atlas-systems`.
-4. `atlas-systems` owns the Writing directory, published presentation assets, browser evidence, deployment validation, and the live result.
+## Final authority
 
-## Current repository state
+ADR-0009 now defines the classic sequence footer as the only active Writing footer architecture. It retains scheduler-rendered previous, next, and latest navigation. Retired semantic and Classic Plus shapes remain historical evidence only and are rejected by active generator, scheduler, and consumer validation.
 
-- `atlas-infra/main`: `0b5f236ca3b46ec48bd90bf67995f02f66e564d9`.
-- `atlas-article-gen/main`: `6b5fe2a49b7f8d413fbd19e00b51df78ec5bfd84`.
-- `atlas-scheduler/main`: `2f6b7f8e372e25d935eb07c01cd7c5efd443617f`.
-- `atlas-systems/main`: `4dd5827b922832efacba4e20146de8dc2e95a1e7`.
-- No open pull request overlaps Phase 10 paths in `atlas-article-gen` or `atlas-scheduler`.
-- `atlas-systems#179` is stale, excluded, and must not be reused, rebased into Phase 10, or merged.
-- No current Phase 10 implementation branch or pull request existed at inspection time.
+Authority merged through `atlas-infra#104`:
 
-## Authority inspected
+- merge commit: `44e7e15cbc9f9071c1886d0d86260bcafcc97c14`;
+- no provider setting, secret, binding, publication timing, or runtime configuration changed.
 
-- `AGENT.md`;
-- this programme record and Phase 9 closeout;
-- ADR-0008 and ADR-0009;
-- `atlas-article-gen/docs/CASE_STUDY_INSTRUCTIONS.md`;
-- generator starter templates;
-- `scripts/build_article.py` and `scripts/build_article_core.py`;
-- generator CSS, tests, publication plan, generated drafts, and workflows;
-- `atlas-scheduler/docs/PUBLISHING_CONTRACT.md`;
-- scheduler publication, series, targeted-preview, shell-refresh, and preview-refresh paths;
-- scheduler tests and production workflow;
-- `atlas-systems/writing/index.html`, directory, search, and series scripts;
-- article and directory presentation CSS;
-- representative W-01, W-06, W-07, W-08, standalone, series, table-heavy, and code-heavy output;
-- current browser-evidence and contract tests.
+## Implementation receipts
 
-## Historical failure pattern
+### Generator parser and immutable refresh preparation
 
-The previous Writing work failed through three interacting classes rather than one isolated styling problem:
+`atlas-article-gen#44` merged as `4b0fa788c78ccc2d8f5747326e460c849974a178`.
 
-1. **Parser defects.** The generator accepted unsupported Markdown shapes and produced malformed HTML while validation inspected metadata and broad structure rather than rendered block fidelity.
-2. **Contract churn.** The Writing footer moved through semantic, Classic Plus, sequence-only, and restored classic shapes before ADR-0009, generator output, scheduler validation, and published output agreed.
-3. **Rollout sequencing.** Generator merges regenerated drafts and synchronised the scheduler queue; scheduler refreshes then wrote selected published output through separate production paths. Source success, queue sync, refresh generation, scheduler execution, site push, deployment, and live verification were sometimes discussed too loosely.
+It:
 
-Phase 10 must prevent all three classes from recurring.
+- added fail-closed backtick and tilde fenced-code parsing;
+- escaped literal code content and preserved newlines;
+- validated optional language identities;
+- rejected unterminated fences;
+- added mixed rendered-block fixtures and deterministic build coverage;
+- preserved canonical Markdown, article metadata, publication timing, and live-site state.
 
-## Confirmed current defects
+The corrected W-06 bundle was exported through `atlas-article-gen#46`, merged as `0eb66140abe0e8d7fd9446a6f285c730c5a35960`, with immutable provenance:
 
-### P0: fenced code blocks are malformed
+- generator source commit: `fca344e36295d3620e812cbfb4b8c5aa19299816`;
+- article blob: `f03cc461cad7880773f8ec21c5e2802d55cb36b3`;
+- metadata blob: `dfadb1fa122993a41a026f8d70439a66c2049e91`.
 
-`atlas-article-gen` documentation states that fenced code blocks are supported, and multiple canonical articles use them. The current `render_body()` parser has no fenced-code branch. It therefore flattens fences and their contents into ordinary paragraphs, sometimes passing triple backticks through the inline-code substitution.
+### Scheduler preview parity and W-06 refresh
 
-Confirmed affected state includes:
+`atlas-scheduler#51` merged as `50b87ae1114cfda1af765f84450c21f4ff5a4d1f`.
 
-- unpublished W-08 `specular-core-architectural-recovery` in both generator and scheduler queues;
-- unpublished `atlas-control-plane-waves-0-3`;
-- unpublished `reliability-one-source-of-truth`;
-- unpublished `reliability-release-correlation`;
-- published W-06 `atlas-systems-cicd-pipeline`.
+It routed targeted previews through the production editorial adapter and rejected queue shapes that production would reject.
 
-This parser defect and its missing regression tests block article-reading changes and future publication.
+The approved W-06 refresh request landed through `atlas-scheduler#52` as `0e6e2ee2c7a70e32d6942fdde03a94ea3a3709de`.
 
-### P1: cross-repository preview evidence is stale
+The scheduler then:
 
-The generator interface-preview handoff is pinned to scheduler commit `ae04c8bc3a3c9b0e205f387a9d7e64382a68ddfb`, which is 46 commits behind current scheduler main. The delta includes current dual-footer validation, refresh contracts, production receipts, queued shell updates, and workflow validation.
+- wrote only `writing/atlas-systems-cicd-pipeline/index.html` to the site;
+- produced site commit `b86d3500592d2bd107ad808c6455a92e5a9e863c`;
+- changed the existing YAML and TOML examples from flattened paragraph markup to fenced code markup;
+- preserved prose, title, W-number, publication date, tags, summary, series state, Writing index, Work index, and classic sequence navigation;
+- recorded immutable receipt commit `339959ffb78ba624c950bda6d4d8df7477953ea7` with `exact_deployment_verified: true`.
 
-The scheduled-article preview workflow is separately pinned to `929de0e842e469fbd67c9745c50735520c78e0a9`. Both pins are immutable, but neither currently proves compatibility with the scheduler code that would publish the queue.
+### Writing directory and browser-owned state
 
-### P1: targeted preview bypasses the strict footer adapter
+`atlas-systems#184` merged as `ccbb0cbdaa2fadd2d949f8f4765024ea7d3a304e`.
 
-`scripts/preview_selected.py` installs the series adapter and calls series publication functions directly. It does not install `publish_editorial.py`, which is the current production entry point and the strict validator for semantic and classic footer profiles. A targeted preview can therefore prove series and Work projection while missing a footer-profile incompatibility that production would reject.
+It:
 
-### P1: Writing type filtering is semantically incorrect
+- made case-study, series, upcoming, and all filters mutually coherent;
+- added an executable directory state contract;
+- required scheduler-owned series attributes rather than repairing missing data in the browser;
+- made series observer refresh idempotent;
+- preserved article cards, routes, insertion markers, dates, tags, summaries, and source order.
 
-`writing/directory.js` classifies published series separately, but the `case-study` filter accepts every non-upcoming card. Published series entries therefore appear under both Case Studies and Series. Current tests verify that filtering tokens exist but do not execute the filter semantics.
+The initial production run exposed a dependency-resolution failure in the shared static deployment path before upload. `atlas-infra#101` pinned Wrangler `4.116.0` as `ba99bab755d5601204ead565a6b308d60a5c53ad`, and `atlas-systems#185` updated the immutable caller pin as `bb18b60e3ef80ae8ad4a3167cf2468ca0489da34`.
 
-### P2: stale series compatibility can conceal source drift
+A later scheduler preflight found unrelated stale deterministic output at `og/blackbox.png`. Diagnostic PR `atlas-systems#186` was closed without merge. `atlas-systems#187` regenerated only that asset and merged as `2a34f6a56875a3d63a672c08c16bb2b2a41cc8f6`.
 
-`writing/series.js` retains a hard-coded W-05 through W-07 fallback even though current scheduler output includes source-owned `data-series` attributes. The fallback can hide missing source data by repairing it in the browser. Repeated `AtlasSeries.refresh()` calls may also attach additional `MutationObserver` instances because existing observers are not retained and disconnected.
+### Classic-only footer implementation
 
-### P2: historical and generated article shells are intentionally non-uniform
+`atlas-scheduler#53` merged as `c9fabf6c5f49546bf6175ef1bdeafff8bc2b30ce`.
 
-W-01 through W-04 retain protected historical inline shells and presentation-only overlays. W-05 through W-07 use current generated shells and series markup. Tests and CSS must target shared contracts rather than assuming identical document bytes.
+It:
 
-## Protected contracts
+- removed the retired semantic footer from active validation and dispatch;
+- enforced the exact classic container across queue validation, preview, shell refresh, and publication;
+- rejected semantic tokens, mixed profiles, bare placeholders, and extra footer classes;
+- removed the dormant provider-writing Classic Plus migration workflow;
+- preserved historical bundles, requests, receipts, reports, and repository history.
 
-Phase 10 must preserve unless Atlas separately approves the exact change:
+`atlas-article-gen#47` merged as `08288c145df509dcb3ab7385ac148a52918178bb`.
 
-- W-01 through W-07 classic footer structure under ADR-0009;
-- published article prose, dates, W-numbers, tags, summaries, metadata, canonical URLs, social identity, and series history;
-- scheduler ownership of sequence calculation and the only production write path;
-- one queue entry per slug with matching metadata;
-- publication-plan ordering and date semantics;
-- no direct edits to generated `index.html` or `meta.toml`;
-- no direct article writes into `atlas-systems`;
-- no provider settings, secrets, bindings, or workflow dispatch without the relevant gate;
-- no claim of publication before scheduler execution, exact site push, deployment verification, and live-route verification.
+It pinned both scheduler-backed preview workflows to the immutable classic-only scheduler commit and required W-99 output to contain exactly one classic footer with rendered sequence navigation and no retired semantic tokens.
 
-## Routine authorised work
+The exact-head W-99 run `30637492984` passed:
 
-Atlas has authorised the agent to inspect, implement, validate, mark ready, and merge routine Phase 10 corrections without returning for each normal engineering decision. This includes:
+- 183 generator tests;
+- the complete pinned scheduler suite;
+- production-adapter W-99 construction;
+- classic footer and sequence validation;
+- HTML and filtered Pages validation;
+- unchanged Writing and Work indexes;
+- private artifact `8795959298`, digest `sha256:6a65a4eff3f0777bbd5b7abe90b488a42ac6e8da530e787b0d1b0af429c37c24`.
 
-- parser correctness and fail-closed validation;
-- deterministic fixture and regression coverage;
-- current immutable compatibility pins after measuring the delta;
-- preview paths that mirror production validation without production writes;
-- directory filtering, search, count, empty-state, and keyboard defects;
-- stale browser-only compatibility removal when source contracts are already present;
-- documentation and test corrections;
-- repository-local source pull requests whose merge does not itself publish to production.
+## Final consumer proof
 
-Every pull request must still use an exact current base, repository-native validation, changed-path inspection, current-main rebase, exact-head checks, and a merge head guard.
+`atlas-systems#188` merged as `4896b1c482d89f8b7968ec0baee5763e36843342`.
 
-## Separate approval gates
+It added:
 
-Return to Atlas with one consolidated evidence bundle before any of the following:
+- explicit `overflow-wrap: anywhere` for visible prose links;
+- an executable inventory test over every published Writing article;
+- exact-one classic footer enforcement;
+- rejection of retired semantic tokens, placeholders, and extra footer classes;
+- sequence evidence requiring previous and next navigation or `Latest article`.
 
-1. choosing whether future articles retain the classic footer or adopt a replacement profile;
-2. changing the shared article presentation in a way that materially alters protected W-01 through W-07;
-3. refreshing published W-06 or any other published article to repair generated formatting;
-4. running a production scheduler publication or published-article refresh;
-5. dispatching a provider-writing workflow, changing publication timing, or changing queue semantics;
-6. any architecture change not representable by current ADR-0009 and publishing contracts.
+No generated article HTML, prose, metadata, publication date, Writing index, Work index, scheduler state, workflow, provider setting, binding, or secret changed in that pull request.
 
-## Implementation order
+## Preview evidence
 
-### 10.0 Control and regression baseline
+Atlas approved the isolated non-production preview for exact source head `3da0b1b9f76272fb5ce2bcf065148e3447abb5c3`.
 
-- record this coordination entry and active Work Allocation state;
-- add rendered-block fixtures that reproduce current code, table, callout, long-link, and mixed-content failures;
-- inventory current queued and published malformed output;
-- compare preview pins with current scheduler behavior.
+Preview run `30637397463` passed:
 
-### 10.1 Generator parser correctness
+- candidate and approval gates;
+- isolated Pages publication at `https://interface-pr-188.atlas-systems-44t.pages.dev`;
+- route-derived Chrome and Firefox evidence for the Writing directory and all seven published articles;
+- keyboard, responsive, accessibility, page-error, request-error, and console-error gates;
+- Batch H assertions;
+- System Map and directory-header pixel smokes;
+- no new blocking findings, with 12 reviewed reporting-baseline findings preserved.
 
-- implement fenced-code parsing with escaped literal content and optional language identity;
-- reject unterminated fences;
-- add fixtures for short, long, code-heavy, table-heavy, mixed-callout, and long-URL articles;
-- prove current canonical articles build deterministically;
-- regenerate drafts from Markdown only;
-- verify exactly which generator and scheduler queue files change.
+Artifacts:
 
-### 10.2 Scheduler compatibility and sequencing
+- interface validation `8795915019`, digest `sha256:bcdc04cdcd8182f3b24f41d8fa0fe611178fe3a6233f758a899ac788781a2bf4`;
+- public interface evidence `8796413189`, digest `sha256:90ae70bcceadb6e4c8b69fb8ee260c7f074f01c1441af1472b100e99baa83673`;
+- Batch H evidence `8796414553`, digest `sha256:c52d46e20fe10b55535d7d222a312b7231d86377f4765ced46550f79a0a5a2af`.
 
-- make targeted preview install the production editorial adapter;
-- validate both accepted footer profiles through the preview path;
-- add first, middle, latest, standalone, series, coming-soon, empty-queue, and malformed-output fixtures;
-- update immutable cross-repository pins only to reviewed commits;
-- preserve production timing and write boundaries.
+## Production verification
 
-### 10.3 Writing directory
+Production run `30638766487` deployed exact merge commit `4896b1c482d89f8b7968ec0baee5763e36843342`.
 
-- correct mutually exclusive content-type filtering;
-- test filter plus search composition, counts, empty states, feature state, and series visibility;
-- remove obsolete fallback data only after source attributes are required by tests;
-- make series refresh idempotent;
-- preserve scheduler insertion markers and source order.
+Observed evidence:
 
-### 10.4 Article reading and navigation review
+- Pages output contract: success;
+- HTML and offline link validation: success;
+- immutable shared workflow pin: `atlas-infra@ba99bab755d5601204ead565a6b308d60a5c53ad`;
+- Wrangler: `4.116.0`;
+- Cloudflare Pages upload: 472 files inspected, one file uploaded, 471 reused;
+- atomic Pages deployment: `https://ffd93356.atlas-systems-44t.pages.dev`;
+- custom domain exposed the exact merge commit on the second readiness attempt;
+- Systems v2 route marker: success;
+- Phase 6 footer asset readiness: success;
+- homepage AtlasField production smoke: success;
+- System Symphony live topology and 32-bar loudness smoke: success;
+- corpus refresh: HTTP `202`.
 
-- capture deterministic browser evidence for representative historical and generated articles;
-- measure prose width, heading rhythm, tables, code, long links, figures, callouts, focus, keyboard use, reduced motion, and mobile behavior;
-- return once with the exact future-footer and protected-presentation decisions, plus any proposed published W-06 repair bundle.
+Production artifacts:
 
-### 10.5 Controlled rollout
+- homepage AtlasField smoke `8796533559`, digest `sha256:54c09b90299028b9d33475cba04d59757fe5ffa14c491416a7a27682330b7724`;
+- System Symphony smoke `8796675029`, digest `sha256:becd326962434a44b15d80977153e6dc8465e3e5be30a57a300f6ba711b967b3`.
 
-- merge approved source changes in dependency order;
-- run a production-shaped scheduler dry run;
-- treat any published refresh or scheduler execution as a separate approval;
-- prove the exact `atlas-systems` commit, deploy run, live directory, live articles, and rollback path.
+## Closure state
 
-## Required evidence matrix
+Phase 10 is complete.
 
-At minimum, Phase 10 evidence must cover:
+The active publication contract is now:
 
-- no articles, one article, multiple articles, and a continuous future queue;
-- W-01 first-article fallback and latest-article fallback;
-- standalone and clustered series ordering;
-- published, next, scheduled, and no-coming-soon states;
-- short prose, long prose, fenced code, inline code, tables, callouts, lists, long URLs, and responsive media;
-- search alone, each type filter alone, filter plus search, zero results, reset, and feature behavior;
-- keyboard navigation, visible focus, 200 percent text zoom, reduced motion, and narrow widths;
-- Chrome and Firefox at the programme evidence widths;
-- no serious or critical accessibility findings;
-- no console errors, page errors, unintended failed requests, mutation endpoints, secret exposure, or production writes during source review;
-- deterministic generated HTML and metadata;
-- exact source, queue, scheduler, site, deployment, and live receipts where each stage applies.
+1. `atlas-article-gen` creates and validates deterministic generated article output.
+2. `atlas-scheduler` validates the classic footer, computes sequence and series state, owns publication timing, and remains the only write path into published Writing output.
+3. `atlas-systems` validates the committed consumer inventory, serves the published output, and records browser and production evidence.
+4. Publication or refresh remains proven only by scheduler execution, exact site commit, deployment success, custom-domain verification, and live-route evidence.
 
-## Current approval boundary
+Current repository heads at closure include later unrelated W-08 image work and its queue sync:
 
-This record authorises routine source preparation, validation, ready-for-review transitions, and merges within the boundaries above. It does not authorise future-footer architecture, protected published-article refreshes, production scheduler execution, publication timing changes, provider writes, secret changes, or a live rollout.
+- `atlas-infra/main`: `44e7e15cbc9f9071c1886d0d86260bcafcc97c14` before this closeout change;
+- `atlas-article-gen/main`: `6f2d432bc1fbd3510679601524df405de25222d4`;
+- `atlas-scheduler/main`: `d9abcf0843c1663181dd6d74bcf06b89255ff2cd`;
+- `atlas-systems/main`: `4896b1c482d89f8b7968ec0baee5763e36843342`.
+
+The W-08 image update and resulting queue sync are not publication evidence and are not part of the Phase 10 architecture decision.
+
+## Next programme stage
+
+Phase 11 begins with a fresh Part 0 inspection. It owns Lab interaction polish and the remaining declared legacy-console exception. It must inspect current repository and deployed state rather than reuse Phase 10 assumptions or preview artifacts.
