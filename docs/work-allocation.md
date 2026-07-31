@@ -26,15 +26,6 @@ Entry format:
 
 ## Active work
 
-### GitHub conformance Phase II closeout
-
-- **Repo(s):** `atlas-infra`
-- **Agent:** ChatGPT with Atlas approving merge and later provider or release writes
-- **Status:** active
-- **Started:** 2026-07-31
-- **Last updated:** 2026-07-31
-- **Summary:** Record the successful 30 July policy-aware scoreboard as the closing evidence for the read-only source-conformance phase. The report checked 33 public repositories, produced 233 required passes and zero required failures, and separated 27 unreadable branch-guard outcomes plus one deferred `worker-meta-kit` release from source remediation. The closeout must not change rulesets, branch protection, token permissions, releases, tags, deployments, or private-repository scope.
-
 ### Public interface programme Phase 10
 
 - **Repo(s):** `atlas-infra`, `atlas-article-gen`, `atlas-scheduler`, `atlas-systems`
@@ -57,6 +48,15 @@ Entry format:
 - **Resume point:** Begin only after every public-interface programme phase, consumer merge, production deployment, and live-verification gate is complete. Reinspect current GitHub source and deployed surfaces rather than relying on programme-era screenshots or memory.
 
 ## Recently completed
+
+### GitHub conformance Phase II closeout
+
+- **Repo(s):** `atlas-infra`
+- **Agent:** ChatGPT with Atlas approving the closeout merge
+- **Status:** done
+- **Started:** 2026-07-31
+- **Last updated:** 2026-07-31
+- **Summary:** Closed the read-only public-repository source-conformance phase through `atlas-infra#102`. The verified 30 July scheduled scoreboard checked 33 public repositories, recorded 233 required passes and zero required failures, and preserved 27 unreadable branch-guard outcomes plus one deferred `worker-meta-kit` release as separate provider and release work. The formal evidence, contract-continuity check, and closure boundary are recorded in `docs/github-conformance-phase-ii-closeout.md`.
 
 ### Public interface programme Phase 9
 
