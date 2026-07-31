@@ -47,6 +47,16 @@ Entry format:
 
 ## Paused work
 
+### W-09 Ramone Voice Assistant work-card visuals
+
+- **Repo(s):** `atlas-article-gen`
+- **Agent:** Claude, with Atlas supplying screenshots taken at SPECULAR-CORE and the resulting Cloudinary links
+- **Status:** paused
+- **Started:** 2026-07-31
+- **Last updated:** 2026-07-31
+- **Summary:** W-08 (`specular-core-architectural-recovery`) had its four work-card image placeholders replaced with real assets (recovery diagram, Uptime Kuma dashboard, systemd override, `docker ps`) via `atlas-article-gen` PR #48, which also required splitting the stale `test_w08_and_w09_placeholder_media_blocks_remain_present` test in `tests/test_upcoming_snapshot_accuracy.py` so W-08 now asserts the real assets are present while W-09 keeps its original placeholder guard. W-09 (`ramone-voice-assistant`, `publish_date` 2026-09-24) still has placeholder images: its current alt text (`"Caller workflow file from a Worker repo"`, `"GitHub Actions run summary"`, `"Discord notification channels by signal class"`) is a mismatched leftover from an unrelated article template and needs correcting regardless of image source. Note also that `validate_work_card()` only checks that `src` is a string, not that it's non-empty, so the placeholder-guard test is currently the only thing that would catch an unfinished work card before it publishes. Atlas chose to hold off sourcing W-09's visuals until closer to the September publish date rather than do it now.
+- **Resume point:** Build the lead diagram covering the actual working path (wake phrase -> `OpenWakeWord` custom `ramone.tflite` model -> Wyoming satellite -> Faster Whisper STT -> branch to Home Assistant intents / `conversation.ramone` Ollama `llama3.1:8b` fallback -> Kokoro TTS `bm_daniel` -> Windows audio out), with the Windows / WSL2-Docker / Windows boundary crossings marked, matching the brand-styled diagram already built for W-08. Pair with 2-3 real screenshots: a clean terminal log cycle (`Waiting for wake word` -> transcript -> synthesize -> `Audio output opening`), `test-ramone-wake.ps1` output showing `WAKE DETECTED: ramone`, and optionally the Home Assistant Assist pipeline settings screen for `Ramone`. Once Atlas supplies the Cloudinary links, replace the mismatched placeholder alts the same way W-08 was done, then split `test_w09_placeholder_media_blocks_remain_present` the same way `test_w08_media_placeholders_replaced_with_recovery_assets` was split out.
+
 ### Post-programme cross-page conformance audit
 
 - **Repo(s):** all public browser-facing Atlas Systems surfaces, beginning with `atlas-systems`, `status`, `atlas-doc-viewer`, `ramone-edge`, and human-facing `atlas-api-public` documentation
