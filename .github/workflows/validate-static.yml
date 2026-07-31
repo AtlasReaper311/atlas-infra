@@ -169,9 +169,10 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
           PROJECT_NAME: ${{ inputs.project_name }}
           PUBLISH_DIRECTORY: ${{ steps.publish_directory.outputs.directory }}
+          WRANGLER_VERSION: "4.116.0"
         run: |
           set -euo pipefail
-          npx --yes wrangler@4 pages deploy "$PUBLISH_DIRECTORY" \
+          npx --yes "wrangler@${WRANGLER_VERSION}" pages deploy "$PUBLISH_DIRECTORY" \
             --project-name "$PROJECT_NAME" \
             --branch main \
             --commit-dirty=true
