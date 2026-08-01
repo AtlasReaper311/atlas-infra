@@ -19,6 +19,35 @@ import control_plane_read_model as read_model
 from control_plane_contracts import canonical_json, load_json, validate_instance
 
 
+def first_difference(expected, actual, path="$"):
+    """Return the first structural difference for actionable CI output."""
+    if type(expected) is not type(actual):
+        return f"{path}: type {type(expected).__name__} != {type(actual).__name__}"
+    if isinstance(expected, dict):
+        expected_keys = set(expected)
+        actual_keys = set(actual)
+        if expected_keys != actual_keys:
+            missing = sorted(expected_keys - actual_keys)
+            unexpected = sorted(actual_keys - expected_keys)
+            return f"{path}: missing={missing}, unexpected={unexpected}"
+        for key in sorted(expected_keys):
+            difference = first_difference(expected[key], actual[key], f"{path}.{key}")
+            if difference:
+                return difference
+        return None
+    if isinstance(expected, list):
+        if len(expected) != len(actual):
+            return f"{path}: length {len(expected)} != {len(actual)}"
+        for index, (expected_item, actual_item) in enumerate(zip(expected, actual)):
+            difference = first_difference(expected_item, actual_item, f"{path}[{index}]")
+            if difference:
+                return difference
+        return None
+    if expected != actual:
+        return f"{path}: {expected!r} != {actual!r}"
+    return None
+
+
 class ControlPlaneReadModelTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
@@ -58,8 +87,16 @@ class ControlPlaneReadModelTests(unittest.TestCase):
         self.assertEqual('control-plane:read-model:v1', first_receipt['bounded_kv_key'])
         self.assertEqual(1, first_receipt['collection_counts']['services'])
         expected_root = ROOT / 'tests/fixtures/control-plane-read-model/expected'
-        self.assertEqual(load_json(expected_root / 'read-model.json'), first)
-        self.assertEqual(load_json(expected_root / 'dry-run-receipt.json'), first_receipt)
+        expected_model = load_json(expected_root / 'read-model.json')
+        expected_receipt = load_json(expected_root / 'dry-run-receipt.json')
+        self.assertIsNone(
+            first_difference(expected_model, first),
+            first_difference(expected_model, first),
+        )
+        self.assertIsNone(
+            first_difference(expected_receipt, first_receipt),
+            first_difference(expected_receipt, first_receipt),
+        )
 
     def test_fingerprints_cover_sources_and_complete_model(self):
         model, _ = self.build()
