@@ -20,18 +20,23 @@
     "scripts/evidence_ledger.py"
   ],
   "optional_files": [
+    ".github/workflows/publish-control-plane-read-model.yml",
+    "contracts/ramone/v1/control-plane-read-model-publication-receipt.schema.json",
     "contracts/ramone/v1/control-plane-read-model.schema.json",
     "contracts/ramone/v1/control-plane-read-model-source.schema.json",
+    "docs/ramone-control-plane-read-model.md",
+    "policy/control-plane-read-model-publisher.json",
     "policy/control-plane-read-model.json",
     "policy/ramone-control-plane-tools.json",
     "scripts/control_plane_read_model.py",
+    "scripts/control_plane_read_model_publisher.py",
     "scripts/control_plane_summary.py"
   ],
   "deferred_cutovers": [
     {
       "id": "phase9-atlas-api-public",
-      "state": "draft-only",
-      "reason": "The stale Phase 9 API PR remains intentionally unmerged. The read-model producer is offline and dry-run only; no publisher, bearer, deployment, or cutover is approved."
+      "state": "source-only",
+      "reason": "The offline producer and manual exact-digest publisher source are present. No protected environment, publisher token, qualifying production artifact, workflow dispatch, KV write, bearer, API deployment, or cutover is approved or proven."
     },
     {
       "id": "home-assistant-live-install",
@@ -51,6 +56,7 @@
     "backup-coverage-not-declared"
   ],
   "allowed_action_permissions": [
+    "actions: read",
     "contents: read"
   ],
   "max_artifact_retention_days": 90,
