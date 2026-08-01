@@ -1,0 +1,21 @@
+{
+  "generated_at": "2026-07-14T10:00:00Z",
+  "items": [
+    {
+      "evidence_ref": "https://github.com/AtlasReaper311/atlas-infra/actions/runs/101",
+      "freshness": "unknown",
+      "last_restore_test_at": "2026-07-14T09:00:00Z",
+      "last_successful_backup_at": null,
+      "method": "json-export",
+      "retention_days": 30,
+      "service_id": "atlas-api-public",
+      "state": "warning",
+      "target_id": "atlas-api-public-metadata"
+    }
+  ],
+  "producer": "AtlasReaper311/atlas-infra",
+  "schema_version": "atlas-control-plane/control-plane-read-model-source/v1",
+  "source_id": "backups",
+  "stale_after": "2026-07-14T11:00:00Z",
+  "state": "healthy"
+}

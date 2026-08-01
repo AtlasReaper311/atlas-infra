@@ -1,0 +1,18 @@
+{
+  "generated_at": "2026-07-14T10:00:00Z",
+  "items": [
+    {
+      "reference": "https://github.com/AtlasReaper311/atlas-infra/blob/main/docs/runbooks/contract-registry-service-triage.md",
+      "runbook_id": "contract-registry-service-triage",
+      "service_id": "atlas-api-public",
+      "state": "healthy",
+      "summary": "Review declaration, source, and observed contract drift without changing a route.",
+      "title": "Contract registry service triage"
+    }
+  ],
+  "producer": "AtlasReaper311/atlas-infra",
+  "schema_version": "atlas-control-plane/control-plane-read-model-source/v1",
+  "source_id": "runbooks",
+  "stale_after": "2026-07-14T11:00:00Z",
+  "state": "healthy"
+}

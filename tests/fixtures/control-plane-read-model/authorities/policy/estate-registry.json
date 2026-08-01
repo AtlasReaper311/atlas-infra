@@ -1,0 +1,30 @@
+{
+  "approved_repository_count": 3,
+  "classification_axes": {},
+  "owner": "AtlasReaper311/atlas-infra",
+  "repositories": [
+    {
+      "public_surface": true,
+      "repository": "AtlasReaper311/atlas-api-public",
+      "service_ids": [
+        "atlas-api-public"
+      ]
+    },
+    {
+      "public_surface": true,
+      "repository": "AtlasReaper311/atlas-api-index",
+      "service_ids": [
+        "atlas-api-index"
+      ]
+    },
+    {
+      "public_surface": true,
+      "repository": "AtlasReaper311/atlas-corpus",
+      "service_ids": [
+        "atlas-corpus"
+      ]
+    }
+  ],
+  "reviewed_at": "2026-07-20T00:00:00Z",
+  "schema_version": "atlas-contract-registry/estate-registry/v1"
+}

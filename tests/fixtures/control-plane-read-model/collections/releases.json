@@ -1,0 +1,20 @@
+{
+  "generated_at": "2026-07-14T10:00:00Z",
+  "items": [
+    {
+      "commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "completed_at": "2026-07-14T09:58:00Z",
+      "environment": "production",
+      "evidence_ref": "https://github.com/AtlasReaper311/atlas-journey-watch/actions/runs/100",
+      "journey_result": "passed",
+      "release_state": "live",
+      "repository": "atlas-api-public",
+      "state": "healthy"
+    }
+  ],
+  "producer": "AtlasReaper311/atlas-journey-watch",
+  "schema_version": "atlas-control-plane/control-plane-read-model-source/v1",
+  "source_id": "releases",
+  "stale_after": "2026-07-14T11:00:00Z",
+  "state": "healthy"
+}

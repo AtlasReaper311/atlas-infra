@@ -1,0 +1,20 @@
+{
+  "generated_at": "2026-07-14T10:00:00Z",
+  "items": [
+    {
+      "evidence_id": "release-evidence-001",
+      "evidence_type": "release-verification",
+      "producer": "atlas-journey-watch",
+      "reference": "https://github.com/AtlasReaper311/atlas-journey-watch/actions/runs/100",
+      "state": "healthy",
+      "subject": "atlas-api-public",
+      "summary": "Public API release identity and targeted journey passed.",
+      "timestamp": "2026-07-14T09:58:00Z"
+    }
+  ],
+  "producer": "AtlasReaper311/atlas-infra",
+  "schema_version": "atlas-control-plane/control-plane-read-model-source/v1",
+  "source_id": "evidence",
+  "stale_after": "2026-07-14T11:00:00Z",
+  "state": "healthy"
+}
