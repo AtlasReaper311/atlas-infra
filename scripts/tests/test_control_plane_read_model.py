@@ -89,10 +89,15 @@ class ControlPlaneReadModelTests(unittest.TestCase):
         expected_root = ROOT / 'tests/fixtures/control-plane-read-model/expected'
         expected_model = load_json(expected_root / 'read-model.json')
         expected_receipt = load_json(expected_root / 'dry-run-receipt.json')
+        expected_payload = copy.deepcopy(expected_model)
+        actual_payload = copy.deepcopy(first)
+        expected_fingerprint = expected_payload.pop('read_model_fingerprint')
+        actual_fingerprint = actual_payload.pop('read_model_fingerprint')
         self.assertIsNone(
-            first_difference(expected_model, first),
-            first_difference(expected_model, first),
+            first_difference(expected_payload, actual_payload),
+            first_difference(expected_payload, actual_payload),
         )
+        self.assertEqual(expected_fingerprint, actual_fingerprint)
         self.assertIsNone(
             first_difference(expected_receipt, first_receipt),
             first_difference(expected_receipt, first_receipt),
