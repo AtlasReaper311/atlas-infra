@@ -33,6 +33,7 @@ jobs:
     name: Revalidate exact artifact without credentials
     if: >-
       github.ref == 'refs/heads/main' &&
+      vars.RAMONE_CONTROL_PLANE_PUBLISH_ENABLED == 'true' &&
       vars.RAMONE_CONTROL_PLANE_PUBLISH_FREEZE != 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -57,7 +58,7 @@ jobs:
 
           RUN_JSON="$(gh run view "$SOURCE_RUN_ID" \
             --repo "$GITHUB_REPOSITORY" \
-            --json status,conclusion,headBranch,headSha,event)"
+            --json status,conclusion,headBranch,headSha)"
 
           STATUS="$(jq -r '.status' <<<"$RUN_JSON")"
           CONCLUSION="$(jq -r '.conclusion' <<<"$RUN_JSON")"
@@ -120,6 +121,7 @@ jobs:
     needs: preflight
     if: >-
       github.ref == 'refs/heads/main' &&
+      vars.RAMONE_CONTROL_PLANE_PUBLISH_ENABLED == 'true' &&
       vars.RAMONE_CONTROL_PLANE_PUBLISH_FREEZE != 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 10
