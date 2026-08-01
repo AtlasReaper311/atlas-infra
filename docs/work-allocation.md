@@ -4,7 +4,7 @@ Living coordination document for agents currently working on Atlas Systems. This
 
 This file only has value while it remains current. Update or remove an entry as soon as its status changes.
 
-Last updated: 2026-07-31.
+Last updated: 2026-08-01.
 
 ## How to use this file
 
@@ -25,6 +25,16 @@ Entry format:
 ```
 
 ## Active work
+
+### Public interface programme Phase 11
+
+- **Repo(s):** `atlas-infra`, `atlas-systems`
+- **Agent:** ChatGPT with Atlas approving the isolated preview and retaining separate merge and production gates
+- **Status:** active
+- **Started:** 2026-08-01
+- **Last updated:** 2026-08-01
+- **Summary:** Phase 11 has completed Part 0 inspection and is implementing the first focused branch, `refactor/lab-context-wayfinding`, from current `atlas-systems/main`. The branch groups Lab context routes by purpose, corrects canonical destinations, restores The Bearing, keeps System Symphony child routes inside Symphony-owned navigation, and adds an executable route-inventory contract. Evidence tools, instruments, experiments, and the legacy-console parity decision remain later non-overlapping branches. No merge, production deployment, provider setting, binding, secret, publication, or runtime write is included.
+- **Resume point:** Complete the exact-head draft pull request, approve only the existing isolated `interface-preview.yml` path, inspect Chromium and Firefox evidence, and stop before merge or production deployment.
 
 ### GitHub provider guard audit
 
