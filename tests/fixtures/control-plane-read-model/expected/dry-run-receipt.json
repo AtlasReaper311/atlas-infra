@@ -14,10 +14,10 @@
   "mode": "dry-run",
   "output_bytes": 14503,
   "provider_write_performed": false,
-  "read_model_fingerprint": "sha256:27165da3df14db4cf1c30fef4ca877fabba8f7d03f8b02eabc69d7fe95d56a1b",
+  "read_model_fingerprint": "sha256:2bc37cf440ec7ca6f16f64f3ea7aa5858beb20f53356e8e6fd90090fe6f1bc03",
   "schema_version": "atlas-control-plane/read-model-dry-run-receipt/v1",
   "source_count": 21,
-  "source_fingerprint": "sha256:79d31f8339030aabde1301b465096b692095ad32c55051ed2e33cab4892b2c6b",
+  "source_fingerprint": "sha256:b119a7838ec06296058324d9b5c9e86b72aee1333ac5b1464022c7ee0271ce95",
   "source_revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
   "stale_after": "2026-07-14T10:40:00Z",
   "state": "failed"
