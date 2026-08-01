@@ -200,11 +200,24 @@ def _publication_safety_errors(
                         errors.append(f"{path}.{key}: reference is not a string")
                         continue
                     parsed = urlsplit(reference)
-                    if (
-                        parsed.scheme != "https"
-                        or not parsed.netloc
-                        or not reference.startswith(allowed_reference_origins)
-                    ):
+                    approved = False
+                    if parsed.scheme == "https" and parsed.netloc and not parsed.username:
+                        for origin in allowed_reference_origins:
+                            allowed = urlsplit(origin)
+                            if (
+                                allowed.scheme == "https"
+                                and allowed.netloc
+                                and parsed.scheme == allowed.scheme
+                                and parsed.netloc == allowed.netloc
+                                and (
+                                    not allowed.path
+                                    or parsed.path == allowed.path.rstrip("/")
+                                    or parsed.path.startswith(allowed.path)
+                                )
+                            ):
+                                approved = True
+                                break
+                    if not approved:
                         errors.append(f"{path}.{key}: reference origin is not approved")
             errors.extend(
                 _publication_safety_errors(
@@ -334,6 +347,7 @@ def _load_publisher_policy(path: Path) -> dict[str, Any]:
     if not isinstance(workflow, dict) or set(workflow) != {
         "allowed_ref",
         "confirmation",
+        "enable_variable",
         "environment",
         "token_secret",
     }:
@@ -342,6 +356,8 @@ def _load_publisher_policy(path: Path) -> dict[str, Any]:
         raise PublisherError("publisher workflow ref is not fixed to main")
     if workflow.get("confirmation") != "publish-control-plane-read-model-v1":
         raise PublisherError("publisher confirmation phrase is not fixed")
+    if workflow.get("enable_variable") != "RAMONE_CONTROL_PLANE_PUBLISH_ENABLED":
+        raise PublisherError("publisher enable variable is not fixed")
     if workflow.get("environment") != "ramone-control-plane-publish":
         raise PublisherError("publisher environment is not fixed")
     if workflow.get("token_secret") != "CF_RAMONE_CONTROL_PLANE_KV_WRITE_TOKEN":
@@ -544,6 +560,8 @@ def validate_bundle(
     source_revision = str(producer.get("source_revision", ""))
     if not FULL_SHA.fullmatch(source_revision):
         raise PublisherError("read-model source revision is malformed")
+    if source_revision != source_head_sha:
+        raise PublisherError("read-model source revision does not match source workflow head")
 
     producer_receipt = _load_object(receipt_path, "producer dry-run receipt")
     _validate_producer_receipt(
