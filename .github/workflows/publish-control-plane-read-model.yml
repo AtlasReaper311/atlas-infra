@@ -1,0 +1,176 @@
+name: Publish RAMONE control-plane read model
+
+on:
+  workflow_dispatch:
+    inputs:
+      source_run_id:
+        description: "Successful atlas-infra main run containing the fixed ramone-control-plane-read-model artifact"
+        required: true
+        type: string
+      expected_artifact_sha256:
+        description: "Exact sha256:<hex> digest of control-plane-read-model.json"
+        required: true
+        type: string
+      expected_read_model_fingerprint:
+        description: "Exact read_model_fingerprint reviewed in the dry-run artifact"
+        required: true
+        type: string
+      confirmation:
+        description: "Type publish-control-plane-read-model-v1"
+        required: true
+        type: string
+
+permissions:
+  actions: read
+  contents: read
+
+concurrency:
+  group: ramone-control-plane-read-model-publish
+  cancel-in-progress: false
+
+jobs:
+  preflight:
+    name: Revalidate exact artifact without credentials
+    if: >-
+      github.ref == 'refs/heads/main' &&
+      vars.RAMONE_CONTROL_PLANE_PUBLISH_FREEZE != 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      source_head_sha: ${{ steps.source.outputs.source_head_sha }}
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0, Node 24
+
+      - name: Verify source workflow run
+        id: source
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SOURCE_RUN_ID: ${{ inputs.source_run_id }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [[ ! "$SOURCE_RUN_ID" =~ ^[1-9][0-9]*$ ]]; then
+            echo "source_run_id must be a positive integer"
+            exit 1
+          fi
+
+          RUN_JSON="$(gh run view "$SOURCE_RUN_ID" \
+            --repo "$GITHUB_REPOSITORY" \
+            --json status,conclusion,headBranch,headSha,event)"
+
+          STATUS="$(jq -r '.status' <<<"$RUN_JSON")"
+          CONCLUSION="$(jq -r '.conclusion' <<<"$RUN_JSON")"
+          HEAD_BRANCH="$(jq -r '.headBranch' <<<"$RUN_JSON")"
+          HEAD_SHA="$(jq -r '.headSha' <<<"$RUN_JSON")"
+
+          test "$STATUS" = "completed"
+          test "$CONCLUSION" = "success"
+          test "$HEAD_BRANCH" = "main"
+          [[ "$HEAD_SHA" =~ ^[0-9a-f]{40}([0-9a-f]{24})?$ ]]
+
+          echo "source_head_sha=$HEAD_SHA" >> "$GITHUB_OUTPUT"
+
+      - name: Download fixed artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SOURCE_RUN_ID: ${{ inputs.source_run_id }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          rm -rf input
+          mkdir -p input
+          gh run download "$SOURCE_RUN_ID" \
+            --repo "$GITHUB_REPOSITORY" \
+            --name ramone-control-plane-read-model \
+            --dir input
+
+      - name: Validate exact digest, contract, freshness and leak boundary
+        env:
+          EXPECTED_ARTIFACT_SHA256: ${{ inputs.expected_artifact_sha256 }}
+          EXPECTED_READ_MODEL_FINGERPRINT: ${{ inputs.expected_read_model_fingerprint }}
+          SOURCE_RUN_ID: ${{ inputs.source_run_id }}
+          SOURCE_HEAD_SHA: ${{ steps.source.outputs.source_head_sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          python3 scripts/control_plane_read_model_publisher.py validate \
+            --bundle input \
+            --expected-artifact-sha256 "$EXPECTED_ARTIFACT_SHA256" \
+            --expected-read-model-fingerprint "$EXPECTED_READ_MODEL_FINGERPRINT" \
+            --source-run-id "$SOURCE_RUN_ID" \
+            --source-head-sha "$SOURCE_HEAD_SHA" \
+            --now "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+            --receipt reports/control-plane-read-model-preflight.json
+
+          cat reports/control-plane-read-model-preflight.json >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload redacted preflight receipt
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1, Node 24
+        with:
+          name: ramone-control-plane-preflight-${{ github.run_id }}
+          path: reports/control-plane-read-model-preflight.json
+          if-no-files-found: error
+          retention-days: 30
+
+  publish:
+    name: Publish one fixed KV key and verify read-back
+    needs: preflight
+    if: >-
+      github.ref == 'refs/heads/main' &&
+      vars.RAMONE_CONTROL_PLANE_PUBLISH_FREEZE != 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: ramone-control-plane-publish
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0, Node 24
+
+      - name: Re-download fixed artifact after approval
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SOURCE_RUN_ID: ${{ inputs.source_run_id }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          rm -rf input
+          mkdir -p input
+          gh run download "$SOURCE_RUN_ID" \
+            --repo "$GITHUB_REPOSITORY" \
+            --name ramone-control-plane-read-model \
+            --dir input
+
+      - name: Revalidate and publish exact bytes
+        env:
+          CF_RAMONE_CONTROL_PLANE_KV_WRITE_TOKEN: ${{ secrets.CF_RAMONE_CONTROL_PLANE_KV_WRITE_TOKEN }}
+          CONFIRMATION: ${{ inputs.confirmation }}
+          EXPECTED_ARTIFACT_SHA256: ${{ inputs.expected_artifact_sha256 }}
+          EXPECTED_READ_MODEL_FINGERPRINT: ${{ inputs.expected_read_model_fingerprint }}
+          SOURCE_RUN_ID: ${{ inputs.source_run_id }}
+          SOURCE_HEAD_SHA: ${{ needs.preflight.outputs.source_head_sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          python3 scripts/control_plane_read_model_publisher.py publish \
+            --bundle input \
+            --expected-artifact-sha256 "$EXPECTED_ARTIFACT_SHA256" \
+            --expected-read-model-fingerprint "$EXPECTED_READ_MODEL_FINGERPRINT" \
+            --source-run-id "$SOURCE_RUN_ID" \
+            --source-head-sha "$SOURCE_HEAD_SHA" \
+            --now "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+            --confirm "$CONFIRMATION" \
+            --receipt reports/control-plane-read-model-publication.json
+
+          cat reports/control-plane-read-model-publication.json >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload redacted publication receipt
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1, Node 24
+        with:
+          name: ramone-control-plane-publication-${{ github.run_id }}
+          path: reports/control-plane-read-model-publication.json
+          if-no-files-found: warn
+          retention-days: 90
