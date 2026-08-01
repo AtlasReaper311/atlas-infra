@@ -50,7 +50,7 @@ class ControlPlaneReadModelPublisherTests(unittest.TestCase):
         )
         cls.now = datetime(2026, 7, 14, 10, 30, tzinfo=timezone.utc)
         cls.source_run_id = "123456789"
-        cls.source_head_sha = "b" * 40
+        cls.source_head_sha = "a" * 40
 
     def bundle(self, root: Path) -> Path:
         bundle = root / "bundle"
@@ -121,6 +121,35 @@ class ControlPlaneReadModelPublisherTests(unittest.TestCase):
             stale_now = datetime(2026, 7, 14, 10, 41, tzinfo=timezone.utc)
             with self.assertRaisesRegex(publisher.PublisherError, "stale"):
                 self.validate(bundle, now=stale_now)
+
+    def test_source_workflow_head_must_match_model_revision(self):
+        with tempfile.TemporaryDirectory() as directory:
+            bundle = self.bundle(Path(directory))
+            with self.assertRaisesRegex(publisher.PublisherError, "source workflow head"):
+                self.validate(bundle, source_head_sha="b" * 40)
+
+    def test_reference_prefix_bypass_is_rejected(self):
+        with tempfile.TemporaryDirectory() as directory:
+            bundle = self.bundle(Path(directory))
+            model_path = bundle / "control-plane-read-model.json"
+            model = load_json(model_path)
+            model["services"][0]["evidence_ref"] = (
+                "https://github.com/AtlasReaper311.evil.example/fake"
+            )
+            model["source_fingerprint"] = publisher._sha256_json(model["sources"])
+            model["read_model_fingerprint"] = publisher._read_model_fingerprint(model)
+            model_path.write_text(json.dumps(model), encoding="utf-8")
+            receipt_path = bundle / "dry-run-receipt.json"
+            receipt = load_json(receipt_path)
+            receipt["read_model_fingerprint"] = model["read_model_fingerprint"]
+            receipt["output_bytes"] = len(model_path.read_bytes())
+            receipt_path.write_text(json.dumps(receipt), encoding="utf-8")
+            with self.assertRaisesRegex(publisher.PublisherError, "reference origin"):
+                self.validate(
+                    bundle,
+                    expected_artifact_sha256=self.digest(model_path),
+                    expected_read_model_fingerprint=model["read_model_fingerprint"],
+                )
 
     def test_secret_bearing_model_and_writer_receipt_are_rejected(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -241,6 +270,7 @@ class ControlPlaneReadModelPublisherTests(unittest.TestCase):
         self.assertNotIn("push:", text)
         self.assertIn("environment: ramone-control-plane-publish", text)
         self.assertIn("CF_RAMONE_CONTROL_PLANE_KV_WRITE_TOKEN", text)
+        self.assertIn("RAMONE_CONTROL_PLANE_PUBLISH_ENABLED == 'true'", text)
         self.assertIn("--name ramone-control-plane-read-model", text)
         self.assertIn("actions: read", text)
         self.assertIn("contents: read", text)
