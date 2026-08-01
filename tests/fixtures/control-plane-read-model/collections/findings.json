@@ -1,0 +1,20 @@
+{
+  "generated_at": "2026-07-14T10:00:00Z",
+  "items": [
+    {
+      "category": "contract-drift",
+      "detected_at": "2026-07-13T08:00:00Z",
+      "finding_id": "finding-contract-drift-001",
+      "runbook_ref": "https://github.com/AtlasReaper311/atlas-infra/blob/main/docs/runbooks/contract-registry-service-triage.md",
+      "service_id": "atlas-api-public",
+      "severity": "warning",
+      "state": "warning",
+      "summary": "Two declared contract observations require owner review."
+    }
+  ],
+  "producer": "AtlasReaper311/atlas-infra",
+  "schema_version": "atlas-control-plane/control-plane-read-model-source/v1",
+  "source_id": "findings",
+  "stale_after": "2026-07-14T11:00:00Z",
+  "state": "healthy"
+}

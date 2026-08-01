@@ -1,0 +1,73 @@
+{
+  "$id": "https://schemas.atlas-systems.uk/control-plane/v1/control-plane-read-model-source.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "One bounded collection source consumed only by the offline read-model producer.",
+  "examples": [
+    {
+      "generated_at": "2026-07-14T10:00:00Z",
+      "items": [],
+      "producer": "AtlasReaper311/atlas-api-public",
+      "schema_version": "atlas-control-plane/control-plane-read-model-source/v1",
+      "source_id": "services",
+      "stale_after": "2026-07-14T11:00:00Z",
+      "state": "unknown"
+    }
+  ],
+  "properties": {
+    "generated_at": {
+      "format": "date-time",
+      "type": "string"
+    },
+    "items": {
+      "items": {
+        "type": "object"
+      },
+      "maxItems": 100,
+      "type": "array"
+    },
+    "producer": {
+      "maxLength": 128,
+      "pattern": "^AtlasReaper311/[A-Za-z0-9._-]+$",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "atlas-control-plane/control-plane-read-model-source/v1"
+    },
+    "source_id": {
+      "maxLength": 80,
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+      "type": "string"
+    },
+    "stale_after": {
+      "format": "date-time",
+      "type": "string"
+    },
+    "state": {
+      "enum": [
+        "healthy",
+        "warning",
+        "failed",
+        "stale",
+        "unavailable",
+        "unknown"
+      ],
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema_version",
+    "source_id",
+    "producer",
+    "generated_at",
+    "stale_after",
+    "state",
+    "items"
+  ],
+  "title": "Atlas Systems control-plane read-model collection source v1",
+  "type": "object",
+  "x-owner": {
+    "consumer": "scripts/control_plane_read_model.py",
+    "repository": "AtlasReaper311/atlas-infra"
+  }
+}

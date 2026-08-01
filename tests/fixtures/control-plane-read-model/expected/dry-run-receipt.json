@@ -1,0 +1,24 @@
+{
+  "bounded_kv_key": "control-plane:read-model:v1",
+  "collection_counts": {
+    "backups": 1,
+    "evidence": 1,
+    "findings": 1,
+    "gardener_proposals": 1,
+    "quota": 1,
+    "releases": 1,
+    "runbooks": 1,
+    "services": 1
+  },
+  "generated_at": "2026-07-14T10:30:00Z",
+  "mode": "dry-run",
+  "output_bytes": 14503,
+  "provider_write_performed": false,
+  "read_model_fingerprint": "sha256:27165da3df14db4cf1c30fef4ca877fabba8f7d03f8b02eabc69d7fe95d56a1b",
+  "schema_version": "atlas-control-plane/read-model-dry-run-receipt/v1",
+  "source_count": 21,
+  "source_fingerprint": "sha256:79d31f8339030aabde1301b465096b692095ad32c55051ed2e33cab4892b2c6b",
+  "source_revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "stale_after": "2026-07-14T10:40:00Z",
+  "state": "failed"
+}

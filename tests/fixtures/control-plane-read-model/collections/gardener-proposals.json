@@ -1,0 +1,21 @@
+{
+  "generated_at": "2026-07-14T10:00:00Z",
+  "items": [
+    {
+      "files_count": 1,
+      "fixer_id": "workflow-timeout",
+      "proposal_id": "proposal-workflow-timeout-001",
+      "proposal_state": "draft_pr",
+      "repository": "atlas-api-public",
+      "review_url": "https://github.com/AtlasReaper311/atlas-api-public/pull/1",
+      "risk_class": "low",
+      "state": "warning",
+      "validation_state": "passed"
+    }
+  ],
+  "producer": "AtlasReaper311/atlas-gardener",
+  "schema_version": "atlas-control-plane/control-plane-read-model-source/v1",
+  "source_id": "gardener-proposals",
+  "stale_after": "2026-07-14T11:00:00Z",
+  "state": "healthy"
+}

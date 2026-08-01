@@ -20,14 +20,18 @@
     "scripts/evidence_ledger.py"
   ],
   "optional_files": [
+    "contracts/ramone/v1/control-plane-read-model.schema.json",
+    "contracts/ramone/v1/control-plane-read-model-source.schema.json",
+    "policy/control-plane-read-model.json",
     "policy/ramone-control-plane-tools.json",
+    "scripts/control_plane_read_model.py",
     "scripts/control_plane_summary.py"
   ],
   "deferred_cutovers": [
     {
       "id": "phase9-atlas-api-public",
       "state": "draft-only",
-      "reason": "The Phase 9 API PR deploys on push to main and remains intentionally unmerged pending read-model producer, bearer creation, and explicit cutover approval."
+      "reason": "The stale Phase 9 API PR remains intentionally unmerged. The read-model producer is offline and dry-run only; no publisher, bearer, deployment, or cutover is approved."
     },
     {
       "id": "home-assistant-live-install",

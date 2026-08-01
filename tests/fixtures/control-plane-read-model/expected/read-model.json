@@ -1,0 +1,408 @@
+{
+  "backups": [
+    {
+      "evidence_ref": "https://github.com/AtlasReaper311/atlas-infra/actions/runs/101",
+      "freshness": "unknown",
+      "last_restore_test_at": "2026-07-14T09:00:00Z",
+      "last_successful_backup_at": null,
+      "method": "json-export",
+      "retention_days": 30,
+      "service_id": "atlas-api-public",
+      "state": "warning",
+      "target_id": "atlas-api-public-metadata"
+    }
+  ],
+  "evidence": [
+    {
+      "evidence_id": "release-evidence-001",
+      "evidence_type": "release-verification",
+      "producer": "atlas-journey-watch",
+      "reference": "https://github.com/AtlasReaper311/atlas-journey-watch/actions/runs/100",
+      "state": "healthy",
+      "subject": "atlas-api-public",
+      "summary": "Public API release identity and targeted journey passed.",
+      "timestamp": "2026-07-14T09:58:00Z"
+    }
+  ],
+  "findings": [
+    {
+      "category": "contract-drift",
+      "detected_at": "2026-07-13T08:00:00Z",
+      "finding_id": "finding-contract-drift-001",
+      "runbook_ref": "https://github.com/AtlasReaper311/atlas-infra/blob/main/docs/runbooks/contract-registry-service-triage.md",
+      "service_id": "atlas-api-public",
+      "severity": "warning",
+      "state": "warning",
+      "summary": "Two declared contract observations require owner review."
+    }
+  ],
+  "gardener_proposals": [
+    {
+      "files_count": 1,
+      "fixer_id": "workflow-timeout",
+      "proposal_id": "proposal-workflow-timeout-001",
+      "proposal_state": "draft_pr",
+      "repository": "atlas-api-public",
+      "review_url": "https://github.com/AtlasReaper311/atlas-api-public/pull/1",
+      "risk_class": "low",
+      "state": "warning",
+      "validation_state": "passed"
+    }
+  ],
+  "generated_at": "2026-07-14T10:30:00Z",
+  "producer": {
+    "component": "scripts/control_plane_read_model.py",
+    "repository": "AtlasReaper311/atlas-infra",
+    "source_revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "quota": [
+    {
+      "meter_id": "workers-requests",
+      "period_ends_at": "2026-08-01T00:00:00Z",
+      "projected_percent": 88.2,
+      "source_timestamp": "2026-07-14T10:00:00Z",
+      "state": "warning",
+      "used_percent": 73.4
+    }
+  ],
+  "read_model_fingerprint": "sha256:27165da3df14db4cf1c30fef4ca877fabba8f7d03f8b02eabc69d7fe95d56a1b",
+  "releases": [
+    {
+      "commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "completed_at": "2026-07-14T09:58:00Z",
+      "environment": "production",
+      "evidence_ref": "https://github.com/AtlasReaper311/atlas-journey-watch/actions/runs/100",
+      "journey_result": "passed",
+      "release_state": "live",
+      "repository": "atlas-api-public",
+      "state": "healthy"
+    }
+  ],
+  "runbooks": [
+    {
+      "reference": "https://github.com/AtlasReaper311/atlas-infra/blob/main/docs/runbooks/contract-registry-service-triage.md",
+      "runbook_id": "contract-registry-service-triage",
+      "service_id": "atlas-api-public",
+      "state": "healthy",
+      "summary": "Review declaration, source, and observed contract drift without changing a route.",
+      "title": "Contract registry service triage"
+    }
+  ],
+  "schema_version": "atlas-control-plane/control-plane-read-model/v1",
+  "services": [
+    {
+      "dependencies": [
+        "atlas-api-index",
+        "atlas-corpus"
+      ],
+      "display_name": "Atlas public API",
+      "evidence_refs": [
+        "https://github.com/AtlasReaper311/atlas-journey-watch/actions/runs/100"
+      ],
+      "release_state": "live",
+      "runbook_refs": [
+        "https://github.com/AtlasReaper311/atlas-infra/blob/main/docs/runbooks/contract-registry-service-triage.md"
+      ],
+      "service_id": "atlas-api-public",
+      "state": "healthy"
+    }
+  ],
+  "source_fingerprint": "sha256:79d31f8339030aabde1301b465096b692095ad32c55051ed2e33cab4892b2c6b",
+  "sources": [
+    {
+      "generated_at": "2026-07-14T10:00:00Z",
+      "relative_path": "collections/backups.json",
+      "required": true,
+      "schema_version": "atlas-control-plane/control-plane-read-model-source/v1",
+      "sha256": "sha256:c1cc3c6ec6b97796ff46298a971810c884a63f13efa995e70b5c1c0a0bef766c",
+      "source_id": "backups",
+      "stale_after": "2026-07-14T11:00:00Z",
+      "state": "healthy"
+    },
+    {
+      "generated_at": "2026-07-20T00:00:00Z",
+      "relative_path": "policy/estate-registry.json",
+      "required": true,
+      "schema_version": "atlas-contract-registry/estate-registry/v1",
+      "sha256": "sha256:5c41b4a698e9b5208192cadc0402224cbbe9c7c0adc82963165d1141ad00fd39",
+      "source_id": "estate-registry",
+      "stale_after": null,
+      "state": "healthy"
+    },
+    {
+      "generated_at": "2026-07-14T10:00:00Z",
+      "relative_path": "collections/evidence.json",
+      "required": true,
+      "schema_version": "atlas-control-plane/control-plane-read-model-source/v1",
+      "sha256": "sha256:3af7940164773e3b76b3909024cd7b09d0fe02bdc113f65289f8cc3f267eb1e2",
+      "source_id": "evidence",
+      "stale_after": "2026-07-14T11:00:00Z",
+      "state": "healthy"
+    },
+    {
+      "generated_at": "2026-07-14T10:00:00Z",
+      "relative_path": "collections/findings.json",
+      "required": true,
+      "schema_version": "atlas-control-plane/control-plane-read-model-source/v1",
+      "sha256": "sha256:2f788260b212cd55d01e50cfcd5251c2a8b50e718ec71e2425ce380042f9cb3a",
+      "source_id": "findings",
+      "stale_after": "2026-07-14T11:00:00Z",
+      "state": "healthy"
+    },
+    {
+      "generated_at": "2026-07-14T10:00:00Z",
+      "relative_path": "collections/gardener-proposals.json",
+      "required": true,
+      "schema_version": "atlas-control-plane/control-plane-read-model-source/v1",
+      "sha256": "sha256:236efb6077acd40b3ed845f515db651dd0f068ac448ca40cb0b05f56a07dcb4c",
+      "source_id": "gardener-proposals",
+      "stale_after": "2026-07-14T11:00:00Z",
+      "state": "healthy"
+    },
+    {
+      "generated_at": null,
+      "relative_path": "policy/public-repository-classifications.json",
+      "required": true,
+      "schema_version": "atlas-public-repository-classifications/projection/v1",
+      "sha256": "sha256:a7d7d3c9e752d4bdf65304c9b3693b55390b228743e7cdf9cf4b7bddd79a3941",
+      "source_id": "public-repository-classifications",
+      "stale_after": null,
+      "state": "healthy"
+    },
+    {
+      "generated_at": "2026-07-14T10:00:00Z",
+      "relative_path": "collections/quota.json",
+      "required": true,
+      "schema_version": "atlas-control-plane/control-plane-read-model-source/v1",
+      "sha256": "sha256:6b84e58a571d20d4c7d730f6d904f1af9711add833aac6aedb389751d18c116d",
+      "source_id": "quota",
+      "stale_after": "2026-07-14T11:00:00Z",
+      "state": "healthy"
+    },
+    {
+      "generated_at": "2026-07-14T10:00:00Z",
+      "relative_path": "collections/releases.json",
+      "required": true,
+      "schema_version": "atlas-control-plane/control-plane-read-model-source/v1",
+      "sha256": "sha256:6ac87ae186fb70ea0ea555a2dac675da8de4e5cc6480b4996688526be447e25f",
+      "source_id": "releases",
+      "stale_after": "2026-07-14T11:00:00Z",
+      "state": "healthy"
+    },
+    {
+      "generated_at": "2026-07-14T10:00:00Z",
+      "relative_path": "collections/runbooks.json",
+      "required": true,
+      "schema_version": "atlas-control-plane/control-plane-read-model-source/v1",
+      "sha256": "sha256:2003313cd9e510eea7eb9251d99a0b7601fcbd8080337770618c970486e25ac3",
+      "source_id": "runbooks",
+      "stale_after": "2026-07-14T11:00:00Z",
+      "state": "healthy"
+    },
+    {
+      "generated_at": "2026-07-14T10:00:00Z",
+      "relative_path": "collections/services.json",
+      "required": true,
+      "schema_version": "atlas-control-plane/control-plane-read-model-source/v1",
+      "sha256": "sha256:62ecd68194d7ef9b78271fcd849d6b392eb02c13a4acf22eef67bc238163b76b",
+      "source_id": "services",
+      "stale_after": "2026-07-14T11:00:00Z",
+      "state": "healthy"
+    },
+    {
+      "generated_at": "2026-07-14T10:00:00Z",
+      "relative_path": "summary/backups.json",
+      "required": true,
+      "schema_version": "atlas-control-plane/source-backups/v1",
+      "sha256": "sha256:e4b0b4fa466a0a667f48fdd6756f572a4489efa79c2de11dadbfa79c4850575d",
+      "source_id": "summary-backups",
+      "stale_after": "2026-07-14T11:00:00Z",
+      "state": "warning"
+    },
+    {
+      "generated_at": "2026-07-14T10:00:00Z",
+      "relative_path": "summary/contract-registry.json",
+      "required": true,
+      "schema_version": "atlas-control-plane/source-contract-registry/v1",
+      "sha256": "sha256:ed45b294bda9b6a7c3cfb634b0acfef487a4bddcfce79dfc23b26642b98d23ed",
+      "source_id": "summary-contract-registry",
+      "stale_after": "2026-07-14T11:00:00Z",
+      "state": "warning"
+    },
+    {
+      "generated_at": "2026-07-14T10:00:00Z",
+      "relative_path": "summary/evidence.json",
+      "required": true,
+      "schema_version": "atlas-control-plane/source-evidence/v1",
+      "sha256": "sha256:75d78bae27cfd9d9e847fb737593cc2c5f71090766ea9d4859c79082d29fca8b",
+      "source_id": "summary-evidence",
+      "stale_after": "2026-07-14T11:00:00Z",
+      "state": "healthy"
+    },
+    {
+      "generated_at": "2026-07-14T10:00:00Z",
+      "relative_path": "summary/findings.json",
+      "required": true,
+      "schema_version": "atlas-control-plane/source-findings/v1",
+      "sha256": "sha256:e721c08df0fbbd8bde06057d3d0b8da453ddc00dcf19bf6b9294fbfadcd36747",
+      "source_id": "summary-findings",
+      "stale_after": "2026-07-14T11:00:00Z",
+      "state": "warning"
+    },
+    {
+      "generated_at": "2026-07-14T10:00:00Z",
+      "relative_path": "summary/gardener-proposals.json",
+      "required": true,
+      "schema_version": "atlas-control-plane/source-gardener-proposals/v1",
+      "sha256": "sha256:35e48aa8dba81823a24f4d6d967e83f5a39d9ed9afbbef23a01408837ddc7200",
+      "source_id": "summary-gardener-proposals",
+      "stale_after": "2026-07-14T11:00:00Z",
+      "state": "warning"
+    },
+    {
+      "generated_at": "2026-07-14T10:00:00Z",
+      "relative_path": "summary/health.json",
+      "required": true,
+      "schema_version": "atlas-control-plane/source-health/v1",
+      "sha256": "sha256:0664482f8964152023afe1e4f83222e28bdb79b0365ea447ecf77e459beea14b",
+      "source_id": "summary-health",
+      "stale_after": "2026-07-14T11:00:00Z",
+      "state": "healthy"
+    },
+    {
+      "generated_at": "2026-07-14T10:00:00Z",
+      "relative_path": "summary/journeys.json",
+      "required": true,
+      "schema_version": "atlas-control-plane/source-journeys/v1",
+      "sha256": "sha256:f85e7a6cd88810560c08e986eb9bd4af427177a37fee4f5489a093c0f5c57d72",
+      "source_id": "summary-journeys",
+      "stale_after": "2026-07-14T11:00:00Z",
+      "state": "failed"
+    },
+    {
+      "generated_at": "2026-07-14T10:00:00Z",
+      "relative_path": "summary/quota.json",
+      "required": true,
+      "schema_version": "atlas-control-plane/source-quota/v1",
+      "sha256": "sha256:eb93c321478b0bd901306e4d670544d33e403a913cb583a918f59c46d4af5378",
+      "source_id": "summary-quota",
+      "stale_after": "2026-07-14T11:00:00Z",
+      "state": "warning"
+    },
+    {
+      "generated_at": "2026-07-14T10:00:00Z",
+      "relative_path": "summary/release.json",
+      "required": true,
+      "schema_version": "atlas-control-plane/source-release/v1",
+      "sha256": "sha256:b01d6cf5c5871b4e2872257a1ec107e6117434b6643070499c8842f6d266223e",
+      "source_id": "summary-release",
+      "stale_after": "2026-07-14T11:00:00Z",
+      "state": "healthy"
+    },
+    {
+      "generated_at": "2026-07-14T10:00:00Z",
+      "relative_path": "summary/runbooks.json",
+      "required": true,
+      "schema_version": "atlas-control-plane/source-runbooks/v1",
+      "sha256": "sha256:f3846f318d419a1ffca21c363e91a8021559ef83e84c8b557e9371b821af99f5",
+      "source_id": "summary-runbooks",
+      "stale_after": "2026-07-14T11:00:00Z",
+      "state": "unknown"
+    },
+    {
+      "generated_at": "2026-07-14T10:00:00Z",
+      "relative_path": "summary/secret-watch.json",
+      "required": true,
+      "schema_version": "atlas-control-plane/source-secret-watch/v1",
+      "sha256": "sha256:b62028dc3ff84ed3a606c02b5cdfff6cd83ebcac6b6e8be6f4070fd12cb19a03",
+      "source_id": "summary-secret-hygiene",
+      "stale_after": "2026-07-14T11:00:00Z",
+      "state": "unknown"
+    }
+  ],
+  "stale_after": "2026-07-14T10:40:00Z",
+  "state": "failed",
+  "summary": {
+    "backups": {
+      "failed": 0,
+      "healthy": 3,
+      "stale": 0,
+      "state": "warning",
+      "total": 4,
+      "unknown": 1
+    },
+    "contract_registry": {
+      "contracts_total": 26,
+      "contracts_valid": 24,
+      "drift_count": 2,
+      "state": "warning"
+    },
+    "evidence": {
+      "expiring_soon": 0,
+      "newest_record_at": "2026-07-14T09:59:00Z",
+      "searchable_records": 42,
+      "state": "healthy"
+    },
+    "findings": {
+      "by_severity": {
+        "critical": 0,
+        "failure": 0,
+        "info": 1,
+        "warning": 2
+      },
+      "oldest_detected_at": "2026-07-13T08:00:00Z",
+      "state": "warning",
+      "total": 3
+    },
+    "gardener_proposals": {
+      "open_pull_requests": 1,
+      "state": "warning",
+      "total": 2,
+      "validation_failed": 0
+    },
+    "generated_at": "2026-07-14T10:30:00Z",
+    "health": {
+      "active_incidents": 0,
+      "components_healthy": 34,
+      "components_total": 34,
+      "state": "healthy"
+    },
+    "journeys": {
+      "failed": 1,
+      "state": "failed",
+      "total": 12
+    },
+    "quota": {
+      "highest_meter": "workers-requests",
+      "period_ends_at": "2026-08-01T00:00:00Z",
+      "projected_percent": 88.2,
+      "state": "warning",
+      "used_percent": 73.4
+    },
+    "release": {
+      "commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "completed_at": "2026-07-14T09:58:00Z",
+      "environment": "production",
+      "evidence_ref": "https://github.com/AtlasReaper311/atlas-journey-watch/actions/runs/100",
+      "repository": "AtlasReaper311/atlas-api-public",
+      "state": "healthy"
+    },
+    "request_id": "phase9-2c58b78aa356341b0a06",
+    "runbooks": {
+      "invalid": 0,
+      "stale": 0,
+      "state": "unknown",
+      "valid": 0
+    },
+    "schema_version": "atlas-control-plane/control-plane-summary/v1",
+    "secret_hygiene": {
+      "present": 11,
+      "required": 12,
+      "stale": 0,
+      "state": "unknown",
+      "unknown": 1
+    },
+    "stale_after": "2026-07-14T10:40:00Z",
+    "state": "failed"
+  }
+}

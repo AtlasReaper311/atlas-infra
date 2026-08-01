@@ -2,6 +2,16 @@
   "schema_version": "atlas-control-plane/ramone-read-policy/v1",
   "owner": "AtlasReaper311/atlas-infra",
   "mode": "read-only-disabled-by-default",
+  "read_model": {
+    "schema": "contracts/ramone/v1/control-plane-read-model.schema.json",
+    "source_schema": "contracts/ramone/v1/control-plane-read-model-source.schema.json",
+    "producer": "scripts/control_plane_read_model.py",
+    "policy": "policy/control-plane-read-model.json",
+    "bounded_kv_key": "control-plane:read-model:v1",
+    "producer_mode": "offline-dry-run-only",
+    "provider_write_capability": false,
+    "publisher": null
+  },
   "authentication": {
     "scheme": "bearer",
     "secret_name": "RAMONE_CONTROL_PLANE_READ_TOKEN",

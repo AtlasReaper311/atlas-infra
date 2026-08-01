@@ -1,0 +1,191 @@
+{
+  "$defs": {
+    "collection": {
+      "items": {
+        "type": "object"
+      },
+      "maxItems": 100,
+      "type": "array"
+    },
+    "fingerprint": {
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "producer": {
+      "additionalProperties": false,
+      "properties": {
+        "component": {
+          "const": "scripts/control_plane_read_model.py"
+        },
+        "repository": {
+          "const": "AtlasReaper311/atlas-infra"
+        },
+        "source_revision": {
+          "pattern": "^(?:[0-9a-f]{40}|[0-9a-f]{64})$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "repository",
+        "component",
+        "source_revision"
+      ],
+      "type": "object"
+    },
+    "source": {
+      "additionalProperties": false,
+      "properties": {
+        "generated_at": {
+          "format": "date-time",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "relative_path": {
+          "maxLength": 240,
+          "pattern": "^(?:summary|collections|policy)/[A-Za-z0-9._/-]+\\.json$",
+          "type": "string"
+        },
+        "required": {
+          "const": true
+        },
+        "schema_version": {
+          "maxLength": 160,
+          "minLength": 1,
+          "type": "string"
+        },
+        "sha256": {
+          "$ref": "#/$defs/fingerprint"
+        },
+        "source_id": {
+          "maxLength": 80,
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+          "type": "string"
+        },
+        "stale_after": {
+          "format": "date-time",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "state": {
+          "$ref": "#/$defs/state"
+        }
+      },
+      "required": [
+        "source_id",
+        "relative_path",
+        "schema_version",
+        "generated_at",
+        "stale_after",
+        "state",
+        "sha256",
+        "required"
+      ],
+      "type": "object"
+    },
+    "state": {
+      "enum": [
+        "healthy",
+        "warning",
+        "failed",
+        "stale",
+        "unavailable",
+        "unknown"
+      ]
+    }
+  },
+  "$id": "https://schemas.atlas-systems.uk/control-plane/v1/control-plane-read-model.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "A deterministic, bounded wrapper around ControlPlaneSummary and allowlisted read-only collections.",
+  "examples": [],
+  "properties": {
+    "backups": {
+      "$ref": "#/$defs/collection"
+    },
+    "evidence": {
+      "$ref": "#/$defs/collection"
+    },
+    "findings": {
+      "$ref": "#/$defs/collection"
+    },
+    "gardener_proposals": {
+      "$ref": "#/$defs/collection"
+    },
+    "generated_at": {
+      "format": "date-time",
+      "type": "string"
+    },
+    "producer": {
+      "$ref": "#/$defs/producer"
+    },
+    "quota": {
+      "$ref": "#/$defs/collection"
+    },
+    "read_model_fingerprint": {
+      "$ref": "#/$defs/fingerprint"
+    },
+    "releases": {
+      "$ref": "#/$defs/collection"
+    },
+    "runbooks": {
+      "$ref": "#/$defs/collection"
+    },
+    "schema_version": {
+      "const": "atlas-control-plane/control-plane-read-model/v1"
+    },
+    "services": {
+      "$ref": "#/$defs/collection"
+    },
+    "source_fingerprint": {
+      "$ref": "#/$defs/fingerprint"
+    },
+    "sources": {
+      "items": {
+        "$ref": "#/$defs/source"
+      },
+      "maxItems": 21,
+      "minItems": 21,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "stale_after": {
+      "format": "date-time",
+      "type": "string"
+    },
+    "state": {
+      "$ref": "#/$defs/state"
+    },
+    "summary": {
+      "type": "object"
+    }
+  },
+  "required": [
+    "schema_version",
+    "producer",
+    "generated_at",
+    "stale_after",
+    "state",
+    "source_fingerprint",
+    "read_model_fingerprint",
+    "sources",
+    "summary",
+    "services",
+    "releases",
+    "findings",
+    "quota",
+    "backups",
+    "gardener_proposals",
+    "runbooks",
+    "evidence"
+  ],
+  "title": "Atlas Systems RAMONE control-plane read model v1",
+  "type": "object",
+  "x-owner": {
+    "consumer": "atlas-api-public after separate approval",
+    "repository": "AtlasReaper311/atlas-infra"
+  }
+}

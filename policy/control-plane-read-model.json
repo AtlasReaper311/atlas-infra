@@ -1,0 +1,88 @@
+{
+  "allowed_reference_origins": [
+    "https://api.atlas-systems.uk/",
+    "https://github.com/AtlasReaper311/",
+    "https://schemas.atlas-systems.uk/"
+  ],
+  "authorities": [
+    {
+      "path": "policy/estate-registry.json",
+      "source_id": "estate-registry"
+    },
+    {
+      "path": "policy/public-repository-classifications.json",
+      "source_id": "public-repository-classifications"
+    }
+  ],
+  "blocked_capabilities": [
+    "arbitrary-file-discovery",
+    "arbitrary-http",
+    "cloudflare-api",
+    "generic-kv-key",
+    "home-assistant-api",
+    "network-access",
+    "provider-credentials",
+    "provider-write",
+    "secret-read",
+    "workflow-dispatch"
+  ],
+  "collections": [
+    {
+      "max_items": 100,
+      "name": "services",
+      "path": "services.json",
+      "source_id": "services"
+    },
+    {
+      "max_items": 50,
+      "name": "releases",
+      "path": "releases.json",
+      "source_id": "releases"
+    },
+    {
+      "max_items": 100,
+      "name": "findings",
+      "path": "findings.json",
+      "source_id": "findings"
+    },
+    {
+      "max_items": 50,
+      "name": "quota",
+      "path": "quota.json",
+      "source_id": "quota"
+    },
+    {
+      "max_items": 50,
+      "name": "backups",
+      "path": "backups.json",
+      "source_id": "backups"
+    },
+    {
+      "max_items": 50,
+      "name": "gardener_proposals",
+      "path": "gardener-proposals.json",
+      "source_id": "gardener-proposals"
+    },
+    {
+      "max_items": 100,
+      "name": "runbooks",
+      "path": "runbooks.json",
+      "source_id": "runbooks"
+    },
+    {
+      "max_items": 100,
+      "name": "evidence",
+      "path": "evidence.json",
+      "source_id": "evidence"
+    }
+  ],
+  "mode": "offline-dry-run-only",
+  "output": {
+    "kv_key": "control-plane:read-model:v1",
+    "max_age_seconds": 600,
+    "max_bytes": 65536,
+    "schema_version": "atlas-control-plane/control-plane-read-model/v1"
+  },
+  "owner": "AtlasReaper311/atlas-infra",
+  "schema_version": "atlas-control-plane/read-model-policy/v1"
+}

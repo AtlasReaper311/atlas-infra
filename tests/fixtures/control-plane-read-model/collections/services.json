@@ -1,0 +1,26 @@
+{
+  "generated_at": "2026-07-14T10:00:00Z",
+  "items": [
+    {
+      "dependencies": [
+        "atlas-api-index",
+        "atlas-corpus"
+      ],
+      "display_name": "Atlas public API",
+      "evidence_refs": [
+        "https://github.com/AtlasReaper311/atlas-journey-watch/actions/runs/100"
+      ],
+      "release_state": "live",
+      "runbook_refs": [
+        "https://github.com/AtlasReaper311/atlas-infra/blob/main/docs/runbooks/contract-registry-service-triage.md"
+      ],
+      "service_id": "atlas-api-public",
+      "state": "healthy"
+    }
+  ],
+  "producer": "AtlasReaper311/atlas-api-public",
+  "schema_version": "atlas-control-plane/control-plane-read-model-source/v1",
+  "source_id": "services",
+  "stale_after": "2026-07-14T11:00:00Z",
+  "state": "healthy"
+}
