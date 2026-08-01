@@ -34,6 +34,7 @@
   "workflow": {
     "allowed_ref": "refs/heads/main",
     "confirmation": "publish-control-plane-read-model-v1",
+    "enable_variable": "RAMONE_CONTROL_PLANE_PUBLISH_ENABLED",
     "environment": "ramone-control-plane-publish",
     "token_secret": "CF_RAMONE_CONTROL_PLANE_KV_WRITE_TOKEN"
   }
