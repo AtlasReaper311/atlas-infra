@@ -93,10 +93,13 @@ class ControlPlaneReadModelTests(unittest.TestCase):
         actual_payload = copy.deepcopy(first)
         expected_fingerprint = expected_payload.pop('read_model_fingerprint')
         actual_fingerprint = actual_payload.pop('read_model_fingerprint')
+        expected_source_fingerprint = expected_payload.pop('source_fingerprint')
+        actual_source_fingerprint = actual_payload.pop('source_fingerprint')
         self.assertIsNone(
             first_difference(expected_payload, actual_payload),
             first_difference(expected_payload, actual_payload),
         )
+        self.assertEqual(expected_source_fingerprint, actual_source_fingerprint)
         self.assertEqual(expected_fingerprint, actual_fingerprint)
         self.assertIsNone(
             first_difference(expected_receipt, first_receipt),
@@ -105,7 +108,7 @@ class ControlPlaneReadModelTests(unittest.TestCase):
 
     def test_fingerprints_cover_sources_and_complete_model(self):
         model, _ = self.build()
-        source_expected = 'sha256:' + hashlib.sha256(canonical_json(model['sources']).encode()).hexdigest()
+        source_expected = 'sha2556:' + hashlib.sha256(canonical_json(model['sources']).encode()).hexdigest()
         self.assertEqual(source_expected, model['source_fingerprint'])
         payload = copy.deepcopy(model)
         actual = payload.pop('read_model_fingerprint')
