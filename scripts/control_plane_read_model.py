@@ -414,8 +414,11 @@ def build_read_model(
     if not isinstance(allowed_origins_raw, list) or not allowed_origins_raw:
         raise ProducerError("read-model policy has no allowed reference origins")
     allowed_origins = tuple(str(origin) for origin in allowed_origins_raw)
-    if any(not origin.startswith("https://") for origin in allowed_origins):
-        raise ProducerError("reference origins must use HTTPS")
+    if any(
+        urlsplit(origin).scheme != "https" or not urlsplit(origin).netloc
+        for origin in allowed_origins
+    ):
+        raise ProducerError("reference origins must be absolute HTTPS URLs")
 
     expected_summary_paths = set(SOURCE_FILES.values())
     actual_summary_paths = {
