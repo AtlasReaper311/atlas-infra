@@ -1,6 +1,6 @@
 # Public interface programme Phase 12 coordination
 
-Status: active at Part 0 inspection.
+Status: active after 12A CV document viewer alignment.
 
 Started: 2 August 2026.
 
@@ -111,7 +111,7 @@ merge.
 
 Planned branch: `status:fix/phase-12-status-alignment`.
 
-Begin only after preserving the current non-main local branch. Scope must remain
+Begin after preserving the current non-main local branch. Scope must remain
 presentation-only around repository-owned runtime data.
 
 ### 12C: Ramone product alignment
@@ -134,6 +134,28 @@ Planned branch: `atlas-api-index:test/phase-12-json-contract`.
 
 This is verification-only unless current tests prove a JSON contract defect.
 Visual work remains excluded.
+
+## Implementation receipts
+
+| Slice | Pull request | Source branch | Reviewed head | Merge commit | Production run | Live smoke |
+| --- | --- | --- | --- | --- | --- | --- |
+| 12A CV document viewer alignment | `atlas-doc-viewer#33` | `fix/phase-12-cv-alignment` | `bd048d29a80dfdf4d58ca4f5672f0afdc104b94f` | `2b03d5843588f0415ecc735f6b33ca7527063137` | `30746009334` | pass |
+
+12A tightened the mobile product strip and footer presentation while preserving
+the protected PDF bytes, explicit initialize action, desktop embed, mobile
+native handoff, close/focus return, `noindex, follow`, About active state,
+metadata, security headers, and independent Pages deployment.
+
+The exact-head pull-request preview run `30745903897` published the isolated
+document preview and passed the repository browser evidence capture. Production
+run `30746009334` then passed HTML and link validation, Cloudflare Pages deploy,
+edge cache purge, and Discord reporting for merge commit
+`2b03d5843588f0415ecc735f6b33ca7527063137`.
+
+A live custom-domain smoke on `https://cv.atlas-systems.uk/` at a 390 pixel
+mobile viewport confirmed title `CV // Atlas Systems`, H1 `Atlas Reaper.`,
+document state `Ready`, no horizontal overflow, mobile bottom navigation
+visible, compact footer height, `noindex, follow`, and active About navigation.
 
 ## Validation and evidence contract
 
