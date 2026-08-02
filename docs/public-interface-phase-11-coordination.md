@@ -1,6 +1,6 @@
 # Public interface programme Phase 11 coordination
 
-Status: active at Part 0 completion and Lab context-wayfinding implementation.
+Status: complete at source, production deployment, and live-verification gates.
 
 Started: 1 August 2026.
 
@@ -17,6 +17,13 @@ This phase begins only after the formally recorded Phase 10 closeout. It treats 
 - Phase 10 production run: `30638766487`.
 - Stale `atlas-systems#179` remains excluded and must not be reused or merged.
 - No Phase 11 implementation, preview, merge, deployment, provider setting, binding, secret, publication, or runtime write existed at the start of this record.
+
+## Closeout baseline
+
+- `atlas-infra/main` at closeout inspection: `1d6a09589188cf14a7bc2c5cba5dfd7ed468e966`.
+- `atlas-systems/main` after Phase 11: `0fd7a98aeaea523f18914c3c7f134fa96607406b`.
+- Final Phase 11 production deployment run: `30744843987`.
+- Phase 12 remains a separate supporting-products phase and requires fresh Part 0 inspection of the current programme authority and every product repository before implementation.
 
 ## Accepted authority
 
@@ -96,6 +103,30 @@ Planned branch: `atlas-systems:fix/lab-experiment-interactions`.
 
 Scope includes Speculum, Almost, Drift, and The Bearing.
 
+## Implementation receipts
+
+| Slice | Pull request | Source branch | Reviewed head | Merge commit | Production run |
+| --- | --- | --- | --- | --- | --- |
+| 11A Lab context wayfinding | `atlas-systems#189` | `refactor/lab-context-wayfinding` | `353cb62cd3e25856bd644f3c7505e76dd399eb73` | `163db2609028dea0d493e56afacbd81cc34e675b` | `30722995814` |
+| 11B Lab evidence tools | `atlas-systems#190` | `refactor/lab-evidence-tools` | `44e467899692ce8a8cd6f4544eb351e0861eb5f5` | `519bb402a2f0d4ef1e3fc351efdccfffb0152262` | `30742015214` |
+| 11C Lab instruments | `atlas-systems#191` | `fix/lab-instrument-interactions` | `2d98d61dbd429ff77e4810d39b1ad26dd6ee7e6b` | `8e12441b67a1d1eab571022d5d4471701b9ffb89` | `30743228232` |
+| 11D Lab experiments | `atlas-systems#192` | `fix/lab-experiment-interactions` | `c3cdc62ef9886cfd9569272de6caf4e6fbfec3cc` | `0fd7a98aeaea523f18914c3c7f134fa96607406b` | `30744843987` |
+
+All four production runs completed successfully. The final run verified the Pages output contract, HTML and offline links, Cloudflare Pages deployment, cache purge, Discord reporting, exact custom-domain commit, v2 Systems route marker, Phase 6 footer assets, live homepage AtlasField renderer, live System Symphony Atlas APU and topology map, and guarded corpus refresh job.
+
+## Final live Lab smoke
+
+After `atlas-systems#192` deployed, a live browser smoke covered the changed Phase 11 Lab experiment routes on `https://atlas-systems.uk` at a 390 pixel mobile viewport with reduced motion enabled:
+
+| Route | Expected shell | Mobile Lab nav | Keyboard focus path | Result |
+| --- | --- | --- | --- | --- |
+| `/lab/almost/` | yes | active | focus canvas, Space, N | pass |
+| `/lab/drift/` | yes | active | focus canvas, ArrowRight, Escape | pass |
+| `/lab/speculum/` | yes | active | focus canvas, Space | pass |
+| `/lab/bearing/` | no, standalone full-bleed experiment | not applicable | focus lattice, ArrowRight, Space, Escape | pass |
+
+The live smoke produced no page errors, no unmatched console errors, and no non-ignored request failures. Exact deployed commit evidence is provided by deploy run `30744843987`, which confirmed the custom domain served `0fd7a98aeaea523f18914c3c7f134fa96607406b`.
+
 ## Validation and evidence contract
 
 Every implementation branch must run the current repository-native validation, including:
@@ -125,6 +156,8 @@ Phase 11 must not:
 - alter article generation, scheduling, publication timing, or published output;
 - infer live state from merged source.
 
-## Current approval boundary
+## Closeout boundary
 
-Atlas approved implementation of 11A and creation of its isolated non-production preview. Stop after the validated draft pull request, preview URL, deterministic browser evidence, exact changed-path record, and remaining findings. Do not merge or deploy production without a new explicit approval.
+Phase 11 is closed from repository, preview, merge, production deployment, and live-route evidence. No provider setting, binding, secret, inference route, article publication path, scheduler path, or Cloudflare configuration was changed as part of this phase.
+
+The next phase is Phase 12: supporting products. Before implementation, inspect the current complete programme definition, accepted ADRs, executable policy, open pull requests, repository baselines, preview workflows, deployment boundaries, and protected product contracts for `status`, `atlas-doc-viewer`, `ramone-edge`, `atlas-api-public`, and `atlas-api-index`.
