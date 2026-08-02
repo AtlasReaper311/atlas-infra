@@ -33,7 +33,7 @@ Entry format:
 - **Status:** active
 - **Started:** 2026-08-02
 - **Last updated:** 2026-08-02
-- **Summary:** Starting supporting-product alignment after the Phase 11 Lab closeout. Part 0 has current main SHAs, local branch states, open PR overlaps, protected product contracts, branch order, and validation boundaries in `docs/public-interface-phase-12-coordination.md`. No product runtime, provider, binding, secret, deployment, or API behaviour has changed.
+- **Summary:** Supporting-product alignment after the Phase 11 Lab closeout. Part 0 has current main SHAs, local branch states, open PR overlaps, protected product contracts, branch order, and validation boundaries in `docs/public-interface-phase-12-coordination.md`. 12A CV document viewer alignment merged through `atlas-doc-viewer#33` as `2b03d5843588f0415ecc735f6b33ca7527063137` with production run `30746009334` and live CV smoke passing. No product runtime, provider, binding, secret, deployment configuration, PDF, indexing, or API behaviour changed.
 
 ### GitHub provider guard audit
 
