@@ -26,6 +26,16 @@ Entry format:
 
 ## Active work
 
+### Public interface programme Phase 13
+
+- **Repo(s):** `atlas-infra`; read-only inspection of `atlas-systems` and `atlas-interface-kit`
+- **Agent:** ChatGPT with Atlas approving autonomous merge when evidence is clean
+- **Status:** active
+- **Started:** 2026-08-02
+- **Last updated:** 2026-08-02
+- **Summary:** Creating the normative AtlasField composition catalogue and validation gate for Public Interface System Phase 13. Scope is documentation and validation only: no public route, product runtime, renderer source, interface-kit release, provider setting, binding, secret, workflow dispatch, or production deployment change.
+- **Resume point:** Finish local repository validation, open the Phase 13 pull request, verify checks, merge if clean under the current autonomous approval, then record merge receipts and move to Phase 14 inspection.
+
 ### GitHub provider guard audit
 
 - **Repo(s):** `atlas-infra` plus the 33 repositories in the authoritative public projection

@@ -1,0 +1,236 @@
+{
+  "schema_version": "atlas-control-plane/atlasfield-composition-catalogue/v1",
+  "status": "accepted",
+  "catalogue_fingerprint": "sha256:9a739d2588a851b7e5918ea9545c831c8676e8eebee717bd223abfc1d86e1fdb",
+  "authority": {
+    "programme_phase": "Phase 13",
+    "programme_record": "docs/public-interface-programme.md",
+    "catalogue_document": "docs/atlasfield-composition-catalogue.md",
+    "source_repository": "AtlasReaper311/atlas-systems",
+    "source_main_sha": "0fd7a98aeaea523f18914c3c7f134fa96607406b",
+    "source_contract": "docs/ATLAS_FIELD.md",
+    "source_registry": "static/js/atlas-field-composition-registry.js",
+    "validator": "scripts/validate_atlasfield_composition_catalogue.py"
+  },
+  "scope": {
+    "kind": "documentation-and-validation",
+    "public_route_created": false,
+    "renderer_source_changed": false,
+    "product_runtime_changed": false,
+    "provider_or_secret_changed": false
+  },
+  "renderer": {
+    "public_modules": [
+      "/static/js/atlas-field.js",
+      "/static/js/atlas-field-consumer.js",
+      "/static/css/atlas-field-consumer.css"
+    ],
+    "allowed_presets": [
+      "hero",
+      "ambient",
+      "card"
+    ],
+    "preset_policy": "A preset is a performance and behaviour baseline, not a finished visual composition.",
+    "consumer_policy": [
+      "Consumers own composition, contrast, masks, gradients, and readability.",
+      "Essential information must remain ordinary DOM content above decorative canvas layers.",
+      "Decorative field colour must not be used as evidence of live operational status.",
+      "New compositions require this catalogue and a real product need before source adoption."
+    ]
+  },
+  "composition_defaults": {
+    "preset": "ambient",
+    "pointer_enabled": false,
+    "state_key": "atlasCompositionState",
+    "canvas_class": "atlas-composition-canvas"
+  },
+  "compositions": [
+    {
+      "name": "identity-field",
+      "route": "/about/",
+      "surface": "About page header",
+      "selector": ".page-header",
+      "preset": "ambient",
+      "state_key": "atlasCompositionState",
+      "host_classes": [
+        "atlas-composition-host",
+        "atlas-composition--identity-field"
+      ],
+      "canvas_class": "atlas-composition-canvas",
+      "seed": "atlas-about-identity-field-v2",
+      "density": {
+        "min": 210,
+        "max": 560,
+        "reduced": 160,
+        "area_divisor": 1220
+      },
+      "domain_breaks": [
+        0.62,
+        0.88
+      ],
+      "domain_styles": [
+        "rgba(245, 166, 35, 0.16)",
+        "rgba(247, 184, 74, 0.09)",
+        "rgba(232, 232, 224, 0.065)"
+      ],
+      "light": {
+        "radius_min": 175,
+        "radius_ratio": 0.32,
+        "smoothing": 0.012
+      },
+      "visual_contract": "Warm identity orbit behind the About header; decorative only.",
+      "evidence_contract": "Route-local browser evidence must assert one canvas, non-zero dimensions, visible pixels, no overflow, and no AtlasField console errors."
+    },
+    {
+      "name": "proof-trace",
+      "route": "/systems/evidence/",
+      "surface": "Evidence focus hero",
+      "selector": ".focus-hero",
+      "preset": "ambient",
+      "state_key": "atlasCompositionState",
+      "host_classes": [
+        "atlas-composition-host",
+        "atlas-composition--proof-trace"
+      ],
+      "canvas_class": "atlas-composition-canvas",
+      "seed": "atlas-evidence-proof-trace-v1",
+      "density": {
+        "min": 230,
+        "max": 640,
+        "reduced": 175,
+        "area_divisor": 1140
+      },
+      "domain_breaks": [
+        0.64,
+        0.88
+      ],
+      "domain_styles": [
+        "rgba(245, 166, 35, 0.18)",
+        "rgba(232, 232, 224, 0.105)",
+        "rgba(56, 189, 248, 0.09)"
+      ],
+      "light": {
+        "radius_min": 145,
+        "radius_ratio": 0.27,
+        "smoothing": 0.013
+      },
+      "visual_contract": "Skewed proof-flow treatment for evidence surfaces; not a data guarantee.",
+      "evidence_contract": "Route-local browser evidence must assert one canvas, non-zero dimensions, visible pixels, no overflow, and no AtlasField console errors."
+    },
+    {
+      "name": "pulse-horizon",
+      "route": "/systems/reliability/",
+      "surface": "Reliability focus hero",
+      "selector": ".focus-hero",
+      "preset": "ambient",
+      "state_key": "atlasCompositionState",
+      "host_classes": [
+        "atlas-composition-host",
+        "atlas-composition--pulse-horizon"
+      ],
+      "canvas_class": "atlas-composition-canvas",
+      "seed": "atlas-reliability-pulse-horizon-v2",
+      "density": {
+        "min": 220,
+        "max": 620,
+        "reduced": 170,
+        "area_divisor": 1180
+      },
+      "domain_breaks": [
+        0.48,
+        0.82
+      ],
+      "domain_styles": [
+        "rgba(74, 222, 128, 0.145)",
+        "rgba(245, 166, 35, 0.115)",
+        "rgba(56, 189, 248, 0.105)"
+      ],
+      "light": {
+        "radius_min": 205,
+        "radius_ratio": 0.4,
+        "smoothing": 0.014
+      },
+      "visual_contract": "Reliability monitoring cadence with amber routing accents; never a live status signal.",
+      "evidence_contract": "Route-local browser evidence must assert one canvas, non-zero dimensions, visible pixels, no overflow, and no AtlasField console errors."
+    },
+    {
+      "name": "signal-bloom",
+      "route": "/lab/",
+      "surface": "Lab introduction",
+      "selector": ".page-intro",
+      "preset": "ambient",
+      "state_key": "atlasIntroFieldState",
+      "host_classes": [
+        "atlas-composition-host",
+        "atlas-composition--signal-bloom"
+      ],
+      "canvas_class": "atlas-composition-canvas",
+      "seed": "atlas-lab-signal-bloom-v2",
+      "density": {
+        "min": 210,
+        "max": 620,
+        "reduced": 170,
+        "area_divisor": 1150
+      },
+      "domain_breaks": [
+        0.38,
+        0.7
+      ],
+      "domain_styles": [
+        "rgba(74, 222, 128, 0.105)",
+        "rgba(56, 189, 248, 0.11)",
+        "rgba(245, 166, 35, 0.065)"
+      ],
+      "light": {
+        "radius_min": 165,
+        "radius_ratio": 0.3,
+        "smoothing": 0.018
+      },
+      "visual_contract": "Signal bloom field for the Lab directory introduction; preserves individual Lab route identities.",
+      "evidence_contract": "Route-local browser evidence must assert one canvas, non-zero dimensions, visible pixels, no overflow, and no AtlasField console errors."
+    },
+    {
+      "name": "telemetry-lattice",
+      "route": "/systems/observability/",
+      "surface": "Observability focus hero",
+      "selector": ".focus-hero",
+      "preset": "ambient",
+      "state_key": "atlasCompositionState",
+      "host_classes": [
+        "atlas-composition-host",
+        "atlas-composition--telemetry-lattice"
+      ],
+      "canvas_class": "atlas-composition-canvas",
+      "seed": "atlas-observability-telemetry-lattice-v1",
+      "density": {
+        "min": 250,
+        "max": 690,
+        "reduced": 180,
+        "area_divisor": 1080
+      },
+      "domain_breaks": [
+        0.55,
+        0.82
+      ],
+      "domain_styles": [
+        "rgba(56, 189, 248, 0.17)",
+        "rgba(74, 222, 128, 0.13)",
+        "rgba(245, 166, 35, 0.105)"
+      ],
+      "light": {
+        "radius_min": 155,
+        "radius_ratio": 0.29,
+        "smoothing": 0.016
+      },
+      "visual_contract": "Vertical telemetry lattice for observability surfaces; decorative context, not provider telemetry.",
+      "evidence_contract": "Route-local browser evidence must assert one canvas, non-zero dimensions, visible pixels, no overflow, and no AtlasField console errors."
+    }
+  ],
+  "validation_requirements": [
+    "Catalogue names, routes, selectors, presets, host classes, canvas class, seeds, density, domain breaks, domain styles, and light parameters must remain deterministic.",
+    "Composition routes must be unique, canonical absolute paths ending in a slash, and sorted by composition name.",
+    "All current catalogue entries must use the ambient preset and pointer disabled unless a later catalogue revision records a real product need.",
+    "A consumer source change that adds, removes, renames, or remaps a composition must update this catalogue and its fingerprint in the same review.",
+    "Browser evidence for each routed consumer must prove one decorative canvas, visible pixels, reduced-motion behaviour, no horizontal overflow, and no AtlasField console or page errors."
+  ]
+}
