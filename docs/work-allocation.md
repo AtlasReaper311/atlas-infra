@@ -26,6 +26,15 @@ Entry format:
 
 ## Active work
 
+### Public interface programme Phase 12
+
+- **Repo(s):** `atlas-infra`, `status`, `atlas-doc-viewer`, `ramone-edge`, `atlas-api-public`, `atlas-api-index`
+- **Agent:** ChatGPT with Atlas approving autonomous merge and rollout gates where evidence is clean
+- **Status:** active
+- **Started:** 2026-08-02
+- **Last updated:** 2026-08-02
+- **Summary:** Starting supporting-product alignment after the Phase 11 Lab closeout. Part 0 has current main SHAs, local branch states, open PR overlaps, protected product contracts, branch order, and validation boundaries in `docs/public-interface-phase-12-coordination.md`. No product runtime, provider, binding, secret, deployment, or API behaviour has changed.
+
 ### GitHub provider guard audit
 
 - **Repo(s):** `atlas-infra` plus the 33 repositories in the authoritative public projection
