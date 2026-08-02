@@ -1,6 +1,6 @@
 # Public interface programme Phase 12 coordination
 
-Status: active after 12A CV document viewer alignment.
+Status: active after 12C Ramone product alignment.
 
 Started: 2 August 2026.
 
@@ -140,6 +140,8 @@ Visual work remains excluded.
 | Slice | Pull request | Source branch | Reviewed head | Merge commit | Production run | Live smoke |
 | --- | --- | --- | --- | --- | --- | --- |
 | 12A CV document viewer alignment | `atlas-doc-viewer#33` | `fix/phase-12-cv-alignment` | `bd048d29a80dfdf4d58ca4f5672f0afdc104b94f` | `2b03d5843588f0415ecc735f6b33ca7527063137` | `30746009334` | pass |
+| 12B Status product alignment | `status#35` | `fix/phase-12-status-alignment` | `95a8b54ceffb4652536c69b40028418e610c7d89` | `4db1438b1a8859008461903105360a2f09376c02` | `30746440035` | pass |
+| 12C Ramone product alignment | `ramone-edge#32` | `fix/phase-12-ramone-alignment` | `81756e4d8d545542dc520cf2a19e6b08ec51acf6` | `3830dd3839847187e0b5ac6c837a5658f5f47341` | `30746842107` | pass |
 
 12A tightened the mobile product strip and footer presentation while preserving
 the protected PDF bytes, explicit initialize action, desktop embed, mobile
@@ -156,6 +158,55 @@ A live custom-domain smoke on `https://cv.atlas-systems.uk/` at a 390 pixel
 mobile viewport confirmed title `CV // Atlas Systems`, H1 `Atlas Reaper.`,
 document state `Ready`, no horizontal overflow, mobile bottom navigation
 visible, compact footer height, `noindex, follow`, and active About navigation.
+
+12B tightened the Status mobile footer presentation while preserving
+repository-owned runtime data, reliability semantics, canonical API sources,
+`slo.json`, metadata, security headers, and independent Pages deployment. The
+local branch was created from current `origin/main` while preserving the
+pre-existing non-main local branch `chore/update-static-workflow-pin`.
+
+The exact-head pull-request preview run `30746329149` passed Status preview
+candidate validation, non-production preview publication, and deterministic
+Status browser evidence. Pull-request CI, public-interface conformance, CodeQL,
+OpenSSF Scorecard, and the Gardener barrier also passed for reviewed head
+`95a8b54ceffb4652536c69b40028418e610c7d89`. Production run `30746440035` then
+passed HTML and link validation, Cloudflare Pages deploy, edge cache purge, and
+Discord reporting for merge commit
+`4db1438b1a8859008461903105360a2f09376c02`.
+
+A live custom-domain smoke on `https://status.atlas-systems.uk/` at a 390 pixel
+mobile viewport confirmed title `Status // Atlas Systems`, no horizontal
+overflow, mobile bottom navigation visible, compact footer height, canonical
+`https://status.atlas-systems.uk/`, and the deployed CSS rule
+`flex: 0 0 auto`. The live aggregate status label was `degraded`; that was
+runtime evidence, not a changed verdict.
+
+12C tightened the Ramone product footer on mobile and mirrored the same compact
+behaviour on the browser-route 404 footer while preserving inference routing,
+private tunnel boundaries, Turnstile, rate limiting, SSE, `/ask`, `/status`,
+bindings, secrets, provider settings, grounding authority, and runtime knowledge
+boundaries. No acceptance check sent an inference question.
+
+The exact-head pull-request preview run `30746718047` passed Ramone interface
+candidate validation, isolated preview publication, product-specific Chrome and
+Firefox evidence, comparable cross-product evidence, and artifact upload. The
+earlier preview run `30746713668` was cancelled after the preview-approval label
+started the replacement run, and is not treated as a code failure. Pull-request
+CI, public-interface conformance, CodeQL, and OpenSSF Scorecard passed for
+reviewed head `81756e4d8d545542dc520cf2a19e6b08ec51acf6`. Production deploy run
+`30746842107` deployed merge commit
+`3830dd3839847187e0b5ac6c837a5658f5f47341` and persisted the deploy event to
+Lab.
+
+A live custom-domain smoke on `https://ramone.atlas-systems.uk/` confirmed
+`GET /` returned `200`, title `Ramone // Atlas Systems`, no horizontal overflow
+at 390 and 1440 pixel browser widths, compact 390 pixel mobile footer, compact
+desktop footer, mobile bottom navigation visible, and live CSS containing the
+mobile `flex: 0 0 auto` footer rules. A browser-route smoke with
+`Accept: text/html` confirmed the live 404 page title
+`404 // Ramone // Atlas Systems`, the public-boundary heading, and the compact
+404 footer rule. Live browser console noise was limited to the intentional 404
+request and Cloudflare analytics beacon being blocked by the existing CSP.
 
 ## Validation and evidence contract
 

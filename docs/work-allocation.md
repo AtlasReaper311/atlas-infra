@@ -33,7 +33,7 @@ Entry format:
 - **Status:** active
 - **Started:** 2026-08-02
 - **Last updated:** 2026-08-02
-- **Summary:** Supporting-product alignment after the Phase 11 Lab closeout. Part 0 has current main SHAs, local branch states, open PR overlaps, protected product contracts, branch order, and validation boundaries in `docs/public-interface-phase-12-coordination.md`. 12A CV document viewer alignment merged through `atlas-doc-viewer#33` as `2b03d5843588f0415ecc735f6b33ca7527063137` with production run `30746009334` and live CV smoke passing. No product runtime, provider, binding, secret, deployment configuration, PDF, indexing, or API behaviour changed.
+- **Summary:** Supporting-product alignment after the Phase 11 Lab closeout. Part 0 has current main SHAs, local branch states, open PR overlaps, protected product contracts, branch order, and validation boundaries in `docs/public-interface-phase-12-coordination.md`. 12A CV document viewer alignment merged through `atlas-doc-viewer#33` as `2b03d5843588f0415ecc735f6b33ca7527063137` with production run `30746009334` and live CV smoke passing. 12B Status product alignment merged through `status#35` as `4db1438b1a8859008461903105360a2f09376c02` with production run `30746440035` and live Status smoke passing. 12C Ramone product alignment merged through `ramone-edge#32` as `3830dd3839847187e0b5ac6c837a5658f5f47341` with production deploy run `30746842107` and live Ramone smoke passing. No product runtime, provider, binding, secret, deployment configuration, PDF, indexing, inference, or API behaviour changed.
 
 ### GitHub provider guard audit
 
