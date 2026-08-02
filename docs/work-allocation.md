@@ -26,15 +26,14 @@ Entry format:
 
 ## Active work
 
-### Public interface programme Phase 13
+### Public interface programme Phase 14
 
-- **Repo(s):** `atlas-infra`; read-only inspection of `atlas-systems` and `atlas-interface-kit`
-- **Agent:** ChatGPT with Atlas approving autonomous merge when evidence is clean
+- **Repo(s):** `atlas-infra`; read-only evidence inspection of `atlas-systems`
 - **Status:** active
 - **Started:** 2026-08-02
 - **Last updated:** 2026-08-02
-- **Summary:** Creating the normative AtlasField composition catalogue and validation gate for Public Interface System Phase 13. Scope is documentation and validation only: no public route, product runtime, renderer source, interface-kit release, provider setting, binding, secret, workflow dispatch, or production deployment change.
-- **Resume point:** Finish local repository validation, open the Phase 13 pull request, verify checks, merge if clean under the current autonomous approval, then record merge receipts and move to Phase 14 inspection.
+- **Summary:** Drafting the Phase 14 browser-budget authority proposal from reviewed browser evidence cycles and a fresh local current-main resource measurement. Scope is authority proposal only: no enforcement, public route, product runtime, static-baseline weakening, provider setting, binding, secret, workflow dispatch, release, or production deployment change.
+- **Resume point:** Validate and open the Phase 14 authority pull request, then stop at the explicit approval boundary before merging or enforcing any browser budget.
 
 ### GitHub provider guard audit
 
@@ -59,6 +58,15 @@ Entry format:
 - **Resume point:** Begin only after every public-interface programme phase, consumer merge, production deployment, and live-verification gate is complete. Reinspect current GitHub source and deployed surfaces rather than relying on programme-era screenshots or memory.
 
 ## Recently completed
+
+### Public interface programme Phase 13
+
+- **Repo(s):** `atlas-infra`; read-only inspection of `atlas-systems` and `atlas-interface-kit`
+- **Agent:** ChatGPT with Atlas approving autonomous merge when evidence is clean
+- **Status:** done
+- **Started:** 2026-08-02
+- **Last updated:** 2026-08-02
+- **Summary:** Added the normative AtlasField composition catalogue and validation gate through `atlas-infra#117` as `a3627dde153201068b563c74cd3b229a1d0f8e69`. The catalogue fingerprint is `sha256:9a739d2588a851b7e5918ea9545c831c8676e8eebee717bd223abfc1d86e1fdb`. Local validators and 429 tests passed; pull-request checks and post-merge main Contract registry CI, CodeQL, OpenSSF Scorecard, and Refresh Corpus passed. No public route, product runtime, renderer source, interface-kit release, provider setting, binding, secret, workflow dispatch, or production deployment changed.
 
 ### Public interface programme Phase 12
 
