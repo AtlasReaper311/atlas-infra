@@ -4,7 +4,7 @@ Living coordination document for agents currently working on Atlas Systems. This
 
 This file only has value while it remains current. Update or remove an entry as soon as its status changes.
 
-Last updated: 2026-07-31.
+Last updated: 2026-08-02.
 
 ## How to use this file
 
@@ -49,6 +49,15 @@ Entry format:
 - **Resume point:** Begin only after every public-interface programme phase, consumer merge, production deployment, and live-verification gate is complete. Reinspect current GitHub source and deployed surfaces rather than relying on programme-era screenshots or memory.
 
 ## Recently completed
+
+### Public interface programme Phase 11
+
+- **Repo(s):** `atlas-infra`, `atlas-systems`
+- **Agent:** ChatGPT with Atlas approving preview, merge, and rollout gates
+- **Status:** done
+- **Started:** 2026-08-01
+- **Last updated:** 2026-08-02
+- **Summary:** Completed Lab interaction polish through four focused `atlas-systems` pull requests: context wayfinding `#189` as `163db2609028dea0d493e56afacbd81cc34e675b`, evidence-tool wayfinding and console parity `#190` as `519bb402a2f0d4ef1e3fc351efdccfffb0152262`, Signal Garden keyboard controls `#191` as `8e12441b67a1d1eab571022d5d4471701b9ffb89`, and experiment keyboard access `#192` as `0fd7a98aeaea523f18914c3c7f134fa96607406b`. The final production run `30744843987` verified the custom domain served the exact merge commit, passed Pages, HTML, route, footer, homepage AtlasField, and System Symphony production checks, and a live Lab browser smoke passed Almost, Drift, Speculum, and standalone Bearing focus paths. Formal receipts are recorded in `docs/public-interface-phase-11-coordination.md`.
 
 ### Public interface programme Phase 10
 
