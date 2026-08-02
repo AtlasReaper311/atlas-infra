@@ -1,6 +1,6 @@
 # Public interface programme Phase 12 coordination
 
-Status: active after 12C Ramone product alignment.
+Status: complete after 12E API index contract check.
 
 Started: 2 August 2026.
 
@@ -142,6 +142,8 @@ Visual work remains excluded.
 | 12A CV document viewer alignment | `atlas-doc-viewer#33` | `fix/phase-12-cv-alignment` | `bd048d29a80dfdf4d58ca4f5672f0afdc104b94f` | `2b03d5843588f0415ecc735f6b33ca7527063137` | `30746009334` | pass |
 | 12B Status product alignment | `status#35` | `fix/phase-12-status-alignment` | `95a8b54ceffb4652536c69b40028418e610c7d89` | `4db1438b1a8859008461903105360a2f09376c02` | `30746440035` | pass |
 | 12C Ramone product alignment | `ramone-edge#32` | `fix/phase-12-ramone-alignment` | `81756e4d8d545542dc520cf2a19e6b08ec51acf6` | `3830dd3839847187e0b5ac6c837a5658f5f47341` | `30746842107` | pass |
+| 12D Public API docs alignment | `atlas-api-public#54` | `fix/phase-12-docs-alignment` | `57ee6ddb12cf055ffad5a35ab977809bf8472675` | `4a4d575bf673a272447c40ec42a14c8be01101f8` | `30747322035` | pass |
+| 12E API index contract check | no PR; verification only | `main` | `96cd81f643429895847a1c2f143084d6e995005c` | not changed | not changed | pass |
 
 12A tightened the mobile product strip and footer presentation while preserving
 the protected PDF bytes, explicit initialize action, desktop embed, mobile
@@ -207,6 +209,51 @@ mobile `flex: 0 0 auto` footer rules. A browser-route smoke with
 `404 // Ramone // Atlas Systems`, the public-boundary heading, and the compact
 404 footer rule. Live browser console noise was limited to the intentional 404
 request and Cloudflare analytics beacon being blocked by the existing CSP.
+
+12D tightened the human Public API documentation shell footer on mobile and
+normalized the bottom navigation letter spacing while preserving OpenAPI
+authority, JSON API semantics, health, metadata, topology, trace, badge,
+reliability, evidence, CORS, cache, and fail-closed behaviour.
+
+The exact-head pull-request preview run `30747227396` passed Public API docs
+preview candidate validation, isolated preview publication, deterministic docs
+browser evidence, and artifact upload. The earlier preview run `30747222173`
+was cancelled after the preview-approval label started the replacement run, and
+is not treated as a code failure. Pull-request CI, public-interface conformance,
+CodeQL, and OpenSSF Scorecard passed for reviewed head
+`57ee6ddb12cf055ffad5a35ab977809bf8472675`. Production deploy run
+`30747322035` validated the Worker bundle and public Worker contracts, deployed
+merge commit `4a4d575bf673a272447c40ec42a14c8be01101f8`, and reported to
+Discord and Lab.
+
+A live custom-domain smoke on `https://api.atlas-systems.uk/v1/docs` confirmed
+`GET /v1/docs` returned `200`, title `Public API // Atlas Systems`, H1
+`Public API, v1.`, no horizontal overflow at 390 and 1440 pixel browser widths,
+compact 390 pixel mobile footer, compact desktop footer, mobile bottom
+navigation visible, normal bottom-navigation letter spacing, and live CSS
+containing the mobile `flex:0 0 auto` footer rules. Live browser console noise
+was limited to Cloudflare-injected inline and analytics beacon scripts blocked
+by the existing `script-src 'self'` CSP; the repository-owned docs shell remains
+served from `/v1/docs/assets/shell.js`.
+
+12E verified the API index contract without source changes. `atlas-api-index`
+remained JSON-only and GET-only at the root; no HTML shell, metadata route
+promotion, search, footer, visual navigation, provider setting, binding, secret,
+or deployment configuration changed.
+
+Local validation on `atlas-api-index/main` at
+`96cd81f643429895847a1c2f143084d6e995005c` passed `npm run lint`, `npm test`
+with 9 tests, `node scripts/capture-registry-contract-evidence.mjs`, a Wrangler
+dry-run, and `git diff --check`. The captured contract evidence reported four
+JSON-only cases, zero failures, `json_only: true`, `get_only_root: true`, and
+`fail_closed: true`. The expected deterministic no-credential rebuild path
+logged a Cloudflare API 503 for an undefined account and returned the
+fail-closed registry-unavailable case.
+
+Live API index smoke confirmed `GET https://api.atlas-systems.uk/` returned
+JSON registry data for service `atlas-api-index`, `Accept: text/html` on the
+same root still returned JSON registry data, and `POST /` returned JSON
+`405 method not allowed`.
 
 ## Validation and evidence contract
 
