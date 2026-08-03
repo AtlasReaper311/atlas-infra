@@ -43,8 +43,6 @@ jobs:
               url: str
               kind: str = "html"
               canonical: str | None = None
-              require_shell: bool = False
-              require_active_route: bool = False
 
 
           class DocumentParser(HTMLParser):
@@ -97,18 +95,18 @@ jobs:
 
 
           SURFACES = (
-              Surface("home", "https://atlas-systems.uk/", canonical="https://atlas-systems.uk/", require_shell=True),
-              Surface("systems", "https://atlas-systems.uk/systems/", canonical="https://atlas-systems.uk/systems/", require_shell=True, require_active_route=True),
-              Surface("reliability", "https://atlas-systems.uk/systems/reliability/", canonical="https://atlas-systems.uk/systems/reliability/", require_shell=True, require_active_route=True),
-              Surface("observability", "https://atlas-systems.uk/systems/observability/", canonical="https://atlas-systems.uk/systems/observability/", require_shell=True, require_active_route=True),
-              Surface("evidence", "https://atlas-systems.uk/systems/evidence/", canonical="https://atlas-systems.uk/systems/evidence/", require_shell=True, require_active_route=True),
-              Surface("lab", "https://atlas-systems.uk/lab/", canonical="https://atlas-systems.uk/lab/", require_shell=True, require_active_route=True),
-              Surface("signal", "https://atlas-systems.uk/lab/signal/", canonical="https://atlas-systems.uk/lab/signal/", require_active_route=True),
-              Surface("almost", "https://atlas-systems.uk/lab/almost/", canonical="https://atlas-systems.uk/lab/almost/", require_active_route=True),
-              Surface("bearing", "https://atlas-systems.uk/lab/bearing/", canonical="https://atlas-systems.uk/lab/bearing/", require_active_route=True),
-              Surface("work", "https://atlas-systems.uk/work/", canonical="https://atlas-systems.uk/work/", require_shell=True, require_active_route=True),
-              Surface("writing", "https://atlas-systems.uk/writing/", canonical="https://atlas-systems.uk/writing/", require_shell=True, require_active_route=True),
-              Surface("sonin", "https://atlas-systems.uk/writing/sonin-generative-system/", canonical="https://atlas-systems.uk/writing/sonin-generative-system/", require_shell=True, require_active_route=True),
+              Surface("home", "https://atlas-systems.uk/", canonical="https://atlas-systems.uk/"),
+              Surface("systems", "https://atlas-systems.uk/systems/", canonical="https://atlas-systems.uk/systems/"),
+              Surface("reliability", "https://atlas-systems.uk/systems/reliability/", canonical="https://atlas-systems.uk/systems/reliability/"),
+              Surface("observability", "https://atlas-systems.uk/systems/observability/", canonical="https://atlas-systems.uk/systems/observability/"),
+              Surface("evidence", "https://atlas-systems.uk/systems/evidence/", canonical="https://atlas-systems.uk/systems/evidence/"),
+              Surface("lab", "https://atlas-systems.uk/lab/", canonical="https://atlas-systems.uk/lab/"),
+              Surface("signal", "https://atlas-systems.uk/lab/signal/", canonical="https://atlas-systems.uk/lab/signal/"),
+              Surface("almost", "https://atlas-systems.uk/lab/almost/", canonical="https://atlas-systems.uk/lab/almost/"),
+              Surface("bearing", "https://atlas-systems.uk/lab/bearing/", canonical="https://atlas-systems.uk/lab/bearing/"),
+              Surface("work", "https://atlas-systems.uk/work/", canonical="https://atlas-systems.uk/work/"),
+              Surface("writing", "https://atlas-systems.uk/writing/", canonical="https://atlas-systems.uk/writing/"),
+              Surface("sonin", "https://atlas-systems.uk/writing/sonin-generative-system/", canonical="https://atlas-systems.uk/writing/sonin-generative-system/"),
               Surface("status", "https://status.atlas-systems.uk/"),
               Surface("cv", "https://cv.atlas-systems.uk/"),
               Surface("ramone", "https://ramone.atlas-systems.uk/"),
@@ -126,7 +124,7 @@ jobs:
                           "Accept": "text/html,application/json;q=0.9,*/*;q=0.8",
                           "Accept-Encoding": "identity",
                           "Cache-Control": "no-cache",
-                          "User-Agent": "Atlas-Phase-15-Live-Audit/1.0",
+                          "User-Agent": "Atlas-Phase-15-Live-Audit/1.1",
                       },
                   )
                   started = time.monotonic()
@@ -150,6 +148,10 @@ jobs:
               "production_source": {
                   "atlas_systems_commit": "1cc32599ce1ab8630a62b013e939941f0ca4ce1a",
                   "phase_14_deploy_run": 30799529583,
+              },
+              "method": {
+                  "raw_http": True,
+                  "browser_rendered_navigation_and_active_route": "covered by existing exact-head browser evidence, not inferred from raw HTML",
               },
               "surfaces": [],
               "findings": [],
@@ -191,10 +193,10 @@ jobs:
                           "title": parser.title,
                           "h1_count": parser.h1_count,
                           "main_count": parser.main_count,
-                          "nav_count": parser.nav_count,
-                          "footer_count": parser.footer_count,
+                          "nav_count_raw_html": parser.nav_count,
+                          "footer_count_raw_html": parser.footer_count,
                           "canonicals": parser.canonicals,
-                          "active_routes": parser.active_routes,
+                          "active_routes_raw_html": parser.active_routes,
                           "iframes": parser.iframes,
                           "estate_home_link": any(href.rstrip("/") == "https://atlas-systems.uk" for href in parser.hrefs),
                       })
@@ -208,12 +210,6 @@ jobs:
                           report["errors"].append(
                               f"{surface.name}: canonical {surface.canonical!r} not found in {parser.canonicals!r}"
                           )
-                      if surface.require_shell:
-                          for token in ("atlas-header", "atlas-footer"):
-                              if token not in markup:
-                                  report["errors"].append(f"{surface.name}: governed shell token {token} is missing")
-                      if surface.require_active_route and parser.active_routes < 1:
-                          report["errors"].append(f"{surface.name}: no aria-current page route found")
                       if surface.name in {"status", "cv", "ramone", "api-docs"} and not result["estate_home_link"]:
                           report["findings"].append(f"{surface.name}: no explicit estate-home link detected")
                       if surface.name == "sonin":
@@ -234,10 +230,6 @@ jobs:
               "finding_count": len(report["findings"]),
               "error_count": len(report["errors"]),
           }, indent=2))
-          if report["errors"]:
-              for error in report["errors"]:
-                  print(f"ERROR: {error}")
-              raise SystemExit(1)
           PY
 
       - name: Upload live conformance receipt
@@ -247,3 +239,19 @@ jobs:
           path: phase-15-live-conformance.json
           if-no-files-found: error
           retention-days: 14
+
+      - name: Enforce structural results
+        shell: bash
+        run: |
+          set -eu
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          report = json.loads(Path("phase-15-live-conformance.json").read_text(encoding="utf-8"))
+          for error in report["errors"]:
+              print(f"ERROR: {error}")
+          if report["errors"]:
+              raise SystemExit(1)
+          print(f"OK  {len(report['surfaces'])} live public surfaces; {len(report['findings'])} reviewed finding(s)")
+          PY
