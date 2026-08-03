@@ -1,26 +1,29 @@
-# Public interface programme Phase 14 browser budget proposal
+# Public interface programme Phase 14 browser budget authority
 
-Status: proposed authority; not accepted and not enforced.
+Status: accepted authority; enforcement pending.
 
 Started: 2 August 2026.
+Accepted: 3 August 2026.
 
 ## Purpose
 
 Phase 14 promotes reviewed browser-performance measurements into selected
 blocking budgets only after evidence supports the metric, value, tolerance, and
-exclusion. This document is the authority proposal. It does not add enforcement
-code, change product runtime, dispatch workflows, deploy production, or weaken
-the existing deterministic static baseline.
+exclusion. This document records the accepted authority for the first browser
+resource gate. It does not weaken the existing deterministic static baseline or
+turn runtime timing into a synthetic Core Web Vitals claim.
 
 ## Current baseline
 
-- `atlas-infra/main`: `a3627dde153201068b563c74cd3b229a1d0f8e69`.
-- `atlas-systems/main`: `0fd7a98aeaea523f18914c3c7f134fa96607406b`.
+- `atlas-infra/main` before acceptance: `b451737544b5943a2a11ccb279e817742c9228f0`.
+- `atlas-systems/main`: `31af5f9b948a9be5dd80fd4a4e685c92137240a0`.
 - Phase 13 merged through `atlas-infra#117` as
   `a3627dde153201068b563c74cd3b229a1d0f8e69`.
+- Phase 11 follow-up Lab directory polish merged through `atlas-systems#194` as
+  `31af5f9b948a9be5dd80fd4a4e685c92137240a0`.
 - Current `atlas-systems/data/performance-baseline.json` remains
   `blocking_thresholds: false` and fingerprint
-  `f330bfb924ad55927c40b79d21ad74fb18f235866f3a1a328530b59bf2e1a96d`.
+  `19850b063f0817f953c0d853ae3d3d80431c05fc94371bd92f04cb27f0c6a021`.
 
 ## Evidence inspected
 
@@ -28,8 +31,8 @@ the existing deterministic static baseline.
 
 - Static performance baseline drift is already blocking in `atlas-systems` CI.
 - Static size thresholds remain reporting-only.
-- Browser performance evidence remains reporting-only until Phase 14 accepts
-  specific budgets.
+- Browser resource budgets may block only for the exact accepted route,
+  browser, viewport, metric, tolerance, and exclusion set below.
 - The 1920-pixel viewport remains reporting-only and is not a blocking budget.
 
 ### Reviewed browser evidence cycles
@@ -41,28 +44,37 @@ the existing deterministic static baseline.
 | `atlas-systems#190` | `30724694572` | `44e467899692ce8a8cd6f4544eb351e0861eb5f5` | `8826116404` | `sha256:31a5b8cb379dccf32a4040781cc9046ec25b7a3df8762e7d1d94c1999aac9870` | Lab evidence-tool preview evidence. |
 | `atlas-systems#191` | `30742333958` | `2d98d61dbd429ff77e4810d39b1ad26dd6ee7e6b` | `8831862825` | `sha256:0c13b0a912eab612175013af316e3e52839a11a237cf2e43746577a8eddb827f` | Signal Garden preview evidence. |
 | `atlas-systems#192` | `30743826242` | `c3cdc62ef9886cfd9569272de6caf4e6fbfec3cc` | `8832353944` | `sha256:465f5fde26078cea91bc6c6c87345c128e43c0a8387b26a98628578fa37f2a28` | Final Phase 11 Lab preview evidence. |
+| `atlas-systems#194` | `30762531071` | `bb32c18765e8d99fb3fb08439b6d56b2259e1c21` | `8838070224` | `sha256:5bc2aed19685525f99f54982c6b247c5a1cf3291ea1c4999ac1cc0e5f1318e61` | Current Lab directory follow-up and refreshed Phase 14 evidence baseline. |
 
-The recent cycles prove that the browser harness captures resource metrics and
-that the visual/accessibility gates are repeatable. They do not by themselves
-accept resource budgets; this proposal is the approval boundary.
+The reviewed cycles prove that the browser harness captures resource metrics and
+that the visual and accessibility gates are repeatable. The `#194` cycle is the
+current acceptance baseline because it contains the latest source and static
+performance fingerprint.
 
-### Fresh local candidate measurement
+### Current observed maxima
 
-A local resource cycle was captured from current `atlas-systems/main` served at
-`http://127.0.0.1:4175` using Playwright Chromium and Firefox with reduced
-motion at 375 and 1440 pixel widths. The raw measurement was written outside
-the repository at `/tmp/atlas-phase14-browser-resource-metrics.json`.
+The `#194` exact-head evidence remained within every proposed cap. The maximum
+observed aggregate resource values across Chromium and Firefox at 375 and 1440
+pixels were:
 
-The launch required unsandboxed local browser execution because macOS denied
-Playwright process registration inside the sandbox. No external route, mutation
-endpoint, provider setting, secret, binding, deployment, or workflow dispatch
-was used.
+| Route | Requests | Encoded bytes | Decoded bytes | Scripts | Styles |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| `/` | 42 | 144426 | 275677 | 15 | 15 |
+| `/systems/` | 28 | 118180 | 267290 | 11 | 13 |
+| `/lab/` | 46 | 177445 | 400122 | 21 | 19 |
+| `/lab/signal/` | 26 | 119004 | 255694 | 11 | 11 |
+| `/lab/almost/` | 27 | 138261 | 256571 | 11 | 12 |
+| `/lab/bearing/` | 7 | 41446 | 50201 | 1 | 4 |
+| `/writing/` | 37 | 128743 | 285293 | 17 | 16 |
 
-## Proposed blocking metrics
+`/lab/` has no style-count headroom beyond its accepted cap. Any additional
+first-party stylesheet on that route must therefore be justified and accompanied
+by an authority revision rather than silently grandfathered.
 
-These metrics are suitable for the first accepted browser-budget gate because
-they are captured by the existing browser evidence harness and are less
-environment-sensitive than paint timing:
+## Accepted blocking metrics
+
+The first browser budget gate uses only metrics already captured by the browser
+evidence harness and less environment-sensitive than paint timing:
 
 - `requestCount`;
 - `encodedBytes`;
@@ -70,20 +82,20 @@ environment-sensitive than paint timing:
 - `scriptCount`;
 - `styleCount`.
 
-The first enforcement pass should apply only to:
+The enforcement applies only to:
 
-- representative Atlas Systems routes listed below;
+- the representative Atlas Systems routes listed below;
 - Chromium and Firefox;
 - 375 and 1440 pixel viewports;
 - deterministic preview evidence with reduced motion and service workers
   blocked;
 - first-party resource entries captured through the browser performance API.
 
-## Proposed values
+## Accepted values
 
-The proposed caps use the maximum observed value from the fresh local cycle,
-plus two requests for request count, plus one file for script/style counts, and
-plus 12 percent rounded up to the next KiB for byte counts.
+The accepted caps retain the proposal method: maximum reviewed value plus two
+requests, plus one script or stylesheet, and plus 12 percent rounded up to the
+next KiB for byte counts.
 
 | Route | Request cap | Encoded byte cap | Decoded byte cap | Script cap | Style cap |
 | --- | ---: | ---: | ---: | ---: | ---: |
@@ -97,44 +109,59 @@ plus 12 percent rounded up to the next KiB for byte counts.
 
 ## Exclusions
 
-Do not promote these into blocking budgets in the first pass:
+The first blocking pass excludes:
 
 - 1920 pixel viewport measurements;
+- 320, 768, and 1024 pixel resource measurements;
 - paint timing, LCP, CLS, FCP, TTFB, CPU timing, memory, and animation frame
   timing;
 - network `transferSize` from live or preview deployments;
 - third-party analytics or browser-extension requests;
-- fixture-host 503 responses used by deterministic evidence;
+- deterministic fixture-host responses;
 - external embeds such as YouTube;
 - production live measurements where CDN, cache state, and network path are not
   controlled;
-- routes not listed in the proposed value table.
+- routes not listed in the accepted value table.
 
 ## Rationale
 
-Request count and encoded/decoded byte totals catch common performance
-regressions without claiming more precision than the current evidence supports.
-They also complement the existing static baseline drift check: static drift
-proves source weight changes, while browser resource budgets prove the rendered
-page is not accidentally pulling extra first-party resources.
+Request count and encoded and decoded byte totals catch common performance
+regressions without claiming more precision than the evidence supports. They
+complement the existing static baseline drift check: static drift proves source
+weight changes, while browser resource budgets prove the rendered page is not
+accidentally pulling extra first-party resources.
 
-Runtime timing remains excluded because the current evidence set does not prove
-stable route-and-device timing across enough controlled cycles. The first
-budget gate should be a resource gate, not a synthetic Core Web Vitals claim.
+Runtime timing remains excluded because the evidence set does not prove stable
+route-and-device timing across enough controlled cycles. The first budget gate
+is a resource gate, not a synthetic performance-score claim.
 
-## Approval boundary
+## Accepted decision
 
-This proposal must stop at review. Merging or enforcing browser budgets requires
-explicit owner acceptance of:
+The owner accepted on 3 August 2026:
 
-1. the selected metrics;
-2. the route and viewport set;
-3. the proposed caps and tolerances;
-4. the exclusions;
-5. the follow-up repository where enforcement will live.
+1. the five selected resource metrics;
+2. the seven-route set;
+3. Chromium and Firefox at 375 and 1440 pixels;
+4. the caps and tolerance method above;
+5. the exclusions above;
+6. `AtlasReaper311/atlas-systems` as the enforcement repository.
 
-If accepted, the next implementation should update `atlas-systems` on
-`perf/browser-budget-gates` by adding a budget policy consumed by the existing
-browser evidence harness. It must not weaken
-`data/performance-baseline.json`, skip static drift checks, or silently accept
-new reporting findings as blockers.
+## Enforcement boundary
+
+The implementation must use branch `perf/browser-budget-gates` in
+`atlas-systems` and add a versioned policy consumed by the existing deterministic
+browser evidence harness. It must:
+
+- block selected route, browser, and viewport combinations even when the route
+  is not otherwise classified as changed;
+- fail closed when an expected measurement is missing;
+- report measured values, caps, and violations in `evidence.json`;
+- preserve reviewed reporting-baseline reconciliation;
+- preserve 1920 as reporting-only;
+- exclude non-first-party resources;
+- leave `data/performance-baseline.json` and static drift checks unchanged.
+
+Phase 14 closes only after the enforcement pull request is exact-head green,
+merged with the reviewed head guard, deployed through the normal `main` path,
+and the exact production commit and live route contract are verified and
+recorded in this document and `docs/work-allocation.md`.
