@@ -4,7 +4,7 @@ Living coordination document for agents currently working on Atlas Systems. This
 
 This file only has value while it remains current. Update or remove an entry as soon as its status changes.
 
-Last updated: 2026-08-02.
+Last updated: 2026-08-03.
 
 ## How to use this file
 
@@ -26,14 +26,15 @@ Entry format:
 
 ## Active work
 
-### Public interface programme Phase 14
+### Public interface programme Phase 15
 
-- **Repo(s):** `atlas-infra`; read-only evidence inspection of `atlas-systems`
+- **Repo(s):** `atlas-infra`, with read-only reconciliation of `atlas-systems`, `atlas-interface-kit`, `status`, `atlas-doc-viewer`, `ramone-edge`, `atlas-api-public`, `atlas-api-index`, `atlas-article-gen`, and `atlas-scheduler`
+- **Agent:** ChatGPT with Atlas approving the Phase 14 closeout and Phase 15 start; every later production write remains separately gated
 - **Status:** active
-- **Started:** 2026-08-02
-- **Last updated:** 2026-08-02
-- **Summary:** Drafting the Phase 14 browser-budget authority proposal from reviewed browser evidence cycles and a fresh local current-main resource measurement. Scope is authority proposal only: no enforcement, public route, product runtime, static-baseline weakening, provider setting, binding, secret, workflow dispatch, release, or production deployment change.
-- **Resume point:** Validate and open the Phase 14 authority pull request, then stop at the explicit approval boundary before merging or enforcing any browser budget.
+- **Started:** 2026-08-03
+- **Last updated:** 2026-08-03
+- **Summary:** Phase 14 is complete through accepted authority `atlas-infra#119`, browser-budget enforcement `atlas-systems#196`, exact production run `30799529583`, custom-domain commit proof, deploy-watch success, live smoke, and Corpus refresh. Phase 15 has established a no-new-feature freeze and is reconciling authority, source, release, adoption, preview, deployment, generated-output, rollback, live conformance, and residual-finding evidence. Stale, paused, Dependabot, RAMONE, inventory-refresh, and other separately gated pull requests are excluded from the programme merge path.
+- **Resume point:** Complete the read-only receipt matrix and post-programme cross-page conformance audit, disposition the 20 reporting-only browser findings, then update final programme and work-allocation records. Any discovered source correction must stop at its own repository-specific approval gate.
 
 ### GitHub provider guard audit
 
@@ -47,17 +48,18 @@ Entry format:
 
 ## Paused work
 
-### Post-programme cross-page conformance audit
-
-- **Repo(s):** all public browser-facing Atlas Systems surfaces, beginning with `atlas-systems`, `status`, `atlas-doc-viewer`, `ramone-edge`, and human-facing `atlas-api-public` documentation
-- **Agent:** unassigned until the public-interface programme is fully closed
-- **Status:** paused
-- **Started:** 2026-07-30
-- **Last updated:** 2026-07-31
-- **Summary:** Required estate-wide follow-up after the complete public-interface programme. Audit and correct global navigation, active-route treatment, Lab and Systems context navigation, route labels and breadcrumbs, shared shell/search/footer behaviour, spacing and heading hierarchy, canonical card destinations, and accidental page-to-page drift while preserving intentional product identities.
-- **Resume point:** Begin only after every public-interface programme phase, consumer merge, production deployment, and live-verification gate is complete. Reinspect current GitHub source and deployed surfaces rather than relying on programme-era screenshots or memory.
+None recorded for the public-interface programme. Its former post-programme cross-page conformance audit is now active inside Phase 15.
 
 ## Recently completed
+
+### Public interface programme Phase 14
+
+- **Repo(s):** `atlas-infra`, `atlas-systems`; read-only production receipt inspection through GitHub Actions, the custom domain, and `deploy-watch`
+- **Agent:** ChatGPT with Atlas approving authority acceptance, preview, exact-head merge, normal production deployment, and closeout
+- **Status:** done
+- **Started:** 2026-08-02
+- **Last updated:** 2026-08-03
+- **Summary:** Accepted the first browser resource budgets through `atlas-infra#119` as `d61e0f8fa36df09c8ba10e76dacc59c8bca4a4fa`, then enforced the five selected first-party metrics across seven routes, Chrome and Firefox, and 375 and 1440 pixel viewports through `atlas-systems#196` as `1cc32599ce1ab8630a62b013e939941f0ca4ce1a`. Exact-head preview run `30798375945` observed all 28 required measurements with zero budget violations and zero blocking interface findings. Production run `30799529583` deployed the exact merge commit and passed custom-domain, Systems, footer, AtlasField, System Symphony, reporting, and Corpus-refresh checks. Independent deploy-watch deployment `50929bca-e74d-4491-aacb-13581c5db991` reported success. The 20 existing reporting-only findings remain visible and assigned to Phase 15 disposition.
 
 ### Public interface programme Phase 13
 
