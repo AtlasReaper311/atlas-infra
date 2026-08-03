@@ -1,0 +1,249 @@
+name: Phase 15 live conformance diagnostic
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/phase-15-live-conformance.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: phase-15-live-conformance-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  audit:
+    name: Audit current public surfaces
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Inspect live HTTP and document contracts
+        shell: bash
+        run: |
+          set -eu
+          python3 - <<'PY'
+          from __future__ import annotations
+
+          import json
+          import time
+          from dataclasses import dataclass
+          from html.parser import HTMLParser
+          from pathlib import Path
+          from urllib.error import HTTPError, URLError
+          from urllib.request import Request, urlopen
+
+          OUTPUT = Path("phase-15-live-conformance.json")
+          MAX_BYTES = 2_000_000
+
+
+          @dataclass(frozen=True)
+          class Surface:
+              name: str
+              url: str
+              kind: str = "html"
+              canonical: str | None = None
+              require_shell: bool = False
+              require_active_route: bool = False
+
+
+          class DocumentParser(HTMLParser):
+              def __init__(self) -> None:
+                  super().__init__(convert_charrefs=True)
+                  self.title_depth = 0
+                  self.title_parts: list[str] = []
+                  self.h1_count = 0
+                  self.main_count = 0
+                  self.nav_count = 0
+                  self.footer_count = 0
+                  self.canonicals: list[str] = []
+                  self.active_routes = 0
+                  self.iframes: list[str] = []
+                  self.hrefs: list[str] = []
+
+              def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+                  values = dict(attrs)
+                  if tag == "title":
+                      self.title_depth += 1
+                  elif tag == "h1":
+                      self.h1_count += 1
+                  elif tag == "main":
+                      self.main_count += 1
+                  elif tag == "nav":
+                      self.nav_count += 1
+                  elif tag == "footer":
+                      self.footer_count += 1
+                  elif tag == "link" and values.get("rel") == "canonical" and values.get("href"):
+                      self.canonicals.append(values["href"] or "")
+                  elif tag == "a":
+                      if values.get("aria-current") == "page":
+                          self.active_routes += 1
+                      if values.get("href"):
+                          self.hrefs.append(values["href"] or "")
+                  elif tag == "iframe" and values.get("src"):
+                      self.iframes.append(values["src"] or "")
+
+              def handle_endtag(self, tag: str) -> None:
+                  if tag == "title" and self.title_depth:
+                      self.title_depth -= 1
+
+              def handle_data(self, data: str) -> None:
+                  if self.title_depth:
+                      self.title_parts.append(data)
+
+              @property
+              def title(self) -> str:
+                  return " ".join(" ".join(self.title_parts).split())
+
+
+          SURFACES = (
+              Surface("home", "https://atlas-systems.uk/", canonical="https://atlas-systems.uk/", require_shell=True),
+              Surface("systems", "https://atlas-systems.uk/systems/", canonical="https://atlas-systems.uk/systems/", require_shell=True, require_active_route=True),
+              Surface("reliability", "https://atlas-systems.uk/systems/reliability/", canonical="https://atlas-systems.uk/systems/reliability/", require_shell=True, require_active_route=True),
+              Surface("observability", "https://atlas-systems.uk/systems/observability/", canonical="https://atlas-systems.uk/systems/observability/", require_shell=True, require_active_route=True),
+              Surface("evidence", "https://atlas-systems.uk/systems/evidence/", canonical="https://atlas-systems.uk/systems/evidence/", require_shell=True, require_active_route=True),
+              Surface("lab", "https://atlas-systems.uk/lab/", canonical="https://atlas-systems.uk/lab/", require_shell=True, require_active_route=True),
+              Surface("signal", "https://atlas-systems.uk/lab/signal/", canonical="https://atlas-systems.uk/lab/signal/", require_active_route=True),
+              Surface("almost", "https://atlas-systems.uk/lab/almost/", canonical="https://atlas-systems.uk/lab/almost/", require_active_route=True),
+              Surface("bearing", "https://atlas-systems.uk/lab/bearing/", canonical="https://atlas-systems.uk/lab/bearing/", require_active_route=True),
+              Surface("work", "https://atlas-systems.uk/work/", canonical="https://atlas-systems.uk/work/", require_shell=True, require_active_route=True),
+              Surface("writing", "https://atlas-systems.uk/writing/", canonical="https://atlas-systems.uk/writing/", require_shell=True, require_active_route=True),
+              Surface("sonin", "https://atlas-systems.uk/writing/sonin-generative-system/", canonical="https://atlas-systems.uk/writing/sonin-generative-system/", require_shell=True, require_active_route=True),
+              Surface("status", "https://status.atlas-systems.uk/"),
+              Surface("cv", "https://cv.atlas-systems.uk/"),
+              Surface("ramone", "https://ramone.atlas-systems.uk/"),
+              Surface("api-docs", "https://api.atlas-systems.uk/v1/docs"),
+              Surface("api-index", "https://api.atlas-systems.uk/", kind="json"),
+          )
+
+
+          def fetch(url: str) -> tuple[int, str, dict[str, str], bytes, int]:
+              last_error: Exception | None = None
+              for attempt in range(3):
+                  request = Request(
+                      url,
+                      headers={
+                          "Accept": "text/html,application/json;q=0.9,*/*;q=0.8",
+                          "Accept-Encoding": "identity",
+                          "Cache-Control": "no-cache",
+                          "User-Agent": "Atlas-Phase-15-Live-Audit/1.0",
+                      },
+                  )
+                  started = time.monotonic()
+                  try:
+                      with urlopen(request, timeout=20) as response:
+                          body = response.read(MAX_BYTES + 1)
+                          elapsed_ms = round((time.monotonic() - started) * 1000)
+                          if len(body) > MAX_BYTES:
+                              raise RuntimeError(f"response exceeds {MAX_BYTES} bytes")
+                          headers = {key.lower(): value for key, value in response.headers.items()}
+                          return response.status, response.geturl(), headers, body, elapsed_ms
+                  except (HTTPError, URLError, TimeoutError, RuntimeError) as error:
+                      last_error = error
+                      if attempt < 2:
+                          time.sleep(attempt + 1)
+              raise RuntimeError(f"request failed after retries: {last_error}")
+
+
+          report = {
+              "schema": "atlas-infra/public-interface-phase-15-live-conformance/v1",
+              "production_source": {
+                  "atlas_systems_commit": "1cc32599ce1ab8630a62b013e939941f0ca4ce1a",
+                  "phase_14_deploy_run": 30799529583,
+              },
+              "surfaces": [],
+              "findings": [],
+              "errors": [],
+          }
+
+          for surface in SURFACES:
+              result = {"name": surface.name, "url": surface.url, "kind": surface.kind}
+              try:
+                  status, final_url, headers, body, elapsed_ms = fetch(surface.url)
+                  content_type = headers.get("content-type", "")
+                  result.update({
+                      "status": status,
+                      "final_url": final_url,
+                      "content_type": content_type,
+                      "elapsed_ms": elapsed_ms,
+                      "content_security_policy": headers.get("content-security-policy"),
+                  })
+                  if status != 200:
+                      report["errors"].append(f"{surface.name}: expected HTTP 200, received {status}")
+
+                  if surface.kind == "json":
+                      if "json" not in content_type.lower():
+                          report["errors"].append(f"{surface.name}: root is not JSON content")
+                      payload = json.loads(body.decode("utf-8"))
+                      if not isinstance(payload, dict):
+                          report["errors"].append(f"{surface.name}: JSON root is not an object")
+                      result["json_keys"] = sorted(payload)[:40]
+                      result["html_detected"] = b"<html" in body.lower()
+                      if result["html_detected"]:
+                          report["errors"].append(f"{surface.name}: HTML detected on JSON-only root")
+                  else:
+                      if "html" not in content_type.lower():
+                          report["errors"].append(f"{surface.name}: expected HTML content, received {content_type}")
+                      markup = body.decode("utf-8", errors="replace")
+                      parser = DocumentParser()
+                      parser.feed(markup)
+                      result.update({
+                          "title": parser.title,
+                          "h1_count": parser.h1_count,
+                          "main_count": parser.main_count,
+                          "nav_count": parser.nav_count,
+                          "footer_count": parser.footer_count,
+                          "canonicals": parser.canonicals,
+                          "active_routes": parser.active_routes,
+                          "iframes": parser.iframes,
+                          "estate_home_link": any(href.rstrip("/") == "https://atlas-systems.uk" for href in parser.hrefs),
+                      })
+                      if not parser.title:
+                          report["errors"].append(f"{surface.name}: document title is missing")
+                      if parser.h1_count != 1:
+                          report["errors"].append(f"{surface.name}: expected one h1, found {parser.h1_count}")
+                      if parser.main_count != 1:
+                          report["errors"].append(f"{surface.name}: expected one main, found {parser.main_count}")
+                      if surface.canonical and surface.canonical not in parser.canonicals:
+                          report["errors"].append(
+                              f"{surface.name}: canonical {surface.canonical!r} not found in {parser.canonicals!r}"
+                          )
+                      if surface.require_shell:
+                          for token in ("atlas-header", "atlas-footer"):
+                              if token not in markup:
+                                  report["errors"].append(f"{surface.name}: governed shell token {token} is missing")
+                      if surface.require_active_route and parser.active_routes < 1:
+                          report["errors"].append(f"{surface.name}: no aria-current page route found")
+                      if surface.name in {"status", "cv", "ramone", "api-docs"} and not result["estate_home_link"]:
+                          report["findings"].append(f"{surface.name}: no explicit estate-home link detected")
+                      if surface.name == "sonin":
+                          youtube_frames = [src for src in parser.iframes if "youtube.com" in src]
+                          csp = headers.get("content-security-policy", "")
+                          if youtube_frames and "youtube.com" not in csp:
+                              report["findings"].append(
+                                  "sonin: legacy YouTube iframe remains blocked by the strict site CSP; canonical-source recovery required"
+                              )
+              except Exception as error:
+                  result["exception"] = str(error)
+                  report["errors"].append(f"{surface.name}: {error}")
+              report["surfaces"].append(result)
+
+          OUTPUT.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+          print(json.dumps({
+              "surface_count": len(report["surfaces"]),
+              "finding_count": len(report["findings"]),
+              "error_count": len(report["errors"]),
+          }, indent=2))
+          if report["errors"]:
+              for error in report["errors"]:
+                  print(f"ERROR: {error}")
+              raise SystemExit(1)
+          PY
+
+      - name: Upload live conformance receipt
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1, Node 24
+        with:
+          name: phase-15-live-conformance-${{ github.event.pull_request.head.sha }}
+          path: phase-15-live-conformance.json
+          if-no-files-found: error
+          retention-days: 14
