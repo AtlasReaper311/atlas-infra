@@ -2,15 +2,15 @@
 
 ## Status
 
-Phase III has completed the owner-authenticated read-only provider inspection and is awaiting approval for a one-repository canary.
+Phase III completed the owner-authenticated provider inspection and the bounded `atlas-badges` canary write. The normal protected pull-request path and a genuine Dependabot pull request have both succeeded under the active rule.
 
-Phase II closed the public-repository source-conformance work with zero required source failures. This phase resolves the 27 remaining `default_branch_guard` outcomes that the scheduled scoreboard could not read.
+A stamped owner-authenticated scoreboard rerun and final canary receipt remain pending. No wider rollout or destructive branch test has begun.
 
-No ruleset, branch-protection, token, repository, release, tag, workflow, deployment, or secret change is authorised by this document.
+Phase II remains closed. The provider findings in this document do not reopen its source-conformance result.
 
 ## Part 0 inspection
 
-The closing scoreboard run was GitHub Actions run [`30535544793`](https://github.com/AtlasReaper311/atlas-infra/actions/runs/30535544793). It checked the authoritative 33-repository public projection and recorded:
+The Phase II closing scoreboard was GitHub Actions run `30535544793`. It checked the authoritative 33-repository public projection and recorded:
 
 - 233 required passes;
 - 0 required failures;
@@ -19,24 +19,22 @@ The closing scoreboard run was GitHub Actions run [`30535544793`](https://github
 - 1 approved exception;
 - 1 deferred outcome.
 
-All 27 unknown outcomes were `default_branch_guard`. The scheduled report message was `GitHub ruleset or branch-protection evidence was unavailable.` This was an evidence-access result and did not prove that a guard was present or absent.
+All 27 unknown outcomes were `default_branch_guard`. The report message was `GitHub ruleset or branch-protection evidence was unavailable.` This was an evidence-access result and did not prove that a guard was present or absent.
 
-The existing scoreboard implementation uses these read-only provider paths:
+The scoreboard reads:
 
 - `GET /repos/{owner}/{repo}/rulesets`;
-- the returned ruleset detail endpoint when the list response omits conditions or rules;
+- the ruleset detail endpoint when the list response omits conditions or rules;
 - `GET /repos/{owner}/{repo}/branches/{default_branch}/protection` as the classic-protection fallback.
 
-The accepted pass conditions are:
+A default-branch guard passes when either:
 
-- an active branch ruleset that targets the default branch and contains `pull_request`, `deletion`, and `non_fast_forward`; or
-- classic branch protection with pull-request review protection.
+- an active branch ruleset targets the default branch and contains `pull_request`, `deletion`, and `non_fast_forward`; or
+- classic branch protection requires pull-request reviews.
 
-The scheduled workflow uses the repository-scoped `GITHUB_TOKEN`. It could read normal repository contents but could not establish provider-state evidence for these 27 repositories. The connected ChatGPT GitHub application also does not expose a ruleset or branch-protection read action. The initial audit therefore required an owner-authenticated local read using the existing Atlas Infra tooling.
+## Initial owner-authenticated evidence
 
-## Owner-authenticated evidence receipt
-
-Atlas supplied the generated JSON and Markdown reports on 31 July 2026. The report contract and policy inputs match the Phase II closing evidence:
+Atlas supplied the generated JSON and Markdown reports on 31 July 2026. Their policy inputs matched the Phase II closing evidence:
 
 - schema: `atlas-github-conformance-scoreboard/report/v2`;
 - repositories checked: 33;
@@ -45,13 +43,9 @@ Atlas supplied the generated JSON and Markdown reports on 31 July 2026. The repo
 - JSON file digest: `sha256:8250292fa3865b04e2a5d5a56a036a44bfb5648bae9b16c01efe944fcbd2111c`;
 - Markdown file digest: `sha256:30ee4ac5864268648e85aef9028579ee03f214f5a966c206d45f45cd31a17a46`.
 
-The reports contain no token value and no unreadable provider outcome.
+The reports contained no token value and no unreadable provider outcome. The generator did not yet embed the Atlas Infra source commit, collection timestamp, or a report fingerprint. The scoreboard-stamping change prepared with this closeout corrects that evidence gap without changing the provider checks or policy rules.
 
-The current generator does not embed the local git source commit or collection timestamp. This document does not invent either value. A later evidence run used for final Phase III closure must stamp the source commit, collection time, and report fingerprint.
-
-## Classified provider result
-
-The owner-authenticated audit changed the provider result from 27 unknown outcomes to:
+## Classified provider result before the canary
 
 | Classification | Count |
 | --- | ---: |
@@ -62,7 +56,7 @@ The owner-authenticated audit changed the provider result from 27 unknown outcom
 | `unreadable` | 0 |
 | `scope_changed` | 0 |
 
-The complete policy result is now 233 required passes, 27 required failures, and zero required unknowns.
+The policy result was 233 required passes, 27 required failures, and zero required unknowns.
 
 ### Active qualifying ruleset observed
 
@@ -73,7 +67,7 @@ The complete policy result is now 233 required passes, 27 required failures, and
 - `AtlasReaper311/atlas-systems`
 - `AtlasReaper311/worker-meta-kit`
 
-### Classic protection present without pull-request review protection
+### Classic protection without pull-request review protection
 
 - `AtlasReaper311/atlas-doc-viewer`
 - `AtlasReaper311/atlas-quota-watch`
@@ -106,94 +100,157 @@ The complete policy result is now 233 required passes, 27 required failures, and
 - `AtlasReaper311/specular-sentinel`
 - `AtlasReaper311/specular-telemetry`
 
-The 27 policy failures are current readable provider findings. They are not repository-source defects and must not reopen Phase II.
+## Canary selection
 
-## Canary recommendation
+`AtlasReaper311/atlas-badges` was selected because it was:
 
-Use `AtlasReaper311/atlas-badges` as the first provider canary.
+- active and public;
+- not a runtime service;
+- on default branch `main`;
+- without an existing guard;
+- without a deployment or publication workflow;
+- protected by a repository-native `CI` workflow with job context `test`;
+- configured with repository auto-merge disabled.
 
-Current evidence:
+The native `test` job runs pytest and Ruff with read-only workflow permissions.
 
-- lifecycle: `active`;
-- scope: `public`;
-- runtime service: `false`;
-- default branch: `main`;
-- current main commit: `2ddf0f410e4967871ecf1bf8de0f005909bce0b7`;
-- repository auto-merge: disabled;
-- open pull requests: none observed;
-- default-branch deployment or publication workflow: none observed;
-- repository-native workflow: `CI`;
-- native validation job: `test`;
-- validation commands: `python -m pytest -q` and `python -m ruff check .`;
-- workflow permissions: `contents: read`.
+## Canary provider write
 
-This is lower risk than a production runtime repository, a shared interface distribution repository, the owner-wide `.github` defaults repository, or a repository with existing partial classic protection.
+Atlas separately approved one ruleset write. GitHub created ruleset `20126389` at `2026-07-31T14:52:44.173+01:00` with this exact state:
 
-## Proposed canary provider state
+- name: `Atlas default branch PR guard`;
+- target: branch;
+- condition: `~DEFAULT_BRANCH`;
+- enforcement: active;
+- pull request required;
+- required approving reviews: 0;
+- required status context: `test`;
+- required status integration ID: `15368`;
+- deletion blocked;
+- non-fast-forward updates blocked;
+- bypass actors: none;
+- current-user bypass: `never`;
+- repository auto-merge: disabled.
 
-The canary should create one active ruleset named `Atlas default branch PR guard` targeting `~DEFAULT_BRANCH` in `AtlasReaper311/atlas-badges`.
+The create response and ruleset read-back were identical. The active-rules endpoint independently returned `deletion`, `non_fast_forward`, `pull_request`, and `required_status_checks` from ruleset `20126389`.
 
-Required rules:
+Owner-authenticated evidence file digests:
 
-- require changes through a pull request;
-- block branch deletion;
-- block non-fast-forward updates;
-- require the exact repository-native CI status context observed from the canary pull request;
-- require zero approving reviews because the repository has one owner and GitHub does not permit self-approval to satisfy an approval requirement;
-- do not enable repository auto-merge;
-- do not add a bypass actor unless the canary review explicitly accepts one.
+- `repository-after.json`: `sha256:e074e92e7979e697dbd8d6f87dbd9338b430c09e44880b1a3a3b3d45e59aab40`;
+- `ruleset-created.json`: `sha256:0184166c46f2dac05d105276f3e650e25cbf63d0847d734d9d4aaa47a78d744a`;
+- `ruleset-readback.json`: `sha256:0184166c46f2dac05d105276f3e650e25cbf63d0847d734d9d4aaa47a78d744a`;
+- `active-rules-after.json`: `sha256:3f1a73725bc54f89196cdb3d43b64c3f5556024d5cbe39e96e283d588e2e78d1`.
 
-The exact status-check context must be captured from a fresh canary pull request before the ruleset is activated. Do not guess whether GitHub records the context as `test` or `CI / test`.
+## Protected owner pull-request path
 
-## Canary validation sequence
+Canary pull request `atlas-badges#5` captured the native status context before the provider write, then received the post-write evidence documentation.
 
-1. Record the pre-change ruleset and classic-protection responses.
-2. Open a bounded documentation-only pull request in `atlas-badges` to capture the exact CI context.
-3. Create the one-repository ruleset with the approved rule set and captured status context.
-4. Confirm a direct update to `main` is rejected.
-5. Confirm pull-request creation still works.
-6. Confirm the ruleset blocks merging while the native CI check is pending or failing.
-7. Confirm merging becomes available after the required check passes.
-8. Confirm force-push and default-branch deletion protections are active.
-9. Confirm Dependabot pull requests remain compatible while auto-merge stays disabled.
-10. Re-run the owner-authenticated scoreboard and confirm `atlas-badges` changes from failed to passed.
-11. Record the provider response, ruleset identifier, exact configuration, validation PR, rollback evidence, and report fingerprints before proposing a wider wave.
+Its reviewed exact head was `627177aaa60fdf3830578b6582dc5798142171e9`. The post-write runs were:
+
+| Workflow | Run | Result |
+| --- | ---: | --- |
+| `CI` | `30637955337` | success |
+| `CodeQL` | `30637953723` | success |
+| `OpenSSF Scorecard` | `30637953787` | success |
+| `Dependabot review policy` | `30637954640` | skipped as expected for a non-Dependabot pull request |
+
+The pull request had no unresolved review threads and merged through the active ruleset as `21cb45aff47183b86258c5a23a354d66c65137bb`.
+
+This proves that the normal owner pull-request path remains available and that the required `test` context can satisfy the protected merge path.
+
+## Genuine Dependabot compatibility
+
+A genuine Dependabot pull request now exists under the canary ruleset:
+
+- pull request: `atlas-badges#6`;
+- head: `238dbc95d55da73c19310609480e1f63d217cd1c`;
+- state at inspection: open and mergeable;
+- repository auto-merge: disabled.
+
+Exact-head workflow evidence:
+
+| Workflow | Run | Result |
+| --- | ---: | --- |
+| `Dependabot review policy` | `30681518607` | success |
+| `CI` | `30681518624` | success |
+| `CodeQL` | `30681518610` | success |
+| `OpenSSF Scorecard` | `30681518620` | success |
+
+This proves that Dependabot can create a pull request, obtain the required native check, and pass the repository review policy while auto-merge remains disabled. No synthetic Dependabot event or merge is required for the canary closeout.
+
+## Validation sequence status
+
+| Step | Status | Evidence or boundary |
+| --- | --- | --- |
+| Record pre-change provider state | complete | Initial owner-authenticated audit and file digests |
+| Capture exact native check context | complete | `atlas-badges#5`, workflow `CI`, job `test` |
+| Create bounded ruleset | complete | Ruleset `20126389` and identical read-back |
+| Confirm direct update to `main` is rejected | not attempted | Intentional prohibited write; excluded by owner instruction |
+| Confirm pull-request creation works | complete | `atlas-badges#5`, `#6`, and `#7` |
+| Prove pending or failing required check blocks merge | not injected | No failing workflow or merge race manufactured |
+| Prove passing required check allows merge | complete | `atlas-badges#5` merged as `21cb45aff47183b86258c5a23a354d66c65137bb` |
+| Confirm force-push and deletion rules are active | provider state proved | Active-rules read-back; destructive attempts not made |
+| Confirm Dependabot compatibility | complete | Genuine `atlas-badges#6` exact-head runs |
+| Rerun stamped owner-authenticated scoreboard | pending | Requires merged stamping source and a local read-only run |
+| Record final canary closeout | pending | Requires stamped report files and digests |
+
+The incomplete destructive and synthetic rejection tests are explicit residual evidence boundaries. They are not silently recorded as successful.
+
+## Scoreboard stamping
+
+The closeout source adds a post-collection stamper for policy-aware v2 reports. It records:
+
+- UTC `collected_at`;
+- exact `AtlasReaper311/atlas-infra` source commit;
+- canonical SHA-256 report fingerprint.
+
+The fingerprint excludes only the fingerprint field itself. The stamper fails closed on an unexpected schema, invalid source commit, invalid timestamp, malformed JSON root, or malformed Markdown heading. Scheduled and manual workflow runs pass `${GITHUB_SHA}` after the policy report is built.
+
+The owner-authenticated rerun must use a clean checkout of the merged stamping source. It must retain both output files and their file digests alongside the embedded report fingerprint.
+
+Expected provider-only movement, assuming no unrelated estate drift:
+
+- `atlas-badges` changes from failed to passed for `default_branch_guard`;
+- required passes change from 233 to 234;
+- required failures change from 27 to 26;
+- required unknowns remain 0.
+
+These counts are expectations, not evidence. The final closeout must use the actual stamped result.
 
 ## Rollback
 
-If the canary blocks the intended owner workflow or produces an unexpected check dependency:
+If the canary later blocks the intended owner workflow or produces an unexpected check dependency:
 
-1. disable or delete only the new `atlas-badges` ruleset;
-2. verify the pre-change provider response is restored;
-3. close the canary pull request if it is no longer needed;
-4. rerun the owner-authenticated audit;
-5. record the failure and stop the rollout.
+1. disable or delete only ruleset `20126389`;
+2. verify the pre-change provider result is restored for `atlas-badges`;
+3. rerun the owner-authenticated scoreboard;
+4. record the failure and stop the programme.
 
-Rollback does not include weakening any pre-existing protection because `atlas-badges` currently has no qualifying guard.
+Rollback has not been executed because the protected owner and Dependabot paths both work. A rollback test would itself change provider state and remains separately approval-gated.
 
-## Later rollout grouping
+## Wider rollout boundary
 
-Do not expand until the canary is accepted.
+Do not expand from `atlas-badges` until the stamped rerun and final canary receipt are reviewed and merged.
 
-Suggested order after a successful canary:
+A later wave requires:
 
-1. active, public, non-runtime repositories with no guard;
-2. active or production repositories with partial classic protection, handled as migrations rather than fresh rulesets;
+- a current read-only inventory;
+- an exact repository list;
+- repository-native required-check discovery;
+- a migration plan for partial classic protections;
+- rollback instructions;
+- separate provider-write approval;
+- a new stamped policy-aware scoreboard result.
+
+Suggested order remains:
+
+1. active public non-runtime repositories with no guard;
+2. repositories with partial classic protection, treated as migrations;
 3. production runtime repositories without a guard;
-4. owner-wide defaults and profile repositories after their special behavior is reviewed.
+4. owner-wide defaults and profile repositories after special-behaviour review.
 
-Each wave requires a current read-only inventory, an exact repository list, a rollback plan, provider-write approval, and a fresh policy-aware scoreboard result.
+## Separate boundaries
 
-## Separate release boundary
+The first owner-approved `worker-meta-kit` release remains independent. Do not create a tag, GitHub Release, or release artifact as part of Phase III.
 
-The first owner-approved `worker-meta-kit` release remains independent from this provider audit. Do not create a tag, GitHub Release, or release artifact as part of Phase III.
-
-## Completion criteria
-
-Phase III can close only when:
-
-- every one of the 27 former unknown repositories has current provider evidence;
-- every result is classified without converting unknown into pass or failure by assumption;
-- any required provider corrections have separately approved rollout and rollback evidence;
-- a fresh policy-aware scoreboard run records the resulting state with source commit, collection time, and report fingerprint;
-- the final evidence and residual boundaries are committed to Atlas Infra.
+Phase III can close only after the stamped owner-authenticated rerun and final receipt are committed. Wider provider correction remains a later programme rather than an implicit part of this canary.
