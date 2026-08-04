@@ -1,0 +1,69 @@
+{
+  "atlas_badges_default_branch_guard": {
+    "id": "default_branch_guard",
+    "label": "Default branch PR guard",
+    "message": "An active default-branch ruleset was observed.",
+    "outcome": "passed",
+    "policy_message": "Estate-wide default requirement.",
+    "requirement": "required",
+    "status": "passed"
+  },
+  "authority": "AtlasReaper311/atlas-infra",
+  "canary_repository": "AtlasReaper311/atlas-badges",
+  "collected_at": "2026-08-04T23:22:02Z",
+  "evidence_files": {
+    "atlas-badges-canary-final-receipt.json": {
+      "bytes": 1022,
+      "sha256": "298726c75d84ffb6954fd4d437eb786471f73fc40336f087c72f6def620f5e70"
+    },
+    "atlas-badges-final-scoreboard-evidence.zip": {
+      "bytes": 6447,
+      "sha256": "9c95ffe17159e8e67d91136435d370842d886d06d1da27906260c670cad4eca6"
+    },
+    "github-conformance-scoreboard.json": {
+      "bytes": 129283,
+      "sha256": "df9b2744a0e2adab81550a825833d7baec80ab24678ff5cd31157767868e330c"
+    },
+    "github-conformance-scoreboard.md": {
+      "bytes": 6929,
+      "sha256": "d797d7a8b366367dffa7e4fe06a405bbafa16b6989e890e15dfb750a1068f140"
+    }
+  },
+  "policy_summary": {
+    "checks_deferred": 1,
+    "checks_exception": 1,
+    "checks_failed": 96,
+    "checks_not_applicable": 68,
+    "checks_passed": 234,
+    "checks_total": 330,
+    "checks_unknown": 0,
+    "policy_checks_failed": 26,
+    "policy_checks_passed": 234,
+    "policy_checks_required": 260,
+    "policy_checks_unknown": 0,
+    "repositories_checked": 33
+  },
+  "report_fingerprint": "sha256:cfb03af45343602dfa5bcc1c6180d2e054242a14a6295695ffda99d7ae5427bd",
+  "residual_boundaries": [
+    "No direct push rejection test was performed.",
+    "No force-push rejection test was performed.",
+    "No default-branch deletion attempt was performed.",
+    "No manufactured failing required check was performed.",
+    "No rollback provider write was performed.",
+    "No wider ruleset rollout was performed."
+  ],
+  "ruleset_id": 20126389,
+  "ruleset_name": "Atlas default branch PR guard",
+  "schema_version": "atlas-github-provider-guard-canary/final-receipt/v1",
+  "source": {
+    "commit": "da0de618a70603a1989d0b03c6f7d8659fa458f3",
+    "repository": "AtlasReaper311/atlas-infra"
+  },
+  "verification": {
+    "atlas_badges_guard_passed": true,
+    "canonical_report_fingerprint_matches": true,
+    "policy_unknowns_zero": true,
+    "sha256sums_match": true,
+    "source_commit_matches_scoreboard_stamping_merge": true
+  }
+}
