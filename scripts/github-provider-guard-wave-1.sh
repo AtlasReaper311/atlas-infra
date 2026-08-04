@@ -25,6 +25,36 @@ require_command() {
   }
 }
 
+write_sha256s() {
+  evidence_dir="$1"
+  output_file="$2"
+
+  if command -v sha256sum >/dev/null 2>&1
+  then
+    digest_command="sha256sum"
+  elif command -v shasum >/dev/null 2>&1
+  then
+    digest_command="shasum -a 256"
+  else
+    printf 'ERROR: neither sha256sum nor shasum is available.\n' >&2
+    exit 1
+  fi
+
+  : >"$output_file"
+
+  find "$evidence_dir" -type f ! -name SHA256SUMS.txt -print |
+    LC_ALL=C sort |
+    while IFS= read -r evidence_file
+    do
+      if [ "$digest_command" = "sha256sum" ]
+      then
+        sha256sum "$evidence_file"
+      else
+        shasum -a 256 "$evidence_file"
+      fi
+    done >"$output_file"
+}
+
 verify_required_check() {
   repository="$1"
   pull_number="$2"
@@ -180,7 +210,6 @@ verify_ruleset_readback() {
 printf 'PART 0: Preflight\n'
 require_command gh
 require_command jq
-require_command sha256sum
 
 gh auth status >/dev/null
 AUTHENTICATED_LOGIN="$(gh api /user --jq '.login')"
@@ -237,7 +266,7 @@ printf '%s\n' "$REPOSITORIES" | while IFS='|' read -r repository pull_number exp
 if [ "$MODE" = "inspect" ]
 then
   printf 'PART 2: Inspection complete; no provider write performed.\n'
-  find "$EVIDENCE_DIR" -type f ! -name SHA256SUMS.txt -print0 | sort -z | xargs -0 sha256sum >"${EVIDENCE_DIR}/SHA256SUMS.txt"
+  write_sha256s "$EVIDENCE_DIR" "${EVIDENCE_DIR}/SHA256SUMS.txt"
   printf 'Evidence: %s\n' "$EVIDENCE_DIR"
   exit 0
 fi
@@ -279,7 +308,7 @@ printf '%s\n' "$REPOSITORIES" | while IFS='|' read -r repository pull_number exp
  done
 
 printf 'PART 3: Final evidence identity\n'
-find "$EVIDENCE_DIR" -type f ! -name SHA256SUMS.txt -print0 | sort -z | xargs -0 sha256sum >"${EVIDENCE_DIR}/SHA256SUMS.txt"
+write_sha256s "$EVIDENCE_DIR" "${EVIDENCE_DIR}/SHA256SUMS.txt"
 
 printf 'Wave 1 provider write complete.\n'
 printf 'Evidence: %s\n' "$EVIDENCE_DIR"
