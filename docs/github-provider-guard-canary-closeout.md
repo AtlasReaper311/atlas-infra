@@ -1,14 +1,17 @@
 # GitHub provider guard canary closeout
 
-Status: source and provider evidence prepared; stamped owner-authenticated scoreboard rerun pending.
+Status: complete for the bounded `atlas-badges` canary. Wider rollout remains unapproved and has not started.
 
 ## Scope
 
-This record closes the implemented and observed portions of the one-repository `atlas-badges` provider-guard canary. It does not close Phase III, approve a wider rollout, or claim destructive tests that were not performed.
+This record closes the one-repository `AtlasReaper311/atlas-badges` provider-guard canary. It records the approved provider write, the normal protected owner path, a genuine Dependabot path, and the final owner-authenticated scoreboard result.
+
+It does not close the wider Phase III provider programme. Twenty-six readable default-branch-guard failures remain elsewhere in the public projection and require separately approved rollout waves.
 
 Authority:
 
 - provider audit and canary plan: `atlas-infra#103`;
+- scoreboard stamping and closeout tooling: `atlas-infra#123`;
 - canary repository: `AtlasReaper311/atlas-badges`;
 - active ruleset: `20126389`, `Atlas default branch PR guard`.
 
@@ -43,7 +46,7 @@ The successful merge proves that the owner pull-request path remained available 
 
 ## Dependabot receipt
 
-A genuine Dependabot pull request supplied the compatibility evidence without creating a synthetic event.
+A genuine Dependabot pull request supplied compatibility evidence without creating a synthetic event.
 
 - pull request: `atlas-badges#6`;
 - head: `238dbc95d55da73c19310609480e1f63d217cd1c`;
@@ -56,39 +59,43 @@ A genuine Dependabot pull request supplied the compatibility evidence without cr
 
 No Dependabot pull request was merged as part of the canary.
 
-## Evidence files
+## Final scoreboard receipt
 
-| File | SHA-256 |
-| --- | --- |
-| `repository-after.json` | `e074e92e7979e697dbd8d6f87dbd9338b430c09e44880b1a3a3b3d45e59aab40` |
-| `ruleset-created.json` | `0184166c46f2dac05d105276f3e650e25cbf63d0847d734d9d4aaa47a78d744a` |
-| `ruleset-readback.json` | `0184166c46f2dac05d105276f3e650e25cbf63d0847d734d9d4aaa47a78d744a` |
-| `active-rules-after.json` | `3f1a73725bc54f89196cdb3d43b64c3f5556024d5cbe39e96e283d588e2e78d1` |
+The owner-authenticated report was collected on `2026-08-04T23:22:02Z` from exact Atlas Infra source commit `da0de618a70603a1989d0b03c6f7d8659fa458f3`.
 
-## Scoreboard identity correction
+Report identity:
 
-The existing policy-aware report contract lacks a collection timestamp, exact Atlas Infra source commit, and report-level fingerprint. The closeout source adds a post-collection stamper that records:
+- schema: `atlas-github-conformance-scoreboard/report/v2`;
+- report fingerprint: `sha256:cfb03af45343602dfa5bcc1c6180d2e054242a14a6295695ffda99d7ae5427bd`;
+- repositories checked: 33;
+- required checks passed: 234;
+- required checks failed: 26;
+- required checks unknown: 0;
+- not applicable: 68;
+- approved exceptions: 1;
+- deferred: 1.
 
-- UTC `collected_at`;
-- `source.repository` and exact 40-character `source.commit`;
-- canonical SHA-256 `fingerprint`.
+The report moved exactly one required provider check from failed to passed:
 
-The stamper updates both JSON and Markdown, rejects malformed inputs, and is called by the existing read-only workflow after policy evaluation.
+- previous policy result: 233 passed, 27 failed, 0 unknown;
+- final policy result: 234 passed, 26 failed, 0 unknown;
+- `AtlasReaper311/atlas-badges` `default_branch_guard`: `passed`;
+- provider message: `An active default-branch ruleset was observed.`
 
-## Required rerun
+The canonical fingerprint was independently recomputed from the complete stamped JSON after removing only the fingerprint field. It matched the embedded value.
 
-After the stamping pull request merges, run the owner-authenticated scoreboard from a clean checkout of that merge commit. Preserve:
+## Final evidence identity
 
-- stamped JSON report;
-- stamped Markdown report;
-- each file digest;
-- embedded report fingerprint;
-- source commit;
-- collection timestamp;
-- actual policy summary;
-- `atlas-badges` default-branch-guard outcome.
+Generated reports remain under the ignored `reports/` path and are not committed as ordinary repository source. Their complete identity is preserved in `docs/github-provider-guard-canary-final-receipt.json`.
 
-Expected movement is one provider check from failed to passed, but the recorded closeout must use the actual report rather than the expectation.
+| Evidence | Bytes | SHA-256 |
+| --- | ---: | --- |
+| `github-conformance-scoreboard.json` | 129283 | `df9b2744a0e2adab81550a825833d7baec80ab24678ff5cd31157767868e330c` |
+| `github-conformance-scoreboard.md` | 6929 | `d797d7a8b366367dffa7e4fe06a405bbafa16b6989e890e15dfb750a1068f140` |
+| `atlas-badges-canary-final-receipt.json` | 1022 | `298726c75d84ffb6954fd4d437eb786471f73fc40336f087c72f6def620f5e70` |
+| `atlas-badges-final-scoreboard-evidence.zip` | 6447 | `9c95ffe17159e8e67d91136435d370842d886d06d1da27906260c670cad4eca6` |
+
+The uploaded `SHA256SUMS.txt` matched all three contained evidence files.
 
 ## Residual evidence boundaries
 
@@ -101,8 +108,22 @@ The following were not performed:
 - rollback provider write;
 - wider ruleset rollout.
 
-The provider read-back proves the force-push and deletion rules are active, but no destructive rejection claim is made. These boundaries remain explicit rather than being converted into passes by inference.
+The provider read-back proves the force-push and deletion rules are configured and active, but no destructive rejection claim is made. These boundaries remain explicit rather than being converted into passes by inference.
 
-## Completion gate
+## Closeout decision
 
-The canary closeout is complete only when the stamped owner-authenticated report and its digests are reviewed and committed to Atlas Infra. Phase III and any wider provider programme remain open until that evidence is accepted through a separate pull request and approval gate.
+The bounded `atlas-badges` canary is complete.
+
+It proved:
+
+- the approved default-branch ruleset was stored exactly as intended;
+- repository auto-merge remained disabled;
+- the owner pull-request path remained usable;
+- the required native `test` context gates the protected path;
+- a genuine Dependabot pull request remains compatible;
+- the owner-authenticated scoreboard now records `atlas-badges` as passed;
+- the final report has a source commit, UTC collection timestamp, canonical fingerprint, file digests, and a machine-readable receipt.
+
+No further action is required for this canary.
+
+Any wider rollout must begin with a fresh provider inventory, an exact repository list, repository-specific required check discovery, rollback instructions, separate provider-write approval, and a new stamped scoreboard result.
