@@ -4,11 +4,11 @@ The GitHub conformance scoreboard is a read-only assurance report for repositori
 
 ## Programme state
 
-Phase II of the July 2026 GitHub conformance programme is in closeout. The scheduled run on 30 July 2026 reported zero policy failures across all 33 repositories in the authoritative public projection.
+Phase II of the July 2026 GitHub conformance programme is complete. Phase III resolved the former provider-evidence unknowns, created and validated the bounded `atlas-badges` default-branch guard canary, and is preparing a stamped owner-authenticated rerun before any wider rollout is proposed.
 
-The verified evidence, policy interpretation, residual boundaries, and next-phase separation are recorded in [`github-conformance-phase-ii-closeout.md`](github-conformance-phase-ii-closeout.md).
+The Phase II evidence and residual boundaries are recorded in [`github-conformance-phase-ii-closeout.md`](github-conformance-phase-ii-closeout.md). The provider audit, canary state, and remaining approval gates are recorded in [`github-provider-guard-audit.md`](github-provider-guard-audit.md).
 
-It reports two related views:
+The scoreboard reports two related views:
 
 - raw evidence inventory, which records whether GitHub evidence was observed;
 - policy conformance, which evaluates that evidence against `policy/github-conformance-requirements.json`.
@@ -16,6 +16,19 @@ It reports two related views:
 The separation prevents an intentionally non-releaseable repository from appearing non-compliant merely because it has no release workflow or tag. It also preserves missing evidence instead of hiding it behind policy exceptions.
 
 The scoreboard does not enumerate the GitHub account, discover private repositories, change settings, open pull requests, merge code, create releases, or deploy services.
+
+## Evidence identity
+
+The policy-aware v2 JSON report is stamped after collection with:
+
+- `collected_at`: the UTC collection timestamp;
+- `source.repository`: `AtlasReaper311/atlas-infra`;
+- `source.commit`: the exact 40-character Atlas Infra commit used for the run;
+- `fingerprint`: a canonical SHA-256 digest of the complete stamped report, excluding the fingerprint field itself.
+
+The Markdown report receives the same identity values. The stamper replaces any previous fingerprint and fails closed when the report schema, source commit, timestamp, JSON root, or Markdown heading is invalid.
+
+The fingerprint identifies the report contents. It is not a signature and does not replace the workflow artifact digest or an owner-authenticated provider read.
 
 ## Evidence checks
 
@@ -45,7 +58,7 @@ Each raw check is evaluated by the Atlas Infra requirements policy:
 - `passed`: required evidence was observed;
 - `failed`: required evidence was readable and absent;
 - `unknown`: required evidence could not be proved;
-- `not_applicable`: the check does not describe that repository class;
+- `not_applicable`: the check does not describe this repository class;
 - `exception`: accepted policy permits the missing evidence;
 - `deferred`: evidence is intentionally postponed until a separately approved milestone.
 
@@ -55,19 +68,47 @@ A passed observation satisfies an `exception` or `deferred` rule automatically. 
 
 ## Run locally
 
+Validate the tooling first:
+
 ```bash
-python3 -m py_compile scripts/github_api.py scripts/github_conformance_scoreboard.py scripts/github_conformance_policy.py
-python3 -m unittest scripts.tests.test_github_conformance_scoreboard scripts.tests.test_github_conformance_policy -v
+python3 -m py_compile \
+  scripts/github_api.py \
+  scripts/github_conformance_scoreboard.py \
+  scripts/github_conformance_policy.py \
+  scripts/github_conformance_stamp.py
+
+python3 -m unittest \
+  scripts.tests.test_github_conformance_scoreboard \
+  scripts.tests.test_github_conformance_policy \
+  scripts.tests.test_github_conformance_stamp \
+  -v
+
 python3 scripts/public_repository_classifications.py --check
-GITHUB_TOKEN="$(gh auth token)" python3 scripts/github_conformance_policy.py \
-  --json-out reports/github-conformance-scoreboard.json \
-  --markdown-out reports/github-conformance-scoreboard.md
 ```
 
-The local report is written under `reports/`, which is not committed.
+Build an owner-authenticated report from a clean Atlas Infra checkout:
+
+```bash
+set -eu
+
+SOURCE_COMMIT="$(git rev-parse HEAD)"
+mkdir -p reports
+
+GITHUB_TOKEN="$(gh auth token)" \
+python3 scripts/github_conformance_policy.py \
+  --json-out reports/github-conformance-scoreboard.json \
+  --markdown-out reports/github-conformance-scoreboard.md
+
+python3 scripts/github_conformance_stamp.py \
+  --json reports/github-conformance-scoreboard.json \
+  --markdown reports/github-conformance-scoreboard.md \
+  --source-commit "${SOURCE_COMMIT}"
+```
+
+The token is passed only to the collection process and must not be printed, copied into a report, or written to disk. The local report is written under `reports/`, which is not committed.
 
 ## GitHub Actions
 
-`.github/workflows/github-conformance-scoreboard.yml` runs weekly and on demand. It uploads the JSON and Markdown report as a short-retention workflow artifact and writes the Markdown report to the workflow summary.
+`.github/workflows/github-conformance-scoreboard.yml` runs weekly and on demand. It builds the policy-aware report, stamps it with `${GITHUB_SHA}`, uploads the JSON and Markdown as a short-retention workflow artifact, and writes the stamped Markdown report to the workflow summary.
 
-The workflow uses the repository-scoped `GITHUB_TOKEN` with read-only `contents` permission. Branch rulesets or classic protection can therefore remain `unknown`; unknown must not be rewritten as failed. If broader evidence is needed later, add a narrowly scoped read token as a separately reviewed provider change rather than expanding the default workflow authority.
+The workflow uses the repository-scoped `GITHUB_TOKEN` with read-only `contents` permission. Branch rulesets or classic protection can therefore remain `unknown`; unknown must not be rewritten as failed. Owner-authenticated provider evidence remains a separate local read unless a narrowly scoped read token is later approved through its own provider-change review.
