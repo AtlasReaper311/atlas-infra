@@ -1,0 +1,159 @@
+{
+  "schema_version": "atlas-control-plane/public-interface-evidence-mode-extension/v1",
+  "version": "1.0.0",
+  "status": "accepted",
+  "authority": {
+    "decision": "docs/adrs/ADR-0008-public-interface-system-v2.md",
+    "measured_extension_record": "docs/public-interface-successor-evidence-mode-authority.md",
+    "base_policy": "policy/public-interface-system-v2.json",
+    "governance_repository": "AtlasReaper311/atlas-infra",
+    "implementation_repository": "AtlasReaper311/atlas-interface-kit"
+  },
+  "evidence_basis": {
+    "atlas_systems_baseline_commit": "3971669be15d2cc26f7ba0dd0a644716578ef88d",
+    "source_confirmed_findings": [
+      "LAB-007a",
+      "LAB-007b"
+    ],
+    "inspected_surfaces": [
+      "Estate Conformance",
+      "Shape Detector",
+      "Lab directory",
+      "Systems directory"
+    ],
+    "confirmed_failures": [
+      "unavailable conformance evidence is rendered as measured zero counts",
+      "browser-generated Shape Detector fallback values are presented with live runtime-state semantics",
+      "Shape Detector directory entries describe the fallback-capable surface only as recorded replay"
+    ]
+  },
+  "taxonomies": {
+    "evidence_modes": [
+      "measured",
+      "stale-measured",
+      "recorded-replay",
+      "simulated",
+      "unavailable",
+      "unknown",
+      "not-applicable-unscored"
+    ],
+    "directory_data_modes": [
+      "Live",
+      "Replay",
+      "Generated",
+      "Simulated"
+    ],
+    "generated_output_is_evidence": false,
+    "generated_output_definition": "Output produced by the product itself that does not stand in for a measurement or assert the condition of a real system.",
+    "runtime_state_is_separate_from_evidence_mode": true,
+    "maturity_is_separate_from_evidence_mode": true
+  },
+  "mode_contracts": {
+    "measured": {
+      "label": "Measured",
+      "definition": "Current evidence obtained from a live bounded source.",
+      "semantic_runtime_hue_permitted": true,
+      "numeral_treatment": "plain-measured-value",
+      "source_and_age_required": true
+    },
+    "stale-measured": {
+      "label": "Stale measured",
+      "definition": "Previously measured evidence retained after its accepted freshness window.",
+      "semantic_runtime_hue_permitted": true,
+      "numeral_treatment": "measured-value-with-stale-marker",
+      "source_and_age_required": true
+    },
+    "recorded-replay": {
+      "label": "Recorded replay",
+      "definition": "Captured evidence played back without claiming to be the current condition.",
+      "semantic_runtime_hue_permitted": false,
+      "numeral_treatment": "recorded-value-with-replay-marker",
+      "source_and_age_required": true
+    },
+    "simulated": {
+      "label": "Simulated",
+      "definition": "Synthetic values standing in for measurements that were not taken.",
+      "semantic_runtime_hue_permitted": false,
+      "numeral_treatment": "synthetic-value-with-simulation-marker",
+      "source_and_age_required": false
+    },
+    "unavailable": {
+      "label": "Unavailable",
+      "definition": "The expected evidence source could not provide evidence.",
+      "semantic_runtime_hue_permitted": false,
+      "numeral_treatment": "em-dash",
+      "source_and_age_required": false
+    },
+    "unknown": {
+      "label": "Unknown",
+      "definition": "The evidence source, meaning, or state cannot be determined from the available information.",
+      "semantic_runtime_hue_permitted": false,
+      "numeral_treatment": "em-dash",
+      "source_and_age_required": false
+    },
+    "not-applicable-unscored": {
+      "label": "Not applicable / unscored",
+      "definition": "The measure does not apply or has been excluded from the scoring denominator.",
+      "semantic_runtime_hue_permitted": false,
+      "numeral_treatment": "not-applicable-or-unscored-label",
+      "source_and_age_required": false
+    }
+  },
+  "presentation": {
+    "evidence_bearing_operational_surfaces_only": true,
+    "mode_attribute": "data-evidence-mode",
+    "runtime_state_attribute": "data-runtime-state",
+    "visible_mode_label_required": true,
+    "machine_readable_mode_required": true,
+    "redundant_signals": [
+      "visible-text-label",
+      "surface-treatment",
+      "numeral-convention"
+    ],
+    "semantic_runtime_hue_modes": [
+      "measured",
+      "stale-measured"
+    ],
+    "neutral_surface_modes": [
+      "recorded-replay",
+      "simulated",
+      "unavailable",
+      "unknown",
+      "not-applicable-unscored"
+    ],
+    "zero_may_not_represent": [
+      "unavailable",
+      "unknown",
+      "not-applicable-unscored"
+    ],
+    "fallback_mode_must_remain_visible_across_primary_state_metrics_tables_and_charts": true,
+    "generated_product_output_may_retain_product_specific_palette": true,
+    "directory_and_destination_vocabulary_must_agree": true,
+    "colour_must_not_be_the_only_signal": true
+  },
+  "distribution": {
+    "intended_interface_kit_release": "0.5.0",
+    "repository_local_assets_required": true,
+    "fingerprint_verification_required": true,
+    "consumer_adoption_requires_separate_pull_request": true,
+    "consumer_rollout_requires_separate_approval": true,
+    "visual_merge_approval_required": true,
+    "shared_runtime_javascript_forbidden": true
+  },
+  "excluded": [
+    "consumer-source-changes",
+    "consumer-deployment",
+    "provider-settings",
+    "secrets",
+    "runtime-routing",
+    "endpoint-contract-changes",
+    "anomaly-calculation-changes",
+    "conformance-calculation-changes",
+    "generated-product-output-reclassification",
+    "system-symphony-scenario-palette-changes",
+    "maturity-taxonomy-changes",
+    "runtime-state-taxonomy-changes",
+    "directory-layout-changes",
+    "global-navigation-redesign"
+  ]
+}
