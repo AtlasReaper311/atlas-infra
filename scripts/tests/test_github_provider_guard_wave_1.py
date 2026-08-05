@@ -56,9 +56,23 @@ class GithubProviderGuardWave1Tests(unittest.TestCase):
         self.assertNotIn('sort -z', self.script)
 
     def test_plan_preserves_later_wave_boundaries(self) -> None:
-        self.assertIn('Wave 1A contains exactly two repositories.', self.plan)
-        self.assertIn('does not:', self.plan)
-        self.assertIn('begin Wave 1B or any later wave', self.plan)
+        wave_1a = self.plan.split('### Wave 1A: completed', 1)[1].split(
+            '### Wave 1B: not started',
+            1,
+        )[0]
+        repositories = re.findall(r'`AtlasReaper311/([^`]+)`', wave_1a)
+        self.assertEqual(
+            repositories,
+            [
+                'atlas-bootstrap',
+                'atlas-resource-audit',
+            ],
+        )
+        self.assertIn('### Wave 1B: not started', self.plan)
+        self.assertIn(
+            'No later wave may begin implicitly from completion of Wave 1A.',
+            self.plan,
+        )
         self.assertIn('separate provider-write approval', self.plan)
 
 
