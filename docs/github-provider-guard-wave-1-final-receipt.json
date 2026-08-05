@@ -1,0 +1,107 @@
+{
+  "authority": {
+    "commit": "c84c4f4822ced17da79cba552def0eb9ada215a6",
+    "repository": "AtlasReaper311/atlas-infra"
+  },
+  "later_waves_started": false,
+  "owner_validation": {
+    "atlas-bootstrap": {
+      "merge_commit": "c4da05eb850ec9dffa8cf84e98d33f0b8d4aaa22",
+      "pull_request": 10,
+      "required_context": "build",
+      "required_run": 30990627184,
+      "reviewed_head": "1bb61ab660fd987625bee83b57ed71caefd0da1f"
+    },
+    "atlas-resource-audit": {
+      "codeql_run": 30990644964,
+      "merge_commit": "76ec572239a35c7f8a00111801e1aaebd1dc1b27",
+      "pull_request": 13,
+      "required_context": "Offline resource audit",
+      "required_run": 30990644705,
+      "reviewed_head": "9d44d8b4ef417fa92ef29d5e7481bdb0990ea839"
+    }
+  },
+  "provider_evidence": {
+    "archive_sha256": "ccbcf57ac3bc0df833b93657fc2ec9c0d76b43e26fe822a0c4fd21ef6e01decf",
+    "receipt": {
+      "authority": {
+        "commit": "c84c4f4822ced17da79cba552def0eb9ada215a6",
+        "repository": "AtlasReaper311/atlas-infra"
+      },
+      "later_waves_started": false,
+      "repositories": {
+        "atlas-bootstrap": {
+          "active_rules": [
+            "deletion",
+            "non_fast_forward",
+            "pull_request",
+            "required_status_checks"
+          ],
+          "auto_merge_after": false,
+          "auto_merge_before": false,
+          "integration_id": 15368,
+          "required_context": "build",
+          "ruleset_id": 20443224,
+          "validation_head": "aea2f6412f711f4b7342a548c398ae94ed890702",
+          "validation_pull_request": 9
+        },
+        "atlas-resource-audit": {
+          "active_rules": [
+            "deletion",
+            "non_fast_forward",
+            "pull_request",
+            "required_status_checks"
+          ],
+          "auto_merge_after": false,
+          "auto_merge_before": false,
+          "integration_id": 15368,
+          "required_context": "Offline resource audit",
+          "ruleset_id": 20443225,
+          "validation_head": "67dcd75194fc9ffd5c3002d722013626a4315872",
+          "validation_pull_request": 11
+        }
+      },
+      "schema": "atlas-github-provider-guard-wave-1/receipt/v1",
+      "verified_at": "2026-08-05T08:44:25.577356Z"
+    }
+  },
+  "schema": "atlas-github-provider-guard-wave-1/final-receipt/v1",
+  "scoreboard": {
+    "collected_at": "2026-08-05T08:56:34Z",
+    "default_branch_guards": {
+      "AtlasReaper311/atlas-bootstrap": {
+        "id": "default_branch_guard",
+        "label": "Default branch PR guard",
+        "message": "An active default-branch ruleset was observed.",
+        "outcome": "passed",
+        "policy_message": "Estate-wide default requirement.",
+        "requirement": "required",
+        "status": "passed"
+      },
+      "AtlasReaper311/atlas-resource-audit": {
+        "id": "default_branch_guard",
+        "label": "Default branch PR guard",
+        "message": "An active default-branch ruleset was observed.",
+        "outcome": "passed",
+        "policy_message": "Estate-wide default requirement.",
+        "requirement": "required",
+        "status": "passed"
+      }
+    },
+    "fingerprint": "sha256:6838a900dbae4b2c1b4e218b2a5d02e9922649c5ea17e9740a402a145eb1c485",
+    "summary": {
+      "checks_deferred": 1,
+      "checks_exception": 1,
+      "checks_failed": 94,
+      "checks_not_applicable": 68,
+      "checks_passed": 236,
+      "checks_total": 330,
+      "checks_unknown": 0,
+      "policy_checks_failed": 24,
+      "policy_checks_passed": 236,
+      "policy_checks_required": 260,
+      "policy_checks_unknown": 0,
+      "repositories_checked": 33
+    }
+  }
+}
