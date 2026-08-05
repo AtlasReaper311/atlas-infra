@@ -1,14 +1,14 @@
-# GitHub provider guard wider rollout: Wave 1 plan
+# GitHub provider guard wider rollout
 
-Status: source plan prepared. No wider-rollout provider write has been performed.
+Status: Wave 1A completed and evidenced. Wave 1B and all later waves remain unstarted.
 
 ## Purpose
 
-Extend the proven `atlas-badges` default-branch guard pattern to a first bounded rollout wave without treating the remaining estate as homogeneous.
+Extend the proven `atlas-badges` default-branch guard pattern across the remaining public estate without treating repositories with different runtime, release, automation, or existing-protection characteristics as interchangeable.
 
-This programme begins from the final canary receipt merged in `atlas-infra#124` as `72b85fe4a04598da20a1c10543dd24ed90e796a1`.
+The programme began from the final canary receipt merged in `atlas-infra#124` as `72b85fe4a04598da20a1c10543dd24ed90e796a1`.
 
-The owner-authenticated scoreboard collected on `2026-08-04T23:22:02Z` recorded:
+The canary-closeout scoreboard collected on `2026-08-04T23:22:02Z` recorded:
 
 - report fingerprint: `sha256:cfb03af45343602dfa5bcc1c6180d2e054242a14a6295695ffda99d7ae5427bd`;
 - repositories checked: 33;
@@ -16,210 +16,173 @@ The owner-authenticated scoreboard collected on `2026-08-04T23:22:02Z` recorded:
 - required checks failed: 26;
 - required checks unknown: 0.
 
-All 26 required failures are readable `default_branch_guard` findings. This plan does not reinterpret them as source defects.
+All 26 failures were readable `default_branch_guard` findings.
 
-## Part 0 result
+## Rollout groups
 
-The remaining repositories divide into five operational groups.
+### Wave 1A: completed
 
-### Wave 1A: active non-runtime, current Dependabot proof available
+Active public non-runtime repositories with genuine Dependabot proof available:
 
-- `AtlasReaper311/atlas-bootstrap`
-- `AtlasReaper311/atlas-resource-audit`
+- `AtlasReaper311/atlas-bootstrap`;
+- `AtlasReaper311/atlas-resource-audit`.
 
-### Wave 1B: active non-runtime, fresh owner validation still required
+Wave 1A source authority was merged in `atlas-infra#125` as `c84c4f4822ced17da79cba552def0eb9ada215a6`.
 
-- `AtlasReaper311/ollama-rag-kit`
+Final evidence is recorded in:
+
+- `docs/github-provider-guard-wave-1-closeout.md`;
+- `docs/github-provider-guard-wave-1-final-receipt.json`.
+
+### Wave 1B: not started
+
+Active public non-runtime repository requiring a fresh owner validation pull request:
+
+- `AtlasReaper311/ollama-rag-kit`.
+
+Wave 1B requires a fresh Part 0 inspection, repository-native required-check discovery, and separate provider-write approval.
 
 ### Wave 2: specialist active non-runtime repositories
 
-- `AtlasReaper311/atlas-gardener`
-- `AtlasReaper311/atlas-interface-kit`
-- `AtlasReaper311/atlas-journey-watch`
+- `AtlasReaper311/atlas-gardener`;
+- `AtlasReaper311/atlas-interface-kit`;
+- `AtlasReaper311/atlas-journey-watch`.
 
-`atlas-journey-watch` currently has repository auto-merge capability enabled. It is excluded until its automation authority and desired repository setting are reviewed together.
+`atlas-gardener` is the dependency-remediation controller and requires a controller-specific protection review.
 
-`atlas-gardener` is the dependency-remediation controller and needs a controller-specific protection review rather than being treated as a generic utility.
+`atlas-interface-kit` owns immutable interface releases and requires release-path compatibility evidence.
 
-`atlas-interface-kit` owns immutable interface releases and needs release-path compatibility evidence before protection changes.
+`atlas-journey-watch` had repository auto-merge capability enabled during the Wave 1 inspection and remains excluded until its automation authority and desired repository setting are reviewed together.
 
 ### Wave 3: partial classic-protection migrations
 
-- `AtlasReaper311/atlas-doc-viewer`
-- `AtlasReaper311/atlas-quota-watch`
-- `AtlasReaper311/site-pulse`
-- `AtlasReaper311/specular-sonify`
-- `AtlasReaper311/status`
+- `AtlasReaper311/atlas-doc-viewer`;
+- `AtlasReaper311/atlas-quota-watch`;
+- `AtlasReaper311/site-pulse`;
+- `AtlasReaper311/specular-sonify`;
+- `AtlasReaper311/status`.
 
-These are migrations, not additions. Their existing classic protection must be captured and either preserved or deliberately replaced one repository at a time.
+These are migrations rather than additions. Existing classic protection must be captured and deliberately preserved or replaced one repository at a time.
 
-### Wave 4: production runtime repositories without a qualifying guard
+### Wave 4: production runtime repositories
 
-- `AtlasReaper311/atlas-api-index`
-- `AtlasReaper311/atlas-blackbox`
-- `AtlasReaper311/atlas-corpus`
-- `AtlasReaper311/atlas-daily-digest`
-- `AtlasReaper311/atlas-dora`
-- `AtlasReaper311/atlas-notify`
-- `AtlasReaper311/deploy-watch`
-- `AtlasReaper311/github-pulse`
-- `AtlasReaper311/ramone-edge`
-- `AtlasReaper311/ramone-memory`
-- `AtlasReaper311/ramone-voice-trigger`
-- `AtlasReaper311/specular-sentinel`
-- `AtlasReaper311/specular-telemetry`
+- `AtlasReaper311/atlas-api-index`;
+- `AtlasReaper311/atlas-blackbox`;
+- `AtlasReaper311/atlas-corpus`;
+- `AtlasReaper311/atlas-daily-digest`;
+- `AtlasReaper311/atlas-dora`;
+- `AtlasReaper311/atlas-notify`;
+- `AtlasReaper311/deploy-watch`;
+- `AtlasReaper311/github-pulse`;
+- `AtlasReaper311/ramone-edge`;
+- `AtlasReaper311/ramone-memory`;
+- `AtlasReaper311/ramone-voice-trigger`;
+- `AtlasReaper311/specular-sentinel`;
+- `AtlasReaper311/specular-telemetry`.
 
-Runtime repositories require deployment and emergency-recovery path inspection before each provider write.
+Each runtime repository requires deployment, publication, emergency-recovery, and required-check inspection before a provider write.
 
 ### Wave 5: owner-wide special repositories
 
-- `AtlasReaper311/.github`
-- `AtlasReaper311/AtlasReaper311`
+- `AtlasReaper311/.github`;
+- `AtlasReaper311/AtlasReaper311`.
 
-These repositories do not currently provide a recent repository-native pull-request gate. They remain last until their special inheritance and profile behaviour is reviewed and a meaningful native check exists.
+These repositories did not provide a recent repository-native pull-request gate during the Wave 1 inspection. They remain last until their special inheritance or profile behaviour is reviewed and a meaningful native check exists.
 
-## Wave 1A selection
+## Standard ruleset pattern
 
-Wave 1A contains exactly two repositories.
-
-Both are:
-
-- public;
-- lifecycle `active`;
-- classified as non-runtime;
-- on default branch `main`;
-- not archived;
-- configured with repository auto-merge disabled;
-- reported by the final owner-authenticated scoreboard as having no active qualifying ruleset or classic pull-request guard;
-- covered by a current genuine Dependabot pull request with the repository-owned native check passing.
-
-### atlas-bootstrap
-
-Current validation pull request:
-
-- pull request: `atlas-bootstrap#9`;
-- state: open and mergeable;
-- inspected head: `aea2f6412f711f4b7342a548c398ae94ed890702`;
-- required native context: `build`;
-- GitHub Actions integration ID: `15368`;
-- `Dependabot review policy` run `30681441159`: success;
-- `ci` run `30681441407`: success;
-- `OpenSSF Scorecard` run `30681441188`: success.
-
-The `build` job performs Bash syntax, JSON validity, and PowerShell AST parsing. CodeQL is not selected because the repository implementation is Bash and PowerShell outside the configured CodeQL language set.
-
-### atlas-resource-audit
-
-Current validation pull request:
-
-- pull request: `atlas-resource-audit#11`;
-- state: open and mergeable;
-- inspected head: `67dcd75194fc9ffd5c3002d722013626a4315872`;
-- required native context: `Offline resource audit`;
-- GitHub Actions integration ID: `15368`;
-- `Dependabot review policy` run `30681524898`: success;
-- `Pull request CI` run `30681524897`: success;
-- `CodeQL` run `30681524902`: success;
-- `OpenSSF Scorecard` run `30681524901`: success.
-
-The `Offline resource audit` job compiles and tests the deterministic audit engine without accessing Cloudflare provider state.
-
-## Proposed ruleset state
-
-Each Wave 1A repository receives one repository ruleset with the same structural pattern proven on `atlas-badges` and its own exact native check context.
-
-Common state:
+The default pattern proven by the canary and Wave 1A is:
 
 - name: `Atlas default branch PR guard`;
 - target: branch;
 - condition: `~DEFAULT_BRANCH`;
 - enforcement: active;
-- require changes through a pull request;
+- changes must pass through a pull request;
 - required approving reviews: 0;
 - required review thread resolution: false;
-- block deletion;
-- block non-fast-forward updates;
+- repository-native required status check bound to GitHub Actions integration ID `15368`;
+- deletion blocked;
+- non-fast-forward updates blocked;
 - no bypass actors;
-- strict required-status branch update policy: false;
-- repository auto-merge remains disabled.
+- strict required-status branch update policy disabled;
+- repository auto-merge unchanged unless separately authorised.
 
-Required status checks:
+This pattern is not applied blindly. Each repository must first prove the exact native context, integration, automation compatibility, and recovery boundary.
 
-| Repository | Context | Integration ID |
-| --- | --- | ---: |
-| `atlas-bootstrap` | `build` | `15368` |
-| `atlas-resource-audit` | `Offline resource audit` | `15368` |
+## Wave 1A outcome
 
-## Fail-closed runner
+Provider results:
 
-`scripts/github-provider-guard-wave-1.sh` owns the proposed operator path.
+| Repository | Ruleset | Required context |
+| --- | ---: | --- |
+| `atlas-bootstrap` | `20443224` | `build` |
+| `atlas-resource-audit` | `20443225` | `Offline resource audit` |
 
-It defaults to `MODE=inspect` and performs only read operations. Inspection requires:
+Both rulesets were created through the approved fail-closed runner, read back from GitHub, and independently observed through the active-rules endpoint. Both retained repository auto-merge disabled.
 
-- the authenticated GitHub user is `AtlasReaper311`;
-- each repository is public, unarchived, on `main`, and has auto-merge disabled;
-- no active branch ruleset is present;
-- classic branch protection is absent;
-- the named validation pull request remains open against `main`;
-- the required native check is completed successfully under GitHub Actions integration `15368`.
+Protected owner-path proof:
 
-Provider writes require both:
+- `atlas-bootstrap#10` passed at `1bb61ab660fd987625bee83b57ed71caefd0da1f` and merged as `c4da05eb850ec9dffa8cf84e98d33f0b8d4aaa22`;
+- `atlas-resource-audit#13` passed at `9d44d8b4ef417fa92ef29d5e7481bdb0990ea839` and merged as `76ec572239a35c7f8a00111801e1aaebd1dc1b27`.
 
-```text
-MODE=apply
-ATLAS_PROVIDER_WRITE_CONFIRMATION=APPLY GITHUB PROVIDER GUARD WAVE 1
-```
+The final owner-authenticated scoreboard collected at `2026-08-05T08:56:34Z` recorded:
 
-The apply path is limited to the two declared repositories. It stores the request, create response, provider read-back, active-rule projection, repository settings, validation pull request, check runs, and SHA-256 file list under the ignored `reports/` directory.
+- report fingerprint: `sha256:6838a900dbae4b2c1b4e218b2a5d02e9922649c5ea17e9740a402a145eb1c485`;
+- repositories checked: 33;
+- required checks passed: 236;
+- required checks failed: 24;
+- required checks unknown: 0;
+- both Wave 1A repositories passed `default_branch_guard`.
 
-The runner refuses to continue when provider state has drifted. It does not edit an existing ruleset or migrate classic protection by assumption.
+Wave 1A is closed and requires no further work.
 
-## Validation sequence
+## Per-wave execution contract
 
-After source review and a separate provider-write approval:
+Every later wave must follow this sequence:
 
-1. run the script in inspection mode from a clean checkout of the approved Atlas Infra merge commit;
-2. review the generated pre-write evidence and digests;
-3. run the script in apply mode with the exact confirmation phrase;
-4. verify each ruleset create response and provider read-back are equivalent in meaning;
-5. verify the four active rules apply to `main`;
-6. confirm repository auto-merge remains disabled;
-7. re-read the two existing Dependabot pull requests and their required checks;
-8. open one harmless owner validation pull request in each repository;
-9. merge each owner validation pull request only after the required context passes;
-10. rerun the stamped owner-authenticated scoreboard from the exact Atlas Infra source commit;
-11. expect movement from 234 passed and 26 failed to 236 passed and 24 failed only when no unrelated estate drift occurred;
-12. commit the actual report identity and provider evidence through a separate Atlas Infra closeout pull request.
+1. inspect current repository, ruleset, classic-protection, auto-merge, pull-request, workflow, release, deployment, and recovery state;
+2. discover the exact repository-native required check and GitHub App integration;
+3. prepare source authority and a fail-closed inspection-first runner;
+4. merge source authority after exact-head validation;
+5. obtain separate provider-write approval for an exact repository list;
+6. run read-only inspection from the approved authority commit;
+7. review pre-write evidence and digests;
+8. perform only the approved provider writes;
+9. verify provider create responses, read-backs, active rules, and unchanged unrelated settings;
+10. prove genuine automation compatibility;
+11. open and merge harmless owner validation pull requests through the new guards;
+12. run a stamped owner-authenticated scoreboard;
+13. commit a final machine-readable receipt and human-readable closeout record.
 
-Expected counts are planning arithmetic, not evidence. The closeout must record the actual stamped result.
+Expected count movement is planning arithmetic, not evidence. Only the stamped report closes a wave.
 
 ## Rollback
 
-If either repository blocks an intended owner or Dependabot path:
+When a new rule blocks an intended owner or automation path:
 
 1. stop the wave immediately;
-2. do not touch the other repository if its write has not occurred;
-3. identify only the ruleset ID created for the affected repository from the evidence directory;
+2. do not touch repositories whose approved write has not occurred;
+3. identify only the affected ruleset ID from the evidence directory;
 4. obtain separate rollback approval;
 5. disable or delete only that ruleset;
-6. verify repository auto-merge and all unrelated settings remain unchanged;
+6. verify repository auto-merge and unrelated settings remain unchanged;
 7. rerun the owner-authenticated scoreboard;
-8. record the failure and do not begin Wave 1B.
+8. record the failure and do not begin the next wave.
 
-Rollback is a provider write and is not pre-approved by this source plan.
+Rollback is a provider write and is never implied by rollout approval.
 
 ## Boundaries
 
-This source plan does not:
+No later wave may begin implicitly from completion of Wave 1A.
 
-- create, update, disable, or delete a ruleset;
-- edit classic branch protection;
-- change auto-merge capability;
-- merge a Dependabot pull request;
-- dispatch a workflow;
-- create a release or tag;
-- deploy anything;
-- change a secret or token;
-- begin Wave 1B or any later wave.
+Separate approval remains required for:
 
-The shared work-allocation document is not changed because unrelated Phase 15 coordination remains active in `atlas-infra#122`.
+- each exact provider-write repository list;
+- classic-protection migration;
+- changing repository auto-merge;
+- destructive direct-push, force-push, or deletion tests;
+- merging Dependabot pull requests;
+- workflow dispatches;
+- releases, tags, deployments, publications, or secret changes.
+
+The shared `docs/work-allocation.md` remains untouched because public-interface Phase 15 coordination is independent of this provider programme.
