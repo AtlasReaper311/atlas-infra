@@ -1,0 +1,279 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://atlas-systems.uk/contracts/v1/public-interface/public-interface-evidence-mode-extension.schema.json",
+  "title": "Atlas Systems public interface evidence-mode extension",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "version",
+    "status",
+    "authority",
+    "evidence_basis",
+    "taxonomies",
+    "mode_contracts",
+    "presentation",
+    "distribution",
+    "excluded"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "atlas-control-plane/public-interface-evidence-mode-extension/v1"
+    },
+    "version": {
+      "const": "1.0.0"
+    },
+    "status": {
+      "const": "accepted"
+    },
+    "authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "decision",
+        "measured_extension_record",
+        "base_policy",
+        "governance_repository",
+        "implementation_repository"
+      ],
+      "properties": {
+        "decision": {
+          "const": "docs/adrs/ADR-0008-public-interface-system-v2.md"
+        },
+        "measured_extension_record": {
+          "const": "docs/public-interface-successor-evidence-mode-authority.md"
+        },
+        "base_policy": {
+          "const": "policy/public-interface-system-v2.json"
+        },
+        "governance_repository": {
+          "const": "AtlasReaper311/atlas-infra"
+        },
+        "implementation_repository": {
+          "const": "AtlasReaper311/atlas-interface-kit"
+        }
+      }
+    },
+    "evidence_basis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "atlas_systems_baseline_commit",
+        "source_confirmed_findings",
+        "inspected_surfaces",
+        "confirmed_failures"
+      ],
+      "properties": {
+        "atlas_systems_baseline_commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "source_confirmed_findings": {
+          "type": "array",
+          "prefixItems": [
+            {"const": "LAB-007a"},
+            {"const": "LAB-007b"}
+          ],
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "inspected_surfaces": {
+          "type": "array",
+          "minItems": 4,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "confirmed_failures": {
+          "type": "array",
+          "minItems": 3,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "taxonomies": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "evidence_modes",
+        "directory_data_modes",
+        "generated_output_is_evidence",
+        "generated_output_definition",
+        "runtime_state_is_separate_from_evidence_mode",
+        "maturity_is_separate_from_evidence_mode"
+      ],
+      "properties": {
+        "evidence_modes": {
+          "type": "array",
+          "prefixItems": [
+            {"const": "measured"},
+            {"const": "stale-measured"},
+            {"const": "recorded-replay"},
+            {"const": "simulated"},
+            {"const": "unavailable"},
+            {"const": "unknown"},
+            {"const": "not-applicable-unscored"}
+          ],
+          "minItems": 7,
+          "maxItems": 7
+        },
+        "directory_data_modes": {
+          "type": "array",
+          "prefixItems": [
+            {"const": "Live"},
+            {"const": "Replay"},
+            {"const": "Generated"},
+            {"const": "Simulated"}
+          ],
+          "minItems": 4,
+          "maxItems": 4
+        },
+        "generated_output_is_evidence": {"const": false},
+        "generated_output_definition": {"type": "string", "minLength": 1},
+        "runtime_state_is_separate_from_evidence_mode": {"const": true},
+        "maturity_is_separate_from_evidence_mode": {"const": true}
+      }
+    },
+    "mode_contracts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "measured",
+        "stale-measured",
+        "recorded-replay",
+        "simulated",
+        "unavailable",
+        "unknown",
+        "not-applicable-unscored"
+      ],
+      "properties": {
+        "measured": {"$ref": "#/$defs/modeContract"},
+        "stale-measured": {"$ref": "#/$defs/modeContract"},
+        "recorded-replay": {"$ref": "#/$defs/modeContract"},
+        "simulated": {"$ref": "#/$defs/modeContract"},
+        "unavailable": {"$ref": "#/$defs/modeContract"},
+        "unknown": {"$ref": "#/$defs/modeContract"},
+        "not-applicable-unscored": {"$ref": "#/$defs/modeContract"}
+      }
+    },
+    "presentation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "evidence_bearing_operational_surfaces_only",
+        "mode_attribute",
+        "runtime_state_attribute",
+        "visible_mode_label_required",
+        "machine_readable_mode_required",
+        "redundant_signals",
+        "semantic_runtime_hue_modes",
+        "neutral_surface_modes",
+        "zero_may_not_represent",
+        "fallback_mode_must_remain_visible_across_primary_state_metrics_tables_and_charts",
+        "generated_product_output_may_retain_product_specific_palette",
+        "directory_and_destination_vocabulary_must_agree",
+        "colour_must_not_be_the_only_signal"
+      ],
+      "properties": {
+        "evidence_bearing_operational_surfaces_only": {"const": true},
+        "mode_attribute": {"const": "data-evidence-mode"},
+        "runtime_state_attribute": {"const": "data-runtime-state"},
+        "visible_mode_label_required": {"const": true},
+        "machine_readable_mode_required": {"const": true},
+        "redundant_signals": {
+          "type": "array",
+          "prefixItems": [
+            {"const": "visible-text-label"},
+            {"const": "surface-treatment"},
+            {"const": "numeral-convention"}
+          ],
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "semantic_runtime_hue_modes": {
+          "type": "array",
+          "prefixItems": [
+            {"const": "measured"},
+            {"const": "stale-measured"}
+          ],
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "neutral_surface_modes": {
+          "type": "array",
+          "prefixItems": [
+            {"const": "recorded-replay"},
+            {"const": "simulated"},
+            {"const": "unavailable"},
+            {"const": "unknown"},
+            {"const": "not-applicable-unscored"}
+          ],
+          "minItems": 5,
+          "maxItems": 5
+        },
+        "zero_may_not_represent": {
+          "type": "array",
+          "prefixItems": [
+            {"const": "unavailable"},
+            {"const": "unknown"},
+            {"const": "not-applicable-unscored"}
+          ],
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "fallback_mode_must_remain_visible_across_primary_state_metrics_tables_and_charts": {"const": true},
+        "generated_product_output_may_retain_product_specific_palette": {"const": true},
+        "directory_and_destination_vocabulary_must_agree": {"const": true},
+        "colour_must_not_be_the_only_signal": {"const": true}
+      }
+    },
+    "distribution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "intended_interface_kit_release",
+        "repository_local_assets_required",
+        "fingerprint_verification_required",
+        "consumer_adoption_requires_separate_pull_request",
+        "consumer_rollout_requires_separate_approval",
+        "visual_merge_approval_required",
+        "shared_runtime_javascript_forbidden"
+      ],
+      "properties": {
+        "intended_interface_kit_release": {"const": "0.5.0"},
+        "repository_local_assets_required": {"const": true},
+        "fingerprint_verification_required": {"const": true},
+        "consumer_adoption_requires_separate_pull_request": {"const": true},
+        "consumer_rollout_requires_separate_approval": {"const": true},
+        "visual_merge_approval_required": {"const": true},
+        "shared_runtime_javascript_forbidden": {"const": true}
+      }
+    },
+    "excluded": {
+      "type": "array",
+      "minItems": 14,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    }
+  },
+  "$defs": {
+    "modeContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "label",
+        "definition",
+        "semantic_runtime_hue_permitted",
+        "numeral_treatment",
+        "source_and_age_required"
+      ],
+      "properties": {
+        "label": {"type": "string", "minLength": 1},
+        "definition": {"type": "string", "minLength": 1},
+        "semantic_runtime_hue_permitted": {"type": "boolean"},
+        "numeral_treatment": {"type": "string", "minLength": 1},
+        "source_and_age_required": {"type": "boolean"}
+      }
+    }
+  }
+}
