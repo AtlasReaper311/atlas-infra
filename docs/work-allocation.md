@@ -13,12 +13,11 @@ Last updated: 2026-08-06.
 ### atlas-twin Stage 1 change-passport MVP
 
 - **Repo(s):** `atlas-twin`; coordination only in `atlas-infra`
-- **Agent:** Cursor agent with Atlas approving create, PR open, and any later merge
+- **Agent:** Cursor agent with Atlas approving review and any later merge
 - **Status:** active
 - **Started:** 2026-08-06
 - **Last updated:** 2026-08-06
-- **Summary:** Implementing the approved Stage 1 offline CLI and library MVP for private `AtlasReaper311/atlas-twin` on `feat/stage-1-change-passport`. Emits `atlas-change-passport/v1` via an importlib adapter to `atlas-infra/scripts/change_impact.py`. No secrets, network modes, provider writes, public registry edits, `atlas-motion` changes, deployment, or merge without further explicit approval.
-- **Resume point:** Finish Stage 1 source, open the twin draft PR, keep this Infra work-allocation PR separate, and stop before either merge.
+- **Summary:** Stage 1 implementation is complete for private `AtlasReaper311/atlas-twin`. Open pull requests `atlas-twin#1` and `atlas-infra#128` are awaiting review and explicit merge approval. Scope remains offline CLI/library only; no secrets, network modes, provider writes, public registry edits, `atlas-motion` changes, deployment, or merge without further explicit approval.
 
 ## Queued work
 
