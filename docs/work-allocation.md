@@ -6,12 +6,11 @@ sessions do not silently duplicate or reverse each other.
 
 Update or remove an entry as soon as its status changes.
 
-Last updated: 2026-08-05.
+Last updated: 2026-08-06.
 
 ## Active work
 
-None recorded for the public-interface programme. The original programme is
-complete through Phase 15.
+None recorded.
 
 ## Queued work
 
@@ -48,7 +47,17 @@ complete through Phase 15.
 
 ## Recently completed
 
+### atlas-twin Stage 1 change-passport MVP
+
+- **Repo(s):** `atlas-twin`; coordination only in `atlas-infra`
+- **Agent:** Cursor agent with Atlas approving exact-head squash merge
+- **Status:** done
+- **Started:** 2026-08-06
+- **Last updated:** 2026-08-06
+- **Summary:** Stage 1 offline CLI and library MVP merged through `atlas-twin#1` as squash commit `6ea6444cda72fd2dfb8c702f646010d60b7ac78c` from exact head `bccd49adde178e4ae2a97ebee9b0539f5f46e567`. No deployment or live rollout exists for `atlas-twin`; Stage 1 remains a private offline tool with no hosted runtime. This coordination PR updates work-allocation only and remains separately merge-gated.
+
 ### Public interface programme Phase 15
+
 
 - **Repo(s):** `atlas-infra`, `atlas-systems`; read-only reconciliation included
   `atlas-interface-kit`, `status`, `atlas-doc-viewer`, `ramone-edge`,
