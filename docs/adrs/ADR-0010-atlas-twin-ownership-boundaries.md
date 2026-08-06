@@ -1,7 +1,7 @@
 +++
 id = "ADR-0010"
 date = 2026-08-06
-status = "proposed"
+status = "accepted"
 visibility = "internal"
 repositories = ["AtlasReaper311/atlas-infra", "AtlasReaper311/atlas-api-public"]
 services = []
@@ -17,6 +17,11 @@ Atlas Systems needed a local, evidence-backed answer to what a proposed change
 affects, why that conclusion is trusted, what evidence is missing, and what
 validation remains separately approval-gated. Stage 1 delivered an offline
 change-passport simulator in the private repository `AtlasReaper311/atlas-twin`.
+
+Atlas Twin Stage 2 is now merged on `AtlasReaper311/atlas-twin` main as squash
+commit `7c333fa0d39e3281ef82decdc59ae3b3fb1ac1c6`. Version `0.2.0` provides
+contract hardening and deterministic passport comparison. No deployment, live
+rollout, release, publication, or hosted runtime exists for Twin.
 
 Without an accepted ownership record, later work risks conflating:
 
