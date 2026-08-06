@@ -6,12 +6,19 @@ sessions do not silently duplicate or reverse each other.
 
 Update or remove an entry as soon as its status changes.
 
-Last updated: 2026-08-05.
+Last updated: 2026-08-06.
 
 ## Active work
 
-None recorded for the public-interface programme. The original programme is
-complete through Phase 15.
+### atlas-twin Stage 1 change-passport MVP
+
+- **Repo(s):** `atlas-twin`; coordination only in `atlas-infra`
+- **Agent:** Cursor agent with Atlas approving create, PR open, and any later merge
+- **Status:** active
+- **Started:** 2026-08-06
+- **Last updated:** 2026-08-06
+- **Summary:** Implementing the approved Stage 1 offline CLI and library MVP for private `AtlasReaper311/atlas-twin` on `feat/stage-1-change-passport`. Emits `atlas-change-passport/v1` via an importlib adapter to `atlas-infra/scripts/change_impact.py`. No secrets, network modes, provider writes, public registry edits, `atlas-motion` changes, deployment, or merge without further explicit approval.
+- **Resume point:** Finish Stage 1 source, open the twin draft PR, keep this Infra work-allocation PR separate, and stop before either merge.
 
 ## Queued work
 
