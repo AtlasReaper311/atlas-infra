@@ -6,11 +6,19 @@ sessions do not silently duplicate or reverse each other.
 
 Update or remove an entry as soon as its status changes.
 
-Last updated: 2026-08-06.
+Last updated: 2026-08-07.
 
 ## Active work
 
-None recorded.
+### GitHub provider guard Wave 1B
+
+- **Repo(s):** `atlas-infra` plus `ollama-rag-kit`
+- **Agent:** ChatGPT with Atlas approving any provider write
+- **Status:** active
+- **Started:** 2026-08-07
+- **Last updated:** 2026-08-07
+- **Summary:** Continue the bounded GitHub provider-guard rollout after the completed `atlas-badges` canary and Wave 1A. Fresh Part 0 evidence identifies `ollama-rag-kit` as the sole Wave 1B repository, with `Build and smoke-check` as its current repository-native pull-request gate. Source authority and an inspection-first fail-closed runner are being prepared before any ruleset write.
+- **Resume point:** Complete and validate the source-authority PR. After it merges, obtain separate approval for exactly one `ollama-rag-kit` ruleset write, then run the owner-authenticated inspection from the approved Atlas Infra commit. Do not begin Wave 2.
 
 ## Queued work
 
@@ -33,18 +41,6 @@ None recorded.
   repository inspection. Claude Design must not claim GitHub writes that its
   toolset cannot perform.
 
-### GitHub provider guard Wave 1B
-
-- **Repo(s):** `atlas-infra` plus `ollama-rag-kit` for the next bounded wave
-- **Agent:** ChatGPT with Atlas approving any provider write
-- **Status:** queued
-- **Queued:** 2026-08-05
-- **Summary:** The `atlas-badges` canary and Wave 1A for `atlas-bootstrap` and
-  `atlas-resource-audit` are complete. Twenty-four repositories still lack a
-  qualifying guard. Wave 1B has not started.
-- **Start boundary:** Run a fresh Part 0 inspection and obtain separate approval
-  before any repository ruleset or branch-protection write.
-
 ## Recently completed
 
 ### atlas-twin Stage 1 change-passport MVP
@@ -57,7 +53,6 @@ None recorded.
 - **Summary:** Stage 1 offline CLI and library MVP merged through `atlas-twin#1` as squash commit `6ea6444cda72fd2dfb8c702f646010d60b7ac78c` from exact head `bccd49adde178e4ae2a97ebee9b0539f5f46e567`. No deployment or live rollout exists for `atlas-twin`; Stage 1 remains a private offline tool with no hosted runtime. This coordination PR updates work-allocation only and remains separately merge-gated.
 
 ### Public interface programme Phase 15
-
 
 - **Repo(s):** `atlas-infra`, `atlas-systems`; read-only reconciliation included
   `atlas-interface-kit`, `status`, `atlas-doc-viewer`, `ramone-edge`,
