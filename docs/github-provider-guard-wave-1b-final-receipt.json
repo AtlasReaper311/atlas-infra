@@ -1,0 +1,71 @@
+{
+  "authority": {
+    "commit": "1c3f63c9a30dd28ffec3ebe77a87d7a254f199c3",
+    "repository": "AtlasReaper311/atlas-infra"
+  },
+  "owner_validation": {
+    "codeql_run": 31226704152,
+    "dependabot_policy_run": 31226704148,
+    "merge_commit": "e2cc5f4dadd3cc1bee5e8f72a6b710c8851c9657",
+    "pull_request": 18,
+    "required_context": "Build and smoke-check",
+    "required_run": 31226704393,
+    "reviewed_head": "a46a83fd3a28807fbb9d3a2d5b4f96ae504a5e19",
+    "scorecard_run": 31226704146
+  },
+  "provider_evidence": {
+    "archive_sha256": "623e5b5629502165122b871a0bb40df5f1e3e8d06f17dd3208bb85be1bf2832b",
+    "receipt": {
+      "active_rules": [
+        "deletion",
+        "non_fast_forward",
+        "pull_request",
+        "required_status_checks"
+      ],
+      "authority": {
+        "commit": "1c3f63c9a30dd28ffec3ebe77a87d7a254f199c3",
+        "repository": "AtlasReaper311/atlas-infra"
+      },
+      "auto_merge_after": false,
+      "auto_merge_before": false,
+      "integration_id": 15368,
+      "repository": "AtlasReaper311/ollama-rag-kit",
+      "required_context": "Build and smoke-check",
+      "ruleset_id": 20573090,
+      "schema": "atlas-github-provider-guard-wave-1b/provider-receipt/v1",
+      "validation_head": "c88e6277f1f2b9bebc8f607bbb59a7d37860e92a",
+      "validation_pull_request": 16,
+      "verified_at": "2026-08-07T22:21:00.810134Z",
+      "wave_2_started": false
+    }
+  },
+  "schema": "atlas-github-provider-guard-wave-1b/final-receipt/v1",
+  "scoreboard": {
+    "collected_at": "2026-08-07T23:29:47Z",
+    "default_branch_guard": {
+      "id": "default_branch_guard",
+      "label": "Default branch PR guard",
+      "message": "An active default-branch ruleset was observed.",
+      "outcome": "passed",
+      "policy_message": "Estate-wide default requirement.",
+      "requirement": "required",
+      "status": "passed"
+    },
+    "fingerprint": "sha256:16b63950fb860bb38fb8b4e7473b5ed8737b985f55d7a0024701d73e00b80322",
+    "summary": {
+      "checks_deferred": 1,
+      "checks_exception": 1,
+      "checks_failed": 93,
+      "checks_not_applicable": 68,
+      "checks_passed": 237,
+      "checks_total": 330,
+      "checks_unknown": 0,
+      "policy_checks_failed": 23,
+      "policy_checks_passed": 237,
+      "policy_checks_required": 260,
+      "policy_checks_unknown": 0,
+      "repositories_checked": 33
+    }
+  },
+  "wave_2_started": false
+}

@@ -6,19 +6,11 @@ sessions do not silently duplicate or reverse each other.
 
 Update or remove an entry as soon as its status changes.
 
-Last updated: 2026-08-07.
+Last updated: 2026-08-08.
 
 ## Active work
 
-### GitHub provider guard Wave 1B
-
-- **Repo(s):** `atlas-infra` plus `ollama-rag-kit`
-- **Agent:** ChatGPT with Atlas approving any provider write
-- **Status:** active
-- **Started:** 2026-08-07
-- **Last updated:** 2026-08-07
-- **Summary:** Continue the bounded GitHub provider-guard rollout after the completed `atlas-badges` canary and Wave 1A. Fresh Part 0 evidence identifies `ollama-rag-kit` as the sole Wave 1B repository, with `Build and smoke-check` as its current repository-native pull-request gate. Source authority and an inspection-first fail-closed runner are being prepared before any ruleset write.
-- **Resume point:** Complete and validate the source-authority PR. After it merges, obtain separate approval for exactly one `ollama-rag-kit` ruleset write, then run the owner-authenticated inspection from the approved Atlas Infra commit. Do not begin Wave 2.
+None recorded.
 
 ## Queued work
 
@@ -42,6 +34,15 @@ Last updated: 2026-08-07.
   toolset cannot perform.
 
 ## Recently completed
+
+### GitHub provider guard Wave 1B
+
+- **Repo(s):** `atlas-infra`, `ollama-rag-kit`
+- **Agent:** ChatGPT with Atlas supplying and approving owner-authenticated provider evidence
+- **Status:** done
+- **Started:** 2026-08-07
+- **Last updated:** 2026-08-08
+- **Summary:** Closed the bounded `ollama-rag-kit` Wave 1B rollout. Source authority merged through `atlas-infra#131` as `1c3f63c9a30dd28ffec3ebe77a87d7a254f199c3`. Ruleset `20573090` requires the repository-native `Build and smoke-check` context while blocking deletion and non-fast-forward updates, with no bypass actors and auto-merge unchanged. Owner validation `ollama-rag-kit#18` merged through the new guard as `e2cc5f4dadd3cc1bee5e8f72a6b710c8851c9657`. The final stamped scoreboard recorded 237 required passes, 23 required failures, and zero required unknowns, with `ollama-rag-kit/default_branch_guard` passed. Wave 2 remains unstarted.
 
 ### atlas-twin Stage 1 change-passport MVP
 
@@ -83,8 +84,7 @@ Last updated: 2026-08-07.
   passes increased from 234 to 236, required failures fell from 26 to 24, and
   required unknowns remained zero. `atlas-bootstrap` and `atlas-resource-audit`
   passed `default_branch_guard`. Final closeout merged through
-  `atlas-infra#126` as `b82839d0755bdd7e373ff35e59f13d088b2329c4`. Wave 1B and later waves remain
-  unstarted.
+  `atlas-infra#126` as `b82839d0755bdd7e373ff35e59f13d088b2329c4`.
 
 ## Standing ownership
 
