@@ -1,0 +1,148 @@
+{
+  "$id": "https://schemas.atlas-systems.uk/control-plane/v1/control-plane-read-model-publication-receipt.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Redacted validation or publication evidence for the bounded RAMONE read-model publisher.",
+  "properties": {
+    "account_id_suffix": {
+      "pattern": "^[0-9a-f]{6}$",
+      "type": "string"
+    },
+    "artifact_sha256": {
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "artifact_source_head_sha": {
+      "pattern": "^(?:[0-9a-f]{40}|[0-9a-f]{64})$",
+      "type": "string"
+    },
+    "artifact_source_run_id": {
+      "pattern": "^[1-9][0-9]*$",
+      "type": "string"
+    },
+    "bounded_kv_key": {
+      "const": "control-plane:read-model:v1"
+    },
+    "error_code": {
+      "enum": [
+        null,
+        "pre-read-failed",
+        "write-outcome-unknown",
+        "read-back-failed",
+        "read-back-missing",
+        "read-back-mismatch"
+      ],
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "generated_at": {
+      "format": "date-time",
+      "type": "string"
+    },
+    "mode": {
+      "enum": [
+        "validate",
+        "publish"
+      ],
+      "type": "string"
+    },
+    "model_generated_at": {
+      "format": "date-time",
+      "type": "string"
+    },
+    "model_stale_after": {
+      "format": "date-time",
+      "type": "string"
+    },
+    "namespace_id_suffix": {
+      "pattern": "^[0-9a-f]{6}$",
+      "type": "string"
+    },
+    "previous_artifact_sha256": {
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "previous_read_model_fingerprint": {
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "previous_value_present": {
+      "type": "boolean"
+    },
+    "provider_write_outcome": {
+      "enum": [
+        "not-performed",
+        "performed",
+        "unknown"
+      ],
+      "type": "string"
+    },
+    "provider_write_performed": {
+      "type": "boolean"
+    },
+    "read_back_verified": {
+      "type": "boolean"
+    },
+    "read_model_fingerprint": {
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "atlas-control-plane/read-model-publication-receipt/v1"
+    },
+    "source_fingerprint": {
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "source_revision": {
+      "pattern": "^(?:[0-9a-f]{40}|[0-9a-f]{64})$",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "validated",
+        "published",
+        "failed"
+      ],
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema_version",
+    "mode",
+    "status",
+    "generated_at",
+    "artifact_source_run_id",
+    "artifact_source_head_sha",
+    "artifact_sha256",
+    "read_model_fingerprint",
+    "source_fingerprint",
+    "source_revision",
+    "model_generated_at",
+    "model_stale_after",
+    "bounded_kv_key",
+    "account_id_suffix",
+    "namespace_id_suffix",
+    "previous_value_present",
+    "previous_artifact_sha256",
+    "previous_read_model_fingerprint",
+    "provider_write_performed",
+    "provider_write_outcome",
+    "read_back_verified",
+    "error_code"
+  ],
+  "title": "Atlas Systems RAMONE read-model publication receipt v1",
+  "type": "object",
+  "x-owner": {
+    "consumer": "scripts/control_plane_read_model_publisher.py",
+    "repository": "AtlasReaper311/atlas-infra"
+  }
+}
