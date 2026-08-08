@@ -75,7 +75,7 @@ class GithubProviderGuardWave2BReconcileTests(unittest.TestCase):
         self.assertIn('.state == "open"', self.script)
         self.assertIn('.mergeable == true', self.script)
         self.assertIn('.autoMergeRequest == null', self.script)
-        self.assertIn("PR `#12` remains the genuine ineligible Dependabot specimen", self.plan)
+        self.assertIn("PR `#12` remains a genuine ineligible Dependabot specimen", self.plan)
 
     def test_no_unrelated_mutation_surface(self) -> None:
         forbidden = (
