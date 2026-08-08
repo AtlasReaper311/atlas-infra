@@ -1,0 +1,76 @@
+{
+  "authority": {
+    "commit": "57cba128ea6f8e09ff293f84aec803e59ac8ecfe",
+    "repository": "AtlasReaper311/atlas-infra"
+  },
+  "evidence": {
+    "final_archive_digest_mismatches": 0,
+    "final_archive_manifest_entries": 19,
+    "final_archive_missing_payloads": [
+      "atlas-gardener-repository.json",
+      "atlas-gardener-variable-mode.json",
+      "atlas-gardener-variable-write-gate.json",
+      "atlas-gardener-variable-write-targets.json",
+      "atlas-interface-kit-repository.json"
+    ],
+    "final_archive_packaged_manifest_entries": 14,
+    "final_evidence_archive_sha256": "34526b10ea7ebcb873aec47b0ab40f35d56b98b84a945689f207a0da4427f812",
+    "interface_recovery_archive_sha256": "5c83a652ab46367f6a9ab554ed9dfe2f6329874e113d59eb98b0e008ceffbf47",
+    "packaging_defect_resolution": {
+      "classification": "evidence-packaging-defect-only",
+      "fresh_repository_readback_auto_merge_disabled": {
+        "AtlasReaper311/atlas-gardener": true,
+        "AtlasReaper311/atlas-interface-kit": true
+      },
+      "gardener_variable_payloads_match_prior_reviewed_evidence": true,
+      "scoreboard_fingerprint_recomputed_from_canonical_stamper": true
+    },
+    "partial_recovery_inspection_archive_sha256": "1e005646386cfd15d000f61a85520d6faa1f05da4f6252e845274bd63204eac4",
+    "wave_2_inspection_archive_sha256": "44cdbb9171c4cf9aaf0a3240836d744ec9ef5e19c1c9790ebc4c654e8b385b62"
+  },
+  "gardener_controller_state_changed": false,
+  "held": {
+    "AtlasReaper311/atlas-journey-watch": {
+      "dependabot_automerge_enabled": true,
+      "repository_auto_merge": true,
+      "ruleset_id": 19154613,
+      "status": "held-for-reconciliation"
+    }
+  },
+  "journey_watch_touched": false,
+  "provider": {
+    "AtlasReaper311/atlas-gardener": {
+      "auto_merge": false,
+      "integration_id": 15368,
+      "owner_validation": {
+        "merge_commit": "7e2b719c106f6da40c270a5aa2cf5b050ef05658",
+        "pull_request": 25,
+        "reviewed_head": "4fbebdaef6e3a3f9009e58ad9716cbb738bd9611"
+      },
+      "required_context": "test",
+      "ruleset_id": 20576711
+    },
+    "AtlasReaper311/atlas-interface-kit": {
+      "auto_merge": false,
+      "integration_id": 15368,
+      "owner_validation": {
+        "merge_commit": "cd3f7223960a75e9344116e3960e613cdf267d90",
+        "pull_request": 15,
+        "reviewed_head": "a3ab405c1ad7e8c2f6bc71d4523aebe53a27a527"
+      },
+      "required_context": "Validate interface kit",
+      "ruleset_id": 20583644
+    }
+  },
+  "schema": "atlas-github-provider-guard-wave-2a/closeout-receipt/v1",
+  "scoreboard": {
+    "collected_at": "2026-08-08T09:32:52Z",
+    "fingerprint": "sha256:4ff745278465998eeffdf6d8f8b7b4789df4c0414950eba880614dc65624295b",
+    "policy_checks_failed": 21,
+    "policy_checks_passed": 239,
+    "policy_checks_unknown": 0,
+    "repositories_checked": 33
+  },
+  "status": "closed",
+  "wave_3_started": false
+}
