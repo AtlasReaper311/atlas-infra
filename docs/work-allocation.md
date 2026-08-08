@@ -14,11 +14,11 @@ Last updated: 2026-08-08.
 
 - **Repo(s):** `atlas-infra`, `atlas-journey-watch`
 - **Agent:** ChatGPT with Atlas approving any provider write
-- **Status:** active, owner-authenticated reconciliation inspection
+- **Status:** active, apply authority pending provider approval
 - **Started:** 2026-08-08
 - **Last updated:** 2026-08-08
-- **Summary:** Wave 2A is closed. Fresh GitHub Part 0 confirms `atlas-journey-watch/main` remains `a124d23ba4444522c206ae3c169165b4e0ef8019`, repository auto-merge remains enabled, genuine Dependabot PR `#12` remains open and mergeable at `acd9b0fdb85fc1d0575adb5f1ee6bea991e5a022`, and native `Offline journey validation`, Dependabot policy, CodeQL, and Scorecard are successful. Source pins selective auto-merge to `DEPENDABOT_AUTOMERGE_ENABLED` through the immutable reusable policy at `8e6d08701823b02c4859bfc72af67fc8ace1f4b5`. Last-observed provider evidence identifies active ruleset `19154613` (`Require native pull request validation`).
-- **Resume point:** Merge the read-only Wave 2B inspection authority, then collect owner-authenticated full ruleset and PR auto-merge evidence. Decide whether ruleset `19154613` already satisfies the Atlas guard contract or needs a narrow in-place reconciliation. Do not mutate provider state without a separate approval and do not begin Wave 3.
+- **Summary:** Wave 2A is closed. Owner-authenticated Wave 2B inspection authority merged through `atlas-infra#137` as `6c828ea1e98d4a731ffed3ee3def448212eb15df`. The reviewed archive SHA-256 is `abf7f135257a5b842188ea8ffae6cc9e2be28b0a0e60bbcba06d46c83bef0141`; all 18 manifest entries match. Existing ruleset `19154613` is active but only enforces `Offline journey validation` with strict status policy enabled. It does not require pull requests or block deletion/non-fast-forward updates, so `default_branch_guard` still fails. Repository auto-merge remains enabled, `DEPENDABOT_AUTOMERGE_ENABLED=true`, and genuine Dependabot PR `#12` is intentionally ineligible with `autoMergeRequest=null` because it is a GitHub Actions update rather than the narrow npm direct-development patch shape allowed by the pinned policy.
+- **Resume point:** Validate and merge the fail-closed Wave 2B in-place reconciliation authority. Then obtain separate provider-write approval before updating existing ruleset `19154613`. The proposed provider mutation preserves the ruleset identity and name, adds the Atlas PR/deletion/non-fast-forward controls, preserves the native status context, leaves repository auto-merge and `DEPENDABOT_AUTOMERGE_ENABLED` unchanged, does not merge PR `#12`, and does not begin Wave 3.
 
 ## Queued work
 

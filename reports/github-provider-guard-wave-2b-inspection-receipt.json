@@ -1,0 +1,72 @@
+{
+  "archive": {
+    "digest_mismatches": 0,
+    "manifest_entries": 18,
+    "pr_automerge_projection_sha256": "0603a9f976ee407624502e9fa1dae414e57ecd3f5686e7997fa65bc3edd2570c",
+    "ruleset_sha256": "1a095f5f3aeaf0c7657ee092b909b9380f6594e308f31e0663d450cc9e3bebc3",
+    "sha256": "abf7f135257a5b842188ea8ffae6cc9e2be28b0a0e60bbcba06d46c83bef0141",
+    "summary_sha256": "40c0a8af72f1caca6a38fc1d273e9db1e92fed9fcb095350721560e33c1cae01"
+  },
+  "authority": {
+    "commit": "6c828ea1e98d4a731ffed3ee3def448212eb15df",
+    "repository": "AtlasReaper311/atlas-infra"
+  },
+  "genuine_dependabot_pr": {
+    "auto_merge_request": null,
+    "eligibility_interpretation": "ineligible-github-actions-update",
+    "head": "acd9b0fdb85fc1d0575adb5f1ee6bea991e5a022",
+    "mergeable": true,
+    "native_required_context_success": true,
+    "number": 12
+  },
+  "provider_writes_performed": false,
+  "reconciliation": {
+    "change_dependabot_automerge_variable": false,
+    "change_repository_auto_merge": false,
+    "create_second_ruleset": false,
+    "decision": "in-place-update-required",
+    "proposed_condition_include": [
+      "~DEFAULT_BRANCH"
+    ],
+    "proposed_rule_types": [
+      "deletion",
+      "non_fast_forward",
+      "pull_request",
+      "required_status_checks"
+    ],
+    "proposed_strict_required_status_checks_policy": false,
+    "ruleset_id": 19154613
+  },
+  "repository": {
+    "classic_protection": "absent",
+    "dependabot_automerge_enabled": true,
+    "main": "a124d23ba4444522c206ae3c169165b4e0ef8019",
+    "name": "AtlasReaper311/atlas-journey-watch",
+    "repository_auto_merge": true
+  },
+  "ruleset_before": {
+    "bypass_actors": [],
+    "condition_include": [
+      "refs/heads/main"
+    ],
+    "enforcement": "active",
+    "id": 19154613,
+    "name": "Require native pull request validation",
+    "qualifies_standard_guard_semantics": false,
+    "required_status_checks": [
+      {
+        "context": "Offline journey validation",
+        "integration_id": 15368
+      }
+    ],
+    "rule_types": [
+      "required_status_checks"
+    ],
+    "strict_required_status_checks_policy": true,
+    "target": "branch"
+  },
+  "schema": "atlas-github-provider-guard-wave-2b/inspection-receipt/v1",
+  "secrets_read": false,
+  "variables_written": false,
+  "wave_3_started": false
+}
