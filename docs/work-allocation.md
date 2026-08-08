@@ -10,15 +10,7 @@ Last updated: 2026-08-08.
 
 ## Active work
 
-### GitHub provider guard Wave 3
-
-- **Repo(s):** `atlas-infra`, `atlas-doc-viewer`, `atlas-quota-watch`, `site-pulse`, `specular-sonify`, `status`
-- **Agent:** ChatGPT with Atlas approving any provider write
-- **Status:** active, reviewed five-repository inspection complete; batch apply authority under review
-- **Started:** 2026-08-08
-- **Last updated:** 2026-08-08
-- **Summary:** Inspection authority merged through `atlas-infra#140` as `1cd123cafcaab0bb2736c1659e6f389922190c60`. Reviewed owner-authenticated inspection archive SHA-256 is `a18e383a80637dd742108c271b25e30d9cf607a495b9c5680ea20d9c3f7056d8` with 64 manifest entries, zero missing payloads and zero digest mismatches. All five targets still have classic `main` protection, zero rulesets, repository auto-merge enabled, `ATLAS_GARDENER_AUTOMERGE_ENABLED=true`, absent `DEPENDABOT_AUTOMERGE_ENABLED`, and a successful recent repository-native PR context. Classic protection requires the native context plus `Gardener native auto-merge barrier`; strict status mode is true on four repositories and false only on `specular-sonify`. The proposed batch creates all five replacement Atlas rulesets, verifies every replacement while classic protection still exists, and only then removes the five superseded classic protections. Provider mutation remains separately approval-gated. Two transient source-only placeholder writes were accidentally made to `atlas-infra/main` during branch preparation and immediately removed; no Wave 3 target repository or provider state changed.
-- **Resume point:** Finish exact-head validation of the batch apply authority. Then obtain one explicit provider approval for the reviewed ten-write batch before running any provider mutation. Do not change auto-merge or automation variables, merge existing PRs, deploy anything, or begin Wave 4.
+No active work is currently recorded.
 
 ## Queued work
 
@@ -42,6 +34,15 @@ Last updated: 2026-08-08.
   toolset cannot perform.
 
 ## Recently completed
+
+### GitHub provider guard Wave 3
+
+- **Repo(s):** `atlas-infra`, `atlas-doc-viewer`, `atlas-quota-watch`, `site-pulse`, `specular-sonify`, `status`
+- **Agent:** ChatGPT with Atlas supplying and approving owner-authenticated provider evidence
+- **Status:** done
+- **Started:** 2026-08-08
+- **Last updated:** 2026-08-08
+- **Summary:** Closed the five-repository classic-protection migration. Inspection authority merged through `atlas-infra#140` as `1cd123cafcaab0bb2736c1659e6f389922190c60`; batch migration authority merged through `atlas-infra#141` as `2edd65f4cc1b1e62c50630881ba7df42b8a2c0b7`. The approved fail-closed provider batch created and verified rulesets `20586980` through `20586984` before removing the five superseded classic protections. Repository auto-merge, `ATLAS_GARDENER_AUTOMERGE_ENABLED=true`, absent `DEPENDABOT_AUTOMERGE_ENABLED`, the Gardener controller, secrets, runtime state, and existing Dependabot PRs were preserved. Owner validation PRs `atlas-doc-viewer#35`, `atlas-quota-watch#15`, `site-pulse#17`, `specular-sonify#20`, and `status#37` all passed their repository-native required context plus `Gardener native auto-merge barrier` and were squash-merged from the exact reviewed heads. The final owner-authenticated scoreboard recorded 245 required passes, 15 required failures, and zero required unknowns, with all five Wave 3 `default_branch_guard` outcomes passed. Final scoreboard fingerprint: `sha256:3a105c77e74827fd5a46e8cf89f59c0981422c4e7b071f1bf4a1dc314fab8e5b`. Final evidence archive SHA-256: `b11c0f23f52dc26bcee5cf7436511ad97966aa1a8f1662207a4803c58fcda28b`, with all 66 manifest payloads present and matching. Wave 4 remains unstarted and separately approval gated.
 
 ### GitHub provider guard Wave 2B
 
