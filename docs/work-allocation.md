@@ -10,7 +10,15 @@ Last updated: 2026-08-08.
 
 ## Active work
 
-No active work is currently recorded.
+### GitHub provider guard Wave 4
+
+- **Repo(s):** `atlas-infra`; future provider scope is the reviewed 13-repository Wave 4A create-first batch plus `atlas-dora` Wave 4B; `AtlasReaper311/AtlasReaper311` is held
+- **Agent:** ChatGPT with Atlas supplying and approving owner-authenticated provider evidence
+- **Status:** active
+- **Started:** 2026-08-08
+- **Last updated:** 2026-08-08
+- **Summary:** Reviewed owner-authenticated inspection archive SHA-256 `0abbd15869a96a8f38f7f7945a914277b7995924710e9eb0a0580478a289e884` with all 171 manifest payloads present and matching. Source authority is being prepared for Wave 4A additive ruleset creation across 13 compatible repositories and separate Wave 4B in-place DORA ruleset `19581236` reconciliation. No provider mutation is authorised by source preparation; the profile writer remains held.
+- **Resume point:** After the source-authority PR passes exact-head checks and is reviewed, obtain separate merge approval. Wave 4A provider creation remains a later explicit approval gate; Wave 4B remains separately gated after Wave 4A evidence.
 
 ## Queued work
 
