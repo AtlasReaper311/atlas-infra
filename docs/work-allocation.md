@@ -10,15 +10,8 @@ Last updated: 2026-08-08.
 
 ## Active work
 
-### GitHub provider guard Wave 2
-
-- **Repo(s):** `atlas-infra`, `atlas-gardener`, `atlas-interface-kit`, `atlas-journey-watch`
-- **Agent:** ChatGPT with Atlas approving any provider write
-- **Status:** active, Wave 2A apply-source stage
-- **Started:** 2026-08-08
-- **Last updated:** 2026-08-08
-- **Summary:** The owner-authenticated Wave 2 inspection is complete and its 40 evidence payloads match `SHA256SUMS.txt`. `atlas-gardener` and `atlas-interface-kit` are cleared as Wave 2A source candidates with auto-merge disabled, no active branch ruleset, no classic `main` protection, and native contexts `test` and `Validate interface kit`. Gardener's live controller remains separately governed in `automerge-low-risk` mode with its write gate enabled and the five inspected later-wave targets. `atlas-journey-watch` is held out of Wave 2A because inspection proved repository auto-merge enabled, `DEPENDABOT_AUTOMERGE_ENABLED=true`, and existing active ruleset `19154613` (`Require native pull request validation`).
-- **Resume point:** Validate and merge the fail-closed Wave 2A apply authority for exactly `atlas-gardener` and `atlas-interface-kit`. Then obtain separate provider-write approval before creating any ruleset. Do not touch Journey Watch ruleset `19154613`, its auto-merge settings or variable, and do not begin Wave 3.
+No provider-guard rollout wave is active. Wave 2A is closed. `atlas-journey-watch`
+remains a separate held reconciliation case and Wave 3 has not started.
 
 ## Queued work
 
@@ -42,6 +35,15 @@ Last updated: 2026-08-08.
   toolset cannot perform.
 
 ## Recently completed
+
+### GitHub provider guard Wave 2A
+
+- **Repo(s):** `atlas-infra`, `atlas-gardener`, `atlas-interface-kit`; read-only held-state evidence for `atlas-journey-watch`
+- **Agent:** ChatGPT with Atlas supplying and approving owner-authenticated provider evidence
+- **Status:** done
+- **Started:** 2026-08-08
+- **Last updated:** 2026-08-08
+- **Summary:** Closed the bounded Wave 2A rollout. Source authority merged through `atlas-infra#134` as `487c7ba6ea6ffaf5e5a3e9bcc756435d075ba0f3`. A local post-write verifier-path defect stopped the first apply after Gardener ruleset `20576711` had been created successfully and before Interface Kit was touched. Recovery inspection proved the exact partial state; recovery authority merged through `atlas-infra#135` as `57cba128ea6f8e09ff293f84aec803e59ac8ecfe`; Interface Kit ruleset `20583644` then completed the approved provider scope. Owner validation `atlas-gardener#25` merged as `7e2b719c106f6da40c270a5aa2cf5b050ef05658` and `atlas-interface-kit#15` merged as `cd3f7223960a75e9344116e3960e613cdf267d90`. The final stamped scoreboard recorded 239 required passes, 21 required failures, and zero required unknowns, with both Wave 2A repositories passing `default_branch_guard`. Journey Watch ruleset `19154613` remains held for separate reconciliation with auto-merge enabled and `DEPENDABOT_AUTOMERGE_ENABLED=true`; Wave 3 remains unstarted.
 
 ### GitHub provider guard Wave 1B
 
