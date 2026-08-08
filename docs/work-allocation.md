@@ -10,7 +10,15 @@ Last updated: 2026-08-08.
 
 ## Active work
 
-None recorded.
+### GitHub provider guard Wave 2
+
+- **Repo(s):** `atlas-infra`, `atlas-gardener`, `atlas-interface-kit`, `atlas-journey-watch`
+- **Agent:** ChatGPT with Atlas approving any provider write
+- **Status:** active, inspection-only source stage
+- **Started:** 2026-08-08
+- **Last updated:** 2026-08-08
+- **Summary:** Continue the default-branch provider-guard programme after the completed canary, Wave 1A, and Wave 1B. Fresh Part 0 identifies `atlas-gardener` and `atlas-interface-kit` as provisional Wave 2A candidates with repository auto-merge disabled and native contexts `test` and `Validate interface kit`. `atlas-journey-watch` is held as Wave 2B because repository auto-merge remains enabled and its selective Dependabot caller depends on the non-secret `DEPENDABOT_AUTOMERGE_ENABLED` variable. The current source stage authorises only an owner-authenticated read-only provider and automation-state inspection.
+- **Resume point:** Validate and merge the Wave 2 inspection authority. Then run the owner-authenticated inspection and review existing rulesets/classic protection plus Gardener controller variables and Journey Watch selective auto-merge state. Do not author or execute a provider apply path until that evidence is reviewed. Do not begin Wave 3.
 
 ## Queued work
 
@@ -42,7 +50,7 @@ None recorded.
 - **Status:** done
 - **Started:** 2026-08-07
 - **Last updated:** 2026-08-08
-- **Summary:** Closed the bounded `ollama-rag-kit` Wave 1B rollout. Source authority merged through `atlas-infra#131` as `1c3f63c9a30dd28ffec3ebe77a87d7a254f199c3`. Ruleset `20573090` requires the repository-native `Build and smoke-check` context while blocking deletion and non-fast-forward updates, with no bypass actors and auto-merge unchanged. Owner validation `ollama-rag-kit#18` merged through the new guard as `e2cc5f4dadd3cc1bee5e8f72a6b710c8851c9657`. The final stamped scoreboard recorded 237 required passes, 23 required failures, and zero required unknowns, with `ollama-rag-kit/default_branch_guard` passed. Wave 2 remains unstarted.
+- **Summary:** Closed the bounded `ollama-rag-kit` Wave 1B rollout. Source authority merged through `atlas-infra#131` as `1c3f63c9a30dd28ffec3ebe77a87d7a254f199c3`. Ruleset `20573090` requires the repository-native `Build and smoke-check` context while blocking deletion and non-fast-forward updates, with no bypass actors and auto-merge unchanged. Owner validation `ollama-rag-kit#18` merged through the new guard as `e2cc5f4dadd3cc1bee5e8f72a6b710c8851c9657`. The final stamped scoreboard recorded 237 required passes, 23 required failures, and zero required unknowns, with `ollama-rag-kit/default_branch_guard` passed.
 
 ### atlas-twin Stage 1 change-passport MVP
 
