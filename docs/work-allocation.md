@@ -10,7 +10,15 @@ Last updated: 2026-08-08.
 
 ## Active work
 
-None recorded.
+### GitHub provider guard Wave 3
+
+- **Repo(s):** `atlas-infra`, `atlas-doc-viewer`, `atlas-quota-watch`, `site-pulse`, `specular-sonify`, `status`
+- **Agent:** ChatGPT with Atlas approving any provider write
+- **Status:** active, reviewed five-repository inspection complete; batch apply authority under review
+- **Started:** 2026-08-08
+- **Last updated:** 2026-08-08
+- **Summary:** Inspection authority merged through `atlas-infra#140` as `1cd123cafcaab0bb2736c1659e6f389922190c60`. Reviewed owner-authenticated inspection archive SHA-256 is `a18e383a80637dd742108c271b25e30d9cf607a495b9c5680ea20d9c3f7056d8` with 64 manifest entries, zero missing payloads and zero digest mismatches. All five targets still have classic `main` protection, zero rulesets, repository auto-merge enabled, `ATLAS_GARDENER_AUTOMERGE_ENABLED=true`, absent `DEPENDABOT_AUTOMERGE_ENABLED`, and a successful recent repository-native PR context. Classic protection requires the native context plus `Gardener native auto-merge barrier`; strict status mode is true on four repositories and false only on `specular-sonify`. The proposed batch creates all five replacement Atlas rulesets, verifies every replacement while classic protection still exists, and only then removes the five superseded classic protections. Provider mutation remains separately approval-gated. Two transient source-only placeholder writes were accidentally made to `atlas-infra/main` during branch preparation and immediately removed; no Wave 3 target repository or provider state changed.
+- **Resume point:** Finish exact-head validation of the batch apply authority. Then obtain one explicit provider approval for the reviewed ten-write batch before running any provider mutation. Do not change auto-merge or automation variables, merge existing PRs, deploy anything, or begin Wave 4.
 
 ## Queued work
 
@@ -42,7 +50,7 @@ None recorded.
 - **Status:** done
 - **Started:** 2026-08-08
 - **Last updated:** 2026-08-08
-- **Summary:** Closed the Journey Watch reconciliation without creating a second ruleset. Inspection authority merged through `atlas-infra#137` as `6c828ea1e98d4a731ffed3ee3def448212eb15df`; apply authority merged through `atlas-infra#138` as `4b91cdb43734ddf507193022aa0ce847aadcee11`. Existing ruleset `19154613` was updated in place to the four-rule Atlas default-branch guard while preserving `Offline journey validation`, repository auto-merge, and `DEPENDABOT_AUTOMERGE_ENABLED=true`. Owner validation `atlas-journey-watch#13` merged through the reconciled guard as `40c77bd6926833fccc09fe0db098a38b1ea507f8`. Genuine Dependabot PR `#12` remains open and unmerged. The final stamped scoreboard recorded 240 required passes, 20 required failures, and zero required unknowns, with `atlas-journey-watch/default_branch_guard` passed. The final ZIP had a packaging-scope omission of two pre-existing Atlas Infra reports only; all packaged payload hashes matched and the canonical scoreboard fingerprint recomputed exactly. Wave 3 remains unstarted.
+- **Summary:** Closed the Journey Watch reconciliation without creating a second ruleset. Inspection authority merged through `atlas-infra#137` as `6c828ea1e98d4a731ffed3ee3def448212eb15df`; apply authority merged through `atlas-infra#138` as `4b91cdb43734ddf507193022aa0ce847aadcee11`. Existing ruleset `19154613` was updated in place to the four-rule Atlas default-branch guard while preserving `Offline journey validation`, repository auto-merge, and `DEPENDABOT_AUTOMERGE_ENABLED=true`. Owner validation `atlas-journey-watch#13` merged through the reconciled guard as `40c77bd6926833fccc09fe0db098a38b1ea507f8`. Genuine Dependabot PR `#12` remains open and unmerged. The final stamped scoreboard recorded 240 required passes, 20 required failures, and zero required unknowns, with `atlas-journey-watch/default_branch_guard` passed. The final ZIP had a packaging-scope omission of two pre-existing Atlas Infra reports only; all packaged payload hashes matched and the canonical scoreboard fingerprint recomputed exactly.
 
 ### GitHub provider guard Wave 2A
 
@@ -51,7 +59,7 @@ None recorded.
 - **Status:** done
 - **Started:** 2026-08-08
 - **Last updated:** 2026-08-08
-- **Summary:** Closed the bounded Wave 2A rollout. Source authority merged through `atlas-infra#134` as `487c7ba6ea6ffaf5e5a3e9bcc756435d075ba0f3`. A local post-write verifier-path defect stopped the first apply after Gardener ruleset `20576711` had been created successfully and before Interface Kit was touched. Recovery inspection proved the exact partial state; recovery authority merged through `atlas-infra#135` as `57cba128ea6f8e09ff293f84aec803e59ac8ecfe`; Interface Kit ruleset `20583644` then completed the approved provider scope. Owner validation `atlas-gardener#25` merged as `7e2b719c106f6da40c270a5aa2cf5b050ef05658` and `atlas-interface-kit#15` merged as `cd3f7223960a75e9344116e3960e613cdf267d90`. The final stamped scoreboard recorded 239 required passes, 21 required failures, and zero required unknowns, with both Wave 2A repositories passing `default_branch_guard`. Journey Watch subsequently completed separate Wave 2B reconciliation; Wave 3 remains unstarted.
+- **Summary:** Closed the bounded Wave 2A rollout. Source authority merged through `atlas-infra#134` as `487c7ba6ea6ffaf5e5a3e9bcc756435d075ba0f3`. A local post-write verifier-path defect stopped the first apply after Gardener ruleset `20576711` had been created successfully and before Interface Kit was touched. Recovery inspection proved the exact partial state; recovery authority merged through `atlas-infra#135` as `57cba128ea6f8e09ff293f84aec803e59ac8ecfe`; Interface Kit ruleset `20583644` then completed the approved provider scope. Owner validation `atlas-gardener#25` merged as `7e2b719c106f6da40c270a5aa2cf5b050ef05658` and `atlas-interface-kit#15` merged as `cd3f7223960a75e9344116e3960e613cdf267d90`. The final stamped scoreboard recorded 239 required passes, 21 required failures, and zero required unknowns, with both Wave 2A repositories passing `default_branch_guard`. Journey Watch subsequently completed separate Wave 2B reconciliation.
 
 ### GitHub provider guard Wave 1B
 
