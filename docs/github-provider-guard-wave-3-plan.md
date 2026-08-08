@@ -118,7 +118,7 @@ While preparing the apply branch, two transient source-only placeholder writes w
 
 ## Approval boundary
 
-This source authority does not authorise provider mutation.
+These source changes do not authorise provider mutation.
 
 Any provider mutation requires a new explicit approval after the exact batch operator has passed Atlas Infra checks. No provider write should occur before that approval.
 
