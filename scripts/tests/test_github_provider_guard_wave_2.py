@@ -100,13 +100,16 @@ class GithubProviderGuardWave2Tests(unittest.TestCase):
         self.assertIn("provider_writes_performed: false", self.script)
         self.assertIn("Provider writes performed: none.", self.script)
 
-    def test_plan_splits_wave_2a_and_2b(self):
-        self.assertIn("### Wave 2A candidates", self.plan)
-        self.assertIn("### Wave 2B held pending automation-state evidence", self.plan)
+    def test_plan_records_reviewed_post_inspection_split(self):
+        self.assertIn("### Wave 2A", self.plan)
+        self.assertIn("### Wave 2B held", self.plan)
+        self.assertIn("19154613", self.plan)
+        self.assertIn("`DEPENDABOT_AUTOMERGE_ENABLED`: `true`", self.plan)
         self.assertIn(
-            "No provider-write approval is implied by approval to merge this inspection authority.",
+            "Merging Wave 2A apply source authority is not provider-write approval.",
             self.plan,
         )
+        self.assertIn("Wave 3 and all later waves remain unstarted.", self.plan)
 
     def test_cross_platform_sha256_support(self):
         self.assertIn("sha256sum", self.script)
