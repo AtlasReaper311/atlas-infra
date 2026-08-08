@@ -1,0 +1,59 @@
+{
+  "authority": {
+    "commit": "4b91cdb43734ddf507193022aa0ce847aadcee11",
+    "repository": "AtlasReaper311/atlas-infra"
+  },
+  "evidence": {
+    "final_evidence_archive_sha256": "ef4a67cb667aec39f9b3ce77c3c7a4c7666890c708bedb104018d9adfd12ae64",
+    "manifest_entries": 14,
+    "packaged_manifest_entries": 12,
+    "digest_mismatches_for_packaged_entries": 0,
+    "missing_manifest_payloads": [
+      "github-provider-guard-wave-2a-closeout-receipt.json",
+      "github-provider-guard-wave-2b-inspection-receipt.json"
+    ],
+    "packaging_defect_resolution": {
+      "classification": "evidence-packaging-scope-defect-only",
+      "missing_payloads_are_pre_existing_atlas_infra_reports": true,
+      "missing_payloads_exist_at_authority_commit": true,
+      "scoreboard_fingerprint_recomputed_from_canonical_content": true,
+      "wave_2b_provider_and_owner_payloads_complete": true
+    },
+    "provider_archive_sha256": "c082eee92abe60e344c4483e70c40310b222bd7fd3966947b676a1edc1c97572"
+  },
+  "provider": {
+    "repository": "AtlasReaper311/atlas-journey-watch",
+    "ruleset_id": 19154613,
+    "ruleset_name": "Require native pull request validation",
+    "updated_in_place": true,
+    "second_ruleset_created": false,
+    "required_context": "Offline journey validation",
+    "integration_id": 15368,
+    "repository_auto_merge": true,
+    "dependabot_automerge_enabled": true
+  },
+  "owner_validation": {
+    "pull_request": 13,
+    "reviewed_head": "12f11cfcbe07bdb2e71ee4bb14f5411e33a1de7c",
+    "merge_commit": "40c77bd6926833fccc09fe0db098a38b1ea507f8",
+    "required_context": "Offline journey validation"
+  },
+  "dependabot_validation": {
+    "pull_request": 12,
+    "head": "acd9b0fdb85fc1d0575adb5f1ee6bea991e5a022",
+    "remained_open": true,
+    "merged": false,
+    "auto_merge_request": null
+  },
+  "scoreboard": {
+    "collected_at": "2026-08-08T12:47:38Z",
+    "fingerprint": "sha256:ecafca3af211aeb75a3150d76cfdf717a9098dd86d123b0c3f7b0f2e14217d3f",
+    "repositories_checked": 33,
+    "policy_checks_passed": 240,
+    "policy_checks_failed": 20,
+    "policy_checks_unknown": 0
+  },
+  "schema": "atlas-github-provider-guard-wave-2b/closeout-receipt/v1",
+  "status": "closed",
+  "wave_3_started": false
+}
