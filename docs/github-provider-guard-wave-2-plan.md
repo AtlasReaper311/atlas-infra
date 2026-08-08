@@ -1,212 +1,156 @@
 # GitHub provider guard wider rollout: Wave 2 plan
 
-Status: Part 0 complete. Source authority is inspection-only; no Wave 2 provider write is authorised by this document.
+Status: owner-authenticated inspection reviewed. Wave 2A apply source is prepared for `atlas-gardener` and `atlas-interface-kit` only. `atlas-journey-watch` is held for separate migration/reconciliation work. No Wave 2 provider write is authorised by this document alone.
 
 ## Scope
 
-Wave 2 is limited to three specialist active public non-runtime repositories:
+Wave 2 began with three specialist active public non-runtime repositories:
 
 - `AtlasReaper311/atlas-gardener`;
 - `AtlasReaper311/atlas-interface-kit`;
 - `AtlasReaper311/atlas-journey-watch`.
 
-The `atlas-badges` canary, Wave 1A, and Wave 1B are complete. Wave 3 and all later waves remain unstarted.
+After owner-authenticated inspection, the provider-write candidates are split:
+
+### Wave 2A
+
+- `AtlasReaper311/atlas-gardener` with required context `test`;
+- `AtlasReaper311/atlas-interface-kit` with required context `Validate interface kit`.
+
+### Wave 2B held
+
+- `AtlasReaper311/atlas-journey-watch`.
+
+Wave 3 and all later waves remain unstarted.
 
 ## Authority and classification
 
-Part 0 was refreshed against current GitHub state on 2026-08-08.
+ADR-0004 authority in `policy/public-assurance-repositories.json` classifies all three repositories as active, public, original repositories. None is classified as a public runtime-service repository by `policy/estate-registry.json`.
 
-ADR-0004 authority in `policy/public-assurance-repositories.json` classifies all three repositories as:
+The final Wave 1B scoreboard identified all three as failures of the qualifying `default_branch_guard` conformance check. The owner-authenticated Wave 2 inspection refined that result and proved that Journey Watch already has an active repository ruleset which does not satisfy the standard Atlas guard projection.
 
-- lifecycle: `active`;
-- scope: `public`;
-- provenance: `original`.
+## Owner-authenticated inspection receipt
 
-None is classified as a public runtime-service repository by `policy/estate-registry.json`.
+Inspection authority:
 
-The final Wave 1B owner-authenticated scoreboard recorded all three as readable `default_branch_guard` failures: no active default-branch ruleset or classic pull-request guard was observed.
+- source merge: `atlas-infra#133`;
+- authority commit: `1a5be84456861e5d0cd09b13db207f2e81a1f007`;
+- evidence run stamp: `20260808T005252Z`;
+- uploaded archive SHA-256: `44cdbb9171c4cf9aaf0a3240836d744ec9ef5e19c1c9790ebc4c654e8b385b62`;
+- `provider-baseline-summary.json` SHA-256: `f0c373e615c7d66aa6b94093807e715fa0201f6b86ebc9f60e9de0b75146713c`;
+- evidence payloads covered by `SHA256SUMS.txt`: `40`;
+- digest mismatches: `0`;
+- provider writes performed: `false`.
 
-## Part 0 repository evidence
+The inspection did not read Actions secrets and did not mutate rulesets, branch protection, auto-merge, variables, workflows, releases, deployments, or runtime state.
+
+## Wave 2A evidence
 
 ### atlas-gardener
 
-Current repository state:
+Inspected repository state:
 
 - default branch: `main`;
 - current `main`: `319465dcea68a8fefead3e7d90e82b79078cb34d`;
 - visibility: public;
 - archived: false;
-- repository auto-merge: disabled.
+- repository auto-merge: disabled;
+- active branch rulesets: none;
+- classic `main` protection: absent.
 
-Current `.github/workflows/ci.yml` defines the repository-native pull-request context:
+Native pull-request gate:
 
-- workflow: `CI`;
-- job/context: `test`;
-- GitHub Actions integration ID: `15368`.
-
-The `test` job validates immutable Atlas Infra automation authority, target-readiness policy, repository tests, write-target scope, automatic controller modes, auto-merge refusal cases, shell syntax, and whitespace.
-
-Current genuine Dependabot PR `atlas-gardener#22` provides exact-head automation compatibility evidence:
-
-- state: open;
-- mergeable: true;
-- base: `main`;
+- context: `test`;
+- GitHub Actions integration ID: `15368`;
+- genuine Dependabot PR: `atlas-gardener#22`;
+- PR state: open and mergeable;
 - base SHA: `319465dcea68a8fefead3e7d90e82b79078cb34d`;
 - head SHA: `5975733c5d4f05d66f957cb50a322905f7751d06`;
-- `CI` run `30681523307`: success;
-- native `test` job: success;
-- `Dependabot review policy` run `30681523278`: success;
-- `OpenSSF Scorecard` run `30681523274`: success;
-- `CodeQL` run `30681523302`: success.
+- native `test` check: completed successfully.
 
-Gardener is not an ordinary library. Its scheduled controller can operate in `disabled`, `observe`, `pr-only`, or `automerge-low-risk` modes and has separately gated GitHub App write seams. Current source defaults mode and write gate to disabled, but repository variables can override those defaults. Therefore the provider inspection must capture the current non-secret values or absence of:
+The owner-authenticated inspection also proved that the scheduled controller is currently live in a separately governed automation mode:
 
-- `ATLAS_GARDENER_MODE`;
-- `ATLAS_GARDENER_WRITE_GATE`;
-- `ATLAS_GARDENER_WRITE_TARGETS_JSON`.
+- `ATLAS_GARDENER_MODE`: `automerge-low-risk`;
+- `ATLAS_GARDENER_WRITE_GATE`: `enabled`;
+- `ATLAS_GARDENER_WRITE_TARGETS_JSON`: `["AtlasReaper311/atlas-doc-viewer","AtlasReaper311/atlas-quota-watch","AtlasReaper311/site-pulse","AtlasReaper311/specular-sonify","AtlasReaper311/status"]`.
 
-A branch guard on Gardener's own `main` must not be treated as authority to enable or alter its controller, GitHub App, target repository auto-merge, schedules, variables, secrets, or write scope.
+Those five targets are later partial-protection repositories. A guard on Gardener's own `main` neither grants nor expands controller authority. The Wave 2A runner therefore pins the three observed variables and fails closed if any value changes before or during provider apply. It never writes an Actions variable, controller setting, GitHub App permission, schedule, target list, or secret.
 
 ### atlas-interface-kit
 
-Current repository state:
+Inspected repository state:
 
 - default branch: `main`;
 - current `main`: `21a1a168e3b25e916555ce4edd4229bd7c061ecb`;
 - visibility: public;
 - archived: false;
-- repository auto-merge: disabled.
+- repository auto-merge: disabled;
+- active branch rulesets: none;
+- classic `main` protection: absent.
 
-Current `.github/workflows/ci.yml` defines the repository-native pull-request context:
+Native pull-request gate:
 
-- workflow: `CI`;
-- job/context: `Validate interface kit`;
-- GitHub Actions integration ID: `15368`.
+- context: `Validate interface kit`;
+- GitHub Actions integration ID: `15368`;
+- current source/release candidate proof: `atlas-interface-kit#14`;
+- reviewed head: `1f26360d938b589cf8a562ca308fd6ca3b4a2b3f`;
+- merged commit: `21a1a168e3b25e916555ce4edd4229bd7c061ecb`;
+- native `Validate interface kit` check: completed successfully.
 
-The gate compiles tooling, validates the deterministic bundle, runs unit tests, performs a release-artifact dry run, checks generated-file cleanliness, and checks whitespace.
+Release compatibility remains unchanged. `.github/workflows/release.yml` operates on `v*` tags or explicit dispatch against an existing tag. A default-branch guard does not create a tag, publish a release, alter consumer adoption, or prove deployment.
 
-There is no current open Dependabot pull request. Recent genuine Dependabot PR `atlas-interface-kit#11` merged successfully from exact head `ed0d59e6fa902854c50de61941a588128b471966` after CI, CodeQL, and OpenSSF Scorecard passed.
+## Journey Watch hold
 
-The current `0.5.0` owner change was validated on `atlas-interface-kit#14` at exact head `1f26360d938b589cf8a562ca308fd6ca3b4a2b3f` and merged as current `main` `21a1a168e3b25e916555ce4edd4229bd7c061ecb`. Its CI, CodeQL, Scorecard, deterministic rebuild, and release-artifact dry run all passed.
+The owner-authenticated inspection corrected the earlier coarse assumption about Journey Watch.
 
-Release compatibility is explicit:
+Current provider and automation state:
 
-- source merge does not deploy a public interface;
-- `.github/workflows/release.yml` runs on `v*` tags or explicit workflow dispatch against an existing tag;
-- release validation is tag/version-bound and read-only apart from uploading the workflow artifact;
-- creating a tag, publishing a GitHub Release, consumer adoption, and consumer production rollout remain separate owner-approved actions.
+- repository auto-merge: enabled;
+- `DEPENDABOT_AUTOMERGE_ENABLED`: `true`;
+- active repository ruleset ID: `19154613`;
+- ruleset name: `Require native pull request validation`;
+- target: branch;
+- enforcement: active;
+- classic `main` protection: absent;
+- genuine Dependabot PR `atlas-journey-watch#12`: open and mergeable;
+- native context `Offline journey validation`: successful under GitHub Actions integration ID `15368`.
 
-A default-branch branch ruleset therefore must not be represented as release publication evidence and must not alter tag or release authority.
+Journey Watch is therefore not a fresh guard-addition candidate. It already combines provider protection with active selective Dependabot auto-merge. Its existing ruleset must be read back in full and reconciled deliberately against the Atlas default-branch guard contract before any provider mutation is proposed.
 
-### atlas-journey-watch
+Wave 2A source and provider operations must not create, replace, update, disable, or delete Journey Watch ruleset `19154613`; must not change repository auto-merge; and must not change `DEPENDABOT_AUTOMERGE_ENABLED`.
 
-Current repository state:
+## Wave 2A apply authority
 
-- default branch: `main`;
-- current `main`: `a124d23ba4444522c206ae3c169165b4e0ef8019`;
-- visibility: public;
-- archived: false;
-- repository auto-merge: **enabled**.
+`scripts/github-provider-guard-wave-2a.sh` is the only provider operator prepared by this stage.
 
-Current `.github/workflows/ci.yml` defines the repository-native pull-request context:
+Default mode is read-only `inspect`.
 
-- workflow: `Pull request CI`;
-- job/context: `Offline journey validation`;
-- GitHub Actions integration ID: `15368`.
+Provider apply is unreachable unless both conditions are true:
 
-Current genuine Dependabot PR `atlas-journey-watch#12` provides exact-head automation compatibility evidence:
+- `MODE=apply`;
+- `ATLAS_PROVIDER_WRITE_CONFIRMATION="APPLY GITHUB PROVIDER GUARD WAVE 2A"`.
 
-- state: open;
-- mergeable: true;
-- base: `main`;
-- base SHA: `a124d23ba4444522c206ae3c169165b4e0ef8019`;
-- head SHA: `acd9b0fdb85fc1d0575adb5f1ee6bea991e5a022`;
-- `Pull request CI` run `30681495858`: success;
-- native `Offline journey validation` job: success;
-- `Dependabot review policy` run `30681496052`: success;
-- `OpenSSF Scorecard` run `30681495821`: success;
-- `CodeQL` run `30681495823`: success.
+The exact repository map is limited to:
 
-Journey Watch contains a selective Dependabot auto-merge caller. The caller passes:
+- `atlas-gardener`;
+- `atlas-interface-kit`.
 
-```text
-automerge_enabled = vars.DEPENDABOT_AUTOMERGE_ENABLED == 'true'
-```
+The runner pins:
 
-into the pinned reusable Atlas Infra policy. The reusable policy can enable native squash auto-merge only when its fail-closed eligibility decision returns true, and can revoke a policy-created auto-merge request when eligibility later becomes false.
-
-Repository-level auto-merge capability is currently enabled. The current value or absence of `DEPENDABOT_AUTOMERGE_ENABLED` is not exposed by the connected GitHub tool, so it must be captured through the owner-authenticated read-only inspection before any Journey Watch provider write is considered.
-
-Journey Watch itself deploys nothing. Its scheduled journeys and release-watch workflow create assurance evidence and notifications; release-watch performs no deploy or rollback. Those facts do not remove the need to reconcile branch protection with selective Dependabot auto-merge.
-
-## Wave split
-
-Part 0 supports the following provisional split.
-
-### Wave 2A candidates
-
-- `AtlasReaper311/atlas-gardener` with required context `test`;
-- `AtlasReaper311/atlas-interface-kit` with required context `Validate interface kit`.
-
-Both currently have repository auto-merge disabled. They remain candidates, not approved provider writes, until the owner-authenticated Wave 2 inspection proves current provider state and Gardener controller-variable state.
-
-### Wave 2B held pending automation-state evidence
-
-- `AtlasReaper311/atlas-journey-watch` with required context `Offline journey validation`.
-
-Journey Watch is held because repository auto-merge is enabled and the current non-secret `DEPENDABOT_AUTOMERGE_ENABLED` value is not yet observed. The inspection must establish whether selective auto-merge is active, inactive, or absent and whether the intended branch guard is compatible with that state.
-
-No source plan may silently disable repository auto-merge. Changing that setting would be a separate provider mutation and requires explicit approval.
-
-## Inspection-only operator
-
-`scripts/github-provider-guard-wave-2-inspect.sh` is the only operator path authorised by this source stage.
-
-It is read-only and pinned to:
-
-- the three exact repositories above;
-- their exact current `main` SHAs;
-- the exact PR/check evidence listed above;
-- the native contexts `test`, `Validate interface kit`, and `Offline journey validation`;
+- each current `main` SHA;
+- Gardener PR `#22` and exact Dependabot head;
+- Interface Kit PR `#14` and exact reviewed head/merged commit;
+- the exact native required context for each repository;
 - GitHub Actions integration ID `15368`;
-- current expected repository auto-merge values.
+- repository auto-merge disabled;
+- absence of active branch rulesets and classic `main` protection;
+- Gardener's three observed controller variables.
 
-It collects and verifies:
-
-- authenticated owner identity;
-- repository identity, visibility, archival state, default branch, current `main`, and auto-merge capability;
-- existing repository rulesets;
-- classic `main` branch protection;
-- exact PR and check-run evidence;
-- current specialist workflow bytes;
-- Gardener controller variables named above;
-- Journey Watch `DEPENDABOT_AUTOMERGE_ENABLED` variable;
-- SHA-256 evidence digests.
-
-It does not read GitHub Actions secrets and must never request or print secret values.
-
-The script contains no provider apply mode and no POST, PUT, PATCH, or DELETE GitHub API operation.
-
-## Decision after inspection
-
-After the owner-authenticated inspection archive is reviewed:
-
-1. determine whether `atlas-gardener` is safe to enter Wave 2A without altering controller authority;
-2. determine whether `atlas-interface-kit` is safe to enter Wave 2A without altering release authority;
-3. determine the exact current Journey Watch selective auto-merge state;
-4. prepare a separate fail-closed provider apply runner only for repositories that remain compatible;
-5. merge that provider-apply source authority after exact-head validation;
-6. request separate approval for the exact provider-write repository list;
-7. perform provider writes one bounded wave at a time;
-8. prove genuine automation compatibility and owner PR paths;
-9. run a stamped owner-authenticated scoreboard;
-10. close the wave through permanent receipts.
-
-No provider-write approval is implied by approval to merge this inspection authority.
+Any drift causes refusal before provider creation.
 
 ## Candidate ruleset shape
 
-If later evidence supports a provider write, the candidate default pattern remains:
+The Wave 2A ruleset matches the proven Atlas pattern:
 
 - name: `Atlas default branch PR guard`;
 - target: branch;
@@ -215,33 +159,72 @@ If later evidence supports a provider write, the candidate default pattern remai
 - pull request required;
 - required approving reviews: `0`;
 - required review-thread resolution: false;
-- exact repository-native required status bound to GitHub Actions integration ID `15368`;
+- exact repository-native status check bound to GitHub Actions integration ID `15368`;
 - deletion blocked;
 - non-fast-forward updates blocked;
 - no bypass actors;
 - strict required-status branch-update policy disabled.
 
-This shape is a candidate only. The inspection evidence must prove repository-specific compatibility before an apply runner is authored.
+Provider apply creates one ruleset per approved Wave 2A repository and then reads back:
 
-## Rollback boundary
+- the created ruleset;
+- effective `main` rules;
+- repository settings;
+- `main` identity;
+- Gardener controller variables.
 
-No rollback is needed for this inspection-only stage because it performs no provider mutation.
+The runner records SHA-256 evidence and contains no rollback path.
 
-Any later ruleset rollback remains a provider write and must receive separate approval. A rollback must identify only the affected ruleset ID from provider evidence and must preserve unrelated repository settings and automation state.
+## Validation after provider apply
+
+Provider creation does not close Wave 2A.
+
+After a separately approved provider apply:
+
+1. review provider evidence and exact created ruleset IDs;
+2. prove Gardener's genuine Dependabot path remains compatible through the new guard without merging it implicitly;
+3. create a harmless owner validation PR for Interface Kit and prove its owner path through the new guard;
+4. confirm repository auto-merge remains disabled on both Wave 2A repositories;
+5. confirm Gardener controller variables remain byte-for-byte unchanged;
+6. run a new owner-authenticated stamped scoreboard;
+7. commit final machine-readable and human-readable Wave 2A receipts;
+8. close Wave 2A before any Journey Watch provider mutation or Wave 3 work.
+
+## Approval boundary
+
+Merging Wave 2A apply source authority is not provider-write approval.
+
+The exact provider-write list requiring explicit approval is:
+
+- `AtlasReaper311/atlas-gardener`;
+- `AtlasReaper311/atlas-interface-kit`.
+
+`atlas-journey-watch`, Wave 3, and all later waves are excluded.
+
+## Rollback
+
+Rollback is not automatic.
+
+If one approved ruleset blocks an intended path:
+
+1. stop immediately;
+2. do not touch the other repository if its write has not occurred;
+3. identify only the affected ruleset ID from evidence;
+4. obtain separate rollback approval;
+5. delete or alter only the approved affected ruleset;
+6. verify unrelated provider, automation, release, and repository state remains unchanged.
 
 ## Explicit boundaries
 
 This stage does not:
 
-- create, update, disable, or delete a ruleset;
-- edit classic branch protection;
-- enable or disable repository auto-merge;
-- create, update, or delete an Actions variable;
-- read or change an Actions secret;
-- change Gardener controller mode, write gate, targets, GitHub App permissions, or schedule;
-- enable or disable Journey Watch selective Dependabot auto-merge;
-- merge a Dependabot pull request;
-- create a release or tag;
-- dispatch a workflow;
-- deploy, restart, publish, or roll back anything;
+- perform a provider write merely by merging source;
+- alter Gardener controller mode, write gate, targets, schedule, GitHub App permissions, or secrets;
+- alter Interface Kit tag/release authority;
+- touch Journey Watch ruleset `19154613`;
+- change Journey Watch auto-merge or `DEPENDABOT_AUTOMERGE_ENABLED`;
+- merge Dependabot PRs;
+- create or publish releases or tags;
+- dispatch workflows;
+- deploy, restart, publish, or roll back runtime services;
 - begin Wave 3 or any later wave.
