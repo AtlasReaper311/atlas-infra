@@ -19,7 +19,7 @@ class GithubProviderGuardWave1BTests(unittest.TestCase):
         self.assertIn('REPOSITORY="ollama-rag-kit"', self.script)
         self.assertNotIn('atlas-bootstrap|', self.script)
         self.assertNotIn('atlas-resource-audit|', self.script)
-        self.assertIn('Wave 1B is limited to exactly one repository', self.plan)
+        self.assertIn('Wave 1B was limited to exactly one repository', self.plan)
 
     def test_runner_pins_current_main_and_validation_head(self) -> None:
         self.assertIn(
@@ -62,10 +62,13 @@ class GithubProviderGuardWave1BTests(unittest.TestCase):
         self.assertIn('shasum -a 256', self.script)
         self.assertNotIn('sort -z', self.script)
 
-    def test_plan_preserves_later_wave_boundary(self) -> None:
+    def test_plan_preserves_closeout_and_later_wave_boundary(self) -> None:
+        self.assertIn('Status: completed and evidenced.', self.plan)
         self.assertIn('Wave 2 and all later waves remain unstarted.', self.plan)
-        self.assertIn('obtain separate approval for the single `ollama-rag-kit` provider write', self.plan)
-        self.assertIn('begin Wave 2 or any later wave', self.plan)
+        self.assertIn('Provider apply required the exact confirmation phrase:', self.plan)
+        self.assertIn('APPLY GITHUB PROVIDER GUARD WAVE 1B', self.plan)
+        self.assertIn('Wave 2 did not begin implicitly from Wave 1B completion.', self.plan)
+        self.assertIn('Wave 2 is a separate optional stage', self.plan)
 
 
 if __name__ == "__main__":
