@@ -1,0 +1,38 @@
+{
+  "schema": "atlas-github-provider-guard-wave-3/source-baseline/v1",
+  "authority": {
+    "repository": "AtlasReaper311/atlas-infra",
+    "base_commit": "05f1d1351cc9249690dc06363ad41d887c007968"
+  },
+  "repositories": {
+    "AtlasReaper311/atlas-doc-viewer": {
+      "main": "2b03d5843588f0415ecc735f6b33ca7527063137",
+      "native_context": "Static document validation",
+      "repository_auto_merge": true
+    },
+    "AtlasReaper311/atlas-quota-watch": {
+      "main": "97304b7df2489a881aca422e494063d62f034a55",
+      "native_context": "validate",
+      "repository_auto_merge": true
+    },
+    "AtlasReaper311/site-pulse": {
+      "main": "be661f348ce7bc96b98f868b9d0eb2c01fcc99af",
+      "native_context": "Worker validation",
+      "repository_auto_merge": true
+    },
+    "AtlasReaper311/specular-sonify": {
+      "main": "2577b5cbfa852a7dda89f3b0d1e1ed640d4e1f53",
+      "native_context": "Worker configuration validation",
+      "repository_auto_merge": true
+    },
+    "AtlasReaper311/status": {
+      "main": "4db1438b1a8859008461903105360a2f09376c02",
+      "native_context": "Status site validation",
+      "repository_auto_merge": true
+    }
+  },
+  "classification_authority": "policy/estate-registry.json",
+  "provider_state": "requires-owner-authenticated-read-only-inspection",
+  "provider_writes_authorised": false,
+  "wave_4_started": false
+}
