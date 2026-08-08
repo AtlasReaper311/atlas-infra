@@ -1,0 +1,79 @@
+{
+  "schema": "atlas-github-provider-guard-wave-3/inspection-receipt/v1",
+  "archive_sha256": "a18e383a80637dd742108c271b25e30d9cf607a495b9c5680ea20d9c3f7056d8",
+  "manifest_entries": 64,
+  "missing_manifest_payloads": 0,
+  "digest_mismatches": 0,
+  "provider_writes_performed": false,
+  "variables_written": false,
+  "secrets_read": false,
+  "wave_4_started": false,
+  "github_actions_integration_id": 15368,
+  "gardener_controller": {
+    "ATLAS_GARDENER_MODE": "automerge-low-risk",
+    "ATLAS_GARDENER_WRITE_GATE": "enabled",
+    "ATLAS_GARDENER_WRITE_TARGETS_JSON": "[\"AtlasReaper311/atlas-doc-viewer\",\"AtlasReaper311/atlas-quota-watch\",\"AtlasReaper311/site-pulse\",\"AtlasReaper311/specular-sonify\",\"AtlasReaper311/status\"]"
+  },
+  "repositories": {
+    "atlas-doc-viewer": {
+      "main": "2b03d5843588f0415ecc735f6b33ca7527063137",
+      "classic_protection": true,
+      "ruleset_count": 0,
+      "repository_auto_merge": true,
+      "gardener_automerge_enabled": true,
+      "dependabot_automerge_variable_present": false,
+      "native_context": "Static document validation",
+      "gardener_barrier_context": "Gardener native auto-merge barrier",
+      "strict_required_status_checks": true
+    },
+    "atlas-quota-watch": {
+      "main": "97304b7df2489a881aca422e494063d62f034a55",
+      "classic_protection": true,
+      "ruleset_count": 0,
+      "repository_auto_merge": true,
+      "gardener_automerge_enabled": true,
+      "dependabot_automerge_variable_present": false,
+      "native_context": "validate",
+      "gardener_barrier_context": "Gardener native auto-merge barrier",
+      "strict_required_status_checks": true
+    },
+    "site-pulse": {
+      "main": "be661f348ce7bc96b98f868b9d0eb2c01fcc99af",
+      "classic_protection": true,
+      "ruleset_count": 0,
+      "repository_auto_merge": true,
+      "gardener_automerge_enabled": true,
+      "dependabot_automerge_variable_present": false,
+      "native_context": "Worker validation",
+      "gardener_barrier_context": "Gardener native auto-merge barrier",
+      "strict_required_status_checks": true
+    },
+    "specular-sonify": {
+      "main": "2577b5cbfa852a7dda89f3b0d1e1ed640d4e1f53",
+      "classic_protection": true,
+      "ruleset_count": 0,
+      "repository_auto_merge": true,
+      "gardener_automerge_enabled": true,
+      "dependabot_automerge_variable_present": false,
+      "native_context": "Worker configuration validation",
+      "gardener_barrier_context": "Gardener native auto-merge barrier",
+      "strict_required_status_checks": false
+    },
+    "status": {
+      "main": "4db1438b1a8859008461903105360a2f09376c02",
+      "classic_protection": true,
+      "ruleset_count": 0,
+      "repository_auto_merge": true,
+      "gardener_automerge_enabled": true,
+      "dependabot_automerge_variable_present": false,
+      "native_context": "Status site validation",
+      "gardener_barrier_context": "Gardener native auto-merge barrier",
+      "strict_required_status_checks": true
+    }
+  },
+  "source_history_note": {
+    "classification": "source-operator-misfire-corrected",
+    "provider_impact": false,
+    "details": "Two transient source-only placeholder writes were accidentally made directly to atlas-infra/main while preparing the apply branch and were immediately removed. No provider state, secret, runtime, workflow dispatch, release, deployment, or Wave 3 target repository was changed."
+  }
+}
