@@ -55,9 +55,9 @@ class GithubProviderGuardWave1Tests(unittest.TestCase):
         self.assertIn('shasum -a 256', self.script)
         self.assertNotIn('sort -z', self.script)
 
-    def test_plan_preserves_later_wave_boundaries(self) -> None:
-        wave_1a = self.plan.split('### Wave 1A: completed', 1)[1].split(
-            '### Wave 1B: not started',
+    def test_plan_preserves_completed_scope_and_later_wave_boundaries(self) -> None:
+        wave_1a = self.plan.split('### Wave 1A', 1)[1].split(
+            '### Wave 1B',
             1,
         )[0]
         repositories = re.findall(r'`AtlasReaper311/([^`]+)`', wave_1a)
@@ -68,12 +68,10 @@ class GithubProviderGuardWave1Tests(unittest.TestCase):
                 'atlas-resource-audit',
             ],
         )
-        self.assertIn('### Wave 1B: not started', self.plan)
-        self.assertIn(
-            'No later wave may begin implicitly from completion of Wave 1A.',
-            self.plan,
-        )
-        self.assertIn('separate provider-write approval', self.plan)
+        self.assertIn('### Wave 2: specialist active non-runtime repositories', self.plan)
+        self.assertIn('Every later wave must follow this sequence:', self.plan)
+        self.assertIn('obtain separate provider-write approval for an exact repository list', self.plan)
+        self.assertIn('repository auto-merge unchanged unless separately authorised', self.plan)
 
 
 if __name__ == "__main__":
