@@ -14,11 +14,11 @@ Last updated: 2026-08-08.
 
 - **Repo(s):** `atlas-infra`, `atlas-gardener`, `atlas-interface-kit`, `atlas-journey-watch`
 - **Agent:** ChatGPT with Atlas approving any provider write
-- **Status:** active, inspection-only source stage
+- **Status:** active, Wave 2A apply-source stage
 - **Started:** 2026-08-08
 - **Last updated:** 2026-08-08
-- **Summary:** Continue the default-branch provider-guard programme after the completed canary, Wave 1A, and Wave 1B. Fresh Part 0 identifies `atlas-gardener` and `atlas-interface-kit` as provisional Wave 2A candidates with repository auto-merge disabled and native contexts `test` and `Validate interface kit`. `atlas-journey-watch` is held as Wave 2B because repository auto-merge remains enabled and its selective Dependabot caller depends on the non-secret `DEPENDABOT_AUTOMERGE_ENABLED` variable. The current source stage authorises only an owner-authenticated read-only provider and automation-state inspection.
-- **Resume point:** Validate and merge the Wave 2 inspection authority. Then run the owner-authenticated inspection and review existing rulesets/classic protection plus Gardener controller variables and Journey Watch selective auto-merge state. Do not author or execute a provider apply path until that evidence is reviewed. Do not begin Wave 3.
+- **Summary:** The owner-authenticated Wave 2 inspection is complete and its 40 evidence payloads match `SHA256SUMS.txt`. `atlas-gardener` and `atlas-interface-kit` are cleared as Wave 2A source candidates with auto-merge disabled, no active branch ruleset, no classic `main` protection, and native contexts `test` and `Validate interface kit`. Gardener's live controller remains separately governed in `automerge-low-risk` mode with its write gate enabled and the five inspected later-wave targets. `atlas-journey-watch` is held out of Wave 2A because inspection proved repository auto-merge enabled, `DEPENDABOT_AUTOMERGE_ENABLED=true`, and existing active ruleset `19154613` (`Require native pull request validation`).
+- **Resume point:** Validate and merge the fail-closed Wave 2A apply authority for exactly `atlas-gardener` and `atlas-interface-kit`. Then obtain separate provider-write approval before creating any ruleset. Do not touch Journey Watch ruleset `19154613`, its auto-merge settings or variable, and do not begin Wave 3.
 
 ## Queued work
 
