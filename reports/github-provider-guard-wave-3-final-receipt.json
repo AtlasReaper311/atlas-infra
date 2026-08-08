@@ -1,0 +1,125 @@
+{
+  "authority": {
+    "commit": "2edd65f4cc1b1e62c50630881ba7df42b8a2c0b7",
+    "repository": "AtlasReaper311/atlas-infra"
+  },
+  "owner_validation": {
+    "AtlasReaper311/atlas-doc-viewer": {
+      "merge_commit": "7117eb333650d27c78ce612427cd729699985395",
+      "pull_request": 35,
+      "required_context": "Static document validation",
+      "reviewed_head": "ca623d7e972abc868ce44fc59c1ae37d0686187c"
+    },
+    "AtlasReaper311/atlas-quota-watch": {
+      "merge_commit": "f5425615a0ba5b042140bd1400680ec5963d32d3",
+      "pull_request": 15,
+      "required_context": "validate",
+      "reviewed_head": "2734a1c282fc4b63c63b9fb7ffb896a83dab9f64"
+    },
+    "AtlasReaper311/site-pulse": {
+      "merge_commit": "3bad42d3b3ce0dd787ad442874053d5e185409e1",
+      "pull_request": 17,
+      "required_context": "Worker validation",
+      "reviewed_head": "f3fa1f3d2667f3ee122935d419cf371f5962c711"
+    },
+    "AtlasReaper311/specular-sonify": {
+      "merge_commit": "b08a9c411429fe47725a06cd3b4eb87b0ca14559",
+      "pull_request": 20,
+      "required_context": "Worker configuration validation",
+      "reviewed_head": "29c1b1445820b4f16e140efb3aa5c0ff08f0f5ce"
+    },
+    "AtlasReaper311/status": {
+      "merge_commit": "6033f9f79e48462273a6fb19105a6df5ce31bff8",
+      "pull_request": 37,
+      "required_context": "Status site validation",
+      "reviewed_head": "b10b39fb06129043e7e7571887dddb2a8beda4f0"
+    }
+  },
+  "preservation": {
+    "classic_protection_removed": true,
+    "dependabot_automerge_variable_absent": true,
+    "existing_dependabot_prs_merged_by_wave_3": false,
+    "gardener_automerge_enabled": true,
+    "gardener_controller_unchanged": true,
+    "manual_deployments": false,
+    "provider_or_variable_writes_during_finalization": false,
+    "repository_auto_merge": true,
+    "wave_4_started": false,
+    "workflow_dispatches": false
+  },
+  "provider_archive_sha256": "c6356e72680cfa130fa4b622cf8a30d63fe96b2e3d79dcecb2c778d0fb2be2e2",
+  "rulesets": {
+    "AtlasReaper311/atlas-doc-viewer": 20586980,
+    "AtlasReaper311/atlas-quota-watch": 20586981,
+    "AtlasReaper311/site-pulse": 20586982,
+    "AtlasReaper311/specular-sonify": 20586983,
+    "AtlasReaper311/status": 20586984
+  },
+  "schema": "atlas-github-provider-guard-wave-3/final-receipt/v1",
+  "scoreboard": {
+    "collected_at": "2026-08-08T20:57:32Z",
+    "fingerprint": "sha256:3a105c77e74827fd5a46e8cf89f59c0981422c4e7b071f1bf4a1dc314fab8e5b",
+    "summary": {
+      "checks_deferred": 1,
+      "checks_exception": 1,
+      "checks_failed": 85,
+      "checks_not_applicable": 68,
+      "checks_passed": 245,
+      "checks_total": 330,
+      "checks_unknown": 0,
+      "policy_checks_failed": 15,
+      "policy_checks_passed": 245,
+      "policy_checks_required": 260,
+      "policy_checks_unknown": 0,
+      "repositories_checked": 33
+    },
+    "target_guards": {
+      "AtlasReaper311/atlas-doc-viewer": {
+        "id": "default_branch_guard",
+        "label": "Default branch PR guard",
+        "message": "An active default-branch ruleset was observed.",
+        "outcome": "passed",
+        "policy_message": "Estate-wide default requirement.",
+        "requirement": "required",
+        "status": "passed"
+      },
+      "AtlasReaper311/atlas-quota-watch": {
+        "id": "default_branch_guard",
+        "label": "Default branch PR guard",
+        "message": "An active default-branch ruleset was observed.",
+        "outcome": "passed",
+        "policy_message": "Estate-wide default requirement.",
+        "requirement": "required",
+        "status": "passed"
+      },
+      "AtlasReaper311/site-pulse": {
+        "id": "default_branch_guard",
+        "label": "Default branch PR guard",
+        "message": "An active default-branch ruleset was observed.",
+        "outcome": "passed",
+        "policy_message": "Estate-wide default requirement.",
+        "requirement": "required",
+        "status": "passed"
+      },
+      "AtlasReaper311/specular-sonify": {
+        "id": "default_branch_guard",
+        "label": "Default branch PR guard",
+        "message": "An active default-branch ruleset was observed.",
+        "outcome": "passed",
+        "policy_message": "Estate-wide default requirement.",
+        "requirement": "required",
+        "status": "passed"
+      },
+      "AtlasReaper311/status": {
+        "id": "default_branch_guard",
+        "label": "Default branch PR guard",
+        "message": "An active default-branch ruleset was observed.",
+        "outcome": "passed",
+        "policy_message": "Estate-wide default requirement.",
+        "requirement": "required",
+        "status": "passed"
+      }
+    }
+  },
+  "status": "ready-for-closeout-pr"
+}
