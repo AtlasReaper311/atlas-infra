@@ -75,8 +75,8 @@ class GithubProviderGuardWave3Tests(unittest.TestCase):
 
     def test_repository_auto_merge_is_preservation_boundary(self) -> None:
         self.assertIn(".allow_auto_merge", self.script)
-        self.assertIn("repository auto-merge", self.plan)
-        self.assertIn("currently report repository-level auto-merge enabled", self.plan)
+        self.assertIn("Repository auto-merge", self.plan)
+        self.assertIn("reported repository-level auto-merge enabled throughout the reviewed migration", self.plan)
 
     def test_operator_is_read_only(self) -> None:
         forbidden = (
@@ -103,25 +103,25 @@ class GithubProviderGuardWave3Tests(unittest.TestCase):
         self.assertIn("main drifted", self.script)
         self.assertIn("repository auto-merge drifted", self.script)
         self.assertIn("Gardener gate no longer pins expected native context", self.script)
-        self.assertIn("must stop before the first write", self.plan)
+        self.assertIn("preflight all five source and provider baselines before the first write", self.plan)
 
-    def test_expected_target_semantics_match_atlas_guard(self) -> None:
+    def test_expected_target_semantics_match_completed_atlas_guard(self) -> None:
         for value in (
             "~DEFAULT_BRANCH",
             "deletion",
             "non_fast_forward",
             "pull_request",
-            "required_status_checks",
-            "strict_required_status_checks_policy: false",
+            "repository-native required status context",
+            "existing repository-specific strict required-status value preserved",
         ):
             self.assertIn(value, self.plan)
 
-    def test_provider_write_requires_later_approval(self) -> None:
-        self.assertIn("do not authorise provider mutation", self.plan)
-        self.assertIn("No provider write should occur before that approval", self.plan)
+    def test_completed_wave_records_later_provider_gate(self) -> None:
+        self.assertIn("Wave 3 requires no further provider work", self.plan)
+        self.assertIn("Wave 4 and all later waves remain unstarted and separately approval gated", self.plan)
 
-    def test_wave_4_remains_unstarted(self) -> None:
-        self.assertIn("Wave 4 and all later waves remain unstarted.", self.plan)
+    def test_wave_4_was_unstarted_at_wave_3_closeout(self) -> None:
+        self.assertIn("Wave 4 and all later waves remain unstarted and separately approval gated.", self.plan)
         self.assertIn('"wave_4_started": False', self.script)
 
     def test_cross_platform_sha256_support(self) -> None:

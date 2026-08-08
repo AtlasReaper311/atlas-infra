@@ -1,0 +1,189 @@
+{
+  "archive_sha256": "0abbd15869a96a8f38f7f7945a914277b7995924710e9eb0a0580478a289e884",
+  "atlas_infra_authority": "ce709204e735bbf30f9479f354dacdd602b6a65f",
+  "digest_mismatches": 0,
+  "gardener_controller": {
+    "ATLAS_GARDENER_MODE": "automerge-low-risk",
+    "ATLAS_GARDENER_WRITE_GATE": "enabled",
+    "ATLAS_GARDENER_WRITE_TARGETS_JSON": "[\"AtlasReaper311/atlas-doc-viewer\",\"AtlasReaper311/atlas-quota-watch\",\"AtlasReaper311/site-pulse\",\"AtlasReaper311/specular-sonify\",\"AtlasReaper311/status\"]"
+  },
+  "github_actions_integration_id": 15368,
+  "held": {
+    "main": "1cc070f9d3a096813ce5ffb87ffd05e0a551e1bb",
+    "provider_change_authorised": false,
+    "reason": "The scheduled update-readme workflow writes README.md directly to main with github-actions[bot]; a no-bypass pull-request guard would block that writer until the write path is redesigned or separately authorised.",
+    "repository": "AtlasReaper311",
+    "source_class": "profile-direct-main-writer-hold"
+  },
+  "manifest_entries": 171,
+  "missing_manifest_payloads": 0,
+  "provider_writes_performed": false,
+  "schema": "atlas-github-provider-guard-wave-4/inspection-receipt/v1",
+  "secrets_read": false,
+  "variables_written": false,
+  "wave_3_scoreboard_baseline": {
+    "policy_checks_failed": 15,
+    "policy_checks_passed": 245,
+    "policy_checks_unknown": 0,
+    "remaining_failure_check": "default_branch_guard",
+    "repositories_checked": 33
+  },
+  "wave_4_provider_apply_started": false,
+  "wave_4a": {
+    "provider_shape": "create-first-default-branch-guard",
+    "repositories": {
+      ".github": {
+        "classic_protection": false,
+        "dependabot_automerge_variable_present": false,
+        "gardener_automerge_variable_present": false,
+        "main": "dd3818eeae486c95e1a1fc0860786db5c24308fa",
+        "native_context": null,
+        "repository_auto_merge": false,
+        "ruleset_count": 0,
+        "source_class": "community-defaults-no-native-ci"
+      },
+      "atlas-api-index": {
+        "classic_protection": false,
+        "dependabot_automerge_variable_present": false,
+        "gardener_automerge_variable_present": false,
+        "main": "96cd81f643429895847a1c2f143084d6e995005c",
+        "native_context": "build",
+        "repository_auto_merge": false,
+        "ruleset_count": 0,
+        "source_class": "ordinary-runtime-native-ci"
+      },
+      "atlas-blackbox": {
+        "classic_protection": false,
+        "dependabot_automerge_variable_present": false,
+        "gardener_automerge_variable_present": false,
+        "main": "e0c3ac7cdb2438a13a7ec71a02f7ac86aeed4223",
+        "native_context": "Offline Worker validation",
+        "repository_auto_merge": false,
+        "ruleset_count": 0,
+        "source_class": "ordinary-runtime-native-ci"
+      },
+      "atlas-corpus": {
+        "classic_protection": false,
+        "dependabot_automerge_variable_present": false,
+        "gardener_automerge_variable_present": false,
+        "main": "faa0690f5f1e58fa97c1839d6f320e00512ecdd1",
+        "native_context": "build",
+        "repository_auto_merge": false,
+        "ruleset_count": 0,
+        "source_class": "ordinary-runtime-native-ci"
+      },
+      "atlas-daily-digest": {
+        "classic_protection": false,
+        "dependabot_automerge_variable_present": false,
+        "gardener_automerge_variable_present": false,
+        "main": "125e4872b90227c4cf72f33f953308e99ddd027b",
+        "native_context": "Worker validation",
+        "repository_auto_merge": false,
+        "ruleset_count": 0,
+        "source_class": "ordinary-runtime-native-ci"
+      },
+      "atlas-notify": {
+        "classic_protection": false,
+        "dependabot_automerge_variable_present": false,
+        "gardener_automerge_variable_present": false,
+        "main": "9efeb709cd86f4b7bb7e6910d55a6155eb7e79f0",
+        "native_context": "Test (Vitest)",
+        "repository_auto_merge": false,
+        "ruleset_count": 0,
+        "source_class": "ordinary-runtime-native-ci"
+      },
+      "deploy-watch": {
+        "classic_protection": false,
+        "dependabot_automerge_variable_present": false,
+        "gardener_automerge_variable_present": false,
+        "main": "72513e434a7b68bdba4e8c181b536b92da6f2b17",
+        "native_context": "Worker validation",
+        "repository_auto_merge": false,
+        "ruleset_count": 0,
+        "source_class": "ordinary-runtime-native-ci"
+      },
+      "github-pulse": {
+        "classic_protection": false,
+        "dependabot_automerge_variable_present": false,
+        "gardener_automerge_variable_present": false,
+        "main": "8f1435e9302cf9006d9ab8a2cc2a9702c460cad6",
+        "native_context": "Worker validation",
+        "repository_auto_merge": false,
+        "ruleset_count": 0,
+        "source_class": "ordinary-runtime-native-ci"
+      },
+      "ramone-edge": {
+        "classic_protection": false,
+        "dependabot_automerge_variable_present": false,
+        "gardener_automerge_variable_present": false,
+        "main": "3830dd3839847187e0b5ac6c837a5658f5f47341",
+        "native_context": "Worker validation",
+        "repository_auto_merge": false,
+        "ruleset_count": 0,
+        "source_class": "ordinary-runtime-native-ci"
+      },
+      "ramone-memory": {
+        "classic_protection": false,
+        "dependabot_automerge_variable_present": false,
+        "gardener_automerge_variable_present": false,
+        "main": "7b983cd4df1435ea0962ff3179d8570ec8dc0e71",
+        "native_context": "build",
+        "repository_auto_merge": false,
+        "ruleset_count": 0,
+        "source_class": "ordinary-runtime-native-ci"
+      },
+      "ramone-voice-trigger": {
+        "classic_protection": false,
+        "dependabot_automerge_variable_present": false,
+        "gardener_automerge_variable_present": false,
+        "main": "6e3273330e531b936553b34243ed5ee6141ba614",
+        "native_context": "build",
+        "repository_auto_merge": false,
+        "ruleset_count": 0,
+        "source_class": "ordinary-runtime-native-ci"
+      },
+      "specular-sentinel": {
+        "classic_protection": false,
+        "dependabot_automerge_variable_present": false,
+        "gardener_automerge_variable_present": false,
+        "main": "8dfe8c4274fc278855bcd4658cdb4866d3c29d3f",
+        "native_context": "build",
+        "repository_auto_merge": false,
+        "ruleset_count": 0,
+        "source_class": "ordinary-runtime-native-ci"
+      },
+      "specular-telemetry": {
+        "classic_protection": false,
+        "dependabot_automerge_variable_present": false,
+        "gardener_automerge_variable_present": false,
+        "main": "0a0a930abaa104e6da5c9ad2da57e78eb0fbec80",
+        "native_context": "build",
+        "repository_auto_merge": false,
+        "ruleset_count": 0,
+        "source_class": "ordinary-runtime-native-ci"
+      }
+    },
+    "repository_count": 13
+  },
+  "wave_4b": {
+    "classic_protection": false,
+    "dependabot_automerge_variable_present": false,
+    "existing_rule_types": [
+      "required_status_checks"
+    ],
+    "gardener_automerge_enabled": false,
+    "main": "fff7c2c5453240dafd693e8a4de645beab523031",
+    "repository": "atlas-dora",
+    "repository_auto_merge": false,
+    "required_status_checks": [
+      "check",
+      "Gardener native auto-merge barrier"
+    ],
+    "ruleset_count": 1,
+    "ruleset_id": 19581236,
+    "ruleset_name": "Atlas Gardener native auto-merge barrier",
+    "source_class": "gardener-coupled-runtime",
+    "strict_required_status_checks_policy": false
+  },
+  "workflow_dispatches": false
+}

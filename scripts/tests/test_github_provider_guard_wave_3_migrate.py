@@ -94,18 +94,18 @@ class GithubProviderGuardWave3MigrateTests(unittest.TestCase):
         ):
             self.assertNotIn(forbidden, self.script)
 
-    def test_apply_requires_exact_confirmation(self) -> None:
+    def test_apply_requires_exact_confirmation_and_records_closeout(self) -> None:
         self.assertIn('MODE="${MODE:-inspect}"', self.script)
         self.assertIn("APPLY GITHUB PROVIDER GUARD WAVE 3", self.script)
-        self.assertIn("Any provider mutation requires a new explicit approval", self.plan)
+        self.assertIn("Wave 3 requires no further provider work", self.plan)
 
     def test_source_operator_misfire_is_recorded(self) -> None:
         self.assertIn("source-only placeholder", self.plan)
         self.assertIn("source-operator-misfire-corrected", self.receipt)
         self.assertIn("No Wave 3 target repository or provider state was changed", self.plan)
 
-    def test_wave_4_remains_unstarted(self) -> None:
-        self.assertIn("Wave 4 and all later waves remain unstarted.", self.plan)
+    def test_wave_4_was_unstarted_at_wave_3_closeout(self) -> None:
+        self.assertIn("Wave 4 and all later waves remain unstarted and separately approval gated.", self.plan)
         self.assertIn('"wave_4_started": False', self.script)
 
 
