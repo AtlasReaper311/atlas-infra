@@ -24,12 +24,20 @@ def deploy_step(
         '          npx --yes "wrangler@${WRANGLER_VERSION}" pages deploy '
         '"$PUBLISH_DIRECTORY" \\'
     ),
+    extra_steps: list[str] | None = None,
+    leading_comments: list[str] | None = None,
 ) -> str:
-    return "\n".join(
+    lines = list(leading_comments or [])
+    lines.extend(
         [
             "jobs:",
             "  deploy:",
             "    steps:",
+        ]
+    )
+    lines.extend(extra_steps or [])
+    lines.extend(
+        [
             "      - name: Deploy with wrangler",
             "        id: deploy_step",
             "        env:",
@@ -42,6 +50,7 @@ def deploy_step(
             "",
         ]
     )
+    return "\n".join(lines)
 
 
 class ValidateStaticWranglerPinTests(unittest.TestCase):
@@ -133,6 +142,31 @@ class ValidateStaticWranglerPinTests(unittest.TestCase):
                 "exact x.y.z pin",
             ):
                 VALIDATE.validate_workflow(path)
+
+    def test_unrelated_wrangler_comment_outside_deploy_step_is_ignored(self) -> None:
+        text = deploy_step(
+            leading_comments=[
+                "# Historical failure used floating wrangler@4 and wrangler@latest.",
+                "# Do not copy `npx wrangler pages deploy` into the deploy step.",
+            ]
+        )
+        pin = VALIDATE.validate_workflow_text(text)
+        self.assertEqual("4.116.0", pin.version)
+
+    def test_unrelated_step_with_mutable_wrangler_does_not_invalidate_deploy_pin(
+        self,
+    ) -> None:
+        text = deploy_step(
+            extra_steps=[
+                "      - name: Diagnostic bundle probe",
+                "        run: |",
+                '          npx --yes "wrangler@latest" deploy --dry-run',
+                '          npx --yes "wrangler@4" deploy --dry-run',
+                "          npx --yes wrangler deploy --dry-run",
+            ]
+        )
+        pin = VALIDATE.validate_workflow_text(text)
+        self.assertEqual("4.116.0", pin.version)
 
 
 if __name__ == "__main__":

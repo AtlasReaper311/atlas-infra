@@ -44,6 +44,12 @@ class WranglerPin:
     line: int
 
 
+@dataclass(frozen=True)
+class DeployStepContract:
+    pin: WranglerPin
+    run_text: str
+
+
 def strip_yaml_scalar(value: str) -> str:
     text = value.split("#", 1)[0].strip()
     if len(text) >= 2 and text[0] == text[-1] and text[0] in {'"', "'"}:
@@ -51,8 +57,8 @@ def strip_yaml_scalar(value: str) -> str:
     return text
 
 
-def parse_wrangler_pin(text: str) -> WranglerPin:
-    """Extract the deploy-step WRANGLER_VERSION from workflow text."""
+def parse_deploy_step_contract(text: str) -> DeployStepContract:
+    """Extract WRANGLER_VERSION and the Deploy with wrangler run block."""
     lines = text.splitlines()
     in_deploy_step = False
     in_env = False
@@ -136,7 +142,12 @@ def parse_wrangler_pin(text: str) -> WranglerPin:
             'npx --yes "wrangler@${WRANGLER_VERSION}" pages deploy'
         )
 
-    return pin
+    return DeployStepContract(pin=pin, run_text=run_text)
+
+
+def parse_wrangler_pin(text: str) -> WranglerPin:
+    """Compatibility helper: return only the deploy-step pin."""
+    return parse_deploy_step_contract(text).pin
 
 
 def assert_exact_immutable_version(version: str) -> None:
@@ -154,44 +165,37 @@ def assert_exact_immutable_version(version: str) -> None:
         )
 
 
-def assert_rejects_mutable_selectors(text: str) -> None:
-    """Fail closed if the deploy invocation uses a known mutable selector."""
-    # Inspect the deploy run block only after structural parse succeeded.
-    pin = parse_wrangler_pin(text)
-    assert_exact_immutable_version(pin.version)
-
-    lowered = text.lower()
+def assert_rejects_mutable_selectors(run_text: str) -> None:
+    """Fail closed if the Deploy with wrangler run block uses a mutable selector."""
     for selector in MUTABLE_SELECTORS:
-        # Permit mentions in comments describing the historical failure, but
-        # reject an actual npx invocation of a mutable selector.
         pattern = re.compile(
             rf'npx\s+(?:--yes\s+)?["\']?{re.escape(selector)}["\']?',
             re.IGNORECASE,
         )
-        if pattern.search(text):
+        if pattern.search(run_text):
             raise WranglerPinValidationError(
                 f"deploy must not invoke mutable selector {selector}"
             )
 
-    if re.search(r'npx\s+(?:--yes\s+)?["\']?wrangler["\']?\s+pages\s+deploy\b', text):
+    if re.search(
+        r'npx\s+(?:--yes\s+)?["\']?wrangler["\']?\s+pages\s+deploy\b',
+        run_text,
+    ):
         raise WranglerPinValidationError(
             "deploy must not invoke unversioned wrangler for pages deploy"
         )
 
-    if re.search(r'npx\s+(?:--yes\s+)?["\']?wrangler@[0-9]+["\']?', text):
+    if re.search(r'npx\s+(?:--yes\s+)?["\']?wrangler@[0-9]+["\']?', run_text):
         raise WranglerPinValidationError(
             "deploy must not invoke floating major wrangler@N"
         )
 
-    # Keep linters calm about unused lowered when comments-only.
-    del lowered
-
 
 def validate_workflow_text(text: str) -> WranglerPin:
-    pin = parse_wrangler_pin(text)
-    assert_exact_immutable_version(pin.version)
-    assert_rejects_mutable_selectors(text)
-    return pin
+    contract = parse_deploy_step_contract(text)
+    assert_exact_immutable_version(contract.pin.version)
+    assert_rejects_mutable_selectors(contract.run_text)
+    return contract.pin
 
 
 def validate_workflow(path: Path) -> WranglerPin:
