@@ -42,6 +42,8 @@ on:
       - "scripts/wave3_contracts.py"
       - "scripts/worker_contract.py"
       - "scripts/validate_contract_registry.py"
+      - "scripts/validate_static_wrangler_pin.py"
+      - "scripts/workflow_pin_validation.py"
       - "scripts/tests/**"
       - ".github/workflows/contract-registry-ci.yml"
       - ".github/workflows/deploy-worker.yml"
@@ -49,9 +51,12 @@ on:
       - ".github/workflows/repository-label-audit.yml"
       - ".github/workflows/repository-metadata-audit.yml"
       - ".github/workflows/repository-readme-audit.yml"
+      - ".github/workflows/validate-private-estate-policy.yml"
+      - ".github/workflows/validate-private-estate.yml"
       - ".github/workflows/validate-private-labels.yml"
       - ".github/workflows/validate-private-metadata.yml"
       - ".github/workflows/validate-private-readme.yml"
+      - ".github/workflows/validate-static.yml"
   push:
     branches: [main]
     paths:
@@ -94,6 +99,8 @@ on:
       - "scripts/wave3_contracts.py"
       - "scripts/worker_contract.py"
       - "scripts/validate_contract_registry.py"
+      - "scripts/validate_static_wrangler_pin.py"
+      - "scripts/workflow_pin_validation.py"
       - "scripts/tests/**"
       - ".github/workflows/contract-registry-ci.yml"
       - ".github/workflows/deploy-worker.yml"
@@ -101,9 +108,12 @@ on:
       - ".github/workflows/repository-label-audit.yml"
       - ".github/workflows/repository-metadata-audit.yml"
       - ".github/workflows/repository-readme-audit.yml"
+      - ".github/workflows/validate-private-estate-policy.yml"
+      - ".github/workflows/validate-private-estate.yml"
       - ".github/workflows/validate-private-labels.yml"
       - ".github/workflows/validate-private-metadata.yml"
       - ".github/workflows/validate-private-readme.yml"
+      - ".github/workflows/validate-static.yml"
   workflow_dispatch:
 
 permissions:
@@ -120,6 +130,8 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0, Node 24
+        with:
+          fetch-depth: 0
 
       - name: Validate public registry and service contracts
         run: |
@@ -185,7 +197,20 @@ jobs:
             scripts/retirement_planner.py \
             scripts/wave3_contracts.py \
             scripts/worker_contract.py \
-            scripts/validate_contract_registry.py
+            scripts/validate_contract_registry.py \
+            scripts/validate_static_wrangler_pin.py \
+            scripts/workflow_pin_validation.py
+
+      - name: Validate static Pages Wrangler pin
+        run: |
+          set -euo pipefail
+          python3 scripts/validate_static_wrangler_pin.py
+
+      - name: Verify hardcoded self-tooling pins are main-reachable
+        run: |
+          set -euo pipefail
+          git fetch --no-tags origin main
+          python3 scripts/workflow_pin_validation.py --main-ref origin/main
 
       - name: Run control-plane unit tests
         run: |
