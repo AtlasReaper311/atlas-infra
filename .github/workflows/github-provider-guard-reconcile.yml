@@ -1,0 +1,126 @@
+name: GitHub provider guard reconciler
+
+on:
+  workflow_dispatch:
+    inputs:
+      apply:
+        description: Create missing baseline guards when the provider write gate is enabled
+        required: true
+        default: false
+        type: boolean
+  schedule:
+    - cron: "19 7 * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: github-provider-guard-reconciler
+  cancel-in-progress: false
+
+jobs:
+  inspect:
+    name: Inspect missing default-branch guards
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out Atlas Infra
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0, Node 24
+
+      - name: Validate reconciler source
+        run: |
+          set -euo pipefail
+          python3 -m py_compile scripts/github_provider_guard_reconcile.py
+          python3 -m unittest scripts.tests.test_github_provider_guard_reconcile -v
+          python3 scripts/public_repository_classifications.py --check
+
+      - name: Inspect governed repositories
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p reports
+          python3 scripts/github_provider_guard_reconcile.py \
+            --mode inspect \
+            --json-out reports/github-provider-guard-reconcile-inspect.json
+
+      - name: Upload inspection evidence
+        if: always() && hashFiles('reports/github-provider-guard-reconcile-inspect.json') != ''
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1, Node 24
+        with:
+          name: github-provider-guard-reconcile-inspect-${{ github.run_id }}
+          path: reports/github-provider-guard-reconcile-inspect.json
+          retention-days: 30
+
+  apply:
+    name: Reconcile missing default-branch guards
+    needs: inspect
+    if: >-
+      ${{ vars.ATLAS_PROVIDER_GUARD_RECONCILE_ENABLED == 'true' &&
+          (github.event_name == 'schedule' || inputs.apply == true) }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out Atlas Infra
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0, Node 24
+
+      - name: Resolve governed repository token scope
+        id: provider-scope
+        run: |
+          set -euo pipefail
+          {
+            echo 'repositories<<ATLAS_REPOSITORIES'
+            jq -r '.repositories[].repository | split("/")[1]' policy/public-repository-classifications.json
+            echo 'ATLAS_REPOSITORIES'
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Create short-lived provider-guard token
+        id: provider-token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0, Node 24
+        with:
+          client-id: ${{ vars.ATLAS_PROVIDER_GUARD_APP_CLIENT_ID }}
+          private-key: ${{ secrets.ATLAS_PROVIDER_GUARD_APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: ${{ steps.provider-scope.outputs.repositories }}
+          permission-administration: write
+
+      - name: Reconcile missing baseline guards
+        env:
+          GITHUB_TOKEN: ${{ steps.provider-token.outputs.token }}
+          ATLAS_PROVIDER_GUARD_CONFIRMATION: APPLY MISSING BASELINE GUARDS
+        run: |
+          set -euo pipefail
+          mkdir -p reports
+          python3 scripts/github_provider_guard_reconcile.py \
+            --mode apply \
+            --json-out reports/github-provider-guard-reconcile-apply.json
+
+      - name: Verify converged provider state
+        env:
+          GITHUB_TOKEN: ${{ steps.provider-token.outputs.token }}
+        run: |
+          set -euo pipefail
+          python3 scripts/github_provider_guard_reconcile.py \
+            --mode inspect \
+            --json-out reports/github-provider-guard-reconcile-after.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          report = json.loads(
+              Path("reports/github-provider-guard-reconcile-after.json").read_text(
+                  encoding="utf-8"
+              )
+          )
+          summary = report["summary"]
+          if summary["create"] != 0 or summary["blocked"] != 0:
+              raise SystemExit("provider-guard reconciliation did not converge")
+          PY
+
+      - name: Upload reconciliation evidence
+        if: always() && hashFiles('reports/github-provider-guard-reconcile-*.json') != ''
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1, Node 24
+        with:
+          name: github-provider-guard-reconcile-${{ github.run_id }}
+          path: reports/github-provider-guard-reconcile-*.json
+          retention-days: 30
