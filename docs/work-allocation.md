@@ -6,19 +6,11 @@ sessions do not silently duplicate or reverse each other.
 
 Update or remove an entry as soon as its status changes.
 
-Last updated: 2026-08-08.
+Last updated: 2026-08-09.
 
 ## Active work
 
-### GitHub provider guard Wave 4
-
-- **Repo(s):** `atlas-infra`; future provider scope is the reviewed 13-repository Wave 4A create-first batch plus `atlas-dora` Wave 4B; `AtlasReaper311/AtlasReaper311` is held
-- **Agent:** ChatGPT with Atlas supplying and approving owner-authenticated provider evidence
-- **Status:** active
-- **Started:** 2026-08-08
-- **Last updated:** 2026-08-08
-- **Summary:** Reviewed owner-authenticated inspection archive SHA-256 `0abbd15869a96a8f38f7f7945a914277b7995924710e9eb0a0580478a289e884` with all 171 manifest payloads present and matching. Source authority is being prepared for Wave 4A additive ruleset creation across 13 compatible repositories and separate Wave 4B in-place DORA ruleset `19581236` reconciliation. No provider mutation is authorised by source preparation; the profile writer remains held.
-- **Resume point:** After the source-authority PR passes exact-head checks and is reviewed, obtain separate merge approval. Wave 4A provider creation remains a later explicit approval gate; Wave 4B remains separately gated after Wave 4A evidence.
+None.
 
 ## Queued work
 
@@ -43,6 +35,15 @@ Last updated: 2026-08-08.
 
 ## Recently completed
 
+### GitHub provider guard Wave 4
+
+- **Repo(s):** `atlas-infra`; provider scope covered the reviewed 13-repository Wave 4A create-first batch, `atlas-dora` Wave 4B, the separately owner-operated final profile guard, and day-zero reconciler activation
+- **Agent:** ChatGPT with Atlas supplying and approving owner-authenticated provider evidence
+- **Status:** done
+- **Started:** 2026-08-08
+- **Last updated:** 2026-08-09
+- **Summary:** Closed GitHub Provider Guard Wave 4. Wave 4A created the 13 reviewed default-branch guards. Wave 4B reconciled `atlas-dora` ruleset `19581236` in place to the four-rule shape while preserving `check` and `Gardener native auto-merge barrier`. The profile writer redesign landed through `AtlasReaper311/AtlasReaper311#8`, pre-guard automation succeeded through `#9`, and final profile ruleset `20595678` was installed by a separate owner-operated provider action. The day-zero create-only reconciler is enabled, scheduled, and healthy with observed no-op apply evidence of 33 compliant / 0 create / 0 blocked. One-shot Wave 4A and Wave 4B operators are retained unchanged as historical fail-closed evidence and are not current maintenance authority. Final owner-authenticated scoreboard: 260 required passes, 0 required failures, 0 required unknowns; fingerprint `sha256:34265f801dfcd5ca1d24d93b0041aa707a8746d01879f3da8bab30df053ed5fe`. Permanent closeout: `docs/github-provider-guard-wave-4-closeout.md` and `reports/github-provider-guard-wave-4-final-receipt.json`.
+
 ### GitHub provider guard Wave 3
 
 - **Repo(s):** `atlas-infra`, `atlas-doc-viewer`, `atlas-quota-watch`, `site-pulse`, `specular-sonify`, `status`
@@ -50,7 +51,7 @@ Last updated: 2026-08-08.
 - **Status:** done
 - **Started:** 2026-08-08
 - **Last updated:** 2026-08-08
-- **Summary:** Closed the five-repository classic-protection migration. Inspection authority merged through `atlas-infra#140` as `1cd123cafcaab0bb2736c1659e6f389922190c60`; batch migration authority merged through `atlas-infra#141` as `2edd65f4cc1b1e62c50630881ba7df42b8a2c0b7`. The approved fail-closed provider batch created and verified rulesets `20586980` through `20586984` before removing the five superseded classic protections. Repository auto-merge, `ATLAS_GARDENER_AUTOMERGE_ENABLED=true`, absent `DEPENDABOT_AUTOMERGE_ENABLED`, the Gardener controller, secrets, runtime state, and existing Dependabot PRs were preserved. Owner validation PRs `atlas-doc-viewer#35`, `atlas-quota-watch#15`, `site-pulse#17`, `specular-sonify#20`, and `status#37` all passed their repository-native required context plus `Gardener native auto-merge barrier` and were squash-merged from the exact reviewed heads. The final owner-authenticated scoreboard recorded 245 required passes, 15 required failures, and zero required unknowns, with all five Wave 3 `default_branch_guard` outcomes passed. Final scoreboard fingerprint: `sha256:3a105c77e74827fd5a46e8cf89f59c0981422c4e7b071f1bf4a1dc314fab8e5b`. Final evidence archive SHA-256: `b11c0f23f52dc26bcee5cf7436511ad97966aa1a8f1662207a4803c58fcda28b`, with all 66 manifest payloads present and matching. Wave 4 remains unstarted and separately approval gated.
+- **Summary:** Closed the five-repository classic-protection migration. Inspection authority merged through `atlas-infra#140` as `1cd123cafcaab0bb2736c1659e6f389922190c60`; batch migration authority merged through `atlas-infra#141` as `2edd65f4cc1b1e62c50630881ba7df42b8a2c0b7`. The approved fail-closed provider batch created and verified rulesets `20586980` through `20586984` before removing the five superseded classic protections. Repository auto-merge, `ATLAS_GARDENER_AUTOMERGE_ENABLED=true`, absent `DEPENDABOT_AUTOMERGE_ENABLED`, the Gardener controller, secrets, runtime state, and existing Dependabot PRs were preserved. Owner validation PRs `atlas-doc-viewer#35`, `atlas-quota-watch#15`, `site-pulse#17`, `specular-sonify#20`, and `status#37` all passed their repository-native required context plus `Gardener native auto-merge barrier` and were squash-merged from the exact reviewed heads. The final owner-authenticated scoreboard recorded 245 required passes, 15 required failures, and zero required unknowns, with all five Wave 3 `default_branch_guard` outcomes passed. Final scoreboard fingerprint: `sha256:3a105c77e74827fd5a46e8cf89f59c0981422c4e7b071f1bf4a1dc314fab8e5b`. Final evidence archive SHA-256: `b11c0f23f52dc26bcee5cf7436511ad97966aa1a8f1662207a4803c58fcda28b`, with all 66 manifest payloads present and matching. Wave 4 later completed under a separate programme; see `docs/github-provider-guard-wave-4-closeout.md`.
 
 ### GitHub provider guard Wave 2B
 

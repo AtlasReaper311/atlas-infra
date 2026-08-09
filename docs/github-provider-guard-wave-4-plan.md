@@ -1,6 +1,8 @@
 # GitHub provider guard Wave 4 plan
 
-Status: reviewed owner-authenticated Wave 4 inspection complete; source authority in review. No Wave 4 provider write is authorised by this document.
+Status: historical / superseded. Provider rollout completed; final state is recorded in `docs/github-provider-guard-wave-4-closeout.md` and `reports/github-provider-guard-wave-4-final-receipt.json`.
+
+This document preserves the reviewed Wave 4 plan and contracts. Present-tense rollout gates below describe reviewed expectations at planning time, not current programme status.
 
 ## Scope
 
@@ -144,3 +146,16 @@ Source preparation and provider rollout remain separate:
 The provider operators do not create or merge owner-validation pull requests. If owner-path validation is later requested, it is a separate source-write gate. Any merge in a repository whose `main` path deploys is also a separate deployment action and must not be inferred from ruleset success.
 
 Any provider mutation requires a new explicit approval after this source authority is reviewed and merged.
+
+## Actual final provider outcome
+
+The planning expectations above are retained for historical contract evidence. They are not current status.
+
+Final provider outcome is recorded in `docs/github-provider-guard-wave-4-closeout.md` and `reports/github-provider-guard-wave-4-final-receipt.json`:
+
+- Wave 4A created the 13 reviewed rulesets;
+- Wave 4B updated ruleset `19581236` in place to the four-rule shape while preserving both required contexts;
+- the profile writer was redesigned and final ruleset `20595678` was installed by a separate owner-operated provider action;
+- the day-zero create-only reconciler is enabled, scheduled, and healthy;
+- the final owner-authenticated scoreboard is `260 / 0 / 0`;
+- one-shot Wave 4A and Wave 4B operators are retained unchanged as historical fail-closed evidence and must not be reused for future rollout work.

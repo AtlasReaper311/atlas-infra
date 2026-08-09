@@ -10,7 +10,7 @@ Wave 3 was limited to:
 - `AtlasReaper311/specular-sonify`;
 - `AtlasReaper311/status`.
 
-Wave 4 and all later waves remain unstarted.
+At the time of this Wave 3 closeout, Wave 4 and all later waves remained unstarted. Wave 4 later completed under a separate programme; see `docs/github-provider-guard-wave-4-closeout.md`.
 
 ## Source authority
 
@@ -63,7 +63,7 @@ The migration and finalization evidence records:
 - no variable write during finalization;
 - no workflow dispatch during finalization;
 - no manual deployment;
-- Wave 4 not started.
+- Wave 4 was not started by Wave 3.
 
 ## Owner-path validation
 
@@ -131,4 +131,4 @@ Wave 3 did not:
 - modify runtime configuration;
 - begin Wave 4 or any later wave.
 
-Wave 3 requires no further provider work. The next provider-guard wave remains separately inspection and approval gated.
+Wave 3 requires no further provider work. Wave 4 later completed under a separate programme; see `docs/github-provider-guard-wave-4-closeout.md`.

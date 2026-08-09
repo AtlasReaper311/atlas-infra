@@ -1,6 +1,6 @@
 # GitHub provider guard reconciler
 
-Status: source design for maintaining the Atlas default-branch guard after the completed provider-guard rollout. Provider activation remains separate from source merge.
+Status: standing governance. Source merged through `atlas-infra#144` as `3ff1a72a9148e94d4e433cc787ffcad9ab8df10d`. Provider activation is complete: `ATLAS_PROVIDER_GUARD_RECONCILE_ENABLED=true`, scheduled runs are healthy, and current no-op apply evidence reports 33 compliant / 0 create / 0 blocked with `provider_writes_performed=false`.
 
 ## Purpose
 
@@ -96,7 +96,7 @@ Configure only these Atlas Infra workflow inputs:
 
 - repository variable `ATLAS_PROVIDER_GUARD_APP_CLIENT_ID` containing the App client ID;
 - repository secret `ATLAS_PROVIDER_GUARD_APP_PRIVATE_KEY` containing the App private key; and
-- repository variable `ATLAS_PROVIDER_GUARD_RECONCILE_ENABLED`, initially `false` and changed to `true` only at the separate rollout gate.
+- repository variable `ATLAS_PROVIDER_GUARD_RECONCILE_ENABLED`, initially `false` at source merge and later set to `true` at the separate rollout gate; current standing state is enabled.
 
 Never place the private key in source, shell history, logs, issue text, pull requests, or chat.
 
