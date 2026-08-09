@@ -50,8 +50,8 @@ class PublicRepositoryClassificationTests(unittest.TestCase):
         repositories = [item["repository"] for item in projection["repositories"]]
         self.assertEqual(sorted(repositories), repositories)
         self.assertEqual(len(repositories), len(set(repositories)))
-        self.assertEqual(33, projection["repository_count"])
-        self.assertEqual(33, len(repositories))
+        self.assertEqual(34, projection["repository_count"])
+        self.assertEqual(34, len(repositories))
 
     def test_known_runtime_lifecycle_drift_is_resolved_at_authority(self):
         projection = self.projection()
