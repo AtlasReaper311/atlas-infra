@@ -1,0 +1,54 @@
+name: Provider guard reconciler CI
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/github-provider-guard-reconcile.yml"
+      - ".github/workflows/github-provider-guard-reconciler-ci.yml"
+      - "docs/github-provider-guard-reconciler.md"
+      - "policy/github-conformance-requirements.json"
+      - "policy/public-repository-classifications.json"
+      - "scripts/github_provider_guard_reconcile.py"
+      - "scripts/tests/test_github_provider_guard_reconcile.py"
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/github-provider-guard-reconcile.yml"
+      - ".github/workflows/github-provider-guard-reconciler-ci.yml"
+      - "docs/github-provider-guard-reconciler.md"
+      - "policy/github-conformance-requirements.json"
+      - "policy/public-repository-classifications.json"
+      - "scripts/github_provider_guard_reconcile.py"
+      - "scripts/tests/test_github_provider_guard_reconcile.py"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.repository }}-provider-guard-reconciler-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Provider guard reconciler validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out Atlas Infra
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0, Node 24
+
+      - name: Compile reconciler
+        run: |
+          set -euo pipefail
+          python3 -m py_compile scripts/github_provider_guard_reconcile.py
+
+      - name: Run reconciler regression tests
+        run: |
+          set -euo pipefail
+          python3 -m unittest scripts.tests.test_github_provider_guard_reconcile -v
+
+      - name: Verify public repository projection
+        run: |
+          set -euo pipefail
+          python3 scripts/public_repository_classifications.py --check
