@@ -1,0 +1,157 @@
+{
+  "schema": "atlas-github-provider-guard-wave-4/final-receipt/v1",
+  "timestamp": "2026-08-09T20:37:29Z",
+  "atlas_infra_main": "217826b73e9dbbf8f0c3e4e9b0901860e7fbc4d4",
+  "wave_4_source_authority": {
+    "accepted_source_authority": "ae69babf02c79eb79ee8ba874027dc2c6df8f3c1",
+    "pull_request": 143,
+    "execution_authority_sha_inside_apply_receipt": "not recorded",
+    "local_historical_evidence": "consistent with execution after #143",
+    "day_zero_reconciler_source": "3ff1a72a9148e94d4e433cc787ffcad9ab8df10d",
+    "day_zero_reconciler_pull_request": 144
+  },
+  "wave_4a": {
+    "operator": "scripts/github-provider-guard-wave-4a.sh",
+    "mode": "apply",
+    "provider_writes_performed": true,
+    "provider_write_type": "ruleset-create-only",
+    "variables_written": false,
+    "profile_repository_modified": false,
+    "pre_apply_inspection_archive_sha256": "0abbd15869a96a8f38f7f7945a914277b7995924710e9eb0a0580478a289e884",
+    "apply_archive_sha256": "b7e6bcbe712ca0b2417753f18d35d937eeecca7594bff848cd4ef2fef12527bd",
+    "payload_verification": {
+      "checked": 287,
+      "failed": 0
+    },
+    "rulesets_created_and_read_back": 13,
+    "rulesets": {
+      "AtlasReaper311/.github": 20594949,
+      "AtlasReaper311/atlas-api-index": 20594950,
+      "AtlasReaper311/atlas-blackbox": 20594952,
+      "AtlasReaper311/atlas-corpus": 20594954,
+      "AtlasReaper311/atlas-daily-digest": 20594955,
+      "AtlasReaper311/atlas-notify": 20594956,
+      "AtlasReaper311/deploy-watch": 20594959,
+      "AtlasReaper311/github-pulse": 20594960,
+      "AtlasReaper311/ramone-edge": 20594961,
+      "AtlasReaper311/ramone-memory": 20594962,
+      "AtlasReaper311/ramone-voice-trigger": 20594963,
+      "AtlasReaper311/specular-sentinel": 20594965,
+      "AtlasReaper311/specular-telemetry": 20594968
+    }
+  },
+  "wave_4b": {
+    "operator": "scripts/github-provider-guard-wave-4b-reconcile.sh",
+    "provider_writes_performed": true,
+    "provider_write_type": "existing-ruleset-update-only",
+    "ruleset_id": 19581236,
+    "repository": "AtlasReaper311/atlas-dora",
+    "apply_archive_sha256": "3ec75ed96dc15b045e879f100b3450bad4c2a1d7ba26520ef6c0d4329923b315",
+    "payload_verification": {
+      "checked": 28,
+      "failed": 0
+    },
+    "before_rule_types": [
+      "required_status_checks"
+    ],
+    "after_rule_types": [
+      "deletion",
+      "non_fast_forward",
+      "pull_request",
+      "required_status_checks"
+    ],
+    "preserved_contexts": [
+      "check",
+      "Gardener native auto-merge barrier"
+    ],
+    "live_updated_at": "2026-08-08T23:43:46+01:00",
+    "variables_unchanged": true,
+    "profile_repository_untouched": true
+  },
+  "profile": {
+    "repository": "AtlasReaper311/AtlasReaper311",
+    "ruleset_id": 20595678,
+    "created_at": "2026-08-09T01:00:35+01:00",
+    "actor": "not exposed",
+    "provenance": "reconstructed, not provider-audit-attributed",
+    "not_attributed_to": [
+      "wave_4a",
+      "wave_4b",
+      "day_zero_reconciler"
+    ],
+    "writer_redesign_pull_request": 8,
+    "writer_redesign_merge_commit": "31a596cff8375072207635e0790578a8d6a2f9dc",
+    "pre_guard_automation_pull_request": 9,
+    "pre_guard_automation_author": "github-actions[bot]",
+    "pre_guard_automation_merge_commit": "57d0844f1fb55901715210b91d72bbc7905bf525",
+    "post_guard_genuine_change_execution_observed": false
+  },
+  "reconciler": {
+    "variable": "ATLAS_PROVIDER_GUARD_RECONCILE_ENABLED",
+    "enabled": true,
+    "scheduled": true,
+    "healthy": true,
+    "create_only": true,
+    "ongoing_governance": true,
+    "variable_mutation_audit_timestamp": "not exposed",
+    "observed_runs": [
+      {
+        "id": 31286612623,
+        "event": "workflow_dispatch",
+        "inspect": "success",
+        "apply": "skipped"
+      },
+      {
+        "id": 31286729796,
+        "event": "workflow_dispatch",
+        "inspect": "success",
+        "apply": "success",
+        "summary": {
+          "compliant": 33,
+          "create": 0,
+          "blocked": 0,
+          "provider_writes_performed": false
+        }
+      },
+      {
+        "id": 31302475134,
+        "event": "schedule",
+        "inspect": "success",
+        "apply": "success",
+        "summary": {
+          "compliant": 33,
+          "create": 0,
+          "blocked": 0,
+          "provider_writes_performed": false
+        }
+      }
+    ]
+  },
+  "scoreboard": {
+    "collected_at": "2026-08-09T20:37:29Z",
+    "atlas_infra_authority": "217826b73e9dbbf8f0c3e4e9b0901860e7fbc4d4",
+    "repositories_checked": 33,
+    "policy_checks_passed": 260,
+    "policy_checks_failed": 0,
+    "policy_checks_unknown": 0,
+    "fingerprint": "sha256:34265f801dfcd5ca1d24d93b0041aa707a8746d01879f3da8bab30df053ed5fe"
+  },
+  "evidence_limitations": [
+    "Wave 4A and Wave 4B apply receipts did not embed the exact Atlas Infra execution SHA.",
+    "GitHub ruleset APIs do not expose creating or updating actors.",
+    "Profile ruleset 20595678 provenance is reconstructed from local evidence, not provider-audit-attributed.",
+    "No post-guard content-changing scheduled profile refresh has been observed yet.",
+    "GitHub does not expose the ATLAS_PROVIDER_GUARD_RECONCILE_ENABLED mutation audit timestamp."
+  ],
+  "one_shot_operators": {
+    "disposition": "A",
+    "retained_unchanged": [
+      "scripts/github-provider-guard-wave-4a.sh",
+      "scripts/github-provider-guard-wave-4b-reconcile.sh"
+    ],
+    "rollout_authority_exhausted": true,
+    "current_maintenance_mechanism": "day-zero create-only reconciler"
+  },
+  "provider_guard_complete": true,
+  "status": "ready-for-closeout-pr"
+}
