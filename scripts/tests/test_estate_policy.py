@@ -177,6 +177,26 @@ class EstatePolicyTests(unittest.TestCase):
         )
         self.assertTrue(all(not items for items in findings.values()))
 
+    def test_documentation_rules_allow_technical_placeholder_noun(self):
+        text = "The scheduler replaces one placeholder before publication.\n"
+        findings = estate_policy.documentation_findings(
+            "owner/repo",
+            "docs/publishing.md",
+            text,
+            estate_policy.BANNED_WORDS,
+        )
+        self.assertEqual([], findings["unfinished-copy"])
+
+    def test_documentation_rules_flag_explicit_placeholder_marker(self):
+        text = "PLACEHOLDER: add the final owner-approved summary.\n"
+        findings = estate_policy.documentation_findings(
+            "owner/repo",
+            "README.md",
+            text,
+            estate_policy.BANNED_WORDS,
+        )
+        self.assertEqual(1, len(findings["unfinished-copy"]))
+
     def test_documentation_rules_still_flag_rendered_prose(self):
         text = "TODO: write a robust summary — this remains unfinished.\n"
         findings = estate_policy.documentation_findings(
