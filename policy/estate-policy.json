@@ -1,6 +1,6 @@
 {
   "schema": "atlas-estate-policy/v2",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "banned_words": [
     "leveraged",
     "utilised",
@@ -68,7 +68,7 @@
     "unfinished-copy": {
       "weight": 6,
       "severity": "warning",
-      "description": "Rendered public documentation contains no TODO or placeholder copy."
+      "description": "Rendered public documentation contains no TODO or explicit PLACEHOLDER markers."
     },
     "worker-meta": {
       "weight": 10,
