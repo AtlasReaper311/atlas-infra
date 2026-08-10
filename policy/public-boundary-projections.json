@@ -1,0 +1,30 @@
+{
+  "schema_version": "atlas-public-boundary/projections/v1",
+  "owner": "AtlasReaper311",
+  "targets": [
+    {
+      "repository": "AtlasReaper311/atlas-api-public",
+      "path": "data/estate.manifest.json"
+    },
+    {
+      "repository": "AtlasReaper311/atlas-api-public",
+      "path": "data/public-repositories.json"
+    },
+    {
+      "repository": "AtlasReaper311/atlas-infra",
+      "path": "policy/estate-registry.json"
+    },
+    {
+      "repository": "AtlasReaper311/atlas-infra",
+      "path": "policy/public-assurance-repositories.json"
+    },
+    {
+      "repository": "AtlasReaper311/atlas-infra",
+      "path": "policy/public-repository-classifications.json"
+    },
+    {
+      "repository": "AtlasReaper311/atlas-systems",
+      "path": "lab/speculum/topology.js"
+    }
+  ]
+}
