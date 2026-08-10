@@ -20,6 +20,8 @@ jobs:
     steps:
       - name: Check out atlas-infra
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0, Node 24
+        with:
+          fetch-depth: 0
 
       - name: Validate assurance scripts
         run: |
@@ -134,8 +136,28 @@ jobs:
           retention-days: 90
 
       - name: Report consolidated findings
-        if: always()
+        if: always() && hashFiles('reports/estate-policy.json') != '' && (steps.policy.outputs.errors != '0' || steps.policy.outputs.warnings != '0')
+        continue-on-error: true
+        env:
+          NOTIFY_TOKEN: ${{ secrets.NOTIFY_TOKEN }}
+          ERRORS: ${{ steps.policy.outputs.errors }}
+          WARNINGS: ${{ steps.policy.outputs.warnings }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
+          set -euo pipefail
+          LEVEL="warning"
+          if [ "${ERRORS:-0}" != "0" ]; then
+            LEVEL="failure"
+          fi
           python3 scripts/notify_assurance.py \
-            --conformance reports/estate-policy.json \
-            --output reports/assurance-summary.json
+            --title "Estate policy findings" \
+            --level "$LEVEL" \
+            --message "${ERRORS:-0} errors and ${WARNINGS:-0} warnings across the declared repository estate." \
+            --url "$RUN_URL"
+
+      - name: Preserve blocking policy result
+        if: always() && steps.policy.outcome == 'failure'
+        run: |
+          set -euo pipefail
+          echo "Estate policy audit failed closed."
+          exit 1
