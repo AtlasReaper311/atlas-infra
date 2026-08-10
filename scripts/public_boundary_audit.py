@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Audit public source for protected private repository identities without publishing them."""
+"""Audit governed public projections for protected private repository identities."""
 
 from __future__ import annotations
 
 import argparse
+import base64
 import hashlib
 import json
 import os
@@ -15,9 +16,13 @@ from typing import Any, Iterable
 from github_api import GitHubApiError, GitHubClient
 
 
-SCHEMA_VERSION = "atlas-public-boundary/audit/v1"
+SCHEMA_VERSION = "atlas-public-boundary/audit/v2"
+PROJECTION_POLICY_SCHEMA = "atlas-public-boundary/projections/v1"
+DEFAULT_PROJECTION_POLICY = (
+    Path(__file__).resolve().parents[1] / "policy" / "public-boundary-projections.json"
+)
 MAX_LOCAL_FILE_BYTES = 1_048_576
-MAX_SEARCH_PAGES_PER_IDENTITY = 10
+MAX_PROJECTION_FILE_BYTES = 2_097_152
 SKIP_DIRECTORIES = {
     ".git",
     ".mypy_cache",
@@ -73,7 +78,7 @@ def _finding_fingerprint(repository: str, path: str, line: int | None) -> str:
             "repository": repository,
             "path": path,
             "line": line,
-            "rule": "protected-private-identity-in-public-source",
+            "rule": "protected-private-identity-in-public-projection",
         },
         sort_keys=True,
         separators=(",", ":"),
@@ -148,7 +153,7 @@ def audit_local_tree(
     repository: str | None = None,
     excluded_paths: Iterable[str] = (),
 ) -> dict[str, Any]:
-    """Scan one current source tree and return only redacted public coordinates."""
+    """Scan one explicitly selected local tree and return redacted coordinates."""
 
     root = root.resolve(strict=True)
     repository_label = repository or root.name
@@ -162,10 +167,10 @@ def audit_local_tree(
         try:
             data = path.read_bytes()
         except OSError:
-            errors.append(f"unable to read public source path: {relative}")
+            errors.append(f"unable to read selected source path: {relative}")
             continue
         if len(data) > MAX_LOCAL_FILE_BYTES:
-            errors.append(f"public source path exceeds audit size bound: {relative}")
+            errors.append(f"selected source path exceeds audit size bound: {relative}")
             continue
         if b"\x00" in data:
             continue
@@ -199,7 +204,7 @@ def audit_local_tree(
     errors = sorted(set(errors))
     return {
         "schema_version": SCHEMA_VERSION,
-        "mode": "local",
+        "mode": "local-selected-source",
         "files_checked": files_checked,
         "findings": findings,
         "errors": errors,
@@ -208,7 +213,7 @@ def audit_local_tree(
 
 
 def discover_private_identities(client: GitHubClient, owner: str) -> list[str]:
-    """Derive the protected identity set inside authenticated GitHub context."""
+    """Derive protected repository identities inside authenticated GitHub context."""
 
     try:
         repositories = client.paginate(
@@ -244,95 +249,181 @@ def discover_private_identities(client: GitHubClient, owner: str) -> list[str]:
     return sorted(identities)
 
 
-def _code_search_page(
-    client: GitHubClient,
-    owner: str,
-    identity: str,
-    page: int,
-) -> dict[str, Any]:
-    query = f'"{identity}" user:{owner}'
-    path = "/search/code?" + urllib.parse.urlencode(
-        {"q": query, "per_page": "100", "page": str(page)}
+def load_projection_targets(path: Path, owner: str) -> list[dict[str, str]]:
+    """Load the explicit public projection coordinates governed by the boundary."""
+
+    try:
+        document = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as error:
+        raise BoundaryAuditError(f"cannot load public projection policy: {error}") from None
+
+    if not isinstance(document, dict):
+        raise BoundaryAuditError("public projection policy root must be an object")
+    if document.get("schema_version") != PROJECTION_POLICY_SCHEMA:
+        raise BoundaryAuditError("unsupported public projection policy schema")
+    if document.get("owner") != owner:
+        raise BoundaryAuditError("public projection policy owner does not match audit owner")
+
+    raw_targets = document.get("targets")
+    if not isinstance(raw_targets, list) or not raw_targets:
+        raise BoundaryAuditError("public projection policy targets must be a non-empty list")
+
+    targets: list[dict[str, str]] = []
+    for item in raw_targets:
+        if not isinstance(item, dict) or set(item) != {"repository", "path"}:
+            raise BoundaryAuditError(
+                "public projection targets must contain only repository and path"
+            )
+        repository = item.get("repository")
+        source_path = item.get("path")
+        if not isinstance(repository, str) or not repository.startswith(owner + "/"):
+            raise BoundaryAuditError("public projection target repository is outside audit owner")
+        if not isinstance(source_path, str) or not source_path or source_path.startswith("/"):
+            raise BoundaryAuditError("public projection target path is invalid")
+        if ".." in Path(source_path).parts:
+            raise BoundaryAuditError("public projection target path may not traverse parents")
+        targets.append({"repository": repository, "path": source_path})
+
+    normalized = sorted(targets, key=lambda item: (item["repository"], item["path"]))
+    if targets != normalized:
+        raise BoundaryAuditError("public projection targets must be sorted")
+    coordinates = [(item["repository"], item["path"]) for item in targets]
+    if len(coordinates) != len(set(coordinates)):
+        raise BoundaryAuditError("public projection targets must be unique")
+    return targets
+
+
+def _repository_is_public(client: GitHubClient, repository: str) -> bool:
+    owner, name = repository.split("/", 1)
+    path = "/repos/{}/{}".format(
+        urllib.parse.quote(owner, safe=""),
+        urllib.parse.quote(name, safe=""),
     )
     try:
         payload = client.get(path)
     except (GitHubApiError, RuntimeError):
         raise BoundaryAuditError(
-            "GitHub code search failed while evaluating a protected identity"
+            f"cannot verify public projection repository visibility: {repository}"
         ) from None
-    if not isinstance(payload, dict) or not isinstance(payload.get("items"), list):
+    return isinstance(payload, dict) and payload.get("private") is False
+
+
+def _projection_text(client: GitHubClient, repository: str, source_path: str) -> str:
+    owner, name = repository.split("/", 1)
+    api_path = "/repos/{}/{}/contents/{}".format(
+        urllib.parse.quote(owner, safe=""),
+        urllib.parse.quote(name, safe=""),
+        urllib.parse.quote(source_path, safe="/"),
+    )
+    try:
+        payload = client.get(api_path)
+    except (GitHubApiError, RuntimeError):
         raise BoundaryAuditError(
-            "GitHub code search returned an invalid result while evaluating a protected identity"
+            f"cannot read governed public projection: {repository}:{source_path}"
+        ) from None
+    if not isinstance(payload, dict) or payload.get("type") != "file":
+        raise BoundaryAuditError(
+            f"governed public projection is not a file: {repository}:{source_path}"
         )
-    return payload
+    if payload.get("encoding") != "base64" or not isinstance(payload.get("content"), str):
+        raise BoundaryAuditError(
+            f"governed public projection has unsupported encoding: {repository}:{source_path}"
+        )
+    try:
+        data = base64.b64decode(payload["content"], validate=False)
+    except (ValueError, TypeError):
+        raise BoundaryAuditError(
+            f"governed public projection content is malformed: {repository}:{source_path}"
+        ) from None
+    if len(data) > MAX_PROJECTION_FILE_BYTES:
+        raise BoundaryAuditError(
+            f"governed public projection exceeds audit size bound: {repository}:{source_path}"
+        )
+    try:
+        return data.decode("utf-8")
+    except UnicodeDecodeError:
+        raise BoundaryAuditError(
+            f"governed public projection is not UTF-8: {repository}:{source_path}"
+        ) from None
 
 
-def audit_github_public_source(
+def audit_github_public_projections(
     client: GitHubClient,
     owner: str,
     identities: list[str],
+    targets: list[dict[str, str]],
 ) -> dict[str, Any]:
-    """Search current indexed GitHub source and retain only public matches."""
+    """Scan only reviewed public projection coordinates for protected identities."""
 
-    findings_by_key: dict[tuple[str, str], dict[str, Any]] = {}
+    findings: list[dict[str, Any]] = []
+    errors: list[str] = []
+    verified_repositories: dict[str, bool] = {}
 
-    for identity in identities:
-        page = 1
-        while True:
-            payload = _code_search_page(client, owner, identity, page)
-            items = payload["items"]
-            for item in items:
-                if not isinstance(item, dict):
-                    continue
-                repository = item.get("repository")
-                if not isinstance(repository, dict):
-                    continue
-                repository_owner = repository.get("owner")
-                if not isinstance(repository_owner, dict):
-                    continue
-                if repository_owner.get("login") != owner:
-                    continue
-                if repository.get("private") is not False:
-                    continue
-                full_name = repository.get("full_name")
-                path = item.get("path")
-                if not isinstance(full_name, str) or not isinstance(path, str):
-                    continue
-                finding = _redacted_finding(full_name, path)
-                findings_by_key[(finding["repository"], finding["path"])] = finding
-
-            if len(items) < 100:
-                break
-            page += 1
-            if page > MAX_SEARCH_PAGES_PER_IDENTITY:
+    for target in targets:
+        repository = target["repository"]
+        source_path = target["path"]
+        try:
+            if repository not in verified_repositories:
+                verified_repositories[repository] = _repository_is_public(client, repository)
+            if not verified_repositories[repository]:
                 raise BoundaryAuditError(
-                    "GitHub code search exceeded the bounded result window while evaluating a protected identity"
+                    f"governed projection repository is not public: {repository}"
+                )
+            text = _projection_text(client, repository, source_path)
+        except BoundaryAuditError as error:
+            errors.append(str(error))
+            continue
+
+        for line_number, line in enumerate(text.splitlines(), start=1):
+            if any(identity in line for identity in identities):
+                findings.append(
+                    _redacted_finding(
+                        repository,
+                        source_path,
+                        line=line_number,
+                    )
                 )
 
     findings = sorted(
-        findings_by_key.values(),
-        key=lambda item: (item["repository"], item["path"]),
+        {
+            (item["repository"], item["path"], item["line"]): item
+            for item in findings
+        }.values(),
+        key=lambda item: (
+            item["repository"],
+            item["path"],
+            item["line"] or 0,
+        ),
     )
+    errors = sorted(set(errors))
     return {
         "schema_version": SCHEMA_VERSION,
-        "mode": "github",
+        "mode": "github-public-projections",
+        "projection_targets_checked": len(targets),
         "findings": findings,
-        "errors": [],
-        "status": "failed" if findings else "passed",
+        "errors": errors,
+        "status": "failed" if findings or errors else "passed",
     }
 
 
 def render_markdown(report: dict[str, Any]) -> str:
     lines = [
-        "# Public/private source boundary audit",
+        "# Public/private projection boundary audit",
         "",
         f"Status: **{report['status']}**",
     ]
-    if report.get("mode") == "local":
+    if report.get("mode") == "local-selected-source":
         lines.extend(
             [
                 "",
                 f"UTF-8 source files checked: {report.get('files_checked', 0)}",
+            ]
+        )
+    elif report.get("mode") == "github-public-projections":
+        lines.extend(
+            [
+                "",
+                f"Governed public projections checked: {report.get('projection_targets_checked', 0)}",
             ]
         )
 
@@ -347,7 +438,7 @@ def render_markdown(report: dict[str, Any]) -> str:
                 "",
                 "## Redacted findings",
                 "",
-                "| Public repository | Path | Line | Finding fingerprint |",
+                "| Public repository | Projection path | Line | Finding fingerprint |",
                 "|---|---|---:|---|",
             ]
         )
@@ -365,7 +456,7 @@ def render_markdown(report: dict[str, Any]) -> str:
         lines.extend(
             [
                 "",
-                "No protected repository identities were found in public source.",
+                "No protected repository identities were found in governed public projections.",
             ]
         )
     lines.append("")
@@ -390,13 +481,15 @@ def write_report(
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Audit public source for protected private repository identities."
+        description=(
+            "Audit explicit public projection files for protected private repository identities."
+        )
     )
     mode = parser.add_mutually_exclusive_group(required=True)
-    mode.add_argument("--root", type=Path, help="Local public source root to scan.")
+    mode.add_argument("--root", type=Path, help="Explicit local source root to scan.")
     mode.add_argument(
         "--github-owner",
-        help="GitHub owner whose authenticated private identities and public source are audited.",
+        help="GitHub owner whose private identities are checked against governed projections.",
     )
     parser.add_argument(
         "--protected-identities-file",
@@ -412,6 +505,12 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         action="append",
         default=[],
         help="Exact repository-relative path excluded from local scanning. Repeat as needed.",
+    )
+    parser.add_argument(
+        "--projection-policy",
+        type=Path,
+        default=DEFAULT_PROJECTION_POLICY,
+        help="Reviewed public projection coordinates used by GitHub mode.",
     )
     parser.add_argument(
         "--token-env",
@@ -451,7 +550,13 @@ def main(argv: list[str] | None = None) -> int:
                 )
             client = GitHubClient(token)
             identities = discover_private_identities(client, args.github_owner)
-            report = audit_github_public_source(client, args.github_owner, identities)
+            targets = load_projection_targets(args.projection_policy, args.github_owner)
+            report = audit_github_public_projections(
+                client,
+                args.github_owner,
+                identities,
+                targets,
+            )
     except (BoundaryAuditError, OSError) as error:
         print(f"public boundary audit failed: {error}", file=sys.stderr)
         return 2
