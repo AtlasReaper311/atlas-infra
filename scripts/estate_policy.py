@@ -361,14 +361,16 @@ def documentation_findings(
                     f"Portfolio-facing prose contains banned word: {word}",
                 )
             )
-    if re.search(r"\b(TODO|PLACEHOLDER)\b", prose, re.IGNORECASE):
+    if re.search(r"\bTODO\b", prose, re.IGNORECASE) or re.search(
+        r"\bPLACEHOLDER\b", prose
+    ):
         findings["unfinished-copy"].append(
             Finding(
                 repo,
                 "warning",
                 "unfinished-copy",
                 path,
-                "Portfolio-facing prose contains TODO or placeholder text",
+                "Portfolio-facing prose contains an unfinished TODO or PLACEHOLDER marker",
             )
         )
     return findings
