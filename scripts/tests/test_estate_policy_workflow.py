@@ -23,6 +23,15 @@ class EstatePolicyWorkflowTests(unittest.TestCase):
         block = step_block(self.text, "Check out atlas-infra")
         self.assertIn("fetch-depth: 0", block)
 
+    def test_boundary_audit_uses_reviewed_projection_policy(self) -> None:
+        block = step_block(self.text, "Audit public and private source boundary")
+        self.assertIn("--github-owner AtlasReaper311", block)
+        self.assertIn(
+            "--projection-policy policy/public-boundary-projections.json",
+            block,
+        )
+        self.assertNotIn("/search/code", block)
+
     def test_consolidated_notification_matches_notify_assurance_cli(self) -> None:
         block = step_block(self.text, "Report consolidated findings")
         self.assertIn("NOTIFY_TOKEN: ${{ secrets.NOTIFY_TOKEN }}", block)
