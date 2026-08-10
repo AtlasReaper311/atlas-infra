@@ -106,6 +106,7 @@ jobs:
           set +e
           python3 scripts/public_boundary_audit.py \
             --github-owner AtlasReaper311 \
+            --projection-policy policy/public-boundary-projections.json \
             --token-env GH_DIGEST_PAT \
             --report reports/public-boundary-audit.json \
             --markdown reports/public-boundary-audit.md \
