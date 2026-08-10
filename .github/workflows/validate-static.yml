@@ -80,7 +80,7 @@ jobs:
     env:
       HTML_GLOB: ${{ inputs.html_glob }}
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0, Node 24
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.0, Node 24
       - name: Check README style
         run: |
           set -euo pipefail
@@ -114,7 +114,7 @@ jobs:
     outputs:
       deployed: ${{ steps.deploy_step.outputs.deployed }}
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0, Node 24
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.0, Node 24
 
       - name: Inject build metadata
         if: ${{ inputs.inject_build_meta }}
