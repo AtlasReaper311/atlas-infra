@@ -35,7 +35,7 @@ class GitHubConformanceScoreboardTests(unittest.TestCase):
         projection = self.load_projection()
         repositories = {item["repository"] for item in projection["repositories"]}
         self.assertIn("AtlasReaper311/.github", repositories)
-        self.assertEqual(33, projection["repository_count"])
+        self.assertEqual(34, projection["repository_count"])
 
     def test_scoreboard_uses_global_security_default_without_private_discovery(self):
         projection = {

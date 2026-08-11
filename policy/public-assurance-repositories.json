@@ -11,6 +11,7 @@
     {"repository":"AtlasReaper311/atlas-interface-kit","lifecycle":"active","scope":"public","provenance":"original"},
     {"repository":"AtlasReaper311/atlas-journey-watch","lifecycle":"active","scope":"public","provenance":"original"},
     {"repository":"AtlasReaper311/atlas-kit-python-rag","lifecycle":"active","scope":"public","provenance":"original"},
+    {"repository":"AtlasReaper311/atlas-model-lab","lifecycle":"experimental","scope":"public","provenance":"original"},
     {"repository":"AtlasReaper311/atlas-resource-audit","lifecycle":"active","scope":"public","provenance":"original"},
     {"repository":"AtlasReaper311/ollama-rag-kit","lifecycle":"active","scope":"public","provenance":"original"},
     {"repository":"AtlasReaper311/worker-meta-kit","lifecycle":"active","scope":"public","provenance":"original"}
