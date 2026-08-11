@@ -432,7 +432,6 @@ def build_plan(project: dict[str, Any], rows: list[dict[str, Any]], config: dict
         if current is None:
             actions.append({"action": "add_item", "title": row["title"]})
             item_id = "<after-add>"
-            draft_id = "<after-add>"
         else:
             item_id = current["item_id"]
             draft_id = current["draft_id"]
