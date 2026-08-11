@@ -1,0 +1,154 @@
+{
+  "schema_version": "atlas-model-promotion-coverage/v1",
+  "owner": "AtlasReaper311",
+  "project_number": 2,
+  "project_title": "Model Promotion and Eval Coverage",
+  "eval_harness_repository": "atlas-eval-harness",
+  "field_names": {
+    "action_needed": "Action Needed",
+    "capability_id": "Capability ID",
+    "coverage_status": "Coverage Status",
+    "eval_case_count": "Eval Case Count",
+    "last_verified": "Last Verified",
+    "live_model": "Live Model",
+    "next_step": "Next Step",
+    "promoted_model": "Promoted Model",
+    "risk": "Risk",
+    "source": "Source",
+    "status": "Status"
+  },
+  "capabilities": [
+    {
+      "id": "corpus-retrieval",
+      "title": "Corpus grounded Q&A (/ask)",
+      "source": "AtlasReaper311/atlas-corpus",
+      "risk": "High",
+      "action_needed": "Decide live/promoted mismatch",
+      "next_step": "Decide whether atlas-corpus documented ANSWER_MODEL should move to qwen3:14b or whether the promoted model remains deliberately non-live.",
+      "live_model_sources": [
+        {
+          "repository": "atlas-corpus",
+          "path": ".env.example",
+          "pattern": "^ANSWER_MODEL=(\\S+)"
+        }
+      ],
+      "eval_case_paths": [
+        "cases/corpus-grounding-service-bindings.toml"
+      ],
+      "promotion_record_paths": [
+        "promotions/records/corpus-retrieval/qwen3-14b.json"
+      ],
+      "notes": [
+        "The current GitHub source can locate the qwen3:14b promotion record; older local checkouts may not have the promotions directory.",
+        "Current source evidence found an atlas-corpus documented answer-model default rather than proving the live container runtime."
+      ]
+    },
+    {
+      "id": "postmortem-drafting",
+      "title": "Postmortem drafting",
+      "source": "AtlasReaper311/atlas-postmortem",
+      "risk": "Medium",
+      "action_needed": "No action",
+      "next_step": "Monitor for drift between ATLAS_PM_MODEL and the approved qwen2.5:32b promotion record.",
+      "live_model_sources": [
+        {
+          "repository": "atlas-postmortem",
+          "path": "src/atlas_postmortem/config.py",
+          "pattern": "ATLAS_PM_MODEL\", \"([^\"]+)\""
+        },
+        {
+          "repository": "atlas-postmortem",
+          "path": "README.md",
+          "pattern": "`ATLAS_PM_MODEL` \\| `([^`]+)`"
+        }
+      ],
+      "eval_case_paths": [
+        "cases/postmortem-inc-20260713-104620.toml"
+      ],
+      "promotion_record_paths": [
+        "promotions/records/postmortem-drafting/qwen2.5-32b.json"
+      ],
+      "notes": [
+        "The eval case explicitly pins the llama3.1:8b AtlasModel fabrication regression.",
+        "The current GitHub source can locate the qwen2.5:32b promotion record; older local checkouts may not have the promotions directory."
+      ]
+    },
+    {
+      "id": "session-summarisation",
+      "title": "Session summarisation",
+      "source": "AtlasReaper311/ramone-memory",
+      "risk": "Low",
+      "action_needed": "Monitor only",
+      "coverage_override": "Exempt - low risk",
+      "next_step": "Keep exemption visible; add eval coverage only if summaries begin making factual claims over unseen code or deployment state.",
+      "live_model_sources": [
+        {
+          "repository": "ramone-memory",
+          "path": ".env.example",
+          "pattern": "^CHAT_MODEL=(\\S+)"
+        },
+        {
+          "repository": "ramone-memory",
+          "path": "app/config.py",
+          "pattern": "chat_model: str = \"([^\"]+)\""
+        }
+      ],
+      "eval_case_paths": [],
+      "promotion_record_paths": [],
+      "notes": [
+        "Summarisation is treated as lower risk because it condenses completed sessions rather than drafting evidence-sensitive causal claims."
+      ]
+    },
+    {
+      "id": "ramone-rag-generation",
+      "title": "Ramone RAG generation (ollama-rag-kit)",
+      "source": "AtlasReaper311/ollama-rag-kit",
+      "risk": "Critical",
+      "action_needed": "Add eval case",
+      "next_step": "Confirm the deployed runtime model, then add grounded-answer eval cases before treating llama3.1:8b as acceptable for Ramone RAG generation.",
+      "live_model_sources": [
+        {
+          "repository": "ollama-rag-kit",
+          "path": ".env.example",
+          "pattern": "^LLM_MODEL=(\\S+)"
+        },
+        {
+          "repository": "ollama-rag-kit",
+          "path": "app/config.py",
+          "pattern": "llm_model: str = \"([^\"]+)\""
+        }
+      ],
+      "eval_case_paths": [],
+      "promotion_record_paths": [],
+      "notes": [
+        "This is the highest-risk row because the documented default is the model family with the known AtlasModel fabrication regression.",
+        "Source evidence confirms documented defaults only; deployed container environment remains a separate runtime check."
+      ]
+    },
+    {
+      "id": "daily-digest-synthesis",
+      "title": "Daily digest synthesis",
+      "source": "AtlasReaper311/atlas-daily-digest",
+      "risk": "Medium",
+      "action_needed": "Add eval case",
+      "next_step": "Add a small digest eval that verifies no invented activity and preserves the event-feed boundary.",
+      "live_model_sources": [
+        {
+          "repository": "atlas-daily-digest",
+          "path": "wrangler.toml",
+          "pattern": "OLLAMA_MODEL = \"([^\"]+)\""
+        },
+        {
+          "repository": "atlas-daily-digest",
+          "path": "README.md",
+          "pattern": "`OLLAMA_MODEL` is `([^`]+)`"
+        }
+      ],
+      "eval_case_paths": [],
+      "promotion_record_paths": [],
+      "notes": [
+        "Lower risk than RAG generation because the prompt is bounded to an event feed, but it still creates user-facing prose and should have a small no-invention eval."
+      ]
+    }
+  ]
+}
