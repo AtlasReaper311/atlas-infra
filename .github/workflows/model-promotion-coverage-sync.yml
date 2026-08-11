@@ -1,0 +1,65 @@
+name: Model promotion coverage sync
+
+on:
+  workflow_dispatch:
+    inputs:
+      apply:
+        description: "Apply project updates; false writes a dry-run report only"
+        required: true
+        default: false
+        type: boolean
+  schedule:
+    - cron: "52 7 * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: model-promotion-coverage-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    name: Sync model coverage project
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out Atlas Infra
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0, Node 24
+
+      - name: Validate sync tooling
+        run: |
+          set -euo pipefail
+          python3 -m py_compile scripts/model_promotion_coverage.py
+          python3 -m unittest scripts.tests.test_model_promotion_coverage -v
+
+      - name: Dry-run model coverage sync
+        env:
+          GITHUB_TOKEN: ${{ secrets.ATLAS_PROJECTS_TOKEN }}
+        run: |
+          set -euo pipefail
+          mkdir -p reports
+          python3 scripts/model_promotion_coverage.py \
+            --json-out reports/model-promotion-coverage-sync-dry-run.json
+          cat reports/model-promotion-coverage-sync-dry-run.json >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Apply model coverage sync
+        if: ${{ github.event_name == 'schedule' || inputs.apply == true }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.ATLAS_PROJECTS_TOKEN }}
+          ATLAS_MODEL_COVERAGE_CONFIRMATION: SYNC MODEL PROMOTION COVERAGE
+        run: |
+          set -euo pipefail
+          python3 scripts/model_promotion_coverage.py \
+            --apply \
+            --json-out reports/model-promotion-coverage-sync-apply.json
+          cat reports/model-promotion-coverage-sync-apply.json >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload model coverage sync report
+        if: always() && hashFiles('reports/model-promotion-coverage-sync-*.json') != ''
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1, Node 24
+        with:
+          name: model-promotion-coverage-sync-${{ github.run_id }}
+          path: reports/model-promotion-coverage-sync-*.json
+          if-no-files-found: error
+          retention-days: 30
