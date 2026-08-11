@@ -56,8 +56,8 @@
         "reason": "The interface kit is a versioned distributable consumed as pinned repository-local assets."
       },
       "release_history": {
-        "disposition": "deferred",
-        "reason": "The first owner-approved release has not been created yet."
+        "disposition": "required",
+        "reason": "Releases are published for each version bump; v0.3.0, v0.4.0, and v0.5.0 are already live on the Releases page."
       }
     },
     "AtlasReaper311/worker-meta-kit": {
