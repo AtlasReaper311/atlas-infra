@@ -1,0 +1,65 @@
+name: Estate rollout board sync
+
+on:
+  workflow_dispatch:
+    inputs:
+      apply:
+        description: "Apply project updates; false writes a dry-run report only"
+        required: true
+        default: false
+        type: boolean
+  schedule:
+    - cron: "37 7 * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: estate-rollout-board-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    name: Sync rollout project
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out Atlas Infra
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0, Node 24
+
+      - name: Validate sync tooling
+        run: |
+          set -euo pipefail
+          python3 -m py_compile scripts/estate_rollout_board.py
+          python3 -m unittest scripts.tests.test_estate_rollout_board -v
+
+      - name: Dry-run rollout board sync
+        env:
+          GITHUB_TOKEN: ${{ secrets.ATLAS_PROJECTS_TOKEN }}
+        run: |
+          set -euo pipefail
+          mkdir -p reports
+          python3 scripts/estate_rollout_board.py \
+            --json-out reports/estate-rollout-board-sync-dry-run.json
+          cat reports/estate-rollout-board-sync-dry-run.json >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Apply rollout board sync
+        if: ${{ github.event_name == 'schedule' || inputs.apply == true }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.ATLAS_PROJECTS_TOKEN }}
+          ATLAS_ROLLOUT_BOARD_CONFIRMATION: SYNC ESTATE ROLLOUT BOARD
+        run: |
+          set -euo pipefail
+          python3 scripts/estate_rollout_board.py \
+            --apply \
+            --json-out reports/estate-rollout-board-sync-apply.json
+          cat reports/estate-rollout-board-sync-apply.json >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload rollout board sync report
+        if: always() && hashFiles('reports/estate-rollout-board-sync-*.json') != ''
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1, Node 24
+        with:
+          name: estate-rollout-board-sync-${{ github.run_id }}
+          path: reports/estate-rollout-board-sync-*.json
+          if-no-files-found: error
+          retention-days: 30
