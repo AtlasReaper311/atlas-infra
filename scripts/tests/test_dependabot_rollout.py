@@ -25,6 +25,8 @@ class DependabotRolloutTests(unittest.TestCase):
             "      pull-requests: write\n",
             template,
         )
+        self.assertIn("non-dependabot:", template)
+        self.assertIn("Not a Dependabot pull request", template)
         default_permissions = template.split("concurrency:", 1)[0]
         self.assertNotIn("contents: write", default_permissions)
         self.assertNotIn("pull-requests: write", default_permissions)
@@ -35,6 +37,16 @@ class DependabotRolloutTests(unittest.TestCase):
         )
         self.assertNotIn("dependabot-review.yml@main", template)
         self.assertIn("automerge_enabled:", template)
+
+    def test_live_dependabot_workflow_matches_rollout_template(self):
+        root = Path(__file__).resolve().parents[2]
+        live = (root / ".github" / "workflows" / "dependabot-automerge.yml").read_text(
+            encoding="utf-8"
+        )
+        template = (root / "templates" / "dependabot-automerge.yml").read_text(
+            encoding="utf-8"
+        )
+        self.assertEqual(live, template)
 
     def test_required_checks_include_active_repository_rulesets(self):
         class RulesClient:
