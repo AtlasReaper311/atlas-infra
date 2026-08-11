@@ -1,0 +1,78 @@
+{
+  "schema_version": "atlas-estate-rollout-board/v1",
+  "owner": "AtlasReaper311",
+  "project_number": 1,
+  "project_title": "Estate Rollout Board",
+  "archive_after_done_days": 3,
+  "done_retention_action": "archive",
+  "excluded_labels": [
+    "dependencies",
+    "dependabot",
+    "automation"
+  ],
+  "excluded_label_prefixes": [
+    "dependabot",
+    "dependencies"
+  ],
+  "excluded_authors": [
+    "app/dependabot",
+    "app/dependabot[bot]"
+  ],
+  "excluded_title_prefixes": [
+    "build(deps):",
+    "chore(deps):"
+  ],
+  "field_names": {
+    "agent": "Agent",
+    "pillar": "Pillar",
+    "stage": "Stage",
+    "status": "Status"
+  },
+  "status_rules": {
+    "open_draft": "Todo",
+    "open_ready": "In Progress",
+    "closed": "Done",
+    "merged": "Done"
+  },
+  "stage_rules": {
+    "open_draft": "Draft - Awaiting Review",
+    "open_ready": "In Progress",
+    "gated": "Draft - Awaiting Review",
+    "closed": "Live / Verified",
+    "merged": "Live / Verified"
+  },
+  "gated_markers": [
+    "do not merge",
+    "draft only",
+    "rollout gate",
+    "rollout-gate",
+    "separate approval",
+    "separately authorised",
+    "separately authorized",
+    "no merge until"
+  ],
+  "repositories": {
+    "addiction-honours-project": {
+      "pillar": "P-04 Honours Project"
+    },
+    "atlas-api-public": {
+      "pillar": "P-03 DevOps Core"
+    },
+    "atlas-infra": {
+      "pillar": "P-03 DevOps Core"
+    },
+    "atlas-twin": {
+      "pillar": "P-03 DevOps Core"
+    },
+    "github-pulse": {
+      "pillar": "P-03 DevOps Core"
+    }
+  },
+  "agent_label_prefix": "agent:",
+  "agent_label_values": {
+    "agent:atlas": "Atlas",
+    "agent:claude": "Claude",
+    "agent:codex": "Codex",
+    "agent:cursor": "Cursor"
+  }
+}
