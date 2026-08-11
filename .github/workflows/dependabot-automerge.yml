@@ -12,27 +12,14 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # Always land a completed job on non-Dependabot PRs. If every job is
-  # filtered out by if:, GitHub concludes the workflow as failed/empty and
-  # pollutes the PR check rollup.
-  non-dependabot:
-    if: >-
-      github.actor != 'dependabot[bot]' ||
-      github.event.pull_request.user.login != 'dependabot[bot]'
-    runs-on: ubuntu-latest
-    timeout-minutes: 1
-    steps:
-      - name: Skip Dependabot policy
-        run: echo "Not a Dependabot pull request; review policy does not apply."
-
+  # Always call the reusable policy. Skipping this uses: job left owner PRs
+  # failing to resolve an orphaned pin (workflow was not found). The reusable
+  # workflow owns the Dependabot vs owner-PR job split.
   review:
     permissions:
       contents: write
       issues: write
       pull-requests: write
-    if: >-
-      github.actor == 'dependabot[bot]' &&
-      github.event.pull_request.user.login == 'dependabot[bot]'
-    uses: AtlasReaper311/atlas-infra/.github/workflows/dependabot-review.yml@8e6d08701823b02c4859bfc72af67fc8ace1f4b5
+    uses: AtlasReaper311/atlas-infra/.github/workflows/dependabot-review.yml@299b9b5cd682b882719638670cf99ee96baf7a10
     with:
       automerge_enabled: ${{ vars.DEPENDABOT_AUTOMERGE_ENABLED == 'true' }}
