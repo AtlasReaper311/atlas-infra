@@ -54,3 +54,8 @@ manual.
 
 No recovery step may merge a pull request, relax a required check, bypass a
 ruleset, enable a deployment, or add a broad credential.
+
+## Owner pull requests
+
+Caller workflows always invoke the reusable Dependabot policy. Non-Dependabot pull requests run a no-op `non-dependabot` job inside that reusable workflow so the check does not fail on an unresolvable or skipped `uses:` pin.
+

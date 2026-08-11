@@ -25,17 +25,21 @@ class DependabotRolloutTests(unittest.TestCase):
             "      pull-requests: write\n",
             template,
         )
-        self.assertIn("non-dependabot:", template)
-        self.assertIn("Not a Dependabot pull request", template)
+        self.assertNotIn("non-dependabot:", template)
+        self.assertNotIn("github.actor == 'dependabot[bot]'", template)
         default_permissions = template.split("concurrency:", 1)[0]
         self.assertNotIn("contents: write", default_permissions)
         self.assertNotIn("pull-requests: write", default_permissions)
         self.assertIn(
             "uses: AtlasReaper311/atlas-infra/.github/workflows/"
-            "dependabot-review.yml@8e6d08701823b02c4859bfc72af67fc8ace1f4b5",
+            "dependabot-review.yml@299b9b5cd682b882719638670cf99ee96baf7a10",
             template,
         )
         self.assertNotIn("dependabot-review.yml@main", template)
+        self.assertNotIn(
+            "dependabot-review.yml@8e6d08701823b02c4859bfc72af67fc8ace1f4b5",
+            template,
+        )
         self.assertIn("automerge_enabled:", template)
 
     def test_live_dependabot_workflow_matches_rollout_template(self):
@@ -47,6 +51,16 @@ class DependabotRolloutTests(unittest.TestCase):
             encoding="utf-8"
         )
         self.assertEqual(live, template)
+
+    def test_reusable_dependabot_policy_has_owner_pr_noop(self):
+        reusable = (
+            Path(__file__).resolve().parents[2]
+            / ".github"
+            / "workflows"
+            / "dependabot-review.yml"
+        ).read_text(encoding="utf-8")
+        self.assertIn("non-dependabot:", reusable)
+        self.assertIn("Not a Dependabot pull request", reusable)
 
     def test_required_checks_include_active_repository_rulesets(self):
         class RulesClient:

@@ -17,6 +17,19 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # Always land a completed job on non-Dependabot PRs. Caller workflows that
+  # only invoke this reusable file must not skip the call itself: an orphaned
+  # or unresolvable uses: pin fails the whole caller as a workflow-file error.
+  non-dependabot:
+    if: >-
+      github.actor != 'dependabot[bot]' ||
+      github.event.pull_request.user.login != 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 1
+    steps:
+      - name: Skip Dependabot policy
+        run: echo "Not a Dependabot pull request; review policy does not apply."
+
   review:
     permissions:
       contents: write
