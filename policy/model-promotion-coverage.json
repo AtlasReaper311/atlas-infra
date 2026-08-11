@@ -6,15 +6,19 @@
   "eval_harness_repository": "atlas-eval-harness",
   "field_names": {
     "action_needed": "Action Needed",
+    "attention": "Attention",
     "capability_id": "Capability ID",
     "coverage_status": "Coverage Status",
+    "evidence": "Evidence",
     "eval_case_count": "Eval Case Count",
     "last_verified": "Last Verified",
+    "last_synced": "Last Synced",
     "live_model": "Live Model",
     "next_step": "Next Step",
     "promoted_model": "Promoted Model",
     "risk": "Risk",
     "source": "Source",
+    "stale_days": "Stale Days",
     "status": "Status"
   },
   "capabilities": [

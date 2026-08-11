@@ -33,6 +33,12 @@ def quote_path(value: str) -> str:
     return urllib.parse.quote(value, safe="/")
 
 
+def parse_date(value: str | int | None) -> dt.date | None:
+    if not value:
+        return None
+    return dt.date.fromisoformat(str(value).split("T", 1)[0])
+
+
 class GitHubClient:
     def __init__(self, token: str, *, api_url: str = REST_URL) -> None:
         self.token = token.strip()
@@ -236,6 +242,24 @@ def item_body(row: dict[str, Any]) -> str:
     return "\n".join(lines)
 
 
+def evidence_for(row: dict[str, Any]) -> str:
+    parts = [row["live_evidence"], row["promotion_evidence"]]
+    parts.extend(row["eval_case_paths"])
+    return " | ".join(part for part in parts if part) or row["source"]
+
+
+def attention_for(row: dict[str, Any], *, stale_days: int) -> str:
+    if row["status"] == "Done":
+        return "Healthy"
+    if stale_days >= 14:
+        return "Stale"
+    if row["risk"] == "Critical":
+        return "Critical gap"
+    if row["action_needed"] == "Decide live/promoted mismatch":
+        return "Needs decision"
+    return "Needs coverage"
+
+
 def build_rows(client: GitHubClient, config: dict[str, Any], *, today: str) -> list[dict[str, Any]]:
     rows: list[dict[str, Any]] = []
     owner = config["owner"]
@@ -269,10 +293,14 @@ def build_rows(client: GitHubClient, config: dict[str, Any], *, today: str) -> l
             "coverage_status": coverage,
             "status": status_for(action, coverage),
             "last_verified": today,
+            "last_synced": today,
+            "stale_days": 0,
             "missing_promotion_paths": missing_promotions,
             "notes": list(capability.get("notes", [])),
             "warnings": warnings,
         }
+        row["evidence"] = evidence_for(row)
+        row["attention"] = attention_for(row, stale_days=0)
         row["body"] = item_body(row)
         rows.append(row)
     return rows
@@ -299,6 +327,39 @@ query($login:String!,$number:Int!) {
       items(first:100, archivedStates:[NOT_ARCHIVED]) {
         nodes {
           id
+          fieldValues(first:50) {
+            nodes {
+              __typename
+              ... on ProjectV2ItemFieldTextValue {
+                text
+                field {
+                  ... on ProjectV2Field { name }
+                  ... on ProjectV2SingleSelectField { name }
+                }
+              }
+              ... on ProjectV2ItemFieldNumberValue {
+                number
+                field {
+                  ... on ProjectV2Field { name }
+                  ... on ProjectV2SingleSelectField { name }
+                }
+              }
+              ... on ProjectV2ItemFieldDateValue {
+                date
+                field {
+                  ... on ProjectV2Field { name }
+                  ... on ProjectV2SingleSelectField { name }
+                }
+              }
+              ... on ProjectV2ItemFieldSingleSelectValue {
+                name
+                field {
+                  ... on ProjectV2Field { name }
+                  ... on ProjectV2SingleSelectField { name }
+                }
+              }
+            }
+          }
           content {
             __typename
             ... on DraftIssue { id title body }
@@ -341,8 +402,36 @@ def option_id(field: dict[str, Any], name: str) -> str:
     raise GitHubError(f"field {field.get('name')} has no option {name!r}")
 
 
-def items_by_title(project: dict[str, Any]) -> dict[str, dict[str, str]]:
-    items: dict[str, dict[str, str]] = {}
+def field_name_from_value(value: dict[str, Any]) -> str | None:
+    field = value.get("field")
+    if isinstance(field, dict) and field.get("name"):
+        return str(field["name"])
+    return None
+
+
+def item_field_values(item: dict[str, Any]) -> dict[str, str | int]:
+    values: dict[str, str | int] = {}
+    for value in item.get("fieldValues", {}).get("nodes", []):
+        if not isinstance(value, dict):
+            continue
+        field_name = field_name_from_value(value)
+        if not field_name:
+            continue
+        if value.get("__typename") == "ProjectV2ItemFieldSingleSelectValue":
+            values[field_name] = str(value.get("name") or "")
+        elif value.get("__typename") == "ProjectV2ItemFieldNumberValue":
+            number = value.get("number")
+            if isinstance(number, (int, float)):
+                values[field_name] = int(number) if float(number).is_integer() else number
+        elif value.get("__typename") == "ProjectV2ItemFieldDateValue":
+            values[field_name] = str(value.get("date") or "")
+        elif value.get("__typename") == "ProjectV2ItemFieldTextValue":
+            values[field_name] = str(value.get("text") or "")
+    return values
+
+
+def items_by_title(project: dict[str, Any]) -> dict[str, dict[str, Any]]:
+    items: dict[str, dict[str, Any]] = {}
     for item in project.get("items", {}).get("nodes", []):
         if not isinstance(item, dict):
             continue
@@ -352,6 +441,7 @@ def items_by_title(project: dict[str, Any]) -> dict[str, dict[str, str]]:
                 "item_id": str(item["id"]),
                 "draft_id": str(content["id"]),
                 "body": str(content.get("body", "")),
+                "field_values": item_field_values(item),
             }
     return items
 
@@ -427,14 +517,31 @@ def update_field(
 def build_plan(project: dict[str, Any], rows: list[dict[str, Any]], config: dict[str, Any]) -> dict[str, Any]:
     existing = items_by_title(project)
     actions: list[dict[str, Any]] = []
+    planned_rows: list[dict[str, Any]] = []
     for row in rows:
+        row = dict(row)
         current = existing.get(row["title"])
         if current is None:
             actions.append({"action": "add_item", "title": row["title"]})
             item_id = "<after-add>"
+            current_values: dict[str, str | int] = {}
         else:
             item_id = current["item_id"]
             draft_id = current["draft_id"]
+            current_values = current.get("field_values", {})
+            previous_action = current_values.get(config["field_names"]["action_needed"])
+            previous_synced = parse_date(current_values.get(config["field_names"]["last_synced"]))
+            previous_stale = current_values.get(config["field_names"]["stale_days"], 0)
+            if (
+                row["status"] != "Done"
+                and previous_action == row["action_needed"]
+                and previous_synced is not None
+                and isinstance(previous_stale, int)
+            ):
+                today = parse_date(row["last_synced"])
+                if today is not None:
+                    row["stale_days"] = previous_stale + max((today - previous_synced).days, 0)
+            row["attention"] = attention_for(row, stale_days=int(row["stale_days"]))
             if current.get("body") != row["body"]:
                 actions.append(
                     {
@@ -443,12 +550,17 @@ def build_plan(project: dict[str, Any], rows: list[dict[str, Any]], config: dict
                         "title": row["title"],
                     }
                 )
+        planned_rows.append(row)
         for key, field_name in config["field_names"].items():
             if key == "status":
                 value = row["status"]
             elif key in row:
                 value = row[key]
             else:
+                continue
+            if value == "" and not current_values.get(field_name):
+                continue
+            if current is not None and current_values.get(field_name) == value:
                 continue
             actions.append(
                 {
@@ -473,7 +585,7 @@ def build_plan(project: dict[str, Any], rows: list[dict[str, Any]], config: dict
             "field_updates": sum(1 for action in actions if action["action"] == "set_field"),
         },
         "actions": actions,
-        "rows": rows,
+        "rows": planned_rows,
     }
 
 

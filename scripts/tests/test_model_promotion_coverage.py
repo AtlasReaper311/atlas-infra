@@ -202,6 +202,124 @@ class ModelPromotionCoverageTests(unittest.TestCase):
             plan["actions"],
         )
 
+    def test_build_plan_skips_unchanged_project_fields(self):
+        config = self.load_config()
+        row = {
+            "title": "Example",
+            "body": "body",
+            "capability_id": "example",
+            "source": "AtlasReaper311/example",
+            "risk": "High",
+            "action_needed": "Add eval case",
+            "next_step": "Add one case.",
+            "live_model": "llama3.1:8b",
+            "promoted_model": "",
+            "eval_case_count": 0,
+            "coverage_status": "No eval case",
+            "status": "Todo",
+            "last_verified": "2026-08-11",
+            "last_synced": "2026-08-11",
+            "stale_days": 0,
+            "evidence": "AtlasReaper311/example:.env.example",
+            "attention": "Needs coverage",
+        }
+        project = {
+            "id": "project-id",
+            "title": "Model Promotion and Eval Coverage",
+            "items": {
+                "nodes": [
+                    {
+                        "id": "item-id",
+                        "fieldValues": {
+                            "nodes": [
+                                {
+                                    "__typename": "ProjectV2ItemFieldTextValue",
+                                    "text": "example",
+                                    "field": {"name": "Capability ID"},
+                                },
+                                {
+                                    "__typename": "ProjectV2ItemFieldTextValue",
+                                    "text": "AtlasReaper311/example",
+                                    "field": {"name": "Source"},
+                                },
+                                {
+                                    "__typename": "ProjectV2ItemFieldSingleSelectValue",
+                                    "name": "High",
+                                    "field": {"name": "Risk"},
+                                },
+                                {
+                                    "__typename": "ProjectV2ItemFieldSingleSelectValue",
+                                    "name": "Add eval case",
+                                    "field": {"name": "Action Needed"},
+                                },
+                                {
+                                    "__typename": "ProjectV2ItemFieldTextValue",
+                                    "text": "Add one case.",
+                                    "field": {"name": "Next Step"},
+                                },
+                                {
+                                    "__typename": "ProjectV2ItemFieldTextValue",
+                                    "text": "llama3.1:8b",
+                                    "field": {"name": "Live Model"},
+                                },
+                                {
+                                    "__typename": "ProjectV2ItemFieldNumberValue",
+                                    "number": 0,
+                                    "field": {"name": "Eval Case Count"},
+                                },
+                                {
+                                    "__typename": "ProjectV2ItemFieldSingleSelectValue",
+                                    "name": "No eval case",
+                                    "field": {"name": "Coverage Status"},
+                                },
+                                {
+                                    "__typename": "ProjectV2ItemFieldSingleSelectValue",
+                                    "name": "Todo",
+                                    "field": {"name": "Status"},
+                                },
+                                {
+                                    "__typename": "ProjectV2ItemFieldDateValue",
+                                    "date": "2026-08-11",
+                                    "field": {"name": "Last Verified"},
+                                },
+                                {
+                                    "__typename": "ProjectV2ItemFieldDateValue",
+                                    "date": "2026-08-11",
+                                    "field": {"name": "Last Synced"},
+                                },
+                                {
+                                    "__typename": "ProjectV2ItemFieldNumberValue",
+                                    "number": 0,
+                                    "field": {"name": "Stale Days"},
+                                },
+                                {
+                                    "__typename": "ProjectV2ItemFieldTextValue",
+                                    "text": "AtlasReaper311/example:.env.example",
+                                    "field": {"name": "Evidence"},
+                                },
+                                {
+                                    "__typename": "ProjectV2ItemFieldSingleSelectValue",
+                                    "name": "Needs coverage",
+                                    "field": {"name": "Attention"},
+                                },
+                            ]
+                        },
+                        "content": {
+                            "__typename": "DraftIssue",
+                            "id": "draft-id",
+                            "title": "Example",
+                            "body": "body",
+                        },
+                    }
+                ]
+            },
+        }
+
+        plan = model_promotion_coverage.build_plan(project, [row], config)
+
+        self.assertEqual(0, plan["summary"]["field_updates"])
+        self.assertEqual([], plan["actions"])
+
 
 if __name__ == "__main__":
     unittest.main()
