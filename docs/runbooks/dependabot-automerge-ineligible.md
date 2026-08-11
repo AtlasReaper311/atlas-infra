@@ -54,3 +54,8 @@ manual.
 
 No recovery step may merge a pull request, relax a required check, bypass a
 ruleset, enable a deployment, or add a broad credential.
+
+## Owner pull requests
+
+Non-Dependabot pull requests run a no-op `non-dependabot` job so the workflow does not conclude failed with an empty job list.
+
