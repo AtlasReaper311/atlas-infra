@@ -295,6 +295,95 @@ class EstateRolloutBoardTests(unittest.TestCase):
 
             self.assertEqual({"ok": True}, json.loads(path.read_text(encoding="utf-8")))
 
+    def test_build_plan_skips_unchanged_project_fields(self):
+        config = self.load_config()
+        url = "https://github.com/AtlasReaper311/atlas-infra/pull/160"
+        project = {
+            "id": "project-id",
+            "title": "Estate Rollout Board",
+            "items": {
+                "nodes": [
+                    {
+                        "id": "item-id",
+                        "fieldValues": {
+                            "nodes": [
+                                {
+                                    "__typename": "ProjectV2ItemFieldSingleSelectValue",
+                                    "name": "In Progress",
+                                    "field": {"name": "Status"},
+                                },
+                                {
+                                    "__typename": "ProjectV2ItemFieldSingleSelectValue",
+                                    "name": "In Progress",
+                                    "field": {"name": "Stage"},
+                                },
+                                {
+                                    "__typename": "ProjectV2ItemFieldSingleSelectValue",
+                                    "name": "P-03 DevOps Core",
+                                    "field": {"name": "Pillar"},
+                                },
+                                {
+                                    "__typename": "ProjectV2ItemFieldSingleSelectValue",
+                                    "name": "Needs review",
+                                    "field": {"name": "Attention"},
+                                },
+                                {
+                                    "__typename": "ProjectV2ItemFieldNumberValue",
+                                    "number": 1,
+                                    "field": {"name": "Stale Days"},
+                                },
+                                {
+                                    "__typename": "ProjectV2ItemFieldDateValue",
+                                    "date": "2026-08-11",
+                                    "field": {"name": "Last Synced"},
+                                },
+                                {
+                                    "__typename": "ProjectV2ItemFieldTextValue",
+                                    "text": "atlas-infra #160; updated 2026-08-10",
+                                    "field": {"name": "Evidence"},
+                                },
+                            ]
+                        },
+                        "content": {
+                            "__typename": "PullRequest",
+                            "url": url,
+                            "number": 160,
+                            "state": "OPEN",
+                            "title": "Improve board sync",
+                            "updatedAt": "2026-08-10T10:00:00Z",
+                            "mergedAt": None,
+                            "closedAt": None,
+                            "repository": {"nameWithOwner": "AtlasReaper311/atlas-infra"},
+                        },
+                    }
+                ]
+            },
+        }
+        pulls = {
+            url: {
+                "html_url": url,
+                "number": 160,
+                "state": "open",
+                "title": "Improve board sync",
+                "body": "",
+                "draft": False,
+                "merged_at": None,
+                "closed_at": None,
+                "updated_at": "2026-08-10T10:00:00Z",
+                "labels": [],
+                "_atlas_repository_name": "atlas-infra",
+            }
+        }
+
+        plan = estate_rollout_board.build_plan(
+            project,
+            pulls,
+            config,
+            now=dt.datetime(2026, 8, 11, 10, tzinfo=dt.UTC),
+        )
+
+        self.assertEqual(0, plan["summary"]["field_updates"])
+
 
 if __name__ == "__main__":
     unittest.main()

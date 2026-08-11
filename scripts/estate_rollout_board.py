@@ -36,6 +36,13 @@ def parse_time(value: str | None) -> dt.datetime | None:
     return dt.datetime.fromisoformat(value.replace("Z", "+00:00"))
 
 
+def days_since(value: str | None, *, now: dt.datetime) -> int:
+    parsed = parse_time(value)
+    if parsed is None:
+        return 0
+    return max((now.date() - parsed.date()).days, 0)
+
+
 class GitHubClient:
     def __init__(self, token: str, *, api_url: str = REST_URL) -> None:
         self.token = token.strip()
@@ -221,6 +228,30 @@ def should_archive(pull: dict[str, Any], config: dict[str, Any], *, now: dt.date
     return now - closed_at >= grace
 
 
+def stale_days_for(pull: dict[str, Any], *, now: dt.datetime) -> int:
+    if pull.get("state") == "closed":
+        return days_since(pull.get("closed_at"), now=now)
+    return days_since(pull.get("updated_at"), now=now)
+
+
+def attention_for(pull: dict[str, Any], config: dict[str, Any], *, now: dt.datetime) -> str:
+    if pull.get("state") == "closed" or pull.get("merged_at"):
+        return "Healthy"
+    if pull.get("draft") or is_gated(pull, config):
+        return "Waiting approval"
+    if stale_days_for(pull, now=now) >= int(config.get("stale_after_days", 14)):
+        return "Stale"
+    return "Needs review"
+
+
+def evidence_for(pull: dict[str, Any]) -> str:
+    repo = pull.get("_atlas_repository_name", "unknown")
+    number = pull.get("number", "?")
+    updated = str(pull.get("updated_at") or pull.get("closed_at") or "").split("T", 1)[0]
+    suffix = f"; updated {updated}" if updated else ""
+    return f"{repo} #{number}{suffix}"
+
+
 def collect_open_pull_requests(client: GitHubClient, config: dict[str, Any]) -> dict[str, dict[str, Any]]:
     owner = config["owner"]
     pulls: dict[str, dict[str, Any]] = {}
@@ -260,6 +291,40 @@ query($login:String!,$number:Int!) {
       items(first:100, archivedStates:[NOT_ARCHIVED]) {
         nodes {
           id
+          updatedAt
+          fieldValues(first:50) {
+            nodes {
+              __typename
+              ... on ProjectV2ItemFieldTextValue {
+                text
+                field {
+                  ... on ProjectV2Field { name }
+                  ... on ProjectV2SingleSelectField { name }
+                }
+              }
+              ... on ProjectV2ItemFieldNumberValue {
+                number
+                field {
+                  ... on ProjectV2Field { name }
+                  ... on ProjectV2SingleSelectField { name }
+                }
+              }
+              ... on ProjectV2ItemFieldDateValue {
+                date
+                field {
+                  ... on ProjectV2Field { name }
+                  ... on ProjectV2SingleSelectField { name }
+                }
+              }
+              ... on ProjectV2ItemFieldSingleSelectValue {
+                name
+                field {
+                  ... on ProjectV2Field { name }
+                  ... on ProjectV2SingleSelectField { name }
+                }
+              }
+            }
+          }
           content {
             __typename
             ... on PullRequest {
@@ -267,6 +332,7 @@ query($login:String!,$number:Int!) {
               number
               state
               title
+              updatedAt
               mergedAt
               closedAt
               repository { nameWithOwner }
@@ -310,6 +376,34 @@ def option_id(field: dict[str, Any], value: str) -> str:
     raise GitHubError(f"field {field.get('name')} has no option {value!r}")
 
 
+def field_name_from_value(value: dict[str, Any]) -> str | None:
+    field = value.get("field")
+    if isinstance(field, dict) and field.get("name"):
+        return str(field["name"])
+    return None
+
+
+def item_field_values(item: dict[str, Any]) -> dict[str, str | int]:
+    values: dict[str, str | int] = {}
+    for value in item.get("fieldValues", {}).get("nodes", []):
+        if not isinstance(value, dict):
+            continue
+        field_name = field_name_from_value(value)
+        if not field_name:
+            continue
+        if value.get("__typename") == "ProjectV2ItemFieldSingleSelectValue":
+            values[field_name] = str(value.get("name") or "")
+        elif value.get("__typename") == "ProjectV2ItemFieldNumberValue":
+            number = value.get("number")
+            if isinstance(number, (int, float)):
+                values[field_name] = int(number) if float(number).is_integer() else number
+        elif value.get("__typename") == "ProjectV2ItemFieldDateValue":
+            values[field_name] = str(value.get("date") or "")
+        elif value.get("__typename") == "ProjectV2ItemFieldTextValue":
+            values[field_name] = str(value.get("text") or "")
+    return values
+
+
 def project_items_by_url(project: dict[str, Any]) -> dict[str, dict[str, Any]]:
     items: dict[str, dict[str, Any]] = {}
     for item in project.get("items", {}).get("nodes", []):
@@ -339,6 +433,7 @@ def pull_from_project_item(item: dict[str, Any]) -> dict[str, Any] | None:
         "draft": False,
         "merged_at": content.get("mergedAt"),
         "closed_at": content.get("closedAt"),
+        "updated_at": content.get("updatedAt") or item.get("updatedAt"),
         "labels": [],
         "_atlas_repository_name": repository.split("/", 1)[1],
     }
@@ -359,28 +454,41 @@ def add_item(client: GitHubClient, project_id: str, content_id: str) -> str:
     return str(item["id"])
 
 
-def update_single_select(
+def update_field(
     client: GitHubClient,
     project_id: str,
     item_id: str,
-    field_id: str,
-    option: str,
+    field: dict[str, Any],
+    value: str | int,
 ) -> None:
+    if field.get("__typename") == "ProjectV2SingleSelectField":
+        field_value = {"singleSelectOptionId": option_id(field, str(value))}
+    elif field.get("dataType") == "NUMBER":
+        field_value = {"number": float(value)}
+    elif field.get("dataType") == "DATE":
+        field_value = {"date": str(value)}
+    else:
+        field_value = {"text": str(value)}
     query = """
-    mutation($project:ID!,$item:ID!,$field:ID!,$option:String!) {
+    mutation($project:ID!,$item:ID!,$field:ID!,$value:ProjectV2FieldValue!) {
       updateProjectV2ItemFieldValue(
         input:{
           projectId:$project,
           itemId:$item,
           fieldId:$field,
-          value:{singleSelectOptionId:$option}
+          value:$value
         }
       ) { projectV2Item { id } }
     }
     """
     client.graphql(
         query,
-        {"project": project_id, "item": item_id, "field": field_id, "option": option},
+        {
+            "project": project_id,
+            "item": item_id,
+            "field": field["id"],
+            "value": field_value,
+        },
     )
 
 
@@ -472,11 +580,18 @@ def build_plan(
             "Status": status_for(pull, config),
             "Stage": stage_for(pull, config),
             "Pillar": pillar_for(repo_name, config),
+            "Attention": attention_for(pull, config, now=now),
+            "Stale Days": stale_days_for(pull, now=now),
+            "Last Synced": now.date().isoformat(),
+            "Evidence": evidence_for(pull),
         }
         agent = agent_for(pull, config)
         if agent:
             desired["Agent"] = agent
+        current_values = item_field_values(item) if item else {}
         for field, value in desired.items():
+            if item and current_values.get(field) == value:
+                continue
             plan["actions"].append(
                 {
                     "action": "set_field",
@@ -519,8 +634,15 @@ def build_plan(
         desired = {
             "Status": status_for(pull, config),
             "Stage": stage_for(pull, config),
+            "Attention": attention_for(pull, config, now=now),
+            "Stale Days": stale_days_for(pull, now=now),
+            "Last Synced": now.date().isoformat(),
+            "Evidence": evidence_for(pull),
         }
+        current_values = item_field_values(item)
         for field, value in desired.items():
+            if current_values.get(field) == value:
+                continue
             plan["actions"].append(
                 {
                     "action": "set_field",
@@ -561,14 +683,7 @@ def apply_plan(
             item_id = action["item_id"]
             if item_id == "<after-add>":
                 item_id = added[action["url"]]
-            field = fields[action["field"]]
-            update_single_select(
-                client,
-                project_id,
-                item_id,
-                field["id"],
-                option_id(field, action["value"]),
-            )
+            update_field(client, project_id, item_id, fields[action["field"]], action["value"])
             continue
         if action["action"] == "archive_item":
             archive_item(client, project_id, action["item_id"])

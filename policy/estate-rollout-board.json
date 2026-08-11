@@ -5,6 +5,7 @@
   "project_title": "Estate Rollout Board",
   "archive_after_done_days": 3,
   "done_retention_action": "archive",
+  "stale_after_days": 14,
   "excluded_labels": [
     "dependencies",
     "dependabot",
@@ -24,7 +25,11 @@
   ],
   "field_names": {
     "agent": "Agent",
+    "attention": "Attention",
+    "evidence": "Evidence",
+    "last_synced": "Last Synced",
     "pillar": "Pillar",
+    "stale_days": "Stale Days",
     "stage": "Stage",
     "status": "Status"
   },
