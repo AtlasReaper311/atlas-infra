@@ -59,3 +59,5 @@ ruleset, enable a deployment, or add a broad credential.
 
 Caller workflows always invoke the reusable Dependabot policy. Non-Dependabot pull requests run a no-op `non-dependabot` job inside that reusable workflow so the check does not fail on an unresolvable or skipped `uses:` pin.
 
+Pin the reusable workflow to a full commit SHA that is reachable from `atlas-infra` `main`. Do not pin a pre-squash PR tip: after a squash merge that tip is no longer on `main`, and GitHub Actions fails owner PRs with `workflow was not found` (see run `31524644965` / check `#256` on `#156`).
+

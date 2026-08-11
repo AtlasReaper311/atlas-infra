@@ -32,10 +32,14 @@ class DependabotRolloutTests(unittest.TestCase):
         self.assertNotIn("pull-requests: write", default_permissions)
         self.assertIn(
             "uses: AtlasReaper311/atlas-infra/.github/workflows/"
-            "dependabot-review.yml@299b9b5cd682b882719638670cf99ee96baf7a10",
+            "dependabot-review.yml@5e109b7895a5c224aec7f770a803b66ac1fff914",
             template,
         )
         self.assertNotIn("dependabot-review.yml@main", template)
+        self.assertNotIn(
+            "dependabot-review.yml@299b9b5cd682b882719638670cf99ee96baf7a10",
+            template,
+        )
         self.assertNotIn(
             "dependabot-review.yml@8e6d08701823b02c4859bfc72af67fc8ace1f4b5",
             template,
