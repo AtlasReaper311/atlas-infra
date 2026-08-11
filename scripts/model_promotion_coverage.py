@@ -60,8 +60,8 @@ class GitHubClient:
             message = "request failed"
             try:
                 message = json.loads(error.read()).get("message", message)
-            except (json.JSONDecodeError, AttributeError):
-                pass
+            except (json.JSONDecodeError, AttributeError) as parse_error:
+                message = f"{message} (unable to parse error payload: {parse_error})"
             raise GitHubError(f"GitHub API {method} {url} returned {error.code}: {message}") from error
         except urllib.error.URLError as error:
             raise GitHubError(f"GitHub API {method} {url} failed: {error.reason}") from error
