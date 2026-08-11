@@ -1,0 +1,41 @@
+{
+  "artifact": {
+    "artifact_name": "ramone-control-plane-read-model",
+    "max_bytes": 65536,
+    "max_model_age_seconds": 600,
+    "model_filename": "control-plane-read-model.json",
+    "producer_receipt_filename": "dry-run-receipt.json"
+  },
+  "blocked_capabilities": [
+    "arbitrary-account",
+    "arbitrary-artifact-name",
+    "arbitrary-http",
+    "arbitrary-key",
+    "arbitrary-namespace",
+    "automatic-dispatch",
+    "bulk-write",
+    "delete",
+    "list",
+    "provider-discovery",
+    "request-body-input",
+    "schedule",
+    "token-output"
+  ],
+  "cloudflare": {
+    "account_id": "49e221b7e55a9e5c45b88d08efca5771",
+    "api_origin": "https://api.cloudflare.com",
+    "kv_key": "control-plane:read-model:v1",
+    "namespace_id": "33fa7cbf66fc495ea0304a5f95ffc9a8",
+    "required_token_permission": "Workers KV Storage Write"
+  },
+  "mode": "manual-exact-digest-only",
+  "owner": "AtlasReaper311/atlas-infra",
+  "schema_version": "atlas-control-plane/read-model-publisher-policy/v1",
+  "workflow": {
+    "allowed_ref": "refs/heads/main",
+    "confirmation": "publish-control-plane-read-model-v1",
+    "enable_variable": "RAMONE_CONTROL_PLANE_PUBLISH_ENABLED",
+    "environment": "ramone-control-plane-publish",
+    "token_secret": "CF_RAMONE_CONTROL_PLANE_KV_WRITE_TOKEN"
+  }
+}
