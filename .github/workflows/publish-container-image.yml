@@ -36,7 +36,6 @@ on:
 
 permissions:
   contents: read
-  packages: write
 
 concurrency:
   group: publish-image-${{ inputs.image_name }}-${{ github.ref }}
@@ -46,6 +45,9 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    permissions:
+      contents: read
+      packages: write
 
     steps:
       - name: Check out repository
