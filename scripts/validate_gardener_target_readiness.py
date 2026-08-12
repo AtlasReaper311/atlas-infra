@@ -85,6 +85,19 @@ EXPECTED_BATCHES = [
             "AtlasReaper311/specular-sentinel": ["build"],
         },
     },
+    {
+        "order": 5,
+        "id": "primary-public-surfaces",
+        "risk_tier": "high",
+        "repositories": [
+            "AtlasReaper311/atlas-api-public",
+            "AtlasReaper311/atlas-systems",
+        ],
+        "required_checks": {
+            "AtlasReaper311/atlas-api-public": ["Test (node --test)"],
+            "AtlasReaper311/atlas-systems": ["Static site validation"],
+        },
+    },
 ]
 EXPECTED_BATCH_IDS = [batch["id"] for batch in EXPECTED_BATCHES]
 

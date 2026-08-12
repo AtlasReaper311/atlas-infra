@@ -15,7 +15,8 @@
     "public-runtime-low-blast-radius",
     "public-runtime-observability",
     "gardener-canary-reset",
-    "public-runtime-operations"
+    "public-runtime-operations",
+    "primary-public-surfaces"
   ],
   "future_scope": "Additional verified coverage batches may be added after separate review without changing the schema.",
   "batches": [
@@ -151,6 +152,25 @@
           "repository": "AtlasReaper311/specular-sentinel",
           "required_checks": [
             "build"
+          ]
+        }
+      ]
+    },
+    {
+      "order": 5,
+      "id": "primary-public-surfaces",
+      "risk_tier": "high",
+      "targets": [
+        {
+          "repository": "AtlasReaper311/atlas-api-public",
+          "required_checks": [
+            "Test (node --test)"
+          ]
+        },
+        {
+          "repository": "AtlasReaper311/atlas-systems",
+          "required_checks": [
+            "Static site validation"
           ]
         }
       ]
