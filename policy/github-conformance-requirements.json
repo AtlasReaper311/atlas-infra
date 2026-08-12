@@ -38,6 +38,16 @@
         "reason": "The profile repository does not build, publish, or deploy software."
       }
     },
+    "AtlasReaper311/atlas-badges": {
+      "release_workflow": {
+        "disposition": "required",
+        "reason": "atlas-badges is being packaged for PyPI; the CLI and pyproject.toml are already installable, only the publish workflow is missing."
+      },
+      "release_history": {
+        "disposition": "deferred",
+        "reason": "The first PyPI release has not been published yet."
+      }
+    },
     "AtlasReaper311/atlas-bootstrap": {
       "codeql": {
         "disposition": "not_applicable",
