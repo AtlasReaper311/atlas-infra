@@ -1,10 +1,10 @@
 +++
 id = "ADR-0009"
-date = 2026-07-29
+date = 2026-08-12
 status = "accepted"
 visibility = "public"
 repositories = ["AtlasReaper311/atlas-infra", "AtlasReaper311/atlas-systems"]
-services = []
+services = ["atlas-systems"]
 contracts = ["atlas-control-plane/public-interface-footer-extension/v1"]
 policies = ["policy/public-interface-footer-extension-v1.json"]
 +++
