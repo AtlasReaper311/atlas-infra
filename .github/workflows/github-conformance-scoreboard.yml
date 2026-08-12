@@ -28,9 +28,30 @@ jobs:
           python3 -m unittest scripts.tests.test_github_conformance_scoreboard scripts.tests.test_github_conformance_policy scripts.tests.test_github_conformance_stamp -v
           python3 scripts/public_repository_classifications.py --check
 
+      - name: Resolve branch guard reader repository scope
+        id: branch-guard-scope
+        run: |
+          set -euo pipefail
+          {
+            echo 'repositories<<ATLAS_REPOSITORIES'
+            jq -r '.repositories[].repository | split("/")[1]' policy/public-repository-classifications.json
+            echo 'ATLAS_REPOSITORIES'
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Create short-lived branch guard reader token
+        id: branch-guard-token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0, Node 24
+        with:
+          client-id: ${{ vars.ATLAS_BRANCH_GUARD_READER_APP_CLIENT_ID }}
+          private-key: ${{ secrets.ATLAS_BRANCH_GUARD_READER_APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: ${{ steps.branch-guard-scope.outputs.repositories }}
+          permission-administration: read
+
       - name: Build scoreboard
         env:
           GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_BRANCH_GUARD_TOKEN: ${{ steps.branch-guard-token.outputs.token }}
         run: |
           set -euo pipefail
           mkdir -p reports

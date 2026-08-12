@@ -83,6 +83,61 @@ class GitHubConformanceScoreboardTests(unittest.TestCase):
         self.assertEqual(10, report["summary"]["checks_passed"])
         self.assertEqual(0, report["summary"]["checks_failed"])
 
+    def test_scoreboard_uses_dedicated_branch_guard_client(self):
+        projection = {
+            "schema_version": "atlas-public-repository-classifications/projection/v1",
+            "authority": "AtlasReaper311/atlas-infra",
+            "source_fingerprint": "sha256:" + "0" * 64,
+            "repository_count": 1,
+            "repositories": [
+                {
+                    "repository": "AtlasReaper311/example",
+                    "lifecycle": "active",
+                    "scope": "public",
+                    "provenance": "original",
+                    "runtime_service": False,
+                }
+            ],
+        }
+        values = {
+            "/repos/AtlasReaper311/.github/contents/SECURITY.md?ref=main": {"name": "SECURITY.md"},
+            "/repos/AtlasReaper311/example": {
+                "description": "Example repo",
+                "default_branch": "main",
+                "license": {"spdx_id": "MIT"},
+                "topics": ["atlas-systems"],
+                "visibility": "public",
+            },
+            "/repos/AtlasReaper311/example/contents/.github/dependabot.yml?ref=main": {"name": "dependabot.yml"},
+            "/repos/AtlasReaper311/example/contents/.github/workflows/codeql.yml?ref=main": {"name": "codeql.yml"},
+            "/repos/AtlasReaper311/example/contents/.github/workflows/scorecard.yml?ref=main": {"name": "scorecard.yml"},
+            "/repos/AtlasReaper311/example/contents/.github/workflows/release.yml?ref=main": {"name": "release.yml"},
+            "/repos/AtlasReaper311/example/releases?per_page=1": [],
+            "/repos/AtlasReaper311/example/tags?per_page=1": [{"name": "v1.0.0"}],
+        }
+        branch_guard_values = {
+            "/repos/AtlasReaper311/example/rulesets": [
+                {
+                    "name": "Atlas default branch PR guard",
+                    "target": "branch",
+                    "enforcement": "active",
+                    "conditions": {"ref_name": {"include": ["~DEFAULT_BRANCH"]}},
+                    "rules": [
+                        {"type": "deletion"},
+                        {"type": "non_fast_forward"},
+                        {"type": "pull_request"},
+                    ],
+                }
+            ],
+            "/repos/AtlasReaper311/example/branches/main/protection": None,
+        }
+        report = github_conformance_scoreboard.build_scoreboard(
+            FakeClient(values),
+            projection,
+            branch_guard_client=FakeClient(branch_guard_values),
+        )
+        self.assertEqual(10, report["summary"]["checks_passed"])
+
     def test_markdown_contains_failed_and_unknown_columns(self):
         report = {
             "source_fingerprint": "sha256:" + "0" * 64,

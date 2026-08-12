@@ -200,6 +200,7 @@ def score_repository(
     classification: dict[str, Any],
     *,
     global_security_default: bool,
+    branch_guard_client: GitHubClient | None = None,
 ) -> dict[str, Any]:
     repository = classification["repository"]
     base = repo_api_path(repository)
@@ -282,7 +283,13 @@ def score_repository(
     )
     checks.append(CheckResult("release_workflow", "Release workflow", status, message))
     checks.append(has_release_history(client, repository))
-    checks.append(has_default_branch_guard(client, repository, default_branch))
+    checks.append(
+        has_default_branch_guard(
+            branch_guard_client or client,
+            repository,
+            default_branch,
+        )
+    )
     return repository_result(classification, metadata, checks)
 
 
@@ -327,6 +334,7 @@ def build_scoreboard(
     client: GitHubClient,
     projection: dict[str, Any],
     *,
+    branch_guard_client: GitHubClient | None = None,
     max_workers: int = 8,
 ) -> dict[str, Any]:
     repositories = sorted(
@@ -343,6 +351,7 @@ def build_scoreboard(
                 client,
                 item,
                 global_security_default=global_security_default,
+                branch_guard_client=branch_guard_client,
             ): item["repository"]
             for item in repositories
         }
@@ -447,9 +456,13 @@ def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     try:
         projection = load_projection(args.projection)
+        branch_guard_token = os.environ.get("GITHUB_BRANCH_GUARD_TOKEN", "")
         scoreboard = build_scoreboard(
             GitHubClient(os.environ.get("GITHUB_TOKEN", "")),
             projection,
+            branch_guard_client=GitHubClient(branch_guard_token)
+            if branch_guard_token
+            else None,
             max_workers=args.max_workers,
         )
     except (OSError, json.JSONDecodeError, ScoreboardError, GitHubApiError) as error:

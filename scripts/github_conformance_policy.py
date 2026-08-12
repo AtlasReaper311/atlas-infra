@@ -312,9 +312,13 @@ def main(argv: list[str] | None = None) -> int:
     try:
         projection = evidence.load_projection(args.projection)
         requirements = load_requirements(args.requirements)
+        branch_guard_token = os.environ.get("GITHUB_BRANCH_GUARD_TOKEN", "")
         raw_report = evidence.build_scoreboard(
             GitHubClient(os.environ.get("GITHUB_TOKEN", "")),
             projection,
+            branch_guard_client=GitHubClient(branch_guard_token)
+            if branch_guard_token
+            else None,
             max_workers=args.max_workers,
         )
         report = apply_policy(raw_report, requirements, projection)

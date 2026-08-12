@@ -37,7 +37,7 @@ Keep `ATLAS_GARDENER_MODE=disabled` and `ATLAS_GARDENER_WRITE_GATE=disabled` whi
 
 ## Expansion
 
-A later batch requires a separately reviewed sorted list containing only that approved batch. Verified coverage remains eligibility evidence; it is not the write target list.
+A later expansion requires a separately reviewed sorted list containing exactly the approved active batch set. Verified coverage remains eligibility evidence; it is not the write target list. Batch one and batch two may remain active together, and future batches can be added after the same readiness review.
 
 ## Rollback
 

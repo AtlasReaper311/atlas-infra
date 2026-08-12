@@ -38,6 +38,10 @@ def write(path: Path, text: str) -> None:
     path.write_text(text, encoding="utf-8")
 
 
+def temporary_git_directory() -> tempfile.TemporaryDirectory[str]:
+    return tempfile.TemporaryDirectory(ignore_cleanup_errors=True)
+
+
 def build_ancestry_fixture(root: Path) -> dict[str, str]:
     """Build:
 
@@ -119,7 +123,7 @@ class WorkflowPinParserTests(unittest.TestCase):
         steps = VALIDATE.parse_checkout_steps(text, Path("fixture.yml"))
         self.assertEqual(3, len(steps))
 
-        with tempfile.TemporaryDirectory() as value:
+        with temporary_git_directory() as value:
             workflows = Path(value) / ".github" / "workflows"
             write(workflows / "fixture.yml", text)
             collected = VALIDATE.collect_hardcoded_self_tooling_pins(workflows)
@@ -139,7 +143,7 @@ jobs:
           repository: AtlasReaper311/atlas-dep-audit
           ref: 1c9e37055818a6141d46e92ecf15ec40922279b8
 """
-        with tempfile.TemporaryDirectory() as value:
+        with temporary_git_directory() as value:
             workflows = Path(value) / ".github" / "workflows"
             write(workflows / "fixture.yml", text)
             self.assertEqual([], VALIDATE.collect_hardcoded_self_tooling_pins(workflows))
@@ -147,7 +151,7 @@ jobs:
 
 class WorkflowPinValidationTests(unittest.TestCase):
     def test_full_sha_on_main_is_accepted(self) -> None:
-        with tempfile.TemporaryDirectory() as value:
+        with temporary_git_directory() as value:
             fixture = build_ancestry_fixture(Path(value))
             repo = Path(fixture["repo"])
             workflows = repo / ".github" / "workflows"
@@ -161,7 +165,7 @@ class WorkflowPinValidationTests(unittest.TestCase):
             self.assertEqual(fixture["C"], pins[0].ref)
 
     def test_feature_only_commit_is_rejected_even_when_object_exists(self) -> None:
-        with tempfile.TemporaryDirectory() as value:
+        with temporary_git_directory() as value:
             fixture = build_ancestry_fixture(Path(value))
             repo = Path(fixture["repo"])
             self.assertEqual("commit", run_git(repo, "cat-file", "-t", fixture["D"]))
@@ -178,7 +182,7 @@ class WorkflowPinValidationTests(unittest.TestCase):
                 )
 
     def test_short_sha_is_rejected(self) -> None:
-        with tempfile.TemporaryDirectory() as value:
+        with temporary_git_directory() as value:
             fixture = build_ancestry_fixture(Path(value))
             repo = Path(fixture["repo"])
             workflows = repo / ".github" / "workflows"
@@ -194,7 +198,7 @@ class WorkflowPinValidationTests(unittest.TestCase):
                 )
 
     def test_branch_name_ref_is_rejected(self) -> None:
-        with tempfile.TemporaryDirectory() as value:
+        with temporary_git_directory() as value:
             fixture = build_ancestry_fixture(Path(value))
             repo = Path(fixture["repo"])
             workflows = repo / ".github" / "workflows"
@@ -210,7 +214,7 @@ class WorkflowPinValidationTests(unittest.TestCase):
                 )
 
     def test_tag_like_ref_is_rejected(self) -> None:
-        with tempfile.TemporaryDirectory() as value:
+        with temporary_git_directory() as value:
             fixture = build_ancestry_fixture(Path(value))
             repo = Path(fixture["repo"])
             workflows = repo / ".github" / "workflows"
@@ -226,7 +230,7 @@ class WorkflowPinValidationTests(unittest.TestCase):
                 )
 
     def test_missing_ref_self_checkout_is_out_of_scope(self) -> None:
-        with tempfile.TemporaryDirectory() as value:
+        with temporary_git_directory() as value:
             fixture = build_ancestry_fixture(Path(value))
             repo = Path(fixture["repo"])
             workflows = repo / ".github" / "workflows"
@@ -242,7 +246,7 @@ class WorkflowPinValidationTests(unittest.TestCase):
                 )
 
     def test_expression_only_self_checkouts_fail_closed(self) -> None:
-        with tempfile.TemporaryDirectory() as value:
+        with temporary_git_directory() as value:
             fixture = build_ancestry_fixture(Path(value))
             repo = Path(fixture["repo"])
             workflows = repo / ".github" / "workflows"
