@@ -1,10 +1,10 @@
 +++
 id = "ADR-0008"
-date = 2026-07-23
+date = 2026-08-12
 status = "accepted"
 visibility = "public"
 repositories = ["AtlasReaper311/atlas-api-public", "AtlasReaper311/atlas-doc-viewer", "AtlasReaper311/atlas-infra", "AtlasReaper311/atlas-systems", "AtlasReaper311/ramone-edge", "AtlasReaper311/status"]
-services = []
+services = ["atlas-api-public", "atlas-doc-viewer", "atlas-systems", "ramone-edge", "status"]
 contracts = ["atlas-control-plane/public-interface-surface/v1", "atlas-control-plane/public-interface-system/v1"]
 policies = ["policy/atlas-owned-domains.json", "policy/browser-icons-v1.json", "policy/public-interface-contract.json", "policy/public-interface-system-v2.json"]
 +++

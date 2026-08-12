@@ -60,6 +60,7 @@ class AdrTraceTests(unittest.TestCase):
             if item["adr"]["id"] == "ADR-0009"
         )
         self.assertEqual("accepted", writing_footer["adr"]["status"])
+        self.assertEqual(["atlas-systems"], writing_footer["affects"]["services"])
         self.assertIn(
             "atlas-control-plane/public-interface-footer-extension/v1",
             writing_footer["affects"]["contracts"],
@@ -67,6 +68,30 @@ class AdrTraceTests(unittest.TestCase):
         self.assertIn(
             "policy/public-interface-footer-extension-v1.json",
             writing_footer["affects"]["policies"],
+        )
+
+        interface_contract = next(
+            item
+            for item in first["relationships"]
+            if item["adr"]["id"] == "ADR-0007"
+        )
+        self.assertEqual(
+            [
+                "atlas-api-public",
+                "atlas-doc-viewer",
+                "atlas-systems",
+                "ramone-edge",
+                "status",
+            ],
+            interface_contract["affects"]["services"],
+        )
+        self.assertEqual(
+            interface_contract["affects"]["services"],
+            next(
+                item["affects"]["services"]
+                for item in first["relationships"]
+                if item["adr"]["id"] == "ADR-0008"
+            ),
         )
 
     def test_legacy_slug_keeps_existing_authority_path_valid(self) -> None:
