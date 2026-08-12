@@ -21,15 +21,17 @@ class GardenerTargetReadinessPolicyTests(unittest.TestCase):
     def test_committed_policy_is_valid(self) -> None:
         report = VALIDATOR.validate_policy(self.policy)
         self.assertEqual("valid", report["status"])
-        self.assertEqual(2, report["batch_count"])
+        self.assertEqual(4, report["batch_count"])
         self.assertEqual(
             [
                 "public-runtime-low-blast-radius",
                 "public-runtime-observability",
+                "gardener-canary-reset",
+                "public-runtime-operations",
             ],
             report["active_batch_ids"],
         )
-        self.assertEqual(10, report["target_count"])
+        self.assertEqual(18, report["target_count"])
         self.assertEqual(0, report["provider_mutations"])
 
     def test_rejects_missing_barrier(self) -> None:
