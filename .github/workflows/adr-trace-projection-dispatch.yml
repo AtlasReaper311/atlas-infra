@@ -62,7 +62,7 @@ jobs:
               echo "\`AtlasReaper311/atlas-api-public\`, or run the target workflow manually:"
               echo
               echo "\`\`\`bash"
-              echo "gh workflow run \"ADR runtime projection.yml\" \\"
+              echo "gh workflow run adr-runtime-projection.yml \\"
               echo "  --repo AtlasReaper311/atlas-api-public \\"
               echo "  -f authority_sha=${AUTHORITY_SHA}"
               echo "\`\`\`"
@@ -71,13 +71,13 @@ jobs:
             exit 0
           fi
 
-          gh workflow run "ADR runtime projection.yml" \
+          gh workflow run adr-runtime-projection.yml \
             --repo AtlasReaper311/atlas-api-public \
             -f "authority_sha=${AUTHORITY_SHA}"
 
           {
             echo "## ADR Trace projection dispatch"
             echo
-            echo "Dispatched \`ADR runtime projection.yml\` for authority \`${AUTHORITY_SHA}\`."
+            echo "Dispatched \`adr-runtime-projection.yml\` for authority \`${AUTHORITY_SHA}\`."
             echo "The target workflow opens or updates a draft pull request only; it does not merge or deploy."
           } >> "$GITHUB_STEP_SUMMARY"
