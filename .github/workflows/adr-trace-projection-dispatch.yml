@@ -1,0 +1,83 @@
+name: Dispatch ADR Trace projection refresh
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "docs/adrs/**"
+      - "scripts/adr_trace.py"
+      - "contracts/v1/wave3/adr-runtime-relationship.schema.json"
+      - "contracts/v1/fingerprint-rules.json"
+  workflow_dispatch:
+    inputs:
+      authority_sha:
+        description: Exact atlas-infra commit SHA to project. Leave empty to use this push/run SHA.
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: adr-trace-projection-dispatch
+  cancel-in-progress: false
+
+jobs:
+  dispatch:
+    name: Dispatch atlas-api-public projection refresh
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Resolve authority SHA
+        id: authority
+        env:
+          INPUT_SHA: ${{ github.event.inputs.authority_sha || '' }}
+        run: |
+          set -euo pipefail
+          sha="$(printf '%s' "${INPUT_SHA}" | tr '[:upper:]' '[:lower:]' | tr -d '[:space:]')"
+          if [ -z "${sha}" ]
+          then
+            sha="$(printf '%s' "${GITHUB_SHA}" | tr '[:upper:]' '[:lower:]')"
+          fi
+          if [ "${#sha}" -ne 40 ]
+          then
+            echo "authority SHA must be a full 40-character commit hash" >&2
+            exit 1
+          fi
+          echo "sha=${sha}" >> "$GITHUB_OUTPUT"
+
+      - name: Dispatch atlas-api-public ADR projection workflow
+        env:
+          GH_TOKEN: ${{ secrets.ATLAS_API_PUBLIC_DISPATCH_TOKEN }}
+          AUTHORITY_SHA: ${{ steps.authority.outputs.sha }}
+        run: |
+          set -euo pipefail
+          if [ -z "${GH_TOKEN}" ]
+          then
+            {
+              echo "## ADR Trace projection dispatch skipped"
+              echo
+              echo "Secret \`ATLAS_API_PUBLIC_DISPATCH_TOKEN\` is not configured in atlas-infra."
+              echo "Configure a fine-grained token with Actions: write and Metadata: read on"
+              echo "\`AtlasReaper311/atlas-api-public\`, or run the target workflow manually:"
+              echo
+              echo "\`\`\`bash"
+              echo "gh workflow run \"ADR runtime projection.yml\" \\"
+              echo "  --repo AtlasReaper311/atlas-api-public \\"
+              echo "  -f authority_sha=${AUTHORITY_SHA}"
+              echo "\`\`\`"
+            } >> "$GITHUB_STEP_SUMMARY"
+            echo "ATLAS_API_PUBLIC_DISPATCH_TOKEN is not configured; skipping dispatch."
+            exit 0
+          fi
+
+          gh workflow run "ADR runtime projection.yml" \
+            --repo AtlasReaper311/atlas-api-public \
+            -f "authority_sha=${AUTHORITY_SHA}"
+
+          {
+            echo "## ADR Trace projection dispatch"
+            echo
+            echo "Dispatched \`ADR runtime projection.yml\` for authority \`${AUTHORITY_SHA}\`."
+            echo "The target workflow opens or updates a draft pull request only; it does not merge or deploy."
+          } >> "$GITHUB_STEP_SUMMARY"

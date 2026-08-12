@@ -37,6 +37,8 @@ A record opens as `proposed`, becomes `accepted` when the estate adopts it, and 
 
 The parser uses local repository state only. It performs no GitHub, Cloudflare, or other provider calls and cannot mutate runtime state.
 
+When accepted ADR frontmatter on `main` changes the public Trace projection, `.github/workflows/adr-trace-projection-dispatch.yml` can dispatch `atlas-api-public`'s draft-PR refresh workflow. That path requires `ATLAS_API_PUBLIC_DISPATCH_TOKEN` with Actions write on `AtlasReaper311/atlas-api-public`. The target workflow never merges or deploys by itself.
+
 ## Ingestion
 
 `atlas-corpus` fetches this directory on every ingest and indexes each record with its id, status, and date as metadata, so the estate's search can answer why a thing is the way it is. `TEMPLATE.md` and this `README.md` are skipped. A record with malformed frontmatter is logged and skipped rather than indexed, so a broken file never poisons the corpus.
