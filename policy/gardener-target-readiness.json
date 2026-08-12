@@ -1,7 +1,6 @@
 {
-  "schema_version": "atlas-gardener/target-readiness-policy/v1",
+  "schema_version": "atlas-gardener/target-readiness-policy/v2",
   "authority": "AtlasReaper311/atlas-infra",
-  "batch_id": "public-runtime-low-blast-radius",
   "default_branch": "main",
   "gate_workflow_path": ".github/workflows/gardener-remediation-gate.yml",
   "expected_app_login": "atlas-gardener-w37-atlasreaper[bot]",
@@ -12,35 +11,84 @@
     "allow_squash_merge": true,
     "allow_auto_merge_at_rest": false
   },
-  "targets": [
+  "active_batch_ids": [
+    "public-runtime-low-blast-radius",
+    "public-runtime-observability"
+  ],
+  "future_scope": "Additional verified coverage batches may be added after separate review without changing the schema.",
+  "batches": [
     {
-      "repository": "AtlasReaper311/atlas-doc-viewer",
-      "required_checks": [
-        "Static document validation"
+      "order": 1,
+      "id": "public-runtime-low-blast-radius",
+      "risk_tier": "low",
+      "targets": [
+        {
+          "repository": "AtlasReaper311/atlas-doc-viewer",
+          "required_checks": [
+            "Static document validation"
+          ]
+        },
+        {
+          "repository": "AtlasReaper311/atlas-quota-watch",
+          "required_checks": [
+            "validate"
+          ]
+        },
+        {
+          "repository": "AtlasReaper311/site-pulse",
+          "required_checks": [
+            "Worker validation"
+          ]
+        },
+        {
+          "repository": "AtlasReaper311/specular-sonify",
+          "required_checks": [
+            "Worker configuration validation"
+          ]
+        },
+        {
+          "repository": "AtlasReaper311/status",
+          "required_checks": [
+            "Status site validation"
+          ]
+        }
       ]
     },
     {
-      "repository": "AtlasReaper311/atlas-quota-watch",
-      "required_checks": [
-        "validate"
-      ]
-    },
-    {
-      "repository": "AtlasReaper311/site-pulse",
-      "required_checks": [
-        "Worker validation"
-      ]
-    },
-    {
-      "repository": "AtlasReaper311/specular-sonify",
-      "required_checks": [
-        "Worker configuration validation"
-      ]
-    },
-    {
-      "repository": "AtlasReaper311/status",
-      "required_checks": [
-        "Status site validation"
+      "order": 2,
+      "id": "public-runtime-observability",
+      "risk_tier": "medium",
+      "targets": [
+        {
+          "repository": "AtlasReaper311/atlas-api-index",
+          "required_checks": [
+            "build"
+          ]
+        },
+        {
+          "repository": "AtlasReaper311/atlas-blackbox",
+          "required_checks": [
+            "Offline Worker validation"
+          ]
+        },
+        {
+          "repository": "AtlasReaper311/atlas-corpus",
+          "required_checks": [
+            "build"
+          ]
+        },
+        {
+          "repository": "AtlasReaper311/github-pulse",
+          "required_checks": [
+            "Worker validation"
+          ]
+        },
+        {
+          "repository": "AtlasReaper311/specular-telemetry",
+          "required_checks": [
+            "build"
+          ]
+        }
       ]
     }
   ]

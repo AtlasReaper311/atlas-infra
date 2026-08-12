@@ -21,7 +21,15 @@ class GardenerTargetReadinessPolicyTests(unittest.TestCase):
     def test_committed_policy_is_valid(self) -> None:
         report = VALIDATOR.validate_policy(self.policy)
         self.assertEqual("valid", report["status"])
-        self.assertEqual(5, report["target_count"])
+        self.assertEqual(2, report["batch_count"])
+        self.assertEqual(
+            [
+                "public-runtime-low-blast-radius",
+                "public-runtime-observability",
+            ],
+            report["active_batch_ids"],
+        )
+        self.assertEqual(10, report["target_count"])
         self.assertEqual(0, report["provider_mutations"])
 
     def test_rejects_missing_barrier(self) -> None:
@@ -35,10 +43,19 @@ class GardenerTargetReadinessPolicyTests(unittest.TestCase):
 
     def test_rejects_reordered_batch(self) -> None:
         policy = copy.deepcopy(self.policy)
-        policy["targets"] = list(reversed(policy["targets"]))
+        policy["batches"][0]["targets"] = list(reversed(policy["batches"][0]["targets"]))
         with self.assertRaisesRegex(
             VALIDATOR.ReadinessPolicyError,
-            "ordered verified batch-one",
+            "ordered verified batch",
+        ):
+            VALIDATOR.validate_policy(policy)
+
+    def test_rejects_changed_active_batch_ids(self) -> None:
+        policy = copy.deepcopy(self.policy)
+        policy["active_batch_ids"] = ["public-runtime-observability"]
+        with self.assertRaisesRegex(
+            VALIDATOR.ReadinessPolicyError,
+            "approved batch set",
         ):
             VALIDATOR.validate_policy(policy)
 
