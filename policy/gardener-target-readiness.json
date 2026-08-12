@@ -13,7 +13,9 @@
   },
   "active_batch_ids": [
     "public-runtime-low-blast-radius",
-    "public-runtime-observability"
+    "public-runtime-observability",
+    "gardener-canary-reset",
+    "public-runtime-operations"
   ],
   "future_scope": "Additional verified coverage batches may be added after separate review without changing the schema.",
   "batches": [
@@ -85,6 +87,68 @@
         },
         {
           "repository": "AtlasReaper311/specular-telemetry",
+          "required_checks": [
+            "build"
+          ]
+        }
+      ]
+    },
+    {
+      "order": 3,
+      "id": "gardener-canary-reset",
+      "risk_tier": "medium",
+      "targets": [
+        {
+          "repository": "AtlasReaper311/atlas-dora",
+          "required_checks": [
+            "check"
+          ]
+        }
+      ]
+    },
+    {
+      "order": 4,
+      "id": "public-runtime-operations",
+      "risk_tier": "medium",
+      "targets": [
+        {
+          "repository": "AtlasReaper311/atlas-daily-digest",
+          "required_checks": [
+            "Worker validation"
+          ]
+        },
+        {
+          "repository": "AtlasReaper311/atlas-notify",
+          "required_checks": [
+            "Test (Vitest)"
+          ]
+        },
+        {
+          "repository": "AtlasReaper311/deploy-watch",
+          "required_checks": [
+            "Worker validation"
+          ]
+        },
+        {
+          "repository": "AtlasReaper311/ramone-edge",
+          "required_checks": [
+            "Worker validation"
+          ]
+        },
+        {
+          "repository": "AtlasReaper311/ramone-memory",
+          "required_checks": [
+            "build"
+          ]
+        },
+        {
+          "repository": "AtlasReaper311/ramone-voice-trigger",
+          "required_checks": [
+            "build"
+          ]
+        },
+        {
+          "repository": "AtlasReaper311/specular-sentinel",
           "required_checks": [
             "build"
           ]

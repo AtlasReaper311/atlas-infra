@@ -51,6 +51,40 @@ EXPECTED_BATCHES = [
             "AtlasReaper311/specular-telemetry": ["build"],
         },
     },
+    {
+        "order": 3,
+        "id": "gardener-canary-reset",
+        "risk_tier": "medium",
+        "repositories": [
+            "AtlasReaper311/atlas-dora",
+        ],
+        "required_checks": {
+            "AtlasReaper311/atlas-dora": ["check"],
+        },
+    },
+    {
+        "order": 4,
+        "id": "public-runtime-operations",
+        "risk_tier": "medium",
+        "repositories": [
+            "AtlasReaper311/atlas-daily-digest",
+            "AtlasReaper311/atlas-notify",
+            "AtlasReaper311/deploy-watch",
+            "AtlasReaper311/ramone-edge",
+            "AtlasReaper311/ramone-memory",
+            "AtlasReaper311/ramone-voice-trigger",
+            "AtlasReaper311/specular-sentinel",
+        ],
+        "required_checks": {
+            "AtlasReaper311/atlas-daily-digest": ["Worker validation"],
+            "AtlasReaper311/atlas-notify": ["Test (Vitest)"],
+            "AtlasReaper311/deploy-watch": ["Worker validation"],
+            "AtlasReaper311/ramone-edge": ["Worker validation"],
+            "AtlasReaper311/ramone-memory": ["build"],
+            "AtlasReaper311/ramone-voice-trigger": ["build"],
+            "AtlasReaper311/specular-sentinel": ["build"],
+        },
+    },
 ]
 EXPECTED_BATCH_IDS = [batch["id"] for batch in EXPECTED_BATCHES]
 
