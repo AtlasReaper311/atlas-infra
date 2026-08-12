@@ -123,13 +123,20 @@ class GitHubConformancePolicyTests(unittest.TestCase):
         self.assertEqual("exception", dep_audit["checks"][0]["outcome"])
         self.assertEqual("not_applicable", dep_audit["checks"][1]["outcome"])
         self.assertEqual("passed", interface_kit["checks"][0]["outcome"])
-        self.assertEqual("deferred", interface_kit["checks"][1]["outcome"])
-        self.assertEqual(100, interface_kit["policy_score"])
+        self.assertEqual("failed", interface_kit["checks"][1]["outcome"])
+        self.assertEqual(50, interface_kit["policy_score"])
         self.assertEqual(1, report["summary"]["checks_exception"])
-        self.assertEqual(1, report["summary"]["checks_deferred"])
+        self.assertEqual(0, report["summary"]["checks_deferred"])
+        self.assertEqual(1, report["summary"]["policy_checks_failed"])
 
     def test_passed_evidence_satisfies_deferred_rule(self):
         raw = self.raw_report()
+        raw["repositories"][1]["repository"] = "AtlasReaper311/worker-meta-kit"
+        raw["repositories"][1]["checks"][1]["status"] = "failed"
+        report = github_conformance_policy.apply_policy(
+            raw, self.load_requirements(), self.projection()
+        )
+        self.assertEqual("deferred", report["repositories"][1]["checks"][1]["outcome"])
         raw["repositories"][1]["checks"][1]["status"] = "passed"
         report = github_conformance_policy.apply_policy(
             raw, self.load_requirements(), self.projection()
