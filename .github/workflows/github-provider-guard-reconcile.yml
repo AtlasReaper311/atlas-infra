@@ -34,9 +34,29 @@ jobs:
           python3 -m unittest scripts.tests.test_github_provider_guard_reconcile -v
           python3 scripts/public_repository_classifications.py --check
 
+      - name: Resolve governed repository inspection scope
+        id: inspect-provider-scope
+        run: |
+          set -euo pipefail
+          {
+            echo 'repositories<<ATLAS_REPOSITORIES'
+            jq -r '.repositories[].repository | split("/")[1]' policy/public-repository-classifications.json
+            echo 'ATLAS_REPOSITORIES'
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Create short-lived provider-guard inspection token
+        id: inspect-provider-token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0, Node 24
+        with:
+          client-id: ${{ vars.ATLAS_PROVIDER_GUARD_APP_CLIENT_ID }}
+          private-key: ${{ secrets.ATLAS_PROVIDER_GUARD_APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: ${{ steps.inspect-provider-scope.outputs.repositories }}
+          permission-administration: read
+
       - name: Inspect governed repositories
         env:
-          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{ steps.inspect-provider-token.outputs.token }}
         run: |
           set -euo pipefail
           mkdir -p reports

@@ -1,6 +1,6 @@
 # GitHub provider guard reconciler
 
-Status: standing governance. Source merged through `atlas-infra#144` as `3ff1a72a9148e94d4e433cc787ffcad9ab8df10d`. Provider activation is complete: `ATLAS_PROVIDER_GUARD_RECONCILE_ENABLED=true`, scheduled runs are healthy, and current no-op apply evidence reports 33 compliant / 0 create / 0 blocked with `provider_writes_performed=false`.
+Status: standing governance. Source merged through `atlas-infra#144` as `3ff1a72a9148e94d4e433cc787ffcad9ab8df10d`. Provider activation is enabled through `ATLAS_PROVIDER_GUARD_RECONCILE_ENABLED=true`. Inspection and apply use separately scoped short-lived tokens from the dedicated provider-guard GitHub App; current workflow health must be established from current run evidence rather than this document.
 
 ## Purpose
 
@@ -68,6 +68,8 @@ The day-zero invariant is therefore the three-rule baseline guard: pull requests
 
 `.github/workflows/github-provider-guard-reconcile.yml` runs a read-only inspection daily and on manual dispatch.
 
+The inspection job resolves the governed repository names from the current public classification projection and mints a short-lived dedicated GitHub App token scoped to exactly those repositories with **Administration: read**. This is required because reading classic branch protection is an Administration API operation even when the reconciliation decision is read-only. The built-in workflow token remains limited to repository contents and is not used for cross-repository provider inspection.
+
 Provider writes are disabled unless repository variable:
 
 `ATLAS_PROVIDER_GUARD_RECONCILE_ENABLED=true`
@@ -76,17 +78,19 @@ is present.
 
 A manual dispatch with `apply=false` is always inspection-only. A manual dispatch with `apply=true` can write only when the provider gate variable is also enabled. Scheduled runs can write only while the same variable is enabled.
 
-The apply job mints a short-lived GitHub App installation token, runs the create-only reconciler, then runs a second inspection and requires zero remaining `create` or `blocked` outcomes. JSON evidence is retained as a workflow artifact.
+The apply job independently mints a short-lived GitHub App installation token scoped to the same governed repositories with **Administration: write**, runs the create-only reconciler, then runs a second inspection and requires zero remaining `create` or `blocked` outcomes. JSON evidence is retained as a workflow artifact.
 
 ## Dedicated provider identity
 
-The built-in workflow `GITHUB_TOKEN` is not the provider-write identity. Creating repository rulesets requires repository Administration write permission, and the existing Atlas Gardener App deliberately excludes Administration.
+The built-in workflow `GITHUB_TOKEN` is not the provider inspection or provider-write identity. Complete inspection requires repository Administration read permission to examine classic branch protection, while creating repository rulesets requires Administration write permission. The existing Atlas Gardener App deliberately excludes Administration.
 
 Use a separate GitHub App dedicated to this reconciler. Do not widen Atlas Gardener.
 
 Required GitHub App repository permission:
 
 - Administration: read and write.
+
+The workflow narrows that App permission per job: inspection requests Administration read, while apply requests Administration write.
 
 No webhook is required. The App must not request Contents write, Pull requests write, Actions write, Secrets, Variables, Deployments, or other unrelated mutation permissions.
 
@@ -120,4 +124,4 @@ If inspection reports `blocked`, do not broaden the reconciler. Inspect the repo
 
 If a create request fails after an earlier repository was successfully protected, keep the successfully created additive guard. Do not automatically delete it. Begin recovery from a fresh inspection.
 
-If the dedicated App is suspended, uninstalled, loses Administration write, or its credentials are unavailable, the inspect job remains useful but the apply job must fail or skip rather than falling back to another credential.
+If the dedicated App is suspended, uninstalled, loses Administration permission, or its credentials are unavailable, complete inspection cannot establish classic branch-protection state and must fail closed. Apply must also fail or skip rather than falling back to another credential.
