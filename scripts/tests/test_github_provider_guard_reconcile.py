@@ -313,7 +313,9 @@ class GithubProviderGuardReconcilerTests(unittest.TestCase):
         self.assertIn("ATLAS_PROVIDER_GUARD_RECONCILE_ENABLED", self.workflow)
         self.assertIn("ATLAS_PROVIDER_GUARD_APP_CLIENT_ID", self.workflow)
         self.assertIn("ATLAS_PROVIDER_GUARD_APP_PRIVATE_KEY", self.workflow)
+        self.assertIn("permission-administration: read", self.workflow)
         self.assertIn("permission-administration: write", self.workflow)
+        self.assertIn("repositories: ${{ steps.inspect-provider-scope.outputs.repositories }}", self.workflow)
         self.assertIn("repositories: ${{ steps.provider-scope.outputs.repositories }}", self.workflow)
         self.assertIn("public-repository-classifications.json", self.workflow)
         self.assertIn(
@@ -321,6 +323,14 @@ class GithubProviderGuardReconcilerTests(unittest.TestCase):
             self.workflow,
         )
         self.assertNotIn("ATLAS_GARDENER", self.workflow)
+
+    def test_inspect_uses_scoped_read_only_provider_identity(self) -> None:
+        self.assertIn("id: inspect-provider-token", self.workflow)
+        self.assertIn(
+            "GITHUB_TOKEN: ${{ steps.inspect-provider-token.outputs.token }}",
+            self.workflow,
+        )
+        self.assertNotIn("GITHUB_TOKEN: ${{ github.token }}", self.workflow)
 
     def test_workflow_has_no_broad_builtin_token_permission(self) -> None:
         self.assertIn("permissions:\n  contents: read", self.workflow)
