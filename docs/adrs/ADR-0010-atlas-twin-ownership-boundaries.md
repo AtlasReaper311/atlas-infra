@@ -1,7 +1,7 @@
 +++
 id = "ADR-0010"
-date = 2026-08-06
-status = "accepted"
+date = 2026-08-17
+status = "superseded"
 visibility = "internal"
 repositories = ["AtlasReaper311/atlas-infra", "AtlasReaper311/atlas-api-public"]
 services = []
