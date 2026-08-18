@@ -1,5 +1,18 @@
 # Repository instructions
 
+## Estate-wide conventions
+
+For anything beyond this repository's own chaos-safety rules below, read
+`docs/agent-conventions.md` and `docs/model-policy.md` in this repository
+first. They are the estate-wide source of truth for architecture, workflow,
+model policy, and source-of-truth ordering across all of Atlas Systems, not
+just `atlas-infra`.
+
+If you are working in a different repository and this file is not present
+there, those two documents may not be linked from where you are. Ask the
+person whether they should be, rather than assuming their absence means they
+don't apply.
+
 ## Chaos safety
 
 - Scheduled chaos defaults to deterministic simulation.
