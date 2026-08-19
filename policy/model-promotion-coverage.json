@@ -104,12 +104,43 @@
       ]
     },
     {
+      "id": "ramone-live-chat",
+      "title": "Ramone live chat proxy (/api/chat)",
+      "source": "AtlasReaper311/ramone-memory",
+      "risk": "High",
+      "action_needed": "Run baseline and prepare promotion evidence",
+      "next_step": "Run the new ramone-live-chat cases against the current live-chat model, review the outputs, then prepare capability-scoped baseline and promotion evidence if the run passes.",
+      "live_model_sources": [
+        {
+          "repository": "ramone-memory",
+          "path": ".env.example",
+          "pattern": "^CHAT_MODEL=(\\S+)"
+        },
+        {
+          "repository": "ramone-memory",
+          "path": "app/config.py",
+          "pattern": "chat_model: str = \"([^\"]+)\""
+        }
+      ],
+      "eval_case_paths": [
+        "cases/ramone-live-chat-memory-is-not-live-state.toml",
+        "cases/ramone-live-chat-memory-yields-to-user.toml",
+        "cases/ramone-live-chat-no-invented-home-state.toml"
+      ],
+      "promotion_record_paths": [],
+      "notes": [
+        "Part 0 runtime evidence showed the preferred Home Assistant Assist pipeline using the Ramone memory proxy on port 8091.",
+        "This is live interactive answer generation and is distinct from the lower-risk session-summarisation job.",
+        "Eval case paths are supplied by atlas-eval-harness PR #25; they are not accepted coverage until that PR lands."
+      ]
+    },
+    {
       "id": "ramone-rag-generation",
       "title": "Ramone RAG generation (ollama-rag-kit)",
       "source": "AtlasReaper311/ollama-rag-kit",
       "risk": "Critical",
-      "action_needed": "Add eval case",
-      "next_step": "Confirm the deployed runtime model, then add grounded-answer eval cases before treating llama3.1:8b as acceptable for Ramone RAG generation.",
+      "action_needed": "No action",
+      "next_step": "Keep qwen3:14b under routine regression monitoring for ramone-rag-generation.",
       "live_model_sources": [
         {
           "repository": "ollama-rag-kit",
@@ -122,11 +153,18 @@
           "pattern": "llm_model: str = \"([^\"]+)\""
         }
       ],
-      "eval_case_paths": [],
-      "promotion_record_paths": [],
+      "eval_case_paths": [
+        "cases/ramone-rag-generation-absent-model-abstention.toml",
+        "cases/ramone-rag-generation-cited-grounded-answer.toml",
+        "cases/ramone-rag-generation-no-invented-identifiers.toml"
+      ],
+      "promotion_record_paths": [
+        "promotions/records/ramone-rag-generation/qwen3-14b.json"
+      ],
       "notes": [
-        "This is the highest-risk row because the documented default is the model family with the known AtlasModel fabrication regression.",
-        "Source evidence confirms documented defaults only; deployed container environment remains a separate runtime check."
+        "This is the highest-risk row because it is live interactive RAG generation.",
+        "Part 0 runtime evidence confirmed the deployed container uses qwen3:14b.",
+        "atlas-eval-harness PR #25 adds the approved qwen3:14b promotion record for this capability."
       ]
     },
     {

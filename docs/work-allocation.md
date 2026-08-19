@@ -6,9 +6,30 @@ sessions do not silently duplicate or reverse each other.
 
 Update or remove an entry as soon as its status changes.
 
-Last updated: 2026-08-18.
+Last updated: 2026-08-19.
 
 ## Active work
+
+### Runtime-aware model self-improvement inventory
+
+- **Repo(s):** `atlas-infra` first; follow-up work may involve
+  `atlas-eval-harness`, `ramone-memory`, `ollama-rag-kit`,
+  `atlas-corpus`, `atlas-postmortem`, `atlas-daily-digest`, and
+  `specular-telemetry` only after a reviewed source plan proves ownership
+- **Agent:** ChatGPT/Codex on SPECULAR-CORE with owner-approved batching
+- **Status:** active
+- **Started:** 2026-08-19
+- **Summary:** Add source-owned runtime model-call inventory and mismatch checks
+  so live-interactive, async, draft, embedding, telemetry, Open WebUI, and Home
+  Assistant warmup model usage are compared against promotion and eval evidence
+  rather than stale policy labels. The first slice is source-only in
+  `atlas-infra`; SPECULAR-CORE runtime repair and any eval-harness expansion
+  remain separately bounded follow-ups.
+- **Boundary:** No Home Assistant model routing changes, no Ollama model pulls or
+  deletes, no workflow dispatch, no deployment, no merge, and no secret-value
+  inspection. Model-promotion evidence must continue through
+  `atlas-eval-harness` and the `promotion-prepare` -> `promotion-approve`
+  process.
 
 ### Ramone RAG generation model promotion
 
@@ -16,9 +37,12 @@ Last updated: 2026-08-18.
 - **Agent:** Claude Code on SPECULAR-CORE; Atlas approving model choice and rollout
 - **Status:** active
 - **Started:** 2026-08-18
-- **Last updated:** 2026-08-18
+- **Last updated:** 2026-08-19
 - **Summary:** `ramone-rag-generation` was Critical risk with no eval coverage; the live `ollama-rag-kit` container was confirmed, via `docker inspect` on the actual running container rather than the committed default, to be running the banned `llama3.1:8b`. Eval cases and a scored three-model comparison merged through `atlas-eval-harness#23`. Atlas selected `qwen3:14b`: equal correctness to `qwen2.5:32b` (3/3 each; `llama3.1:8b` scored 2/3 and failed by confidently citing a fabricated answer), roughly 7.6x faster generation on this interactive path.
-- **Resume point:** Accept the first `ramone-rag-generation` baseline via the harness's `promotion-prepare`/`promotion-approve` flow, then draft the `ollama-rag-kit` config change (`LLM_MODEL` to `qwen3:14b`) as its own PR. Live rollout to the running service is a separate approved step after that.
+- **Resume point:** Review and merge the pending `atlas-eval-harness` promotion
+  evidence for `qwen3:14b`, then draft the `ollama-rag-kit` config change
+  (`LLM_MODEL` to `qwen3:14b`) as its own PR. Live rollout to the running
+  service is a separate approved step after that.
 
 ## Queued work
 

@@ -49,7 +49,7 @@ class ModelPromotionCoverageTests(unittest.TestCase):
         self.assertEqual("AtlasReaper311", config["owner"])
         self.assertEqual(2, config["project_number"])
         self.assertEqual("atlas-eval-harness", config["eval_harness_repository"])
-        self.assertEqual(5, len(config["capabilities"]))
+        self.assertEqual(6, len(config["capabilities"]))
 
     def test_build_rows_marks_missing_promotion_record_honestly(self):
         config = self.load_config()
@@ -121,27 +121,32 @@ class ModelPromotionCoverageTests(unittest.TestCase):
             model_promotion_coverage.action_for(capability, "Exempt - low risk"),
         )
 
-    def test_no_eval_case_is_not_promoted(self):
+    def test_eval_case_without_promotion_is_not_promoted(self):
         config = self.load_config()
         capability = next(
             item for item in config["capabilities"] if item["id"] == "ramone-rag-generation"
         )
 
         self.assertEqual(
-            "No eval case",
+            "Promotion record missing",
             model_promotion_coverage.coverage_status(
                 capability,
-                live_model="llama3.1:8b",
-                eval_cases=0,
+                live_model="qwen3:14b",
+                eval_cases=3,
                 promoted_model="",
-                missing_promotions=[],
+                missing_promotions=["promotions/records/ramone-rag-generation/qwen3-14b.json"],
             ),
         )
         self.assertEqual(
-            "Add eval case",
-            model_promotion_coverage.action_for(capability, "No eval case"),
+            "Create promotion record",
+            model_promotion_coverage.action_for(capability, "Promotion record missing"),
         )
-        self.assertEqual("Todo", model_promotion_coverage.status_for("Add eval case", "No eval case"))
+        self.assertEqual(
+            "Todo",
+            model_promotion_coverage.status_for(
+                "Create promotion record", "Promotion record missing"
+            ),
+        )
 
     def test_action_is_computed_from_coverage(self):
         config = self.load_config()
