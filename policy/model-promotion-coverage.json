@@ -139,8 +139,8 @@
       "title": "Ramone RAG generation (ollama-rag-kit)",
       "source": "AtlasReaper311/ollama-rag-kit",
       "risk": "Critical",
-      "action_needed": "Create promotion record",
-      "next_step": "Review the committed qwen3:14b Ramone RAG eval evidence and create an explicit promotion record before treating the live qwen3:14b runtime as promoted.",
+      "action_needed": "No action",
+      "next_step": "Keep qwen3:14b under routine regression monitoring for ramone-rag-generation.",
       "live_model_sources": [
         {
           "repository": "ollama-rag-kit",
@@ -164,7 +164,7 @@
       "notes": [
         "This is the highest-risk row because it is live interactive RAG generation.",
         "Part 0 runtime evidence confirmed the deployed container uses qwen3:14b.",
-        "Eval cases exist on atlas-eval-harness origin/main, but no committed Ramone RAG promotion record was observed."
+        "atlas-eval-harness PR #25 adds the approved qwen3:14b promotion record for this capability."
       ]
     },
     {

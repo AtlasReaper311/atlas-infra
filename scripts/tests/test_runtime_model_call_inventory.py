@@ -93,12 +93,13 @@ class RuntimeModelCallInventoryTests(unittest.TestCase):
             harness_root=harness,
         )
 
-        self.assertTrue(
+        self.assertFalse(
             any(
                 item["call_site"] == "ollama-rag-kit-ask"
                 and item["code"] == "promotion-record-path-missing"
                 for item in report["issues"]
-            )
+            ),
+            report["issues"],
         )
         self.assertFalse(
             any(
