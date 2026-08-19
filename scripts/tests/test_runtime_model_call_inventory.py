@@ -82,7 +82,7 @@ class RuntimeModelCallInventoryTests(unittest.TestCase):
             report["summary"]["call_sites"],
         )
 
-    def test_real_harness_origin_main_evidence_has_expected_open_gaps(self):
+    def test_real_harness_evidence_has_expected_open_gaps(self):
         harness = ROOT.parent / "atlas-eval-harness"
         if not harness.exists():
             self.skipTest("atlas-eval-harness checkout not present next to atlas-infra")
@@ -100,12 +100,13 @@ class RuntimeModelCallInventoryTests(unittest.TestCase):
                 for item in report["issues"]
             )
         )
-        self.assertTrue(
+        self.assertFalse(
             any(
                 item["call_site"] == "ramone-memory-api-chat"
                 and item["code"] == "interactive-live-without-eval-case"
                 for item in report["issues"]
-            )
+            ),
+            report["issues"],
         )
 
 

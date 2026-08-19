@@ -108,8 +108,8 @@
       "title": "Ramone live chat proxy (/api/chat)",
       "source": "AtlasReaper311/ramone-memory",
       "risk": "High",
-      "action_needed": "Add eval case",
-      "next_step": "Add memory-injected live-chat eval coverage before treating the Home Assistant voice path as covered by the session-summarisation exemption.",
+      "action_needed": "Run baseline and prepare promotion evidence",
+      "next_step": "Run the new ramone-live-chat cases against the current live-chat model, review the outputs, then prepare capability-scoped baseline and promotion evidence if the run passes.",
       "live_model_sources": [
         {
           "repository": "ramone-memory",
@@ -122,11 +122,16 @@
           "pattern": "chat_model: str = \"([^\"]+)\""
         }
       ],
-      "eval_case_paths": [],
+      "eval_case_paths": [
+        "cases/ramone-live-chat-memory-is-not-live-state.toml",
+        "cases/ramone-live-chat-memory-yields-to-user.toml",
+        "cases/ramone-live-chat-no-invented-home-state.toml"
+      ],
       "promotion_record_paths": [],
       "notes": [
         "Part 0 runtime evidence showed the preferred Home Assistant Assist pipeline using the Ramone memory proxy on port 8091.",
-        "This is live interactive answer generation and is distinct from the lower-risk session-summarisation job."
+        "This is live interactive answer generation and is distinct from the lower-risk session-summarisation job.",
+        "Eval case paths are supplied by atlas-eval-harness PR #25; they are not accepted coverage until that PR lands."
       ]
     },
     {
