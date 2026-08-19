@@ -1,0 +1,256 @@
+{
+  "schema_version": "atlas-runtime-model-call-inventory/v1",
+  "owner": "AtlasReaper311/atlas-infra",
+  "generated": false,
+  "last_verified": "2026-08-19",
+  "part_0_status": "READY FOR IMPLEMENTATION PLAN",
+  "eval_harness_repository": "atlas-eval-harness",
+  "promotion_coverage_policy": "policy/model-promotion-coverage.json",
+  "classification_values": [
+    "interactive-live",
+    "async-summary",
+    "batch-draft",
+    "embedding-only",
+    "telemetry-only",
+    "background-warmup",
+    "runtime-evidence-only",
+    "unknown"
+  ],
+  "call_sites": [
+    {
+      "id": "home-assistant-ramone-assist-memory",
+      "service": "Home Assistant",
+      "repository": null,
+      "classification": "interactive-live",
+      "capability_id": "ramone-live-chat",
+      "model": "llama3.1:8b",
+      "model_source": "runtime",
+      "endpoint": "conversation.ollama_conversation -> http://host.docker.internal:8091",
+      "runtime_evidence": [
+        "config/.storage/assist_pipeline.pipelines preferred Ramone pipeline",
+        "config/.storage/core.entity_registry maps conversation.ollama_conversation to Ollama (Ramone memory)",
+        "config/.storage/core.config_entries maps Ollama (Ramone memory) to http://host.docker.internal:8091"
+      ],
+      "notes": [
+        "This is the preferred voice assistant route observed in Home Assistant.",
+        "Do not change this route without a separate owner-approved runtime action."
+      ]
+    },
+    {
+      "id": "home-assistant-raw-ollama-legacy",
+      "service": "Home Assistant",
+      "repository": null,
+      "classification": "interactive-live",
+      "capability_id": null,
+      "model": "llama3.1",
+      "model_source": "device-registry",
+      "endpoint": "conversation.ramone -> http://host.docker.internal:11434",
+      "runtime_evidence": [
+        "config/.storage/core.entity_registry maps conversation.ramone to raw Ollama",
+        "config/.storage/core.device_registry records model llama3.1"
+      ],
+      "notes": [
+        "Observed as an existing entity, not the preferred Assist pipeline.",
+        "Kept as runtime evidence only until ownership and active use are proven."
+      ]
+    },
+    {
+      "id": "home-assistant-ramone-warm-model",
+      "service": "Home Assistant",
+      "repository": null,
+      "classification": "background-warmup",
+      "capability_id": null,
+      "model": "llama3.1:8b",
+      "model_source": "source",
+      "endpoint": "rest_command.ramone_warm_model -> http://host.docker.internal:11434/api/generate",
+      "runtime_evidence": [
+        "config/configuration.yaml rest_command.ramone_warm_model"
+      ],
+      "notes": [
+        "Tracked as background model usage so warmup cannot be mistaken for user-facing answer generation."
+      ]
+    },
+    {
+      "id": "ramone-memory-api-chat",
+      "service": "ramone-memory",
+      "repository": "AtlasReaper311/ramone-memory",
+      "classification": "interactive-live",
+      "capability_id": "ramone-live-chat",
+      "model": "llama3.1:8b",
+      "model_source": "runtime",
+      "endpoint": "POST /api/chat -> Ollama /api/chat",
+      "runtime_evidence": [
+        "WSL Docker ramone-memory-memory-1 CHAT_MODEL=llama3.1:8b",
+        "app/main.py exposes POST /api/chat with memory injection"
+      ],
+      "notes": [
+        "This is distinct from session summarisation and should not inherit its low-risk exemption."
+      ]
+    },
+    {
+      "id": "ramone-memory-session-summary",
+      "service": "ramone-memory",
+      "repository": "AtlasReaper311/ramone-memory",
+      "classification": "async-summary",
+      "capability_id": "session-summarisation",
+      "model": "llama3.1:8b",
+      "model_source": "runtime",
+      "endpoint": "session end summariser -> Ollama /api/chat",
+      "runtime_evidence": [
+        "WSL Docker ramone-memory-memory-1 CHAT_MODEL=llama3.1:8b",
+        "app/summariser.py calls /api/chat"
+      ],
+      "notes": [
+        "Existing policy exemption applies only to this summarisation job."
+      ]
+    },
+    {
+      "id": "ramone-memory-embedding",
+      "service": "ramone-memory",
+      "repository": "AtlasReaper311/ramone-memory",
+      "classification": "embedding-only",
+      "capability_id": null,
+      "model": "nomic-embed-text",
+      "model_source": "runtime",
+      "endpoint": "retriever -> Ollama /api/embed",
+      "runtime_evidence": [
+        "WSL Docker ramone-memory-memory-1 EMBED_MODEL=nomic-embed-text",
+        "app/retriever.py calls /api/embed"
+      ],
+      "notes": [
+        "Embedding/search only; not natural-language reasoning."
+      ]
+    },
+    {
+      "id": "ollama-rag-kit-ask",
+      "service": "ollama-rag-kit",
+      "repository": "AtlasReaper311/ollama-rag-kit",
+      "classification": "interactive-live",
+      "capability_id": "ramone-rag-generation",
+      "model": "qwen3:14b",
+      "model_source": "runtime",
+      "endpoint": "POST /ask and streaming answer -> Ollama /api/chat",
+      "runtime_evidence": [
+        "WSL Docker ollama-rag-kit-rag-api-1 LLM_MODEL=qwen3:14b",
+        "app/retriever.py and app/streaming.py call /api/chat"
+      ],
+      "notes": [
+        "Eval cases exist on atlas-eval-harness origin/main, but no promotion record was observed."
+      ]
+    },
+    {
+      "id": "ollama-rag-kit-ingest-embedding",
+      "service": "ollama-rag-kit",
+      "repository": "AtlasReaper311/ollama-rag-kit",
+      "classification": "embedding-only",
+      "capability_id": null,
+      "model": "nomic-embed-text",
+      "model_source": "runtime",
+      "endpoint": "ingest -> Ollama /api/embed",
+      "runtime_evidence": [
+        "WSL Docker ollama-rag-kit-rag-api-1 EMBED_MODEL=nomic-embed-text",
+        "app/ingest.py calls /api/embed"
+      ],
+      "notes": []
+    },
+    {
+      "id": "atlas-corpus-ask",
+      "service": "atlas-corpus",
+      "repository": "AtlasReaper311/atlas-corpus",
+      "classification": "interactive-live",
+      "capability_id": "corpus-retrieval",
+      "model": "mistral:7b",
+      "model_source": "runtime",
+      "endpoint": "GET/POST /ask -> Ollama /api/generate",
+      "runtime_evidence": [
+        "WSL Docker atlas-corpus-corpus-1 ANSWER_MODEL=mistral:7b",
+        "app/main.py calls /api/generate"
+      ],
+      "notes": [
+        "Promotion evidence exists for qwen3:14b, so this remains a live/promoted mismatch."
+      ]
+    },
+    {
+      "id": "atlas-corpus-embedding",
+      "service": "atlas-corpus",
+      "repository": "AtlasReaper311/atlas-corpus",
+      "classification": "embedding-only",
+      "capability_id": null,
+      "model": "nomic-embed-text",
+      "model_source": "runtime",
+      "endpoint": "search/ingest -> Ollama /api/embed",
+      "runtime_evidence": [
+        "WSL Docker atlas-corpus-corpus-1 EMBED_MODEL=nomic-embed-text",
+        "app/embedder.py calls /api/embed"
+      ],
+      "notes": []
+    },
+    {
+      "id": "atlas-postmortem-drafting",
+      "service": "atlas-postmortem",
+      "repository": "AtlasReaper311/atlas-postmortem",
+      "classification": "batch-draft",
+      "capability_id": "postmortem-drafting",
+      "model": "qwen2.5:32b",
+      "model_source": "source",
+      "endpoint": "draft command/bridge -> Ollama /api/chat",
+      "runtime_evidence": [
+        "src/atlas_postmortem/config.py default ATLAS_PM_MODEL=qwen2.5:32b",
+        "src/atlas_postmortem/ollama.py calls /api/chat"
+      ],
+      "notes": [
+        "No running service/container was observed during Part 0; this row is source evidence."
+      ]
+    },
+    {
+      "id": "atlas-daily-digest-synthesis",
+      "service": "atlas-daily-digest",
+      "repository": "AtlasReaper311/atlas-daily-digest",
+      "classification": "async-summary",
+      "capability_id": "daily-digest-synthesis",
+      "model": "llama3.1:8b",
+      "model_source": "source",
+      "endpoint": "Worker scheduled digest -> Ollama tunnel /api/chat",
+      "runtime_evidence": [
+        "wrangler.toml OLLAMA_MODEL=llama3.1:8b",
+        "src/index.js calls /api/chat"
+      ],
+      "notes": [
+        "Cloudflare/provider live state was not mutated or verified in Part 0."
+      ]
+    },
+    {
+      "id": "specular-telemetry-ollama-state",
+      "service": "specular-telemetry",
+      "repository": "AtlasReaper311/specular-telemetry",
+      "classification": "telemetry-only",
+      "capability_id": null,
+      "model": null,
+      "model_source": "none",
+      "endpoint": "collector -> Ollama /api/tags and /api/ps",
+      "runtime_evidence": [
+        "local/collectors/ollama.py reads /api/tags and /api/ps",
+        "Part 0 observed local service crash-looping with status=200/CHDIR"
+      ],
+      "notes": [
+        "Observes model state and VRAM metadata; does not call generation."
+      ]
+    },
+    {
+      "id": "open-webui-ollama",
+      "service": "open-webui",
+      "repository": null,
+      "classification": "runtime-evidence-only",
+      "capability_id": null,
+      "model": null,
+      "model_source": "runtime",
+      "endpoint": "OLLAMA_BASE_URL=http://172.23.16.1:11434",
+      "runtime_evidence": [
+        "Docker Desktop open-webui OLLAMA_BASE_URL observed with secret values masked"
+      ],
+      "notes": [
+        "Included as requested runtime evidence only; per-user Open WebUI model choices were not inspected."
+      ]
+    }
+  ]
+}

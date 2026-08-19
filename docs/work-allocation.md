@@ -6,11 +6,30 @@ sessions do not silently duplicate or reverse each other.
 
 Update or remove an entry as soon as its status changes.
 
-Last updated: 2026-08-09.
+Last updated: 2026-08-19.
 
 ## Active work
 
-None.
+### Runtime-aware model self-improvement inventory
+
+- **Repo(s):** `atlas-infra` first; follow-up work may involve
+  `atlas-eval-harness`, `ramone-memory`, `ollama-rag-kit`,
+  `atlas-corpus`, `atlas-postmortem`, `atlas-daily-digest`, and
+  `specular-telemetry` only after a reviewed source plan proves ownership
+- **Agent:** ChatGPT/Codex on SPECULAR-CORE with owner-approved batching
+- **Status:** active
+- **Started:** 2026-08-19
+- **Summary:** Add source-owned runtime model-call inventory and mismatch checks
+  so live-interactive, async, draft, embedding, telemetry, Open WebUI, and Home
+  Assistant warmup model usage are compared against promotion and eval evidence
+  rather than stale policy labels. The first slice is source-only in
+  `atlas-infra`; SPECULAR-CORE runtime repair and any eval-harness expansion
+  remain separately bounded follow-ups.
+- **Boundary:** No Home Assistant model routing changes, no Ollama model pulls or
+  deletes, no workflow dispatch, no deployment, no merge, and no secret-value
+  inspection. Model-promotion evidence must continue through
+  `atlas-eval-harness` and the `promotion-prepare` -> `promotion-approve`
+  process.
 
 ## Queued work
 
