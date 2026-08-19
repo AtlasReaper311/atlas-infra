@@ -31,6 +31,19 @@ Last updated: 2026-08-19.
   `atlas-eval-harness` and the `promotion-prepare` -> `promotion-approve`
   process.
 
+### Ramone RAG generation model promotion
+
+- **Repo(s):** `atlas-eval-harness`, `ollama-rag-kit`
+- **Agent:** Claude Code on SPECULAR-CORE; Atlas approving model choice and rollout
+- **Status:** active
+- **Started:** 2026-08-18
+- **Last updated:** 2026-08-19
+- **Summary:** `ramone-rag-generation` was Critical risk with no eval coverage; the live `ollama-rag-kit` container was confirmed, via `docker inspect` on the actual running container rather than the committed default, to be running the banned `llama3.1:8b`. Eval cases and a scored three-model comparison merged through `atlas-eval-harness#23`. Atlas selected `qwen3:14b`: equal correctness to `qwen2.5:32b` (3/3 each; `llama3.1:8b` scored 2/3 and failed by confidently citing a fabricated answer), roughly 7.6x faster generation on this interactive path.
+- **Resume point:** Review and merge the pending `atlas-eval-harness` promotion
+  evidence for `qwen3:14b`, then draft the `ollama-rag-kit` config change
+  (`LLM_MODEL` to `qwen3:14b`) as its own PR. Live rollout to the running
+  service is a separate approved step after that.
+
 ## Queued work
 
 ### New public-interface implementation programme
@@ -53,6 +66,15 @@ Last updated: 2026-08-19.
   toolset cannot perform.
 
 ## Recently completed
+
+### Corpus degraded search and digest event-window fix
+
+- **Repo(s):** `atlas-corpus`, `atlas-notify`, `atlas-daily-digest`
+- **Agent:** Claude Code on SPECULAR-CORE; Atlas approving each merge
+- **Status:** done
+- **Started:** 2026-08-18
+- **Last updated:** 2026-08-18
+- **Summary:** `atlas-corpus` previously failed to start, and returned 500s on `/search`, whenever Ollama was unreachable, because embedding ran unconditionally before retrieval and startup blocked on Ollama being reachable. `atlas-corpus#33` (merged) adds a BM25-only degraded path with a `degraded` response flag, observed working against a real stopped-then-restarted Ollama, with the pre-change image's crash captured as before/after evidence. Separately, the daily digest's thin output on busy days traced to two defects, not buffer size as first assumed: `/notify/recent` capped every read at 50 events regardless of buffer depth, and a non-atomic KV read-modify-write let dependency-PR bursts erase earlier history. `atlas-notify#26` (merged) splits the ring buffer into per-day keys and raises the page cap; `atlas-daily-digest#16` (merged, depended on #26) excludes routine dependency-bump events from the digest's window using the same `signal_class` filtering `atlas-infra`'s rollout board already applies.
 
 ### GitHub provider guard Wave 4
 
@@ -152,3 +174,4 @@ Last updated: 2026-08-19.
 | Publication sequencing and live generated output | `atlas-scheduler` | `docs/PUBLISHING_CONTRACT.md` is canonical and the scheduler remains the only generated-output write path into `atlas-systems`. |
 | Repository governance and lifecycle | `atlas-infra` under ADR-0004 | Change authoritative inputs, never generated projections. |
 | Model promotion evidence | `atlas-eval-harness` | Evidence-sensitive model choices require capability-specific evaluation before rollout. |
+| Cross-agent estate conventions | `atlas-infra` (`docs/agent-conventions.md`, `docs/model-policy.md`) | These previously existed only as Claude.ai Project context, not committed source; agents working from a fresh checkout had no way to discover them. Committed 2026-08-18. Individual repos' own `AGENTS.md`/`CLAUDE.md` do not yet point here — that is separate follow-up work, not solved by this commit. |
