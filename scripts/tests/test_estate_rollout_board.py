@@ -38,6 +38,10 @@ class EstateRolloutBoardTests(unittest.TestCase):
             "P-03 DevOps Core",
             estate_rollout_board.pillar_for("atlas-infra", config),
         )
+        self.assertEqual(
+            "P-01 Live Domain",
+            estate_rollout_board.pillar_for("atlas-systems", config),
+        )
 
     def test_stage_rules_handle_draft_gated_open_and_merged(self):
         config = self.load_config()
@@ -70,6 +74,34 @@ class EstateRolloutBoardTests(unittest.TestCase):
                 {"state": "closed", "merged_at": "2026-08-11T10:00:00Z"},
                 config,
             ),
+        )
+
+    def test_closed_unmerged_pull_is_not_labelled_live_or_done(self):
+        # Regression coverage for the rollout-board truth-semantics fix:
+        # a PR that was closed WITHOUT merging (rejected/abandoned) must
+        # not render identically to one that actually merged. Before this
+        # fix, both "closed" and "merged" pointed at the same Status/Stage
+        # values, so an abandoned PR looked identical to shipped work for
+        # up to archive_after_done_days.
+        config = self.load_config()
+        closed_unmerged = {"state": "closed", "merged_at": None}
+        merged = {"state": "closed", "merged_at": "2026-08-11T10:00:00Z"}
+
+        self.assertEqual(
+            "Not Shipped",
+            estate_rollout_board.status_for(closed_unmerged, config),
+        )
+        self.assertEqual(
+            "Closed - Not Merged",
+            estate_rollout_board.stage_for(closed_unmerged, config),
+        )
+        self.assertNotEqual(
+            estate_rollout_board.status_for(closed_unmerged, config),
+            estate_rollout_board.status_for(merged, config),
+        )
+        self.assertNotEqual(
+            estate_rollout_board.stage_for(closed_unmerged, config),
+            estate_rollout_board.stage_for(merged, config),
         )
 
     def test_excludes_dependabot_or_dependency_noise(self):

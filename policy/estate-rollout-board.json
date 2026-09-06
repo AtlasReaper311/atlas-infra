@@ -36,14 +36,14 @@
   "status_rules": {
     "open_draft": "Todo",
     "open_ready": "In Progress",
-    "closed": "Done",
+    "closed": "Not Shipped",
     "merged": "Done"
   },
   "stage_rules": {
     "open_draft": "Draft - Awaiting Review",
     "open_ready": "In Progress",
     "gated": "Draft - Awaiting Review",
-    "closed": "Live / Verified",
+    "closed": "Closed - Not Merged",
     "merged": "Live / Verified"
   },
   "gated_markers": [
@@ -65,6 +65,9 @@
     },
     "atlas-infra": {
       "pillar": "P-03 DevOps Core"
+    },
+    "atlas-systems": {
+      "pillar": "P-01 Live Domain"
     },
     "atlas-twin": {
       "pillar": "P-03 DevOps Core"
