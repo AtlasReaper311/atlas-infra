@@ -7,8 +7,8 @@ under `AtlasReaper311` GitHub Projects.
 
 Tracks active pull-request rollouts across the bounded Atlas repository set.
 
-- `Status` is derived from pull-request state.
-- `Stage` is derived from draft state, merge state, and approval-gate markers.
+- `Status` is derived from pull-request state. Merged pull requests remain `Done` as a workflow completion status, not as live proof.
+- `Stage` is derived from draft state, merge state, and approval-gate markers. A merged pull request maps to `Merged` (ADR-0013 source integration only) and must not be labelled `Live / Verified` from merge evidence. Closed-unmerged pull requests remain `Closed - Not Merged`.
 - `Pillar` is derived from the repository map in `policy/estate-rollout-board.json`.
 - `Attention` highlights waiting approvals, stale work, or review-ready work.
 - `Stale Days` counts days since the pull request was last updated, or since it closed.

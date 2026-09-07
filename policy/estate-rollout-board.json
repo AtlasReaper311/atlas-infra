@@ -44,7 +44,7 @@
     "open_ready": "In Progress",
     "gated": "Draft - Awaiting Review",
     "closed": "Closed - Not Merged",
-    "merged": "Live / Verified"
+    "merged": "Merged"
   },
   "gated_markers": [
     "do not merge",
