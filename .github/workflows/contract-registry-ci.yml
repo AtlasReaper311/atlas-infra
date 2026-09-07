@@ -187,6 +187,7 @@ jobs:
             scripts/atlas_trace.py \
             scripts/contract_registry.py \
             scripts/control_plane_contracts.py \
+            scripts/estate_snapshot.py \
             scripts/public_cloudflare_topology.py \
             scripts/public_repository_classifications.py \
             scripts/readme_contract.py \

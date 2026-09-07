@@ -1,0 +1,379 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.atlas-systems.uk/policy/v1/estate-snapshot.schema.json",
+  "title": "Atlas Systems generated estate snapshot v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "authority",
+    "observation",
+    "estate",
+    "content_fingerprint"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "atlas-estate-snapshot/snapshot/v1"
+    },
+    "authority": {
+      "const": "AtlasReaper311/atlas-infra"
+    },
+    "observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "generated_at",
+        "source_commit",
+        "github",
+        "presentation",
+        "classification"
+      ],
+      "properties": {
+        "generated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "source_commit": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "github": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "route", "owner"],
+          "properties": {
+            "status": {
+              "enum": ["observed", "UNKNOWN / NOT OBSERVED"]
+            },
+            "route": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            "owner": {
+              "const": "AtlasReaper311"
+            }
+          }
+        },
+        "presentation": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "source"],
+          "properties": {
+            "status": {
+              "enum": ["observed", "UNKNOWN / NOT OBSERVED"]
+            },
+            "source": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            }
+          }
+        },
+        "classification": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "runtime_registry",
+            "public_non_runtime",
+            "projection",
+            "source_fingerprint"
+          ],
+          "properties": {
+            "runtime_registry": {
+              "const": "policy/estate-registry.json"
+            },
+            "public_non_runtime": {
+              "const": "policy/public-assurance-repositories.json"
+            },
+            "projection": {
+              "const": "policy/public-repository-classifications.json"
+            },
+            "source_fingerprint": {
+              "type": "string",
+              "pattern": "^sha256:[0-9a-f]{64}$"
+            }
+          }
+        }
+      }
+    },
+    "estate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "classified_repository_count",
+        "github_observed_repository_count",
+        "repositories",
+        "repository_less_topology",
+        "missing_authority",
+        "contradictory_authority",
+        "evidence_boundary"
+      ],
+      "properties": {
+        "classified_repository_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 200
+        },
+        "github_observed_repository_count": {
+          "type": ["integer", "string"],
+          "minimum": 0,
+          "maximum": 500
+        },
+        "repositories": {
+          "type": "array",
+          "maxItems": 200,
+          "uniqueItems": true,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "repository",
+              "lifecycle",
+              "scope",
+              "provenance",
+              "runtime_service",
+              "github",
+              "topology"
+            ],
+            "properties": {
+              "repository": {
+                "type": "string",
+                "pattern": "^AtlasReaper311/[A-Za-z0-9._-]+$",
+                "maxLength": 128
+              },
+              "lifecycle": {
+                "enum": [
+                  "production",
+                  "active",
+                  "experimental",
+                  "deprecated",
+                  "archived"
+                ]
+              },
+              "scope": {
+                "enum": ["public", "internal"]
+              },
+              "provenance": {
+                "enum": ["original", "external-derived"]
+              },
+              "runtime_service": {
+                "type": "boolean"
+              },
+              "github": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["observation"],
+                "properties": {
+                  "observation": {
+                    "enum": ["observed", "UNKNOWN / NOT OBSERVED"]
+                  },
+                  "visibility": {
+                    "type": "string",
+                    "maxLength": 32
+                  },
+                  "private": {
+                    "type": "boolean"
+                  },
+                  "archived": {
+                    "type": "boolean"
+                  },
+                  "default_branch": {
+                    "type": ["string", "null"],
+                    "maxLength": 128
+                  }
+                }
+              },
+              "topology": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["observation", "components"],
+                "properties": {
+                  "observation": {
+                    "enum": [
+                      "observed",
+                      "UNKNOWN / NOT OBSERVED",
+                      "NOT APPLICABLE"
+                    ]
+                  },
+                  "components": {
+                    "type": "array",
+                    "maxItems": 32,
+                    "items": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "name",
+                        "kind",
+                        "layer",
+                        "public_surface",
+                        "presentation_lifecycle"
+                      ],
+                      "properties": {
+                        "name": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 128
+                        },
+                        "kind": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 64
+                        },
+                        "layer": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 64
+                        },
+                        "public_surface": {
+                          "type": ["string", "null"],
+                          "maxLength": 256
+                        },
+                        "presentation_lifecycle": {
+                          "type": ["string", "null"],
+                          "maxLength": 64
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "repository_less_topology": {
+          "type": "array",
+          "maxItems": 200,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "name",
+              "kind",
+              "layer",
+              "public_surface",
+              "classification"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128
+              },
+              "kind": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64
+              },
+              "layer": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64
+              },
+              "public_surface": {
+                "type": ["string", "null"],
+                "maxLength": 256
+              },
+              "classification": {
+                "const": "NOT APPLICABLE"
+              }
+            }
+          }
+        },
+        "missing_authority": {
+          "type": "array",
+          "maxItems": 500,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["kind", "subject", "detail"],
+            "properties": {
+              "kind": {
+                "enum": [
+                  "github-without-classification",
+                  "classification-without-github",
+                  "presentation-repo-without-classification"
+                ]
+              },
+              "subject": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              "detail": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 512
+              }
+            }
+          }
+        },
+        "contradictory_authority": {
+          "type": "array",
+          "maxItems": 500,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["kind", "subject", "detail"],
+            "properties": {
+              "kind": {
+                "enum": [
+                  "presentation-lifecycle-mismatch",
+                  "github-private-public-scope",
+                  "github-archived-lifecycle-mismatch",
+                  "registry-count-mismatch",
+                  "presentation-repositories-not-authority"
+                ]
+              },
+              "subject": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              "detail": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 512
+              }
+            }
+          }
+        },
+        "evidence_boundary": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "delivery_stage_claimed",
+            "later_stage_observation",
+            "does_not_prove"
+          ],
+          "properties": {
+            "delivery_stage_claimed": {
+              "const": "SOURCE"
+            },
+            "later_stage_observation": {
+              "const": "UNKNOWN / NOT OBSERVED"
+            },
+            "does_not_prove": {
+              "type": "array",
+              "minItems": 4,
+              "maxItems": 4,
+              "items": {
+                "enum": [
+                  "DEPLOYMENT OBSERVED",
+                  "DEPLOYED",
+                  "RUNTIME VERIFIED",
+                  "LIVE VERIFIED"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "content_fingerprint": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    }
+  }
+}

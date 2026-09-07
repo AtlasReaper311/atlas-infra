@@ -34,6 +34,7 @@ jobs:
           python3 -m py_compile scripts/dependabot_rollout.py
           python3 -m py_compile scripts/detect_ecosystem.py
           python3 -m py_compile scripts/estate_repo_diff.py
+          python3 -m py_compile scripts/estate_snapshot.py
           python3 -m py_compile scripts/estate_policy.py
           python3 -m py_compile scripts/github_api.py
           python3 -m py_compile scripts/github_conformance_scoreboard.py
@@ -49,6 +50,7 @@ jobs:
           python3 -m unittest discover -s scripts/tests -v
           python3 scripts/validate_control_plane_contracts.py
           python3 scripts/public_repository_classifications.py --check
+          python3 scripts/estate_snapshot.py --check
           python3 scripts/validate_gardener_github_app_coverage.py \
             --report reports/gardener-github-app-coverage.json \
             --quiet
