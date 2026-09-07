@@ -1,0 +1,325 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.atlas-systems.uk/policy/v1/estate-drift.schema.json",
+  "title": "Atlas Systems estate drift report v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "authority",
+    "observation",
+    "classes",
+    "findings",
+    "summary",
+    "evidence_boundary",
+    "content_fingerprint"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "atlas-estate-drift/report/v1"
+    },
+    "authority": {
+      "const": "AtlasReaper311/atlas-infra"
+    },
+    "observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "generated_at",
+        "source_commit",
+        "github",
+        "presentation",
+        "classification",
+        "snapshot_content_fingerprint"
+      ],
+      "properties": {
+        "generated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "source_commit": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "github": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "route", "owner", "source"],
+          "properties": {
+            "status": {
+              "enum": ["observed", "UNKNOWN / NOT OBSERVED"]
+            },
+            "route": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            "owner": {
+              "const": "AtlasReaper311"
+            },
+            "source": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            }
+          }
+        },
+        "presentation": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "source"],
+          "properties": {
+            "status": {
+              "enum": ["observed", "UNKNOWN / NOT OBSERVED"]
+            },
+            "source": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            }
+          }
+        },
+        "classification": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "runtime_registry",
+            "public_non_runtime",
+            "projection",
+            "source_fingerprint"
+          ],
+          "properties": {
+            "runtime_registry": {
+              "const": "policy/estate-registry.json"
+            },
+            "public_non_runtime": {
+              "const": "policy/public-assurance-repositories.json"
+            },
+            "projection": {
+              "const": "policy/public-repository-classifications.json"
+            },
+            "source_fingerprint": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 80
+            }
+          }
+        },
+        "snapshot_content_fingerprint": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80
+        }
+      }
+    },
+    "classes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "owned-public-missing-classification",
+        "projection-differs-from-authority",
+        "presentation-conflicts-with-classification",
+        "hand-maintained-current-truth-conflict",
+        "duplicate-or-ambiguous-ownership"
+      ],
+      "properties": {
+        "owned-public-missing-classification": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "finding_count"],
+          "properties": {
+            "status": {
+              "enum": ["agree", "disagree", "UNKNOWN / NOT OBSERVED"]
+            },
+            "finding_count": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 500
+            }
+          }
+        },
+        "projection-differs-from-authority": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "finding_count"],
+          "properties": {
+            "status": {
+              "enum": ["agree", "disagree", "UNKNOWN / NOT OBSERVED"]
+            },
+            "finding_count": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 500
+            }
+          }
+        },
+        "presentation-conflicts-with-classification": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "finding_count"],
+          "properties": {
+            "status": {
+              "enum": ["agree", "disagree", "UNKNOWN / NOT OBSERVED"]
+            },
+            "finding_count": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 500
+            }
+          }
+        },
+        "hand-maintained-current-truth-conflict": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "finding_count"],
+          "properties": {
+            "status": {
+              "enum": ["agree", "disagree", "UNKNOWN / NOT OBSERVED"]
+            },
+            "finding_count": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 500
+            }
+          }
+        },
+        "duplicate-or-ambiguous-ownership": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "finding_count"],
+          "properties": {
+            "status": {
+              "enum": ["agree", "disagree", "UNKNOWN / NOT OBSERVED"]
+            },
+            "finding_count": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 500
+            }
+          }
+        }
+      }
+    },
+    "findings": {
+      "type": "array",
+      "maxItems": 500,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "kind",
+          "subject",
+          "authoritative_source",
+          "observed_source",
+          "reason",
+          "result_class"
+        ],
+        "properties": {
+          "kind": {
+            "enum": [
+              "owned-public-missing-classification",
+              "projection-differs-from-authority",
+              "presentation-conflicts-with-classification",
+              "hand-maintained-current-truth-conflict",
+              "duplicate-or-ambiguous-ownership",
+              "malformed-authority-or-snapshot"
+            ]
+          },
+          "subject": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "authoritative_source": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "observed_source": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "result_class": {
+            "enum": [
+              "deterministic-drift",
+              "observation-derived-drift",
+              "UNKNOWN / NOT OBSERVED"
+            ]
+          }
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "deterministic_drift",
+        "observation_derived_drift",
+        "unknown_not_observed",
+        "blocking"
+      ],
+      "properties": {
+        "deterministic_drift": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 500
+        },
+        "observation_derived_drift": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 500
+        },
+        "unknown_not_observed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 500
+        },
+        "blocking": {
+          "type": "boolean"
+        }
+      }
+    },
+    "evidence_boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "delivery_stage_claimed",
+        "later_stage_observation",
+        "does_not_prove"
+      ],
+      "properties": {
+        "delivery_stage_claimed": {
+          "const": "SOURCE"
+        },
+        "later_stage_observation": {
+          "const": "UNKNOWN / NOT OBSERVED"
+        },
+        "does_not_prove": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "items": {
+            "enum": [
+              "DEPLOYMENT OBSERVED",
+              "DEPLOYED",
+              "RUNTIME VERIFIED",
+              "LIVE VERIFIED"
+            ]
+          }
+        }
+      }
+    },
+    "content_fingerprint": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    }
+  }
+}
