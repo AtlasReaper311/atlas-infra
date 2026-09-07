@@ -1,0 +1,31 @@
+{
+  "components": [
+    {
+      "kind": "docs",
+      "layer": "infra",
+      "lifecycle": "production",
+      "name": "atlas-infra",
+      "provenance": "external-derived",
+      "public_surface": "https://github.com/AtlasReaper311/atlas-infra",
+      "repo": "https://github.com/AtlasReaper311/atlas-infra",
+      "scope": "internal"
+    },
+    {
+      "kind": "tool",
+      "layer": "infra",
+      "lifecycle": "active",
+      "name": "mystery",
+      "public_surface": "GitHub",
+      "repo": "https://github.com/AtlasReaper311/mystery"
+    },
+    {
+      "kind": "local-service",
+      "layer": "local-ai",
+      "lifecycle": "production",
+      "name": "ollama",
+      "public_surface": "no direct public surface",
+      "repo": null
+    }
+  ],
+  "repositories": []
+}

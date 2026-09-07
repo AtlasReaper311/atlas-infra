@@ -1,0 +1,34 @@
+{
+  "owner": "AtlasReaper311",
+  "route": "recorded-observation:tests/fixtures/estate-drift/github-unclassified-public.json",
+  "repositories": [
+    {
+      "archived": false,
+      "default_branch": "main",
+      "private": false,
+      "repository": "AtlasReaper311/status",
+      "visibility": "public"
+    },
+    {
+      "archived": false,
+      "default_branch": "main",
+      "private": false,
+      "repository": "AtlasReaper311/atlas-infra",
+      "visibility": "public"
+    },
+    {
+      "archived": false,
+      "default_branch": "main",
+      "private": false,
+      "repository": "AtlasReaper311/unclassified-public",
+      "visibility": "public"
+    },
+    {
+      "archived": false,
+      "default_branch": "main",
+      "private": true,
+      "repository": "AtlasReaper311/private-unclassified",
+      "visibility": "private"
+    }
+  ]
+}

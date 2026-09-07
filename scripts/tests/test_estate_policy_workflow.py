@@ -54,6 +54,11 @@ class EstatePolicyWorkflowTests(unittest.TestCase):
         self.assertIn("if: always() && steps.policy.outcome == 'failure'", block)
         self.assertIn("exit 1", block)
 
+    def test_assurance_scripts_run_estate_drift_check(self) -> None:
+        block = step_block(self.text, "Validate assurance scripts")
+        self.assertIn("python3 -m py_compile scripts/estate_drift.py", block)
+        self.assertIn("python3 scripts/estate_drift.py --check", block)
+
 
 if __name__ == "__main__":
     unittest.main()

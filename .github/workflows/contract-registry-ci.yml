@@ -15,6 +15,7 @@ on:
       - "policy/estate-registry.json"
       - "policy/estate-registry.schema.json"
       - "policy/estate-snapshot.schema.json"
+      - "policy/estate-drift.schema.json"
       - "policy/public-assurance-repositories.json"
       - "policy/public-assurance-repositories.schema.json"
       - "policy/public-cloudflare-resources.json"
@@ -33,6 +34,7 @@ on:
       - "scripts/contract_registry.py"
       - "scripts/control_plane_contracts.py"
       - "scripts/estate_snapshot.py"
+      - "scripts/estate_drift.py"
       - "scripts/public_cloudflare_topology.py"
       - "scripts/public_repository_classifications.py"
       - "scripts/readme_contract.py"
@@ -74,6 +76,7 @@ on:
       - "policy/estate-registry.json"
       - "policy/estate-registry.schema.json"
       - "policy/estate-snapshot.schema.json"
+      - "policy/estate-drift.schema.json"
       - "policy/public-assurance-repositories.json"
       - "policy/public-assurance-repositories.schema.json"
       - "policy/public-cloudflare-resources.json"
@@ -92,6 +95,7 @@ on:
       - "scripts/contract_registry.py"
       - "scripts/control_plane_contracts.py"
       - "scripts/estate_snapshot.py"
+      - "scripts/estate_drift.py"
       - "scripts/public_cloudflare_topology.py"
       - "scripts/public_repository_classifications.py"
       - "scripts/readme_contract.py"
@@ -156,6 +160,11 @@ jobs:
           set -euo pipefail
           python3 scripts/public_repository_classifications.py --check
 
+      - name: Verify estate drift against committed authority
+        run: |
+          set -euo pipefail
+          python3 scripts/estate_drift.py --check
+
       - name: Validate repository hygiene policy
         run: |
           set -euo pipefail
@@ -192,6 +201,7 @@ jobs:
             scripts/contract_registry.py \
             scripts/control_plane_contracts.py \
             scripts/estate_snapshot.py \
+            scripts/estate_drift.py \
             scripts/public_cloudflare_topology.py \
             scripts/public_repository_classifications.py \
             scripts/readme_contract.py \
