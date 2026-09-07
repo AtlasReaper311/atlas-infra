@@ -69,7 +69,7 @@ class EstateRolloutBoardTests(unittest.TestCase):
             ),
         )
         self.assertEqual(
-            "Live / Verified",
+            "Merged",
             estate_rollout_board.stage_for(
                 {"state": "closed", "merged_at": "2026-08-11T10:00:00Z"},
                 config,
@@ -103,6 +103,32 @@ class EstateRolloutBoardTests(unittest.TestCase):
             estate_rollout_board.stage_for(closed_unmerged, config),
             estate_rollout_board.stage_for(merged, config),
         )
+        self.assertEqual("Done", estate_rollout_board.status_for(merged, config))
+        self.assertEqual("Merged", estate_rollout_board.stage_for(merged, config))
+
+    def test_merged_pull_stage_is_source_integration_only(self):
+        config = self.load_config()
+        merged = {"state": "closed", "merged_at": "2026-08-11T10:00:00Z"}
+        stage = estate_rollout_board.stage_for(merged, config)
+        status = estate_rollout_board.status_for(merged, config)
+
+        self.assertEqual("Merged", stage)
+        self.assertEqual("Done", status)
+        self.assertEqual("Merged", config["stage_rules"]["merged"])
+        forbidden_tokens = (
+            "live",
+            "verified",
+            "deploy",
+            "runtime",
+            "published",
+        )
+        stage_text = f"{stage} {config['stage_rules']['merged']}".lower()
+        for token in forbidden_tokens:
+            self.assertNotIn(
+                token,
+                stage_text,
+                f"merged Stage must not imply {token!r} from pull-request state",
+            )
 
     def test_excludes_dependabot_or_dependency_noise(self):
         config = self.load_config()
@@ -232,6 +258,23 @@ class EstateRolloutBoardTests(unittest.TestCase):
                 "value": "Done",
             },
             plan["actions"],
+        )
+        self.assertIn(
+            {
+                "action": "set_field",
+                "item_id": "item-id",
+                "url": "https://github.com/AtlasReaper311/atlas-infra/pull/99",
+                "field": "Stage",
+                "value": "Merged",
+            },
+            plan["actions"],
+        )
+        self.assertFalse(
+            any(
+                action.get("field") == "Stage"
+                and "live" in str(action.get("value", "")).lower()
+                for action in plan["actions"]
+            )
         )
 
     def test_done_retention_can_be_configured_to_delete_project_items(self):

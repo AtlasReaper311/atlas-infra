@@ -7,14 +7,14 @@ under `AtlasReaper311` GitHub Projects.
 
 Tracks active pull-request rollouts across the bounded Atlas repository set.
 
-- `Status` is derived from pull-request state.
-- `Stage` is derived from draft state, merge state, and approval-gate markers.
+- `Status` is derived from pull-request state. Merged pull requests remain `Done` as a workflow completion status, not as live proof.
+- `Stage` is derived from draft state, merge state, and approval-gate markers. A merged pull request maps to `Merged` (ADR-0013 source integration only) and must not be labelled `Live / Verified` from merge evidence. Closed-unmerged pull requests remain `Closed - Not Merged`.
 - `Pillar` is derived from the repository map in `policy/estate-rollout-board.json`.
 - `Attention` highlights waiting approvals, stale work, or review-ready work.
 - `Stale Days` counts days since the pull request was last updated, or since it closed.
 - `Evidence` records the repository, pull-request number, and latest update date.
 
-Done items are retained for 3 days and then archived by the scheduled sync.
+Done items are retained for 3 days. Scheduled syncs report proposed archival but do not mutate Project state; archival occurs only on a separately authorised manual apply run.
 Dependabot and dependency-noise pull requests are intentionally excluded.
 
 ## Model Promotion and Eval Coverage
@@ -34,8 +34,15 @@ evidence is added.
 
 ## Maintenance
 
-The scheduled workflows use `ATLAS_PROJECTS_TOKEN` and run in dry-run mode before
-applying changes. Manual dispatch keeps `apply` false by default.
+The Estate Rollout Board schedule is dry-run only. It validates the tooling and
+publishes the proposed Project changes without applying them.
+
+Project mutation requires an explicitly authorised manual `workflow_dispatch`
+with `apply: true`. Manual dispatch keeps `apply` false by default. A scheduled
+run must never apply Project changes merely because the schedule fired.
+
+The workflow uses `ATLAS_PROJECTS_TOKEN`. Do not expose, print, or copy that
+secret value.
 
 Expected local validation before changing these boards:
 

@@ -44,7 +44,7 @@ jobs:
           cat reports/estate-rollout-board-sync-dry-run.json >> "$GITHUB_STEP_SUMMARY"
 
       - name: Apply rollout board sync
-        if: ${{ github.event_name == 'schedule' || inputs.apply == true }}
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.apply == true }}
         env:
           GITHUB_TOKEN: ${{ secrets.ATLAS_PROJECTS_TOKEN }}
           ATLAS_ROLLOUT_BOARD_CONFIRMATION: SYNC ESTATE ROLLOUT BOARD
