@@ -596,11 +596,7 @@ def render_markdown(report: dict[str, Any]) -> str:
         "",
         f"Authority: `{report['authority']}`",
         "",
-        "This report compares Atlas Infra classification authority, the owning "
-        "deterministic projection, generated estate snapshot truth, and optional "
-        "GitHub or presentation observation. It does not prove "
-        "`DEPLOYMENT OBSERVED`, `DEPLOYED`, `RUNTIME VERIFIED`, or `LIVE VERIFIED`. "
-        "Missing later evidence remains `UNKNOWN / NOT OBSERVED`.",
+        "This report compares Atlas Infra classification authority, the owning deterministic projection, generated estate snapshot truth, and optional GitHub or presentation observation. It does not prove `DEPLOYMENT OBSERVED`, `DEPLOYED`, `RUNTIME VERIFIED`, or `LIVE VERIFIED`. Missing later evidence remains `UNKNOWN / NOT OBSERVED`.",
         "",
         "## Observation",
         "",
@@ -637,9 +633,11 @@ def render_markdown(report: dict[str, Any]) -> str:
     if report["findings"]:
         for item in report["findings"]:
             lines.append(
-                f"- `{item['kind']}` `{item['subject']}` [{item['result_class']}]: "
-                f"{item['reason']} (authority `{item['authoritative_source']}`; "
-                f"observed `{item['observed_source']}`)"
+                (
+                    f"- `{item['kind']}` `{item['subject']}` [{item['result_class']}]: "
+                    f"{item['reason']} (authority `{item['authoritative_source']}`; "
+                    f"observed `{item['observed_source']}`)"
+                )
             )
     else:
         lines.append("None.")
