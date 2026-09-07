@@ -4,6 +4,7 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 import sys
 
 SCRIPTS = Path(__file__).resolve().parents[1]
@@ -330,6 +331,64 @@ class EstateSnapshotTests(unittest.TestCase):
     def test_anonymous_github_discovery_is_refused(self) -> None:
         with self.assertRaisesRegex(RuntimeError, "authenticated token"):
             estate_snapshot.discover_github("")
+
+    def test_github_full_name_requires_github_host_not_substring(self) -> None:
+        self.assertEqual(
+            "AtlasReaper311/atlas-infra",
+            estate_snapshot.github_full_name(
+                "https://github.com/AtlasReaper311/atlas-infra.git"
+            ),
+        )
+        self.assertEqual(
+            "AtlasReaper311/atlas-infra",
+            estate_snapshot.github_full_name("AtlasReaper311/atlas-infra"),
+        )
+        self.assertEqual(
+            "AtlasReaper311/atlas-infra",
+            estate_snapshot.github_full_name("github.com/AtlasReaper311/atlas-infra"),
+        )
+        self.assertIsNone(
+            estate_snapshot.github_full_name(
+                "https://evil.example/github.com/AtlasReaper311/atlas-infra"
+            )
+        )
+        self.assertIsNone(
+            estate_snapshot.github_full_name(
+                "https://github.com.evil.example/AtlasReaper311/atlas-infra"
+            )
+        )
+        self.assertIsNone(
+            estate_snapshot.github_full_name("https://github.com/other/atlas-infra")
+        )
+
+    def test_discover_github_flag_calls_owned_listing_not_boolean(self) -> None:
+        observed = {
+            "AtlasReaper311/status": github_item("AtlasReaper311/status"),
+            "AtlasReaper311/atlas-infra": github_item("AtlasReaper311/atlas-infra"),
+        }
+        with patch.object(
+            estate_snapshot,
+            "list_owned_github_repositories",
+            return_value=observed,
+        ) as mocked:
+            snapshot = estate_snapshot.build_from_paths(
+                root=ROOT,
+                registry_path=ROOT / "policy/estate-registry.json",
+                supplement_path=ROOT / "policy/public-assurance-repositories.json",
+                projection_path=ROOT / "policy/public-repository-classifications.json",
+                github_observation=None,
+                discover_github=True,
+                token_env="ATLAS_ESTATE_READ_TOKEN",
+                presentation_path=None,
+                generated_at=GENERATED_AT,
+                source_commit=SOURCE_COMMIT,
+            )
+        mocked.assert_called_once()
+        self.assertEqual("observed", snapshot["observation"]["github"]["status"])
+        self.assertEqual(
+            2,
+            snapshot["estate"]["github_observed_repository_count"],
+        )
 
     def test_check_cli_validates_current_authority(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

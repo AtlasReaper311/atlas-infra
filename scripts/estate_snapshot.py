@@ -17,6 +17,7 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlsplit
 
 from control_plane_contracts import sha256_hex, validate_instance
 from github_api import GitHubClient
@@ -104,13 +105,24 @@ def relative_source(path: Path, root: Path) -> str:
 def github_full_name(value: str | None) -> str | None:
     if not isinstance(value, str) or not value.strip():
         return None
-    cleaned = value.strip().removesuffix(".git").rstrip("/")
-    if "github.com/" in cleaned:
-        cleaned = cleaned.split("github.com/", 1)[1]
-    parts = [part for part in cleaned.split("/") if part]
-    if len(parts) < 2:
-        return None
-    owner, name = parts[-2], parts[-1]
+    raw = value.strip()
+    candidate = raw if "://" in raw else f"https://{raw}"
+    parsed = urlsplit(candidate)
+    host = (parsed.hostname or "").casefold()
+    if host in {"github.com", "www.github.com"}:
+        parts = [
+            part
+            for part in parsed.path.removesuffix(".git").strip("/").split("/")
+            if part
+        ]
+        if len(parts) < 2:
+            return None
+        owner, name = parts[0], parts[1]
+    else:
+        parts = [part for part in raw.removesuffix(".git").strip("/").split("/") if part]
+        if len(parts) != 2:
+            return None
+        owner, name = parts
     if owner.casefold() != DEFAULT_OWNER.casefold():
         return None
     return f"{DEFAULT_OWNER}/{name}"
@@ -130,8 +142,12 @@ def load_github_observation(path: Path) -> tuple[dict[str, dict[str, Any]], str]
     return _github_map(values), route.strip()
 
 
-def discover_github(token: str) -> dict[str, dict[str, Any]]:
+def list_owned_github_repositories(token: str) -> dict[str, dict[str, Any]]:
     return estate_repo_diff.list_owned_repositories(GitHubClient(token), DEFAULT_OWNER)
+
+
+def discover_github(token: str) -> dict[str, dict[str, Any]]:
+    return list_owned_github_repositories(token)
 
 
 def _github_map(values: list[Any]) -> dict[str, dict[str, Any]]:
@@ -531,7 +547,7 @@ def build_from_paths(
         )
     elif discover_github:
         token = os.environ.get(token_env, "") or os.environ.get("GITHUB_TOKEN", "")
-        github_repositories = discover_github(token)
+        github_repositories = list_owned_github_repositories(token)
     presentation = load_presentation(presentation_path) if presentation_path else None
     presentation_source = (
         relative_source(presentation_path, root) if presentation_path else UNKNOWN
