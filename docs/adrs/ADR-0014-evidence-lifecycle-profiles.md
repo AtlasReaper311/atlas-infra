@@ -34,7 +34,7 @@ This ADR does not rewrite Trace, ledger, retirement, hygiene, public-interface, 
 
 `AtlasReaper311/atlas-infra` owns six subject-type profiles that apply ADR-0013. ADR-0013 remains the only delivery-stage authority. A profile selects applicability and required evidence. It does not add estate-wide stages.
 
-A profile attaches to a named subject (repository, change, service, promotion record, article, or equivalent exact identity), not to a repository as a whole. One repository may host more than one subject type. `estate-registry.json` `runtime_service` and `public_surface` are classification fields. They help choose a profile. They are not ADR-0013 stages.
+A profile attaches to a named subject (repository, change, service, promotion record, article, or equivalent exact identity), not to a repository as a whole. One repository may host more than one subject type. `estate-registry.json` `runtime_service` and `public_surface` are classification fields. They help choose a profile. They are not ADR-0013 stages. `public_surface: false` does not make `LIVE VERIFIED` `NOT APPLICABLE` when operator-facing behaviour exists.
 
 ### Standing rules for every profile
 
@@ -71,9 +71,9 @@ Applicable ADR-0013 chain:
 | `DEPLOYMENT OBSERVED` | Named production deploy event for a stated identity, such as the `deploy` job in `deploy-worker.yml`. | Never for this profile. |
 | `DEPLOYED` | Expected identity is the deployed identity. Seeing some deploy event is not enough. | Never for this profile. |
 | `RUNTIME VERIFIED` | The deployed subject answered a stated runtime check (health, `/_meta`, contract probe, or equivalent) for the expected identity. | Never for this profile. |
-| `LIVE VERIFIED` | Independent live check of public or operator-facing behaviour for the expected identity after rollout. | The subject has no public or operator-facing surface. Current registry example: `ramone-memory` has `public_surface: false`. |
+| `LIVE VERIFIED` | Independent live check of public or operator-facing behaviour for the expected identity after rollout. | Never for this profile. |
 
-Missing later evidence stays `UNKNOWN / NOT OBSERVED`. A merged Worker with no named deploy event remains `MERGED`.
+Missing later evidence stays `UNKNOWN / NOT OBSERVED`. A merged Worker with no named deploy event remains `MERGED`. Registry `public_surface: false` does not skip this stage; ADR-0013 still requires operator-facing verification when a public surface is absent. Local services that do not follow `deploy-worker.yml` or the same validate-then-deploy shape are outside this profile.
 
 ### Static / public site
 
