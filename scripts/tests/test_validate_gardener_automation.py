@@ -32,6 +32,17 @@ class GardenerAutomationAuthorityTests(unittest.TestCase):
             ["macos-metadata-ignore", "python-cache-ignore"],
             report["automatic_fixers"],
         )
+        self.assertEqual(
+            [
+                "action-pin-plan",
+                "container-digest-pin",
+                "npm-security-update",
+                "python-security-pin",
+                "workflow-permissions",
+                "workflow-timeout",
+            ],
+            report["review_only_fixers"],
+        )
         self.assertEqual(0, report["provider_mutations"])
 
     def test_unknown_mode_fails_closed(self):
@@ -50,10 +61,19 @@ class GardenerAutomationAuthorityTests(unittest.TestCase):
         ):
             validate_gardener_automation.validate_policy(policy, self.coverage())
 
-    def test_workflow_fixer_cannot_gain_automatic_merge(self):
+    def test_dependency_fixer_cannot_gain_automatic_merge(self):
         policy = self.policy()
-        policy["fixers"]["workflow-timeout"]["automatic_merge"] = True
-        policy["fixers"]["workflow-timeout"]["risk_class"] = "low"
+        policy["fixers"]["npm-security-update"]["automatic_merge"] = True
+        policy["fixers"]["npm-security-update"]["risk_class"] = "low"
+        with self.assertRaisesRegex(
+            validate_gardener_automation.PolicyError, "must remain review-only"
+        ):
+            validate_gardener_automation.validate_policy(policy, self.coverage())
+
+    def test_container_fixer_cannot_gain_automatic_merge(self):
+        policy = self.policy()
+        policy["fixers"]["container-digest-pin"]["automatic_merge"] = True
+        policy["fixers"]["container-digest-pin"]["risk_class"] = "low"
         with self.assertRaisesRegex(
             validate_gardener_automation.PolicyError, "must remain review-only"
         ):
@@ -67,6 +87,24 @@ class GardenerAutomationAuthorityTests(unittest.TestCase):
         ]
         with self.assertRaisesRegex(
             validate_gardener_automation.PolicyError, "gitignore-only"
+        ):
+            validate_gardener_automation.validate_policy(policy, self.coverage())
+
+    def test_fixer_path_boundary_cannot_expand(self):
+        policy = self.policy()
+        policy["fixers"]["python-security-pin"]["allowed_path_patterns"] = [r".*"]
+        with self.assertRaisesRegex(
+            validate_gardener_automation.PolicyError, "allowed path boundary changed"
+        ):
+            validate_gardener_automation.validate_policy(policy, self.coverage())
+
+    def test_new_review_paths_are_not_globally_forbidden(self):
+        policy = self.policy()
+        policy["forbidden_exact_paths"].append("requirements.txt")
+        policy["forbidden_exact_paths"].sort()
+        with self.assertRaisesRegex(
+            validate_gardener_automation.PolicyError,
+            "review-only remediation paths remain globally forbidden",
         ):
             validate_gardener_automation.validate_policy(policy, self.coverage())
 
@@ -101,6 +139,11 @@ class GardenerAutomationAuthorityTests(unittest.TestCase):
             validate_gardener_automation.PolicyError, "required forbidden prefix"
         ):
             validate_gardener_automation.validate_policy(policy, self.coverage())
+
+    def test_schedule_schema_alignment_is_weekly(self):
+        policy = self.policy()
+        self.assertEqual("15 10 * * 1", policy["scheduling"]["controller_cron"])
+        self.assertFalse(policy["scheduling"]["daily_reconciliation"])
 
     def test_policy_digest_is_deterministic(self):
         policy = self.policy()
