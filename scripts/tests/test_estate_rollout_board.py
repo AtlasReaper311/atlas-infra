@@ -31,7 +31,7 @@ class EstateRolloutBoardTests(unittest.TestCase):
         self.assertEqual(3, config["archive_after_done_days"])
         self.assertEqual("archive", estate_rollout_board.retention_action(config))
         self.assertEqual(
-            "P-04 Honours Project",
+            "P-04 Applied Local AI",
             estate_rollout_board.pillar_for("addiction-honours-project", config),
         )
         self.assertEqual(
