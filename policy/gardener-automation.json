@@ -38,10 +38,33 @@
     "private_repository_policy": "source-owned-separate-approval"
   },
   "fixers": {
+    "action-pin-plan": {
+      "risk_class": "review-required",
+      "minimum_mode": "pr-only",
+      "automatic_merge": false,
+      "allowed_path_patterns": [
+        "^\\.github/workflows/[A-Za-z0-9._/-]+\\.ya?ml$"
+      ],
+      "automatic_merge_paths": [],
+      "automatic_merge_added_lines": []
+    },
+    "container-digest-pin": {
+      "risk_class": "review-required",
+      "minimum_mode": "pr-only",
+      "automatic_merge": false,
+      "allowed_path_patterns": [
+        "^(?:[A-Za-z0-9._-]+/)*Dockerfile[A-Za-z0-9._-]*$"
+      ],
+      "automatic_merge_paths": [],
+      "automatic_merge_added_lines": []
+    },
     "macos-metadata-ignore": {
       "risk_class": "low",
       "minimum_mode": "pr-only",
       "automatic_merge": true,
+      "allowed_path_patterns": [
+        "^\\.gitignore$"
+      ],
       "automatic_merge_paths": [
         ".gitignore"
       ],
@@ -50,10 +73,24 @@
         ".DS_Store"
       ]
     },
+    "npm-security-update": {
+      "risk_class": "review-required",
+      "minimum_mode": "pr-only",
+      "automatic_merge": false,
+      "allowed_path_patterns": [
+        "^(?:[A-Za-z0-9._-]+/)*package-lock\\.json$",
+        "^(?:[A-Za-z0-9._-]+/)*package\\.json$"
+      ],
+      "automatic_merge_paths": [],
+      "automatic_merge_added_lines": []
+    },
     "python-cache-ignore": {
       "risk_class": "low",
       "minimum_mode": "pr-only",
       "automatic_merge": true,
+      "allowed_path_patterns": [
+        "^\\.gitignore$"
+      ],
       "automatic_merge_paths": [
         ".gitignore"
       ],
@@ -63,10 +100,13 @@
         "__pycache__/"
       ]
     },
-    "workflow-timeout": {
+    "python-security-pin": {
       "risk_class": "review-required",
       "minimum_mode": "pr-only",
       "automatic_merge": false,
+      "allowed_path_patterns": [
+        "^(?:[A-Za-z0-9._-]+/)*requirements\\.txt$"
+      ],
       "automatic_merge_paths": [],
       "automatic_merge_added_lines": []
     },
@@ -74,13 +114,19 @@
       "risk_class": "review-required",
       "minimum_mode": "pr-only",
       "automatic_merge": false,
+      "allowed_path_patterns": [
+        "^\\.github/workflows/[A-Za-z0-9._/-]+\\.ya?ml$"
+      ],
       "automatic_merge_paths": [],
       "automatic_merge_added_lines": []
     },
-    "action-pin-plan": {
+    "workflow-timeout": {
       "risk_class": "review-required",
       "minimum_mode": "pr-only",
       "automatic_merge": false,
+      "allowed_path_patterns": [
+        "^\\.github/workflows/[A-Za-z0-9._/-]+\\.ya?ml$"
+      ],
       "automatic_merge_paths": [],
       "automatic_merge_added_lines": []
     }
@@ -118,12 +164,10 @@
   "forbidden_exact_paths": [
     ".env",
     ".env.production",
-    "Dockerfile",
-    "package-lock.json",
-    "package.json",
+    "Pipfile",
+    "Pipfile.lock",
     "poetry.lock",
     "pyproject.toml",
-    "requirements.txt",
     "wrangler.json",
     "wrangler.jsonc",
     "wrangler.toml"

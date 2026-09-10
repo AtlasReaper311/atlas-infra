@@ -1,7 +1,7 @@
 +++
 id = "ADR-0006"
-date = 2026-07-22
-status = "accepted"
+date = 2026-09-10
+status = "superseded"
 visibility = "public"
 repositories = []
 services = []
@@ -10,6 +10,8 @@ policies = ["policy/gardener-automation.json", "policy/gardener-github-app-cover
 +++
 
 # ADR-0006: automatic remediation separates detection, proposal writes, and merge authority
+
+Superseded by [ADR-0015](ADR-0015-gardener-bounded-dependency-container-remediation.md).
 
 ## Context
 

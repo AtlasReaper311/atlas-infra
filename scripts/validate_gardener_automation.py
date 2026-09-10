@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 import sys
 from pathlib import Path
 from typing import Any
@@ -15,16 +16,33 @@ DEFAULT_COVERAGE = ROOT / "policy/gardener-github-app-coverage.json"
 EXPECTED_MODES = ["disabled", "observe", "pr-only", "automerge-low-risk"]
 EXPECTED_FIXERS = {
     "action-pin-plan",
+    "container-digest-pin",
     "macos-metadata-ignore",
+    "npm-security-update",
     "python-cache-ignore",
+    "python-security-pin",
     "workflow-permissions",
     "workflow-timeout",
 }
 AUTO_FIXERS = {"macos-metadata-ignore", "python-cache-ignore"}
+REVIEW_ONLY_FIXERS = EXPECTED_FIXERS - AUTO_FIXERS
 EXPECTED_PERMISSIONS = {
     "metadata": "read",
     "contents": "write",
     "pull_requests": "write",
+}
+EXPECTED_PATH_PATTERNS = {
+    "action-pin-plan": [r"^\.github/workflows/[A-Za-z0-9._/-]+\.ya?ml$"],
+    "container-digest-pin": [r"^(?:[A-Za-z0-9._-]+/)*Dockerfile[A-Za-z0-9._-]*$"],
+    "macos-metadata-ignore": [r"^\.gitignore$"],
+    "npm-security-update": [
+        r"^(?:[A-Za-z0-9._-]+/)*package-lock\.json$",
+        r"^(?:[A-Za-z0-9._-]+/)*package\.json$",
+    ],
+    "python-cache-ignore": [r"^\.gitignore$"],
+    "python-security-pin": [r"^(?:[A-Za-z0-9._-]+/)*requirements\.txt$"],
+    "workflow-permissions": [r"^\.github/workflows/[A-Za-z0-9._/-]+\.ya?ml$"],
+    "workflow-timeout": [r"^\.github/workflows/[A-Za-z0-9._/-]+\.ya?ml$"],
 }
 
 
@@ -139,7 +157,7 @@ def validate_policy(policy: dict[str, Any], coverage: dict[str, Any]) -> dict[st
 
     fixers = policy["fixers"]
     if set(fixers) != EXPECTED_FIXERS:
-        raise PolicyError("fixer policy must cover exactly the five allowlisted fixers")
+        raise PolicyError("fixer policy must cover exactly the eight allowlisted fixers")
     for fixer_id, fixer in fixers.items():
         _require_exact_keys(
             fixer,
@@ -147,14 +165,23 @@ def validate_policy(policy: dict[str, Any], coverage: dict[str, Any]) -> dict[st
                 "risk_class",
                 "minimum_mode",
                 "automatic_merge",
+                "allowed_path_patterns",
                 "automatic_merge_paths",
                 "automatic_merge_added_lines",
             },
             f"fixer {fixer_id}",
         )
+        patterns = fixer["allowed_path_patterns"]
+        if patterns != EXPECTED_PATH_PATTERNS[fixer_id]:
+            raise PolicyError(f"{fixer_id} allowed path boundary changed")
+        for pattern in patterns:
+            try:
+                re.compile(pattern)
+            except re.error as error:
+                raise PolicyError(f"{fixer_id} has an invalid allowed path pattern") from error
         if fixer_id in AUTO_FIXERS:
             if fixer["risk_class"] != "low" or fixer["automatic_merge"] is not True:
-                raise PolicyError(f"{fixer_id} must be the only low-risk automatic fixer class")
+                raise PolicyError(f"{fixer_id} must remain a low-risk automatic fixer")
             if fixer["automatic_merge_paths"] != [".gitignore"]:
                 raise PolicyError(f"{fixer_id} automatic merge must be .gitignore-only")
             if not fixer["automatic_merge_added_lines"]:
@@ -197,9 +224,17 @@ def validate_policy(policy: dict[str, Any], coverage: dict[str, Any]) -> dict[st
     for required in (".github/workflows/", "src/", "migrations/", "dist/"):
         if required not in forbidden_prefixes:
             raise PolicyError(f"required forbidden prefix is missing: {required}")
-    for required in ("package.json", "package-lock.json", "wrangler.toml", "pyproject.toml"):
+    for required in (".env", ".env.production", "pyproject.toml", "poetry.lock", "wrangler.toml"):
         if required not in forbidden_paths:
             raise PolicyError(f"required forbidden path is missing: {required}")
+    newly_authorized_review_paths = {
+        "Dockerfile",
+        "package.json",
+        "package-lock.json",
+        "requirements.txt",
+    }
+    if newly_authorized_review_paths & set(forbidden_paths):
+        raise PolicyError("review-only remediation paths remain globally forbidden")
 
     if policy["approval_ttl_hours"] > 24:
         raise PolicyError("automation approvals cannot live longer than 24 hours")
@@ -242,7 +277,7 @@ def validate_policy(policy: dict[str, Any], coverage: dict[str, Any]) -> dict[st
         "coverage_digest": digest_json(coverage),
         "coverage_count": len(repositories),
         "automatic_fixers": sorted(AUTO_FIXERS),
-        "review_only_fixers": sorted(EXPECTED_FIXERS - AUTO_FIXERS),
+        "review_only_fixers": sorted(REVIEW_ONLY_FIXERS),
         "default_mode": policy["default_mode"],
         "provider_mutations": 0,
     }
