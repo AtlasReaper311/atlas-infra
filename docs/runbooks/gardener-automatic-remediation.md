@@ -16,15 +16,26 @@ Review the latest controller evidence artifact and identify:
 - policy, coverage, and Finding bundle digests;
 - Finding fingerprint and remediation key;
 - repository, base SHA, expected head SHA, and patch digest;
-- refusal code or pull-request URL;
+- structured remediation candidate kind for dependency or container work;
+- refusal code, observation reason, or pull-request URL;
 - installation-token mint and revoke status without token values;
 - target-gate, CI, merge, and notification outcomes.
 
 Treat any private key, JWT, installation token, notification token, or secret value exposed in logs, artifacts, issues, pull requests, or chat as compromised. Revoke or replace it through the provider interface and do not paste it into a remediation record.
 
+## Dependency and container proposals
+
+`npm-security-update`, `python-security-pin`, and `container-digest-pin` are review-required fixers. They may create deterministic draft pull requests, but they are not authorised for native automatic merge.
+
+For a dependency proposal, confirm that the Finding candidate identifies a direct dependency, the source file matches the fixer-specific policy boundary, the selected target version is a patch or minor update within the current major version, and every vulnerability identifier recorded by the candidate is represented in the audit evidence. Major upgrades, transitive-only npm findings, missing fixed versions, ambiguous declarations, unsupported Python package formats, and non-deterministic lockfile changes must remain observations or refusals.
+
+For a container proposal, confirm that the candidate binds one external Docker Hub tag to one immutable `sha256` digest and that the Dockerfile change preserves the original tag while adding the digest. Named build stages, already digest-pinned bases, unsupported registries, and ambiguous references must not be rewritten.
+
+Do not treat a passing pull request as deployment evidence. Dependency and container changes can affect runtime behaviour, so merge, deployment, and live verification remain separate authority and evidence steps.
+
 ## Unexpected pull request
 
-Confirm that the head branch begins with `gardener/`, the pull-request body contains the machine approval marker, and the exact head SHA matches the controller evidence. Disable native auto-merge on the pull request before further inspection. Close the pull request if the approval, patch, actor, repository classification, base SHA, or policy digest does not match.
+Confirm that the head branch begins with `gardener/`, the pull-request body contains the machine approval marker, and the exact head SHA matches the controller evidence. Confirm that every changed file matches the selected fixer's `allowed_path_patterns` from the committed Atlas Infra authority. Disable native auto-merge on the pull request before further inspection. Close the pull request if the approval, patch, actor, repository classification, base SHA, policy digest, structured candidate, or fixer path boundary does not match.
 
 Do not force-push or reuse an owner-authored branch. Gardener branches are deterministic per repository, rule, Finding fingerprint, fixer version, and target base state.
 
@@ -72,7 +83,7 @@ The proof exposed three permanent verification requirements: bind jobs to the ex
 
 ## Production readiness
 
-Before enabling a target batch, run the committed source-policy validator and the read-only target-readiness verifier. Every target must have:
+Before enabling a target batch, run the committed source-policy validator and the read-only target-readiness verifier. Every target used for automatic housekeeping merge must have:
 
 - the pinned target-owned Gardener caller;
 - its declared repository CI check required on `main`;
@@ -80,6 +91,8 @@ Before enabling a target batch, run the committed source-policy validator and th
 - squash merge enabled;
 - repository native auto-merge disabled at rest;
 - `ATLAS_GARDENER_AUTOMERGE_ENABLED=false` at rest.
+
+The three dependency and container fixers remain draft-PR-only even when the controller mode is `automerge-low-risk`. Automatic merge for those fixers requires a later accepted authority change and a target-gate implementation capable of revalidating dependency and container output.
 
 The scheduled production cadence is Monday audit ingestion at `08:41 UTC`, followed by controller reconciliation at `10:15 UTC`. Manual dispatch remains available. Do not enable a daily controller against a thirty-six-hour Finding lifetime.
 
@@ -89,9 +102,9 @@ Restore service in stages:
 
 1. validate source with mode `disabled`;
 2. run `observe` and inspect one complete evidence artifact;
-3. run `pr-only` against one harmless eligible Finding;
-4. enable `automerge-low-risk` for the canary repository;
-5. expand to a limited repository batch;
-6. expand to the verified 20-repository public runtime set.
+3. run `pr-only` against one eligible dependency or container Finding and inspect the exact draft;
+4. verify repository-native CI against the exact draft head;
+5. retain manual review for dependency and container proposals;
+6. use `automerge-low-risk` only for the separately authorised housekeeping boundary.
 
-A merged source change, successful dry run, target workflow installation, or enabled repository setting does not prove live automatic operation. Live completion requires one real eligible Finding, automatic pull-request creation, required target CI, automatic squash merge, result notification, bounded evidence, and an explicit deployment classification.
+A merged source change, successful dry run, target workflow installation, or enabled repository setting does not prove live automatic operation. Live completion for dependency and container remediation requires one real eligible Finding, deterministic pull-request creation, repository-native validation, an owner-authorised merge, explicit deployment classification, and live verification where deployment occurs.
