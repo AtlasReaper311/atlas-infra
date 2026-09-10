@@ -34,7 +34,7 @@ Atlas Systems has five pillars:
 1. `P-01 Live Domain`: `atlas-systems.uk` is a working technical environment and public interface, not a static CV.
 2. `P-02 GitHub Library`: repositories form a modular Logic Lego library of reusable components.
 3. `P-03 DevOps Core`: CI/CD, observability, deployment contracts, recovery, and evidence are part of the product.
-4. `P-04 Honours Project`: deferred until September. Do not let unrelated work silently expand into this pillar.
+4. `P-04 Applied Local AI`: local-model evaluation through interactive, game, and real-time system experiments.
 5. `P-05 Writing`: case studies and documentation explain decisions, tradeoffs, failures, and transferable lessons.
 
 The central design question is:
