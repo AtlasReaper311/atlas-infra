@@ -248,7 +248,7 @@ class GardenerAutomationAuthorityTests(unittest.TestCase):
             "candidate": candidate,
         }
         errors = control_plane_contracts.validate_instance(finding, schema)
-        self.assertTrue(any("anyOf" in error for error in errors), errors)
+        self.assertTrue(any("oneOf" in error for error in errors), errors)
 
     def test_unknown_disposition_is_rejected(self):
         schema = self.load("contracts/v1/finding.schema.json")
