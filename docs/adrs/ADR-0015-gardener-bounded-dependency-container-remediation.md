@@ -1,7 +1,7 @@
 +++
 id = "ADR-0015"
-date = 2026-09-10
-status = "accepted"
+date = 2026-09-11
+status = "superseded"
 visibility = "public"
 supersedes = "ADR-0006"
 repositories = []
@@ -11,6 +11,8 @@ policies = ["policy/gardener-automation.json", "policy/gardener-github-app-cover
 +++
 
 # ADR-0015: Gardener adds bounded dependency and container remediation
+
+Superseded by [ADR-0016](ADR-0016-gardener-npm-graph-remediation-and-dispositions.md).
 
 ## Context
 

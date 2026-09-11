@@ -18,6 +18,7 @@ EXPECTED_FIXERS = {
     "action-pin-plan",
     "container-digest-pin",
     "macos-metadata-ignore",
+    "npm-lock-security-remediation",
     "npm-security-update",
     "python-cache-ignore",
     "python-security-pin",
@@ -35,6 +36,10 @@ EXPECTED_PATH_PATTERNS = {
     "action-pin-plan": [r"^\.github/workflows/[A-Za-z0-9._/-]+\.ya?ml$"],
     "container-digest-pin": [r"^(?:[A-Za-z0-9._-]+/)*Dockerfile[A-Za-z0-9._-]*$"],
     "macos-metadata-ignore": [r"^\.gitignore$"],
+    "npm-lock-security-remediation": [
+        r"^(?:[A-Za-z0-9._-]+/)*package-lock\.json$",
+        r"^(?:[A-Za-z0-9._-]+/)*package\.json$",
+    ],
     "npm-security-update": [
         r"^(?:[A-Za-z0-9._-]+/)*package-lock\.json$",
         r"^(?:[A-Za-z0-9._-]+/)*package\.json$",
@@ -157,7 +162,9 @@ def validate_policy(policy: dict[str, Any], coverage: dict[str, Any]) -> dict[st
 
     fixers = policy["fixers"]
     if set(fixers) != EXPECTED_FIXERS:
-        raise PolicyError("fixer policy must cover exactly the eight allowlisted fixers")
+        raise PolicyError(
+            f"fixer policy must cover exactly the {len(EXPECTED_FIXERS)} allowlisted fixers"
+        )
     for fixer_id, fixer in fixers.items():
         _require_exact_keys(
             fixer,

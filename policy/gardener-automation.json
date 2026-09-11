@@ -73,6 +73,17 @@
         ".DS_Store"
       ]
     },
+    "npm-lock-security-remediation": {
+      "risk_class": "review-required",
+      "minimum_mode": "pr-only",
+      "automatic_merge": false,
+      "allowed_path_patterns": [
+        "^(?:[A-Za-z0-9._-]+/)*package-lock\\.json$",
+        "^(?:[A-Za-z0-9._-]+/)*package\\.json$"
+      ],
+      "automatic_merge_paths": [],
+      "automatic_merge_added_lines": []
+    },
     "npm-security-update": {
       "risk_class": "review-required",
       "minimum_mode": "pr-only",
