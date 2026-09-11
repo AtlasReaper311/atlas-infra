@@ -57,3 +57,11 @@ python3 scripts/adr_trace.py check --root .
 The validator checks the exact mode set, default-disabled state, write gate, producer workflow, attestation requirement, repository classification boundary, nine-fixer inventory, fixer-specific allowed paths, review-only dependency and container fixers, `.gitignore`-only automatic fixers, file and line limits, global forbidden paths, expiry, retention, weekly schedule relationship, selected-repository App mode, exact App permission contract, and all 20 verified public runtime repositories. Contract tests additionally prove that the v1 Finding and RemediationProposal schemas accept the bounded npm graph candidate and reject an empty graph candidate or unknown disposition.
 
 The forensic basis for ADR-0016 is recorded in [`gardener-remediation-coverage-2026-09-10.md`](gardener-remediation-coverage-2026-09-10.md). It is evidence for authority design, not proof that a later implementation or rollout succeeded.
+
+## Verified ADR-0016 implementation and remediation closeout
+
+The reviewed implementation and 11 September 2026 public-runtime remediation wave are recorded in [`gardener-remediation-closeout-2026-09-11.md`](gardener-remediation-closeout-2026-09-11.md).
+
+That closeout binds the six merged `npm-lock-security-remediation` pull requests to their exact merge commits and successful repository deployment workflows, the fresh post-remediation Atlas Dep Audit run and attested Finding bundle, and the final current-head Gardener reconciliation. The fresh bundle contains four remaining non-actionable security Findings and the final controller records four observations with zero plans, proposals, pull requests, refusals, or merge outcomes.
+
+This is completion evidence for ADR-0016 implementation and that remediation wave. It is not a claim that the estate is vulnerability-free, and successful repository deployment workflows are not treated as independent provider or live endpoint verification.
