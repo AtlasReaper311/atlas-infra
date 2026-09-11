@@ -14,9 +14,10 @@ Review the latest controller evidence artifact and identify:
 
 - controller run ID and mode;
 - policy, coverage, and Finding bundle digests;
-- Finding fingerprint and remediation key;
+- Finding fingerprint, remediation disposition, and remediation key;
 - repository, base SHA, expected head SHA, and patch digest;
 - structured remediation candidate kind for dependency or container work;
+- for npm graph work, exact manifest/lock paths, pinned npm version, target digests, direct/transitive operations, parent constraints, and vulnerability IDs;
 - refusal code, observation reason, or pull-request URL;
 - installation-token mint and revoke status without token values;
 - target-gate, CI, merge, and notification outcomes.
@@ -25,17 +26,43 @@ Treat any private key, JWT, installation token, notification token, or secret va
 
 ## Dependency and container proposals
 
-`npm-security-update`, `python-security-pin`, and `container-digest-pin` are review-required fixers. They may create deterministic draft pull requests, but they are not authorised for native automatic merge.
+`npm-security-update`, `npm-lock-security-remediation`, `python-security-pin`, and `container-digest-pin` are review-required fixers. They may create deterministic draft pull requests, but they are not authorised for native automatic merge.
 
-For a dependency proposal, confirm that the Finding candidate identifies a direct dependency, the source file matches the fixer-specific policy boundary, the selected target version is a patch or minor update within the current major version, and every vulnerability identifier recorded by the candidate is represented in the audit evidence. Major upgrades, transitive-only npm findings, missing fixed versions, ambiguous declarations, unsupported Python package formats, and non-deterministic lockfile changes must remain observations or refusals.
+For a direct dependency proposal, confirm that the Finding candidate identifies a direct dependency, the source file matches the fixer-specific policy boundary, the selected target version is a patch or minor update within the current major version, and every vulnerability identifier recorded by the candidate is represented in the audit evidence.
+
+For an npm graph proposal, additionally confirm all of the following:
+
+- the candidate binds exactly one `package.json` and matching lockfile-v3 `package-lock.json` from the audited snapshot;
+- the npm toolchain version is explicit and identical between producer and controller regeneration;
+- lifecycle scripts are disabled during regeneration;
+- every direct update matches one unique existing manifest declaration and remains in the current major version;
+- every transitive update identifies one exact lock node and records every parent package path/specifier constraining that node;
+- every recorded parent range accepts the selected transitive target;
+- no direct dependency or npm `overrides` entry was invented merely to force a transitive version;
+- changed paths are confined to the candidate manifest/lock pair and manifest edits exactly match the structured direct-update list;
+- regenerated manifest and lock digests exactly match the candidate target digests;
+- the bounded post-regeneration vulnerability check no longer reports every vulnerability ID claimed by the candidate.
+
+If any of those checks cannot be reproduced from the exact base snapshot, refuse the proposal. A package version changing is not proof that a vulnerability is remediated.
 
 For a container proposal, confirm that the candidate binds one external Docker Hub tag to one immutable `sha256` digest and that the Dockerfile change preserves the original tag while adding the digest. Named build stages, already digest-pinned bases, unsupported registries, and ambiguous references must not be rewritten.
+
+For non-actionable dependency/container Findings, require a specific disposition rather than treating every result as a generic observation:
+
+- `awaiting-upstream-release` when upstream source evidence exists but the acceptable package release is not yet published;
+- `awaiting-upstream-fix` when no released non-affected target exists;
+- `manual-remediation-required` when a real remediation exists outside deterministic Gardener authority;
+- `unsupported-remediation` when the source, graph, package form, or registry is outside current authority.
+
+`remediation-available` must correspond to an eligible structured candidate. Do not reinterpret a non-actionable disposition as write authority.
+
+Major upgrades, missing or contradictory fixed-version evidence, ambiguous declarations, unsupported Python package formats, unsupported npm graph forms, non-deterministic lockfile changes, package-manager lifecycle execution, and parent-range conflicts must remain non-actionable or fail closed.
 
 Do not treat a passing pull request as deployment evidence. Dependency and container changes can affect runtime behaviour, so merge, deployment, and live verification remain separate authority and evidence steps.
 
 ## Unexpected pull request
 
-Confirm that the head branch begins with `gardener/`, the pull-request body contains the machine approval marker, and the exact head SHA matches the controller evidence. Confirm that every changed file matches the selected fixer's `allowed_path_patterns` from the committed Atlas Infra authority. Disable native auto-merge on the pull request before further inspection. Close the pull request if the approval, patch, actor, repository classification, base SHA, policy digest, structured candidate, or fixer path boundary does not match.
+Confirm that the head branch begins with `gardener/`, the pull-request body contains the machine approval marker, and the exact head SHA matches the controller evidence. Confirm that every changed file matches the selected fixer's `allowed_path_patterns` from the committed Atlas Infra authority. For npm graph proposals, confirm the exact manifest/lock pair and target digests agree with the controller evidence. Disable native auto-merge on the pull request before further inspection. Close the pull request if the approval, patch, actor, repository classification, base SHA, policy digest, structured candidate, fixer path boundary, regenerated dependency graph, or vulnerability postcondition does not match.
 
 Do not force-push or reuse an owner-authored branch. Gardener branches are deterministic per repository, rule, Finding fingerprint, fixer version, and target base state.
 
@@ -81,6 +108,12 @@ Evidence:
 
 The proof exposed three permanent verification requirements: bind jobs to the exact Actions `run_attempt`, accept both authority-approved `.DS_Store` patch forms, and classify deployment evidence rather than assuming every merge deploys.
 
+## ADR-0015 remediation proof and ADR-0016 correction
+
+The first ADR-0015 live dependency/container execution on 10 September 2026 produced two bounded container-digest draft pull requests and fifteen dependency observations from seventeen Findings. It proved the write path but exposed insufficient dependency coverage and an Atlas Dep Audit OSV enrichment defect. The exact replay and corrected design target are recorded in `docs/gardener-remediation-coverage-2026-09-10.md`.
+
+ADR-0016 does not retroactively classify those fifteen dependency observations as eligible. Producer correctness, exact graph regeneration, parent-range checks, target digest binding, and vulnerability postconditions must all pass before a fresh Finding may become `remediation-available`.
+
 ## Production readiness
 
 Before enabling a target batch, run the committed source-policy validator and the read-only target-readiness verifier. Every target used for automatic housekeeping merge must have:
@@ -92,7 +125,7 @@ Before enabling a target batch, run the committed source-policy validator and th
 - repository native auto-merge disabled at rest;
 - `ATLAS_GARDENER_AUTOMERGE_ENABLED=false` at rest.
 
-The three dependency and container fixers remain draft-PR-only even when the controller mode is `automerge-low-risk`. Automatic merge for those fixers requires a later accepted authority change and a target-gate implementation capable of revalidating dependency and container output.
+All four dependency and container fixers remain draft-PR-only even when the controller mode is `automerge-low-risk`. Automatic merge for those fixers requires a later accepted authority change and a target-gate implementation capable of revalidating their complete output. ADR-0016 does not grant that authority.
 
 The scheduled production cadence is Monday audit ingestion at `08:41 UTC`, followed by controller reconciliation at `10:15 UTC`. Manual dispatch remains available. Do not enable a daily controller against a thirty-six-hour Finding lifetime.
 
@@ -101,10 +134,11 @@ The scheduled production cadence is Monday audit ingestion at `08:41 UTC`, follo
 Restore service in stages:
 
 1. validate source with mode `disabled`;
-2. run `observe` and inspect one complete evidence artifact;
-3. run `pr-only` against one eligible dependency or container Finding and inspect the exact draft;
-4. verify repository-native CI against the exact draft head;
-5. retain manual review for dependency and container proposals;
-6. use `automerge-low-risk` only for the separately authorised housekeeping boundary.
+2. run `observe` and inspect one complete evidence artifact, including dispositions;
+3. for npm graph work, reproduce one candidate independently against its exact base without any target write;
+4. run `pr-only` against one eligible dependency or container Finding and inspect the exact draft;
+5. verify repository-native CI against the exact draft head;
+6. retain manual review for dependency and container proposals;
+7. use `automerge-low-risk` only for the separately authorised housekeeping boundary.
 
 A merged source change, successful dry run, target workflow installation, or enabled repository setting does not prove live automatic operation. Live completion for dependency and container remediation requires one real eligible Finding, deterministic pull-request creation, repository-native validation, an owner-authorised merge, explicit deployment classification, and live verification where deployment occurs.
