@@ -54,7 +54,8 @@
       "properties": {
         "eligible": {"type": "boolean"},
         "reason": {"type": "string", "minLength": 1, "maxLength": 240},
-        "candidate": {"oneOf": [{"$ref": "#/$defs/dependencyCandidate"}, {"$ref": "#/$defs/containerCandidate"}]}
+        "disposition": {"enum": ["remediation-available", "awaiting-upstream-release", "awaiting-upstream-fix", "manual-remediation-required", "unsupported-remediation"]},
+        "candidate": {"oneOf": [{"$ref": "#/$defs/dependencyCandidate"}, {"$ref": "#/$defs/containerCandidate"}, {"$ref": "#/$defs/npmGraphCandidate"}]}
       }
     },
     "runbook_ref": {"type": "string", "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))[A-Za-z0-9._/-]+\\.md$", "maxLength": 240}
@@ -86,6 +87,62 @@
         "current_reference": {"type": "string", "pattern": "^[A-Za-z0-9._/:@-]+$", "minLength": 1, "maxLength": 200},
         "target_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
       }
+    },
+    "npmGraphCandidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "manifest_file", "lockfile_file", "npm_version", "direct_updates", "transitive_updates", "vulnerability_ids", "target_manifest_sha256", "target_lockfile_sha256"],
+      "properties": {
+        "kind": {"const": "npm-lock-security-remediation"},
+        "manifest_file": {"type": "string", "pattern": "^(?:[A-Za-z0-9._-]+/)*package\\.json$", "maxLength": 240},
+        "lockfile_file": {"type": "string", "pattern": "^(?:[A-Za-z0-9._-]+/)*package-lock\\.json$", "maxLength": 240},
+        "npm_version": {"type": "string", "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$", "maxLength": 40},
+        "direct_updates": {"type": "array", "maxItems": 20, "uniqueItems": true, "items": {"$ref": "#/$defs/npmDirectUpdate"}},
+        "transitive_updates": {"type": "array", "maxItems": 40, "uniqueItems": true, "items": {"$ref": "#/$defs/npmTransitiveUpdate"}},
+        "vulnerability_ids": {"type": "array", "minItems": 1, "maxItems": 100, "uniqueItems": true, "items": {"type": "string", "pattern": "^[A-Za-z0-9._:-]+$", "maxLength": 128}},
+        "target_manifest_sha256": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+        "target_lockfile_sha256": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+      },
+      "anyOf": [
+        {"properties": {"direct_updates": {"type": "array", "minItems": 1}}},
+        {"properties": {"transitive_updates": {"type": "array", "minItems": 1}}}
+      ]
+    },
+    "npmDirectUpdate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["dependency", "section", "current_version", "target_version", "current_spec", "target_spec", "vulnerability_ids"],
+      "properties": {
+        "dependency": {"type": "string", "pattern": "^[A-Za-z0-9@._/-]+$", "minLength": 1, "maxLength": 160},
+        "section": {"enum": ["dependencies", "devDependencies", "optionalDependencies"]},
+        "current_version": {"type": "string", "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"},
+        "target_version": {"type": "string", "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"},
+        "current_spec": {"type": "string", "pattern": "^[~^]?[0-9]+\\.[0-9]+\\.[0-9]+$", "maxLength": 80},
+        "target_spec": {"type": "string", "pattern": "^[~^]?[0-9]+\\.[0-9]+\\.[0-9]+$", "maxLength": 80},
+        "vulnerability_ids": {"type": "array", "minItems": 1, "maxItems": 20, "uniqueItems": true, "items": {"type": "string", "pattern": "^[A-Za-z0-9._:-]+$", "maxLength": 128}}
+      }
+    },
+    "npmTransitiveUpdate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["dependency", "package_path", "current_version", "target_version", "parents", "vulnerability_ids"],
+      "properties": {
+        "dependency": {"type": "string", "pattern": "^[A-Za-z0-9@._/-]+$", "minLength": 1, "maxLength": 160},
+        "package_path": {"type": "string", "pattern": "^node_modules/(?:[A-Za-z0-9@._-]+/)*[A-Za-z0-9@._-]+$", "maxLength": 240},
+        "current_version": {"type": "string", "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"},
+        "target_version": {"type": "string", "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"},
+        "parents": {"type": "array", "minItems": 1, "maxItems": 50, "uniqueItems": true, "items": {"$ref": "#/$defs/npmParentConstraint"}},
+        "vulnerability_ids": {"type": "array", "minItems": 1, "maxItems": 20, "uniqueItems": true, "items": {"type": "string", "pattern": "^[A-Za-z0-9._:-]+$", "maxLength": 128}}
+      }
+    },
+    "npmParentConstraint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["package_path", "specifier"],
+      "properties": {
+        "package_path": {"type": "string", "pattern": "^node_modules/(?:[A-Za-z0-9@._-]+/)*[A-Za-z0-9@._-]+$", "maxLength": 240},
+        "specifier": {"type": "string", "pattern": "^[0-9A-Za-z.*+<>=~^| -]+$", "minLength": 1, "maxLength": 100}
+      }
     }
   },
   "examples": [{
@@ -99,7 +156,7 @@
     "evidence": {"summary": "A contract fixture failed validation.", "references": ["https://github.com/AtlasReaper311/atlas-infra/actions/runs/100"], "redacted": true},
     "detected_at": "2026-07-14T10:00:00Z",
     "fingerprint": "sha256:195f317331e98e586d17af0766b7096cd28262805db932538f3870dc5e73c25a",
-    "remediation": {"eligible": false, "reason": "Schema governance changes require owner review."},
+    "remediation": {"eligible": false, "reason": "Schema governance changes require owner review.", "disposition": "manual-remediation-required"},
     "runbook_ref": "docs/runbooks/control-plane-contract-validation.md"
   }]
 }
