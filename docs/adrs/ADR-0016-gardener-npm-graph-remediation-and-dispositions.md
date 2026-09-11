@@ -1,6 +1,6 @@
 +++
 id = "ADR-0016"
-date = 2026-09-10
+date = 2026-09-11
 status = "accepted"
 visibility = "public"
 supersedes = "ADR-0015"
@@ -48,17 +48,17 @@ The approved values are:
 
 A disposition is evidence classification, not mutation authority. `remediation.eligible` remains the write eligibility gate.
 
-### Npm graph remediation candidate
+### npm graph remediation candidate
 
-The Finding contract gains the `npm-lock-security-remediation` candidate kind. One candidate represents one exact npm manifest/lock graph and may contain both direct-parent and transitive operations so Gardener does not open competing pull requests against the same `package-lock.json` snapshot.
+The Finding and RemediationProposal contracts gain the `npm-lock-security-remediation` candidate kind. One candidate represents one exact npm manifest/lock graph and may contain both direct-parent and transitive operations so Gardener does not open competing pull requests against the same `package-lock.json` snapshot.
 
 The candidate is limited to an exact `package.json` and matching lockfile-v3 `package-lock.json`. It carries:
 
 - the manifest and lockfile paths;
 - the exact npm version used for regeneration;
-- zero or more direct dependency updates with current/target versions and current/target manifest specs;
-- zero or more transitive dependency targets with current/target versions and every discovered parent package path/specifier that constrains the target;
-- the vulnerability identifiers the regenerated graph proves absent;
+- zero or more direct dependency updates with dependency identity, manifest section, current/target versions, current/target manifest specs, and the vulnerability IDs associated with that operation;
+- zero or more transitive dependency targets with dependency identity, exact lock-node path, current/target versions, every discovered parent package path/specifier constraining the target, and the vulnerability IDs associated with that operation;
+- the complete vulnerability identifier set the regenerated graph proves absent;
 - the expected target manifest and lockfile SHA-256 digests.
 
 At least one direct or transitive operation is required.
