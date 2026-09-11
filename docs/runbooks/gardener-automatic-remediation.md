@@ -66,6 +66,18 @@ Confirm that the head branch begins with `gardener/`, the pull-request body cont
 
 Do not force-push or reuse an owner-authored branch. Gardener branches are deterministic per repository, rule, Finding fingerprint, fixer version, and target base state.
 
+## Closed obsolete Gardener proposal
+
+A closed, unmerged Gardener pull request is not automatically reusable. Inspect its signed approval marker and compare its plan digest and patch digest with the current deterministic plan for the same remediation key.
+
+- If the closed pull request binds the exact current plan and patch, treat the closure as deliberate owner intent. Do not reopen it and do not create another pull request for that exact plan.
+- If the closed pull request binds an obsolete plan or patch while the remediation key and exact target base are unchanged, Gardener may create one replacement draft using the ADR-0016 replacement branch form `gardener/<fixer-id>-<first-12-key-hex>-r-<first-12-patch-hex>`.
+- Leave the obsolete pull request and branch unchanged. Never force-push, delete, reopen, or retarget them.
+- Recompute the replacement plan digest after selecting the replacement branch and require the new approval marker to bind the current plan digest, patch digest, exact base SHA, and expected head SHA.
+- If the replacement branch already has an exact open pull request, treat it as idempotent. If it has an exact merged pull request, treat it as already remediated. If it has an exact closed-unmerged pull request, respect that closure. Any conflicting approval, duplicate pull request, unexplained branch, or mismatched open/merged proposal must fail closed.
+
+This recovery path does not expand automatic merge. Dependency and container replacements remain review-required draft pull requests.
+
 ## Unexpected merge
 
 Disable the write gate and controller mode before reverting. Revert the squash merge through a reviewed pull request in the target repository. Do not edit the default branch directly. Record the original remediation key, merge commit, revert pull request, cause, and policy change required to prevent recurrence.
