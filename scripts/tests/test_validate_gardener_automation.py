@@ -8,6 +8,7 @@ SCRIPTS = Path(__file__).resolve().parents[1]
 ROOT = SCRIPTS.parent
 sys.path.insert(0, str(SCRIPTS))
 
+import control_plane_contracts
 import validate_gardener_automation
 
 
@@ -20,6 +21,46 @@ class GardenerAutomationAuthorityTests(unittest.TestCase):
 
     def coverage(self) -> dict:
         return self.load("policy/gardener-github-app-coverage.json")
+
+    def graph_candidate(self) -> dict:
+        return {
+            "kind": "npm-lock-security-remediation",
+            "manifest_file": "package.json",
+            "lockfile_file": "package-lock.json",
+            "npm_version": "10.9.3",
+            "direct_updates": [
+                {
+                    "dependency": "wrangler",
+                    "section": "devDependencies",
+                    "current_version": "4.127.0",
+                    "target_version": "4.131.0",
+                    "current_spec": "^4.127.0",
+                    "target_spec": "^4.131.0",
+                    "vulnerability_ids": ["GHSA-rgj7-g3m4-5g8c"],
+                }
+            ],
+            "transitive_updates": [
+                {
+                    "dependency": "brace-expansion",
+                    "package_path": "node_modules/brace-expansion",
+                    "current_version": "5.0.7",
+                    "target_version": "5.0.9",
+                    "parents": [
+                        {
+                            "package_path": "node_modules/minimatch",
+                            "specifier": "^5.0.0",
+                        }
+                    ],
+                    "vulnerability_ids": ["GHSA-rgw5-rvv9-x895"],
+                }
+            ],
+            "vulnerability_ids": [
+                "GHSA-rgj7-g3m4-5g8c",
+                "GHSA-rgw5-rvv9-x895",
+            ],
+            "target_manifest_sha256": "sha256:" + "a" * 64,
+            "target_lockfile_sha256": "sha256:" + "b" * 64,
+        }
 
     def test_committed_policy_is_valid_and_disabled(self):
         report = validate_gardener_automation.validate_policy(
@@ -36,6 +77,7 @@ class GardenerAutomationAuthorityTests(unittest.TestCase):
             [
                 "action-pin-plan",
                 "container-digest-pin",
+                "npm-lock-security-remediation",
                 "npm-security-update",
                 "python-security-pin",
                 "workflow-permissions",
@@ -70,6 +112,15 @@ class GardenerAutomationAuthorityTests(unittest.TestCase):
         ):
             validate_gardener_automation.validate_policy(policy, self.coverage())
 
+    def test_graph_fixer_cannot_gain_automatic_merge(self):
+        policy = self.policy()
+        policy["fixers"]["npm-lock-security-remediation"]["automatic_merge"] = True
+        policy["fixers"]["npm-lock-security-remediation"]["risk_class"] = "low"
+        with self.assertRaisesRegex(
+            validate_gardener_automation.PolicyError, "must remain review-only"
+        ):
+            validate_gardener_automation.validate_policy(policy, self.coverage())
+
     def test_container_fixer_cannot_gain_automatic_merge(self):
         policy = self.policy()
         policy["fixers"]["container-digest-pin"]["automatic_merge"] = True
@@ -93,6 +144,16 @@ class GardenerAutomationAuthorityTests(unittest.TestCase):
     def test_fixer_path_boundary_cannot_expand(self):
         policy = self.policy()
         policy["fixers"]["python-security-pin"]["allowed_path_patterns"] = [r".*"]
+        with self.assertRaisesRegex(
+            validate_gardener_automation.PolicyError, "allowed path boundary changed"
+        ):
+            validate_gardener_automation.validate_policy(policy, self.coverage())
+
+    def test_graph_fixer_path_boundary_cannot_expand(self):
+        policy = self.policy()
+        policy["fixers"]["npm-lock-security-remediation"]["allowed_path_patterns"] = [
+            r".*"
+        ]
         with self.assertRaisesRegex(
             validate_gardener_automation.PolicyError, "allowed path boundary changed"
         ):
@@ -152,6 +213,63 @@ class GardenerAutomationAuthorityTests(unittest.TestCase):
         self.assertEqual(
             validate_gardener_automation.digest_json(policy),
             validate_gardener_automation.digest_json(reordered),
+        )
+
+    def test_finding_schema_accepts_graph_candidate_and_disposition(self):
+        schema = self.load("contracts/v1/finding.schema.json")
+        finding = self.load("contracts/v1/fixtures/valid/finding.json")
+        finding["remediation"] = {
+            "eligible": True,
+            "reason": "Bounded npm graph regeneration proved the advisory set absent.",
+            "disposition": "remediation-available",
+            "candidate": self.graph_candidate(),
+        }
+        self.assertEqual(
+            [], control_plane_contracts.validate_instance(finding, schema)
+        )
+        fingerprint_rules = self.load("contracts/v1/fingerprint-rules.json")
+        self.assertEqual(
+            [],
+            control_plane_contracts.semantic_errors(
+                "finding.schema.json", finding, fingerprint_rules
+            ),
+        )
+
+    def test_graph_candidate_requires_at_least_one_operation(self):
+        schema = self.load("contracts/v1/finding.schema.json")
+        finding = self.load("contracts/v1/fixtures/valid/finding.json")
+        candidate = self.graph_candidate()
+        candidate["direct_updates"] = []
+        candidate["transitive_updates"] = []
+        finding["remediation"] = {
+            "eligible": True,
+            "reason": "Invalid empty graph candidate.",
+            "disposition": "remediation-available",
+            "candidate": candidate,
+        }
+        errors = control_plane_contracts.validate_instance(finding, schema)
+        self.assertTrue(any("anyOf" in error for error in errors), errors)
+
+    def test_unknown_disposition_is_rejected(self):
+        schema = self.load("contracts/v1/finding.schema.json")
+        finding = self.load("contracts/v1/fixtures/valid/finding.json")
+        finding["remediation"]["disposition"] = "pretend-fixed"
+        errors = control_plane_contracts.validate_instance(finding, schema)
+        self.assertTrue(any("must be one of" in error for error in errors), errors)
+
+    def test_proposal_schema_accepts_graph_remediation_input(self):
+        schema = self.load("contracts/v1/remediation-proposal.schema.json")
+        proposal = self.load("contracts/v1/fixtures/valid/remediation-proposal.json")
+        proposal["remediation_input"] = self.graph_candidate()
+        self.assertEqual(
+            [], control_plane_contracts.validate_instance(proposal, schema)
+        )
+        fingerprint_rules = self.load("contracts/v1/fingerprint-rules.json")
+        self.assertEqual(
+            [],
+            control_plane_contracts.semantic_errors(
+                "remediation-proposal.schema.json", proposal, fingerprint_rules
+            ),
         )
 
 
