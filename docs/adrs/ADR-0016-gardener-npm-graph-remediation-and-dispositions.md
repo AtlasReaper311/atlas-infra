@@ -98,6 +98,25 @@ Its write boundary is limited to `package.json` and `package-lock.json` beneath 
 
 It is never automatically mergeable under this ADR. Existing `npm-security-update`, `python-security-pin`, and `container-digest-pin` also remain review-required. `macos-metadata-ignore` and `python-cache-ignore` remain the only automatically mergeable fixers.
 
+### Closed-unmerged proposal replacement
+
+The remediation key remains the stable semantic identity for one repository, rule, Finding fingerprint, fixer version, and exact target base SHA. It does not change merely because the deterministic implementation of the reviewed patch is corrected.
+
+The primary Gardener branch derived from that remediation key remains authoritative for the first proposal. Gardener may inspect pull requests on that branch but must not force-push, reopen, edit, delete, or otherwise reuse a closed proposal branch.
+
+A matching open pull request is idempotent only when its signed approval marker binds the exact current plan digest and patch digest. A matching merged pull request is already remediated only under the same exact-plan and exact-patch condition. An open or merged pull request carrying the same remediation key but a different current plan or patch must fail closed.
+
+A matching closed, unmerged pull request has two cases:
+
+- when its approval marker binds the exact current plan and patch, Gardener must respect the owner closure and must not recreate the proposal;
+- when its approval marker binds an obsolete plan or patch for the same remediation key, Gardener may create one replacement draft pull request on a new deterministic replacement branch.
+
+The replacement branch must be derived only from the existing remediation key, fixer ID, and the current patch digest. Its branch name is `gardener/<fixer-id>-<first-12-key-hex>-r-<first-12-patch-hex>`. The replacement plan digest must be recomputed after that branch is selected, and the resulting approval must bind the replacement branch, current plan digest, current patch digest, exact base SHA, and expected head SHA.
+
+If a replacement branch or pull request already exists, the same exact-state rules apply: an exact open proposal is idempotent, an exact merged proposal is already remediated, and an exact closed-unmerged proposal remains closed. Any conflicting state, duplicate matching pull request, unexplained branch, or approval mismatch fails closed.
+
+This recovery path does not expand mutation or merge authority. Replacement dependency and container proposals remain review-required draft pull requests. Gardener gains no force-push, branch deletion, pull-request reopen/update, merge, Actions, Administration, or settings permission.
+
 ### Current replay decisions
 
 The exact 10 September replay establishes the following design targets, not pre-authorised output:
@@ -116,7 +135,9 @@ Gardener can address security findings caused by an otherwise safe direct toolch
 
 Mixed lockfiles can be handled as one deterministic source proposal instead of multiple conflicting Gardener branches. The post-regeneration vulnerability proof makes graph state, rather than a guessed package-name mapping, the acceptance criterion.
 
-The controller gains a tightly bounded package-manager execution path. That raises implementation complexity and requires strong regression coverage for lifecycle-script suppression, toolchain pinning, network/package-resolution errors, graph ambiguity, parent-range validation, changed-path containment, output digest agreement, stale snapshots, and vulnerability postconditions.
+A deliberately closed proposal remains closed unless the reviewed deterministic patch itself changes. A corrected patch may be proposed exactly once on a replacement branch without mutating or reusing the obsolete branch, preserving both owner intent and auditable history.
+
+The controller gains a tightly bounded package-manager execution path. That raises implementation complexity and requires strong regression coverage for lifecycle-script suppression, toolchain pinning, network/package-resolution errors, graph ambiguity, parent-range validation, changed-path containment, output digest agreement, stale snapshots, vulnerability postconditions, and closed-proposal replacement identity.
 
 Findings with no released non-affected target remain visible and specifically classified. Gardener must not invent replacement versions, use prereleases without separate authority, or suppress advisories simply to improve remediation counts.
 
