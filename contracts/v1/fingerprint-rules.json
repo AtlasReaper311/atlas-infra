@@ -44,6 +44,32 @@
       ],
       "prefix": "proposal:sha256:",
       "output_path": "proposal_id"
+    },
+    "twin-impact-projection": {
+      "kind": "selected-fields",
+      "schema": "twin-impact-projection.schema.json",
+      "fields": [
+        "schema_version",
+        "generated_at",
+        "subject",
+        "impact.conclusion",
+        "impact.scope",
+        "impact.coverage",
+        "impact.relationships",
+        "impact.unknowns",
+        "analysis",
+        "provenance",
+        "distribution",
+        "privacy",
+        "limitations"
+      ],
+      "sort_arrays": [
+        "impact.relationships",
+        "impact.unknowns",
+        "limitations"
+      ],
+      "prefix": "sha256:",
+      "output_path": "projection_fingerprint"
     }
   },
   "trace_rules": {

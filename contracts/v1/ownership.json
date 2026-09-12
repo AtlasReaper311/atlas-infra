@@ -21,6 +21,7 @@
     "remediation-proposal.schema.json",
     "runbook-index-entry.schema.json",
     "service-contract.schema.json",
+    "twin-impact-projection.schema.json",
     "atlas-trace/evidence-node.schema.json",
     "atlas-trace/evidence-edge.schema.json",
     "atlas-trace/evidence-graph.schema.json",

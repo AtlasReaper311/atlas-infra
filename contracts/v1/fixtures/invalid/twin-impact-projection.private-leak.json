@@ -1,0 +1,73 @@
+{
+  "schema_version": "atlas-control-plane/twin-impact-projection/v1",
+  "projection_fingerprint": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+  "generated_at": "2026-09-12T20:00:00Z",
+  "subject": {
+    "visibility": "public",
+    "repository": "AtlasReaper311/atlas-api-public",
+    "base_oid": "1111111111111111111111111111111111111111",
+    "head_oid": "2222222222222222222222222222222222222222"
+  },
+  "impact": {
+    "conclusion": "could-be-affected",
+    "scope": "public-only",
+    "coverage": "known-public-scope",
+    "relationships": [
+      {
+        "kind": "repository",
+        "id": "AtlasReaper311/atlas-twin",
+        "relation": "indirect-consumer",
+        "evidence_class": "twin-impact"
+      }
+    ],
+    "unknowns": []
+  },
+  "analysis": {
+    "mode": "offline-twin-analysis",
+    "passport_schema_version": "atlas-change-passport/v1",
+    "passport_request_fingerprint": "3333333333333333333333333333333333333333333333333333333333333333",
+    "passport_generated_at": "2026-09-12T19:59:00Z"
+  },
+  "provenance": {
+    "producer_id": "atlas-twin",
+    "producer_version": "1.1.0",
+    "producer_contract": "atlas-change-passport/v1",
+    "authority_repository": "AtlasReaper311/atlas-infra",
+    "authority_commit": "d20ac7593b5ce935ddf0745cdee5f452b1222dd1",
+    "classification_source": {
+      "repository": "AtlasReaper311/atlas-infra",
+      "path": "policy/public-repository-classifications.json",
+      "fingerprint": "sha256:fbb4172ca2e55070ceb1ac29d6cd7ea1380a9b19f4207da2aa4c1c250a9aacbd"
+    },
+    "topology_source": {
+      "repository": "AtlasReaper311/atlas-api-public",
+      "path": "data/estate.manifest.json",
+      "commit": "8ff638f92cfc3a3ec5e2243ecb6464c964bd8e65"
+    },
+    "projection_policy": "ADR-0017"
+  },
+  "distribution": {
+    "mode": "static-public-projection",
+    "serving_repository": "AtlasReaper311/atlas-api-public",
+    "path": "data/twin-impact-projection.json",
+    "route": "/v1/evidence/twin-impact"
+  },
+  "privacy": {
+    "mode": "public-safe",
+    "redaction": "drop-private-or-unclassified",
+    "public_identities_only": true,
+    "private_data_excluded": true,
+    "unknown_data_not_inferred": true
+  },
+  "limitations": [
+    "could-be-affected-only",
+    "no-merge-approval",
+    "no-deployment-claim",
+    "no-runtime-claim",
+    "no-live-claim",
+    "no-publication-claim",
+    "no-failure-claim",
+    "no-estate-completeness-claim",
+    "private-or-unclassified-evidence-may-be-unknown"
+  ]
+}
