@@ -121,6 +121,17 @@
       "path": "invalid/release-reliability-correlation.causal-claim.json",
       "valid": false,
       "expected_error": "must equal True"
+    },
+    {
+      "schema": "twin-impact-projection.schema.json",
+      "path": "valid/twin-impact-projection.json",
+      "valid": true
+    },
+    {
+      "schema": "twin-impact-projection.schema.json",
+      "path": "invalid/twin-impact-projection.private-leak.json",
+      "valid": false,
+      "expected_error": "not in current public classification"
     }
   ]
 }

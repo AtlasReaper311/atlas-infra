@@ -1,0 +1,340 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.atlas-systems.uk/control-plane/v1/twin-impact-projection.schema.json",
+  "title": "Atlas Twin public impact projection v1",
+  "description": "A bounded public projection of what a Twin analysis says could be affected. It is not delivery, runtime, failure, publication, or live evidence.",
+  "type": "object",
+  "additionalProperties": false,
+  "x-owner": {
+    "repository": "AtlasReaper311/atlas-infra",
+    "producer": "Atlas Twin",
+    "serving_consumer": "AtlasReaper311/atlas-api-public",
+    "phase_2_4_consumer": "AtlasReaper311/atlas-systems"
+  },
+  "required": [
+    "schema_version",
+    "projection_fingerprint",
+    "generated_at",
+    "subject",
+    "impact",
+    "analysis",
+    "provenance",
+    "distribution",
+    "privacy",
+    "limitations"
+  ],
+  "properties": {
+    "schema_version": {"const": "atlas-control-plane/twin-impact-projection/v1"},
+    "projection_fingerprint": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "generated_at": {"type": "string", "format": "date-time"},
+    "subject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["visibility", "repository", "base_oid", "head_oid"],
+      "properties": {
+        "visibility": {"enum": ["public", "private-or-unknown"]},
+        "repository": {
+          "type": ["string", "null"],
+          "pattern": "^AtlasReaper311/[A-Za-z0-9._-]+$",
+          "maxLength": 128
+        },
+        "base_oid": {
+          "type": ["string", "null"],
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "head_oid": {
+          "type": ["string", "null"],
+          "pattern": "^[0-9a-f]{40}$"
+        }
+      }
+    },
+    "impact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["conclusion", "scope", "coverage", "relationships", "unknowns"],
+      "properties": {
+        "conclusion": {"const": "could-be-affected"},
+        "scope": {"const": "public-only"},
+        "coverage": {"enum": ["known-public-scope", "partial-public-scope", "unknown"]},
+        "relationships": {
+          "description": "Repository membership is checked against the current Atlas Infra public classification. Component and service membership must be proved by the named public topology exporter before publication; identifier syntax alone is not public-identity proof.",
+          "type": "array",
+          "maxItems": 100,
+          "uniqueItems": true,
+          "items": {
+            "oneOf": [
+              {"$ref": "#/$defs/repositoryRelationship"},
+              {"$ref": "#/$defs/componentRelationship"},
+              {"$ref": "#/$defs/serviceRelationship"}
+            ]
+          }
+        },
+        "unknowns": {
+          "type": "array",
+          "maxItems": 8,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "private-or-unclassified-evidence",
+              "public-classification-unavailable",
+              "passport-source-unavailable",
+              "public-topology-relationship-unavailable",
+              "private-or-unknown-subject"
+            ]
+          }
+        }
+      }
+    },
+    "analysis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mode",
+        "passport_schema_version",
+        "passport_request_fingerprint",
+        "passport_generated_at"
+      ],
+      "properties": {
+        "mode": {"const": "offline-twin-analysis"},
+        "passport_schema_version": {"const": "atlas-change-passport/v1"},
+        "passport_request_fingerprint": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "passport_generated_at": {"type": "string", "format": "date-time"}
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "producer_id",
+        "producer_version",
+        "producer_contract",
+        "authority_repository",
+        "authority_commit",
+        "classification_source",
+        "topology_source",
+        "projection_policy"
+      ],
+      "properties": {
+        "producer_id": {"const": "atlas-twin"},
+        "producer_version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
+        "producer_contract": {"const": "atlas-change-passport/v1"},
+        "authority_repository": {"const": "AtlasReaper311/atlas-infra"},
+        "authority_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "classification_source": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["repository", "path", "fingerprint"],
+          "properties": {
+            "repository": {"const": "AtlasReaper311/atlas-infra"},
+            "path": {"const": "policy/public-repository-classifications.json"},
+            "fingerprint": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+          }
+        },
+        "topology_source": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["repository", "path", "commit"],
+          "properties": {
+            "repository": {"const": "AtlasReaper311/atlas-api-public"},
+            "path": {"const": "data/estate.manifest.json"},
+            "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"}
+          }
+        },
+        "projection_policy": {"const": "ADR-0017"}
+      }
+    },
+    "distribution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "serving_repository", "path", "route"],
+      "properties": {
+        "mode": {"const": "static-public-projection"},
+        "serving_repository": {"const": "AtlasReaper311/atlas-api-public"},
+        "path": {"const": "data/twin-impact-projection.json"},
+        "route": {"const": "/v1/evidence/twin-impact"}
+      }
+    },
+    "privacy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mode",
+        "redaction",
+        "public_identities_only",
+        "private_data_excluded",
+        "unknown_data_not_inferred"
+      ],
+      "properties": {
+        "mode": {"const": "public-safe"},
+        "redaction": {"const": "drop-private-or-unclassified"},
+        "public_identities_only": {"const": true},
+        "private_data_excluded": {"const": true},
+        "unknown_data_not_inferred": {"const": true}
+      }
+    },
+    "limitations": {
+      "type": "array",
+      "minItems": 9,
+      "maxItems": 9,
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "could-be-affected-only",
+          "no-merge-approval",
+          "no-deployment-claim",
+          "no-runtime-claim",
+          "no-live-claim",
+          "no-publication-claim",
+          "no-failure-claim",
+          "no-estate-completeness-claim",
+          "private-or-unclassified-evidence-may-be-unknown"
+        ]
+      }
+    }
+  },
+  "$defs": {
+    "relationshipBase": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "id", "relation", "evidence_class", "identity_authority"],
+      "properties": {
+        "kind": {"type": "string"},
+        "id": {"type": "string"},
+        "relation": {
+          "enum": ["changed", "direct-consumer", "indirect-consumer", "declared-service"]
+        },
+        "evidence_class": {"const": "twin-impact"},
+        "identity_authority": {
+          "type": "string",
+          "description": "The authority that must prove this identity before the projection is published. Infra validates repository membership; the future Twin exporter validates component and service membership against the current public API topology."
+        }
+      }
+    },
+    "repositoryRelationship": {
+      "allOf": [
+        {"$ref": "#/$defs/relationshipBase"},
+        {
+          "properties": {
+            "kind": {"const": "repository"},
+            "id": {"type": "string", "pattern": "^AtlasReaper311/[A-Za-z0-9._-]+$", "maxLength": 128},
+            "identity_authority": {"const": "atlas-infra-public-classification"}
+          }
+        }
+      ]
+    },
+    "componentRelationship": {
+      "allOf": [
+        {"$ref": "#/$defs/relationshipBase"},
+        {
+          "properties": {
+            "kind": {"const": "component"},
+            "id": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$", "maxLength": 96},
+            "identity_authority": {"const": "atlas-api-public-topology-exporter"}
+          }
+        }
+      ]
+    },
+    "serviceRelationship": {
+      "allOf": [
+        {"$ref": "#/$defs/relationshipBase"},
+        {
+          "properties": {
+            "kind": {"const": "service"},
+            "id": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$", "maxLength": 96},
+            "identity_authority": {"const": "atlas-api-public-topology-exporter"}
+          }
+        }
+      ]
+    }
+  },
+  "examples": [
+    {
+      "schema_version": "atlas-control-plane/twin-impact-projection/v1",
+      "projection_fingerprint": "sha256:1adaf487602b5c5df6908f6198efa69dc36f0e9105567cbfe07d068aba00bb48",
+      "generated_at": "2026-09-12T20:00:00Z",
+      "subject": {
+        "visibility": "public",
+        "repository": "AtlasReaper311/atlas-api-public",
+        "base_oid": "1111111111111111111111111111111111111111",
+        "head_oid": "2222222222222222222222222222222222222222"
+      },
+      "impact": {
+        "conclusion": "could-be-affected",
+        "scope": "public-only",
+        "coverage": "known-public-scope",
+        "relationships": [
+          {
+            "kind": "repository",
+            "id": "AtlasReaper311/atlas-api-public",
+            "relation": "changed",
+            "evidence_class": "twin-impact",
+            "identity_authority": "atlas-infra-public-classification"
+          },
+          {
+            "kind": "component",
+            "id": "topology",
+            "relation": "direct-consumer",
+            "evidence_class": "twin-impact",
+            "identity_authority": "atlas-api-public-topology-exporter"
+          },
+          {
+            "kind": "service",
+            "id": "atlas-api-public",
+            "relation": "declared-service",
+            "evidence_class": "twin-impact",
+            "identity_authority": "atlas-api-public-topology-exporter"
+          }
+        ],
+        "unknowns": []
+      },
+      "analysis": {
+        "mode": "offline-twin-analysis",
+        "passport_schema_version": "atlas-change-passport/v1",
+        "passport_request_fingerprint": "3333333333333333333333333333333333333333333333333333333333333333",
+        "passport_generated_at": "2026-09-12T19:59:00Z"
+      },
+      "provenance": {
+        "producer_id": "atlas-twin",
+        "producer_version": "1.1.0",
+        "producer_contract": "atlas-change-passport/v1",
+        "authority_repository": "AtlasReaper311/atlas-infra",
+        "authority_commit": "d20ac7593b5ce935ddf0745cdee5f452b1222dd1",
+        "classification_source": {
+          "repository": "AtlasReaper311/atlas-infra",
+          "path": "policy/public-repository-classifications.json",
+          "fingerprint": "sha256:fbb4172ca2e55070ceb1ac29d6cd7ea1380a9b19f4207da2aa4c1c250a9aacbd"
+        },
+        "topology_source": {
+          "repository": "AtlasReaper311/atlas-api-public",
+          "path": "data/estate.manifest.json",
+          "commit": "8ff638f92cfc3a3ec5e2243ecb6464c964bd8e65"
+        },
+        "projection_policy": "ADR-0017"
+      },
+      "distribution": {
+        "mode": "static-public-projection",
+        "serving_repository": "AtlasReaper311/atlas-api-public",
+        "path": "data/twin-impact-projection.json",
+        "route": "/v1/evidence/twin-impact"
+      },
+      "privacy": {
+        "mode": "public-safe",
+        "redaction": "drop-private-or-unclassified",
+        "public_identities_only": true,
+        "private_data_excluded": true,
+        "unknown_data_not_inferred": true
+      },
+      "limitations": [
+        "could-be-affected-only",
+        "no-merge-approval",
+        "no-deployment-claim",
+        "no-runtime-claim",
+        "no-live-claim",
+        "no-publication-claim",
+        "no-failure-claim",
+        "no-estate-completeness-claim",
+        "private-or-unclassified-evidence-may-be-unknown"
+      ]
+    }
+  ]
+}

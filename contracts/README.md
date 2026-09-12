@@ -34,6 +34,9 @@ service, route, deployment, storage layer, remediation agent, or secret.
   `ControlPlaneState` vocabulary. Phase 9 adds optional journey,
   contract-registry, and open-Gardener-PR projections for the bounded Home
   Assistant sensors; earlier v1 summaries remain valid.
+- `TwinImpactProjection`: a public-safe, static projection of what Twin analysis
+  says could be affected. It carries public identity, provenance, explicit
+  unknowns, and claim limitations; it is not lifecycle or live evidence.
 
 Every schema uses JSON Schema Draft 2020-12, has a stable `$id`, requires an
 explicit `schema_version`, rejects undeclared top-level properties, declares an

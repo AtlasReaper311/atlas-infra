@@ -31,6 +31,7 @@ EXPECTED_SCHEMAS = (
     "remediation-proposal.schema.json",
     "runbook-index-entry.schema.json",
     "service-contract.schema.json",
+    "twin-impact-projection.schema.json",
 )
 SENSITIVE_KEYS = {
     "authorization",
@@ -41,6 +42,18 @@ SENSITIVE_KEYS = {
     "token",
 }
 SAFE_AGGREGATE_KEYS = {"secret_declaration", "secret_hygiene"}
+TWIN_PROJECTION_SCHEMA = "twin-impact-projection.schema.json"
+TWIN_REQUIRED_LIMITATIONS = {
+    "could-be-affected-only",
+    "no-merge-approval",
+    "no-deployment-claim",
+    "no-runtime-claim",
+    "no-live-claim",
+    "no-publication-claim",
+    "no-failure-claim",
+    "no-estate-completeness-claim",
+    "private-or-unclassified-evidence-may-be-unknown",
+}
 UTC_TIMESTAMP = re.compile(
     r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,6})?Z$"
 )
@@ -283,10 +296,142 @@ def _sensitive_key_errors(value: Any, path: str = "$") -> list[str]:
     return errors
 
 
+def _public_repository_set(root: Path) -> set[str]:
+    """Load the current public repository authority when validating the repository."""
+    path = root / "policy" / "public-repository-classifications.json"
+    try:
+        document = load_json(path)
+    except (FileNotFoundError, json.JSONDecodeError):
+        return set()
+    repositories = document.get("repositories") if isinstance(document, dict) else None
+    if not isinstance(repositories, list):
+        return set()
+    return {
+        item["repository"]
+        for item in repositories
+        if (
+            isinstance(item, dict)
+            and item.get("scope") == "public"
+            and isinstance(item.get("repository"), str)
+        )
+    }
+
+
+TWIN_IDENTITY_AUTHORITIES = {
+    "repository": "atlas-infra-public-classification",
+    "component": "atlas-api-public-topology-exporter",
+    "service": "atlas-api-public-topology-exporter",
+}
+
+
+def _twin_projection_semantic_errors(
+    instance: dict[str, Any],
+    public_repositories: set[str] | None,
+) -> list[str]:
+    """Keep Twin impact projections public-safe and claim-bounded."""
+    subject = instance.get("subject")
+    impact = instance.get("impact")
+    if not isinstance(subject, dict) or not isinstance(impact, dict):
+        return []
+
+    errors: list[str] = []
+    visibility = subject.get("visibility")
+    repository = subject.get("repository")
+    relationships = impact.get("relationships")
+    unknowns = impact.get("unknowns")
+    coverage = impact.get("coverage")
+    relationships = relationships if isinstance(relationships, list) else []
+    unknowns = unknowns if isinstance(unknowns, list) else []
+
+    if visibility == "public":
+        if (
+            public_repositories is not None
+            and isinstance(repository, str)
+            and repository not in public_repositories
+        ):
+            errors.append(
+                "$.subject.repository: public identity is not in current public classification"
+            )
+    elif visibility == "private-or-unknown":
+        if any(subject.get(key) is not None for key in ("repository", "base_oid", "head_oid")):
+            errors.append(
+                "$.subject: private-or-unknown identity must use null repository and object ids"
+            )
+        if relationships:
+            errors.append(
+                "$.impact.relationships: private-or-unknown subject must not emit relationships"
+            )
+        if coverage != "unknown":
+            errors.append(
+                "$.impact.coverage: private-or-unknown subject must have unknown coverage"
+            )
+        if "private-or-unknown-subject" not in unknowns:
+            errors.append(
+                "$.impact.unknowns: private-or-unknown subject requires an explicit unknown code"
+            )
+
+    if coverage == "known-public-scope" and unknowns:
+        errors.append(
+            "$.impact.unknowns: known-public-scope cannot contain unknown evidence"
+        )
+    if coverage in {"partial-public-scope", "unknown"} and not unknowns:
+        errors.append(
+            "$.impact.unknowns: partial or unknown coverage requires an explicit unknown code"
+        )
+    if coverage == "unknown" and relationships:
+        errors.append("$.impact.relationships: unknown coverage must not emit relationships")
+
+    missing_limitations = sorted(
+        TWIN_REQUIRED_LIMITATIONS - set(instance.get("limitations", []))
+    )
+    if missing_limitations:
+        errors.append(
+            "$.limitations: missing required claim boundary codes "
+            + ", ".join(missing_limitations)
+        )
+
+    relationship_keys: set[tuple[Any, Any, Any]] = set()
+    for index, relationship_item in enumerate(relationships):
+        if not isinstance(relationship_item, dict):
+            continue
+        identity = (
+            relationship_item.get("kind"),
+            relationship_item.get("id"),
+            relationship_item.get("relation"),
+        )
+        if identity in relationship_keys:
+            errors.append(
+                f"$.impact.relationships[{index}]: relationship identity must be unique"
+            )
+        relationship_keys.add(identity)
+        kind = relationship_item.get("kind")
+        expected_authority = TWIN_IDENTITY_AUTHORITIES.get(kind)
+        if (
+            expected_authority is not None
+            and relationship_item.get("identity_authority") != expected_authority
+        ):
+            errors.append(
+                f"$.impact.relationships[{index}].identity_authority: "
+                f"{kind} identity must name {expected_authority}"
+            )
+        if (
+            kind == "repository"
+            and public_repositories is not None
+            and isinstance(relationship_item.get("id"), str)
+            and relationship_item["id"] not in public_repositories
+        ):
+            errors.append(
+                f"$.impact.relationships[{index}].id: public identity is not in current public classification"
+            )
+    return errors
+
+
 def semantic_errors(
     schema_name: str,
     instance: dict[str, Any],
     fingerprint_rules: dict[str, Any],
+    *,
+    public_repositories: set[str] | None = None,
 ) -> list[str]:
     """Apply cross-field rules JSON Schema cannot express cleanly."""
     errors = _sensitive_key_errors(instance)
@@ -304,6 +449,9 @@ def semantic_errors(
             errors.append(
                 f"$.{rule['output_path']}: deterministic {rule_name} value does not match canonical input"
             )
+
+    if schema_name == TWIN_PROJECTION_SCHEMA:
+        errors.extend(_twin_projection_semantic_errors(instance, public_repositories))
 
     if schema_name == "release-evidence.schema.json":
         started_at = instance.get("started_at")
@@ -426,10 +574,12 @@ def validate_repository(root: Path) -> dict[str, Any]:
     except (FileNotFoundError, json.JSONDecodeError) as error:
         errors.append(f"fingerprint-rules.json: cannot load: {error}")
         fingerprint_rules = {"rules": {}}
+    public_repositories = _public_repository_set(root)
     expected_rule_schemas = {
         "evidence-envelope.schema.json",
         "finding.schema.json",
         "remediation-proposal.schema.json",
+        "twin-impact-projection.schema.json",
     }
     actual_rule_schemas = {
         rule.get("schema") for rule in fingerprint_rules.get("rules", {}).values()
@@ -481,7 +631,12 @@ def validate_repository(root: Path) -> dict[str, Any]:
         instance_errors = validate_instance(instance, schemas[schema_name])
         if isinstance(instance, dict):
             instance_errors.extend(
-                semantic_errors(schema_name, instance, fingerprint_rules)
+                semantic_errors(
+                    schema_name,
+                    instance,
+                    fingerprint_rules,
+                    public_repositories=public_repositories,
+                )
             )
         if expected_valid and instance_errors:
             errors.append(
@@ -508,7 +663,12 @@ def validate_repository(root: Path) -> dict[str, Any]:
             example_errors = validate_instance(example, schema)
             if isinstance(example, dict):
                 example_errors.extend(
-                    semantic_errors(name, example, fingerprint_rules)
+                    semantic_errors(
+                        name,
+                        example,
+                        fingerprint_rules,
+                        public_repositories=public_repositories,
+                    )
                 )
             if example_errors:
                 errors.append(
