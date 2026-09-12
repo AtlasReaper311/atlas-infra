@@ -11,6 +11,10 @@
       "path": "data/public-repositories.json"
     },
     {
+      "repository": "AtlasReaper311/atlas-api-public",
+      "path": "data/twin-impact-projection.json"
+    },
+    {
       "repository": "AtlasReaper311/atlas-infra",
       "path": "policy/estate-registry.json"
     },
