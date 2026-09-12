@@ -306,7 +306,7 @@ class PublicBoundaryAuditTests(unittest.TestCase):
         targets = public_boundary_audit.load_projection_targets(path, "AtlasReaper311")
         coordinates = {(item["repository"], item["path"]) for item in targets}
 
-        self.assertEqual(6, len(coordinates))
+        self.assertEqual(7, len(coordinates))
         self.assertIn(
             ("AtlasReaper311/atlas-infra", "policy/estate-registry.json"),
             coordinates,
@@ -320,6 +320,13 @@ class PublicBoundaryAuditTests(unittest.TestCase):
         )
         self.assertIn(
             ("AtlasReaper311/atlas-api-public", "data/estate.manifest.json"),
+            coordinates,
+        )
+        self.assertIn(
+            (
+                "AtlasReaper311/atlas-api-public",
+                "data/twin-impact-projection.json",
+            ),
             coordinates,
         )
         self.assertIn(
