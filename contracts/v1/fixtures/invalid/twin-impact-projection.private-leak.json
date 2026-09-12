@@ -17,7 +17,8 @@
         "kind": "repository",
         "id": "AtlasReaper311/atlas-twin",
         "relation": "indirect-consumer",
-        "evidence_class": "twin-impact"
+        "evidence_class": "twin-impact",
+        "identity_authority": "atlas-infra-public-classification"
       }
     ],
     "unknowns": []

@@ -68,7 +68,9 @@ The projection may contain only:
   current public classification authority proves the subject is public;
 - bounded public repository, component, and service identifiers that the
   exporter can prove are public through the current classification/topology
-  authorities;
+  authorities. Each relationship declares its required identity authority:
+  repository relationships use `atlas-infra-public-classification`, while
+  component and service relationships use `atlas-api-public-topology-exporter`;
 - relationship kinds limited to `changed`, `direct-consumer`,
   `indirect-consumer`, and `declared-service`;
 - the fixed conclusion `could-be-affected` and public-scope coverage;
@@ -95,6 +97,20 @@ topology source commit in `provenance`. The source subject uses a public
 repository plus base/head object ids only after public classification is
 available. A private or unclassified subject uses `visibility =
 private-or-unknown` and null repository/object ids.
+
+The Infra validator proves repository identities only, using rows whose
+classification `scope` is exactly `public`. It deliberately does not copy a
+topology-name allowlist from `atlas-api-public` into Infra: the API manifest
+and its derived public topology are the accepted topology/presentation
+authority, while Infra remains the repository classification authority. The
+component and service identifier patterns in this schema therefore validate
+serialization shape, not public membership. The future Twin exporter must
+prove every component and service identifier against the current verified
+public topology before publication, and must omit it or report an explicit
+unknown when that proof is unavailable. A syntactically valid identifier is
+not public merely because it matches this schema. The explicit
+`identity_authority` value prevents a component or service from claiming that
+Infra classification proved it.
 
 Private or unclassified affected entities are dropped, not renamed,
 generalised into a guessed public entity, or represented by a private
@@ -141,8 +157,9 @@ verification authority.
 
 The smallest first dependency is an `atlas-twin` issue titled **Add explicit
 public-safe Twin impact projection exporter**. It must consume this exact v1
-schema, use current public classification/topology inputs, and fail closed as
-described above.
+schema, use current public classification/topology inputs, prove repository
+identities with the Infra classification and component/service identities
+with the public topology authority, and fail closed as described above.
 
 That is followed by an `atlas-api-public` issue titled **Serve the versioned
 Twin impact projection through the existing public API static projection path**

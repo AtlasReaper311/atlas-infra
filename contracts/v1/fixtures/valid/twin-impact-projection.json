@@ -1,6 +1,6 @@
 {
   "schema_version": "atlas-control-plane/twin-impact-projection/v1",
-  "projection_fingerprint": "sha256:51858d772ee10259e0453d38f6e8ed46a8733c725f8f37fbd98d3fdcc3213e26",
+  "projection_fingerprint": "sha256:1adaf487602b5c5df6908f6198efa69dc36f0e9105567cbfe07d068aba00bb48",
   "generated_at": "2026-09-12T20:00:00Z",
   "subject": {
     "visibility": "public",
@@ -17,19 +17,22 @@
         "kind": "repository",
         "id": "AtlasReaper311/atlas-api-public",
         "relation": "changed",
-        "evidence_class": "twin-impact"
+        "evidence_class": "twin-impact",
+        "identity_authority": "atlas-infra-public-classification"
       },
       {
         "kind": "component",
         "id": "topology",
         "relation": "direct-consumer",
-        "evidence_class": "twin-impact"
+        "evidence_class": "twin-impact",
+        "identity_authority": "atlas-api-public-topology-exporter"
       },
       {
         "kind": "service",
         "id": "atlas-api-public",
         "relation": "declared-service",
-        "evidence_class": "twin-impact"
+        "evidence_class": "twin-impact",
+        "identity_authority": "atlas-api-public-topology-exporter"
       }
     ],
     "unknowns": []

@@ -309,8 +309,19 @@ def _public_repository_set(root: Path) -> set[str]:
     return {
         item["repository"]
         for item in repositories
-        if isinstance(item, dict) and isinstance(item.get("repository"), str)
+        if (
+            isinstance(item, dict)
+            and item.get("scope") == "public"
+            and isinstance(item.get("repository"), str)
+        )
     }
+
+
+TWIN_IDENTITY_AUTHORITIES = {
+    "repository": "atlas-infra-public-classification",
+    "component": "atlas-api-public-topology-exporter",
+    "service": "atlas-api-public-topology-exporter",
+}
 
 
 def _twin_projection_semantic_errors(
@@ -393,8 +404,18 @@ def _twin_projection_semantic_errors(
                 f"$.impact.relationships[{index}]: relationship identity must be unique"
             )
         relationship_keys.add(identity)
+        kind = relationship_item.get("kind")
+        expected_authority = TWIN_IDENTITY_AUTHORITIES.get(kind)
         if (
-            relationship_item.get("kind") == "repository"
+            expected_authority is not None
+            and relationship_item.get("identity_authority") != expected_authority
+        ):
+            errors.append(
+                f"$.impact.relationships[{index}].identity_authority: "
+                f"{kind} identity must name {expected_authority}"
+            )
+        if (
+            kind == "repository"
             and public_repositories is not None
             and isinstance(relationship_item.get("id"), str)
             and relationship_item["id"] not in public_repositories
