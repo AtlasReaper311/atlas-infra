@@ -1,0 +1,4 @@
+{
+  "name": "atlas-infra",
+  "install": "python3 -m compileall -q scripts"
+}
