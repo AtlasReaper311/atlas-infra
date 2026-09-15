@@ -18,6 +18,11 @@ from pathlib import Path
 from typing import Any
 from urllib.parse import urlsplit
 
+from model_promotion_public_projection_rules import (
+    POLICY_PATH as PUBLIC_MODEL_PROMOTION_POLICY_PATH,
+    semantic_errors as public_model_promotion_semantic_errors,
+)
+
 DRAFT_2020_12 = "https://json-schema.org/draft/2020-12/schema"
 EXPECTED_SCHEMAS = (
     "backup-evidence.schema.json",
@@ -457,14 +462,18 @@ def semantic_errors(
         errors.extend(_twin_projection_semantic_errors(instance, public_repositories))
 
     if schema_name == PUBLIC_MODEL_PROMOTION_SCHEMA:
-        from model_promotion_public_projection import semantic_errors as public_errors
-
-        errors.extend(
-            public_errors(
-                instance,
-                root=root or Path(__file__).resolve().parents[1],
-            )
-        )
+        policy_root = root or Path(__file__).resolve().parents[1]
+        try:
+            public_policy = load_json(policy_root / PUBLIC_MODEL_PROMOTION_POLICY_PATH)
+        except (FileNotFoundError, json.JSONDecodeError) as error:
+            errors.append(f"public Model Promotion policy cannot be loaded: {error}")
+        else:
+            if not isinstance(public_policy, dict):
+                errors.append("public Model Promotion policy must be an object")
+            else:
+                errors.extend(
+                    public_model_promotion_semantic_errors(instance, public_policy)
+                )
 
     if schema_name == "release-evidence.schema.json":
         started_at = instance.get("started_at")
