@@ -1,0 +1,25 @@
+{
+  "schema_version": "atlas-control-plane/public-model-promotion-projection/v1",
+  "projection_fingerprint": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+  "generated_at": "2026-09-15T14:00:00Z",
+  "state": "promotion-approved",
+  "capability": {"id": "synthetic-capability"},
+  "model": {"public_id": "synthetic-model-1b"},
+  "evaluation": {
+    "state": "evaluated-passed",
+    "suite": {"version": "1.0.0", "revision": "suite:sha256:1111111111111111111111111111111111111111111111111111111111111111"},
+    "prepared_at": "2026-09-15T12:00:00Z",
+    "evaluated_at": "2026-09-15T12:30:00Z",
+    "categories": ["abstention", "grounding"],
+    "known_regressions": {"vocabulary_version": "atlas-control-plane/model-promotion-regression-vocabulary/v1", "state": "none", "categories": []},
+    "result": {"case_count": 4, "passed_count": 4, "failed_count": 0, "pass_rate": 1.0, "minimum_pass_rate": 1.0}
+  },
+  "human_review": {"state": "reviewed", "reviewed_at": "2026-09-15T13:00:00Z"},
+  "promotion": {"state": "approved", "approved_at": "2026-09-15T13:30:00Z", "supersedes_projection_fingerprint": null, "superseded_by_projection_fingerprint": null},
+  "freshness": {"state": "current", "evidence_observed_at": "2026-09-15T13:30:00Z", "max_age_days": 30},
+  "current_model_observation": {"subject": "runtime-model-identity", "state": "not-represented", "observed_model_id": null, "observed_at": null},
+  "gaps": ["deployment-not-applicable", "runtime-model-not-represented"],
+  "deployment_boundary": {"promotion_is_not_deployment": true, "deployment_observed": "not-applicable", "deployed": "not-applicable", "runtime_verified": "not-applicable", "live_verified": "not-applicable"},
+  "privacy": {"mode": "public-safe-allowlist", "private_inputs_excluded": true, "unknown_fields_rejected": true, "private_evidence_uris_excluded": true, "runtime_configuration_excluded": true, "raw_answers_excluded": true},
+  "private_evidence_uri": "https://private.example/evidence"
+}

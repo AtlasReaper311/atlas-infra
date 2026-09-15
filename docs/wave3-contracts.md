@@ -91,6 +91,13 @@ The ADR validator accepts only repository and service identities present in curr
 
 Model promotion records default to an internal evidence use case. A later public projection must be separately bounded and sanitized before any portfolio surface exposes promotion evidence.
 
+Roadmap Phase 4.1 now defines that separate authority in
+[`ADR-0019`](adrs/ADR-0019-public-model-promotion-projection.md),
+[`contracts/v1/public-model-promotion-projection.schema.json`](../contracts/v1/public-model-promotion-projection.schema.json),
+and [`policy/model-promotion-public-projection.json`](../policy/model-promotion-public-projection.json).
+The Wave 3 record remains the private/internal source shape and is not
+repurposed by the public contract.
+
 ## Gate
 
 Wave 3.1 is ready to close when:

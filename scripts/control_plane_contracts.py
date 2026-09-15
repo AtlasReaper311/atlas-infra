@@ -18,12 +18,18 @@ from pathlib import Path
 from typing import Any
 from urllib.parse import urlsplit
 
+from model_promotion_public_projection_rules import (
+    POLICY_PATH as PUBLIC_MODEL_PROMOTION_POLICY_PATH,
+    semantic_errors as public_model_promotion_semantic_errors,
+)
+
 DRAFT_2020_12 = "https://json-schema.org/draft/2020-12/schema"
 EXPECTED_SCHEMAS = (
     "backup-evidence.schema.json",
     "control-plane-summary.schema.json",
     "evidence-envelope.schema.json",
     "finding.schema.json",
+    "public-model-promotion-projection.schema.json",
     "release-evidence.schema.json",
     "release-reliability-correlation.schema.json",
     "reliability-objective.schema.json",
@@ -43,6 +49,7 @@ SENSITIVE_KEYS = {
 }
 SAFE_AGGREGATE_KEYS = {"secret_declaration", "secret_hygiene"}
 TWIN_PROJECTION_SCHEMA = "twin-impact-projection.schema.json"
+PUBLIC_MODEL_PROMOTION_SCHEMA = "public-model-promotion-projection.schema.json"
 TWIN_REQUIRED_LIMITATIONS = {
     "could-be-affected-only",
     "no-merge-approval",
@@ -432,6 +439,7 @@ def semantic_errors(
     fingerprint_rules: dict[str, Any],
     *,
     public_repositories: set[str] | None = None,
+    root: Path | None = None,
 ) -> list[str]:
     """Apply cross-field rules JSON Schema cannot express cleanly."""
     errors = _sensitive_key_errors(instance)
@@ -452,6 +460,20 @@ def semantic_errors(
 
     if schema_name == TWIN_PROJECTION_SCHEMA:
         errors.extend(_twin_projection_semantic_errors(instance, public_repositories))
+
+    if schema_name == PUBLIC_MODEL_PROMOTION_SCHEMA:
+        policy_root = root or Path(__file__).resolve().parents[1]
+        try:
+            public_policy = load_json(policy_root / PUBLIC_MODEL_PROMOTION_POLICY_PATH)
+        except (FileNotFoundError, json.JSONDecodeError) as error:
+            errors.append(f"public Model Promotion policy cannot be loaded: {error}")
+        else:
+            if not isinstance(public_policy, dict):
+                errors.append("public Model Promotion policy must be an object")
+            else:
+                errors.extend(
+                    public_model_promotion_semantic_errors(instance, public_policy)
+                )
 
     if schema_name == "release-evidence.schema.json":
         started_at = instance.get("started_at")
@@ -578,6 +600,7 @@ def validate_repository(root: Path) -> dict[str, Any]:
     expected_rule_schemas = {
         "evidence-envelope.schema.json",
         "finding.schema.json",
+        "public-model-promotion-projection.schema.json",
         "remediation-proposal.schema.json",
         "twin-impact-projection.schema.json",
     }
@@ -636,6 +659,7 @@ def validate_repository(root: Path) -> dict[str, Any]:
                     instance,
                     fingerprint_rules,
                     public_repositories=public_repositories,
+                    root=root,
                 )
             )
         if expected_valid and instance_errors:
@@ -668,6 +692,7 @@ def validate_repository(root: Path) -> dict[str, Any]:
                         example,
                         fingerprint_rules,
                         public_repositories=public_repositories,
+                        root=root,
                     )
                 )
             if example_errors:

@@ -37,6 +37,11 @@ service, route, deployment, storage layer, remediation agent, or secret.
 - `TwinImpactProjection`: a public-safe, static projection of what Twin analysis
   says could be affected. It carries public identity, provenance, explicit
   unknowns, and claim limitations; it is not lifecycle or live evidence.
+- `PublicModelPromotionProjection`: a public-safe, capability-scoped projection
+  of evaluation and promotion evidence. It carries aggregate result context,
+  bounded regression codes, explicit freshness, and a fixed deployment
+  boundary; it is not runtime or live evidence. It is separate from the
+  internal Wave 3 `ModelPromotion` contract.
 
 Every schema uses JSON Schema Draft 2020-12, has a stable `$id`, requires an
 explicit `schema_version`, rejects undeclared top-level properties, declares an
@@ -68,12 +73,13 @@ fingerprints, payload digests, and deterministic second-run output.
 ## Stable identity
 
 `v1/fingerprint-rules.json` is normative. Canonical JSON uses UTF-8, sorted
-object keys, compact separators, and unescaped Unicode. Finding fingerprints
-and proposal IDs hash an object whose keys are the declared dotted field paths
-and whose values are the corresponding instance values. Arrays named in
-`sort_arrays` are sorted by their canonical JSON before hashing. Evidence
-payload digests hash the complete canonical inline payload. Changing an input
-field or canonicalisation rule requires a new major contract path.
+object keys, compact separators, and unescaped Unicode. Finding fingerprints,
+proposal IDs, and public Model Promotion projection fingerprints hash an object
+whose keys are the declared dotted field paths and whose values are the
+corresponding instance values. Arrays named in `sort_arrays` are sorted by
+their canonical JSON before hashing. Evidence payload digests hash the
+complete canonical inline payload. Changing an input field or canonicalisation
+rule requires a new major contract path.
 
 ## Repository classification
 

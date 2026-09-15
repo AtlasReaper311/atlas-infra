@@ -1,0 +1,249 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.atlas-systems.uk/control-plane/v1/public-model-promotion-projection.schema.json",
+  "title": "Atlas Systems public Model Promotion projection v1",
+  "description": "A public-safe allowlist projection of capability-scoped model evaluation and promotion evidence. It does not expose private evaluation material and does not prove deployment, runtime identity, or live behaviour.",
+  "type": "object",
+  "additionalProperties": false,
+  "x-owner": {
+    "repository": "AtlasReaper311/atlas-infra",
+    "producer": "future deterministic evaluation sanitizer",
+    "presentation_consumer": "AtlasReaper311/atlas-systems",
+    "internal_source": "private evaluation and promotion evidence is not part of this contract"
+  },
+  "required": [
+    "schema_version",
+    "projection_fingerprint",
+    "generated_at",
+    "state",
+    "capability",
+    "model",
+    "evaluation",
+    "human_review",
+    "promotion",
+    "freshness",
+    "current_model_observation",
+    "gaps",
+    "deployment_boundary",
+    "privacy"
+  ],
+  "properties": {
+    "schema_version": {"const": "atlas-control-plane/public-model-promotion-projection/v1"},
+    "projection_fingerprint": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "generated_at": {"type": "string", "format": "date-time"},
+    "state": {
+      "enum": [
+        "evaluation-prepared",
+        "evaluated-passed",
+        "evaluated-failed",
+        "review-pending",
+        "promotion-approved",
+        "no-accepted-evaluation",
+        "stale-evidence",
+        "superseded-promotion",
+        "promoted-current-model-mismatch",
+        "exempt-not-applicable",
+        "unknown-not-observed"
+      ]
+    },
+    "capability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$", "maxLength": 80}
+      }
+    },
+    "model": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["public_id"],
+      "properties": {
+        "public_id": {"type": ["string", "null"], "pattern": "^[a-z0-9]+(?:[._-][a-z0-9]+)*$", "maxLength": 80}
+      }
+    },
+    "evaluation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "suite", "prepared_at", "evaluated_at", "categories", "known_regressions", "result"],
+      "properties": {
+        "state": {
+          "enum": [
+            "prepared",
+            "evaluated-passed",
+            "evaluated-failed",
+            "no-accepted-evaluation",
+            "exempt-not-applicable",
+            "unknown-not-observed"
+          ]
+        },
+        "suite": {
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "required": ["version", "revision"],
+          "properties": {
+            "version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$", "maxLength": 32},
+            "revision": {"type": "string", "pattern": "^suite:sha256:[0-9a-f]{64}$"}
+          }
+        },
+        "prepared_at": {"type": ["string", "null"], "format": "date-time"},
+        "evaluated_at": {"type": ["string", "null"], "format": "date-time"},
+        "categories": {
+          "type": "array",
+          "maxItems": 5,
+          "uniqueItems": true,
+          "items": {"enum": ["grounding", "abstention", "fabrication", "causal-claim", "format-contract"]}
+        },
+        "known_regressions": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["vocabulary_version", "state", "categories"],
+          "properties": {
+            "vocabulary_version": {"const": "atlas-control-plane/model-promotion-regression-vocabulary/v1"},
+            "state": {"enum": ["none", "known", "unknown-not-observed", "not-applicable"]},
+            "categories": {
+              "type": "array",
+              "maxItems": 5,
+              "uniqueItems": true,
+              "items": {
+                "enum": [
+                  "unsupported-fabrication",
+                  "failed-abstention",
+                  "grounding-failure",
+                  "unsupported-causal-claim",
+                  "format-contract-failure"
+                ]
+              }
+            }
+          }
+        },
+        "result": {
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "required": ["case_count", "passed_count", "failed_count", "pass_rate", "minimum_pass_rate"],
+          "properties": {
+            "case_count": {"type": "integer", "minimum": 1, "maximum": 1000000},
+            "passed_count": {"type": "integer", "minimum": 0, "maximum": 1000000},
+            "failed_count": {"type": "integer", "minimum": 0, "maximum": 1000000},
+            "pass_rate": {"type": "number", "minimum": 0, "maximum": 1},
+            "minimum_pass_rate": {"type": "number", "minimum": 0, "maximum": 1}
+          }
+        }
+      }
+    },
+    "human_review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "reviewed_at"],
+      "properties": {
+        "state": {"enum": ["pending", "reviewed", "not-required", "exempt-not-applicable", "unknown-not-observed"]},
+        "reviewed_at": {"type": ["string", "null"], "format": "date-time"}
+      }
+    },
+    "promotion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "approved_at", "supersedes_projection_fingerprint", "superseded_by_projection_fingerprint"],
+      "properties": {
+        "state": {"enum": ["approved", "not-approved", "superseded", "exempt-not-applicable", "unknown-not-observed"]},
+        "approved_at": {"type": ["string", "null"], "format": "date-time"},
+        "supersedes_projection_fingerprint": {"type": ["string", "null"], "pattern": "^sha256:[0-9a-f]{64}$"},
+        "superseded_by_projection_fingerprint": {"type": ["string", "null"], "pattern": "^sha256:[0-9a-f]{64}$"}
+      }
+    },
+    "freshness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "evidence_observed_at", "max_age_days"],
+      "properties": {
+        "state": {"enum": ["current", "stale", "superseded", "unknown"]},
+        "evidence_observed_at": {"type": ["string", "null"], "format": "date-time"},
+        "max_age_days": {"type": ["integer", "null"], "minimum": 1, "maximum": 3650}
+      }
+    },
+    "current_model_observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["subject", "state", "observed_model_id", "observed_at"],
+      "properties": {
+        "subject": {"const": "runtime-model-identity"},
+        "state": {"enum": ["not-represented", "observed-match", "observed-mismatch", "unknown-not-observed"]},
+        "observed_model_id": {"type": ["string", "null"], "pattern": "^[a-z0-9]+(?:[._-][a-z0-9]+)*$", "maxLength": 80},
+        "observed_at": {"type": ["string", "null"], "format": "date-time"}
+      }
+    },
+    "gaps": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 8,
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "no-accepted-evaluation",
+          "evaluation-not-observed",
+          "evaluation-failed",
+          "human-review-pending",
+          "promotion-not-observed",
+          "stale-evidence",
+          "superseded-promotion",
+          "promoted-current-model-mismatch",
+          "runtime-model-not-represented",
+          "unknown-evidence",
+          "exempt-not-applicable",
+          "deployment-not-applicable"
+        ]
+      }
+    },
+    "deployment_boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["promotion_is_not_deployment", "deployment_observed", "deployed", "runtime_verified", "live_verified"],
+      "properties": {
+        "promotion_is_not_deployment": {"const": true},
+        "deployment_observed": {"const": "not-applicable"},
+        "deployed": {"const": "not-applicable"},
+        "runtime_verified": {"const": "not-applicable"},
+        "live_verified": {"const": "not-applicable"}
+      }
+    },
+    "privacy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "private_inputs_excluded", "unknown_fields_rejected", "private_evidence_uris_excluded", "runtime_configuration_excluded", "raw_answers_excluded"],
+      "properties": {
+        "mode": {"const": "public-safe-allowlist"},
+        "private_inputs_excluded": {"const": true},
+        "unknown_fields_rejected": {"const": true},
+        "private_evidence_uris_excluded": {"const": true},
+        "runtime_configuration_excluded": {"const": true},
+        "raw_answers_excluded": {"const": true}
+      }
+    }
+  },
+  "examples": [
+    {
+      "schema_version": "atlas-control-plane/public-model-promotion-projection/v1",
+      "projection_fingerprint": "sha256:c4e81e90e3fd45ca77356eba34e90f3bce478cf145d11415b7f5ef55b5d9e1fc",
+      "generated_at": "2026-09-15T14:00:00Z",
+      "state": "promotion-approved",
+      "capability": {"id": "synthetic-capability"},
+      "model": {"public_id": "synthetic-model-1b"},
+      "evaluation": {
+        "state": "evaluated-passed",
+        "suite": {"version": "1.0.0", "revision": "suite:sha256:1111111111111111111111111111111111111111111111111111111111111111"},
+        "prepared_at": "2026-09-15T12:00:00Z",
+        "evaluated_at": "2026-09-15T12:30:00Z",
+        "categories": ["abstention", "grounding"],
+        "known_regressions": {"vocabulary_version": "atlas-control-plane/model-promotion-regression-vocabulary/v1", "state": "none", "categories": []},
+        "result": {"case_count": 4, "passed_count": 4, "failed_count": 0, "pass_rate": 1.0, "minimum_pass_rate": 1.0}
+      },
+      "human_review": {"state": "reviewed", "reviewed_at": "2026-09-15T13:00:00Z"},
+      "promotion": {"state": "approved", "approved_at": "2026-09-15T13:30:00Z", "supersedes_projection_fingerprint": null, "superseded_by_projection_fingerprint": null},
+      "freshness": {"state": "current", "evidence_observed_at": "2026-09-15T13:30:00Z", "max_age_days": 30},
+      "current_model_observation": {"subject": "runtime-model-identity", "state": "not-represented", "observed_model_id": null, "observed_at": null},
+      "gaps": ["deployment-not-applicable", "runtime-model-not-represented"],
+      "deployment_boundary": {"promotion_is_not_deployment": true, "deployment_observed": "not-applicable", "deployed": "not-applicable", "runtime_verified": "not-applicable", "live_verified": "not-applicable"},
+      "privacy": {"mode": "public-safe-allowlist", "private_inputs_excluded": true, "unknown_fields_rejected": true, "private_evidence_uris_excluded": true, "runtime_configuration_excluded": true, "raw_answers_excluded": true}
+    }
+  ]
+}

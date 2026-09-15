@@ -1,0 +1,38 @@
+{
+  "schema_version": "atlas-model-promotion/public-projection-policy/v1",
+  "owner": "AtlasReaper311/atlas-infra",
+  "contract_schema": "contracts/v1/public-model-promotion-projection.schema.json",
+  "lifecycle_authority": ["ADR-0013", "ADR-0014"],
+  "allowed_capability_ids": [
+    "corpus-retrieval",
+    "daily-digest-synthesis",
+    "postmortem-drafting",
+    "ramone-live-chat",
+    "ramone-rag-generation",
+    "session-summarisation",
+    "synthetic-capability"
+  ],
+  "allowed_model_identifiers": ["synthetic-model-1b", "synthetic-model-2b"],
+  "allowed_suite_versions": ["1.0.0"],
+  "regression_vocabulary": {
+    "schema_version": "atlas-control-plane/model-promotion-regression-vocabulary/v1",
+    "categories": [
+      "failed-abstention",
+      "format-contract-failure",
+      "grounding-failure",
+      "unsupported-causal-claim",
+      "unsupported-fabrication"
+    ]
+  },
+  "public_boundary": {
+    "mode": "schema-and-policy-only",
+    "production_artifact_registered": false,
+    "target_registration": "deferred-until-artifact-exists"
+  },
+  "deployment_boundary": {
+    "promotion_is_not_deployment": true,
+    "deployment_state": "not-applicable",
+    "runtime_state": "not-applicable",
+    "live_state": "not-applicable"
+  }
+}

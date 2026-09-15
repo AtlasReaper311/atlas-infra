@@ -14,6 +14,7 @@
     "control-plane-summary.schema.json",
     "evidence-envelope.schema.json",
     "finding.schema.json",
+    "public-model-promotion-projection.schema.json",
     "release-evidence.schema.json",
     "release-reliability-correlation.schema.json",
     "reliability-objective.schema.json",
