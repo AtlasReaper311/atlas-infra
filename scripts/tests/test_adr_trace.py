@@ -18,7 +18,7 @@ class AdrTraceTests(unittest.TestCase):
         second, second_errors = adr_trace.build_index(ROOT)
         self.assertEqual([], first_errors)
         self.assertEqual([], second_errors)
-        self.assertEqual(16, len(first["relationships"]))
+        self.assertEqual(17, len(first["relationships"]))
         self.assertEqual(
             adr_trace.canonical_bytes(first),
             adr_trace.canonical_bytes(second),
@@ -41,6 +41,7 @@ class AdrTraceTests(unittest.TestCase):
                 "ADR-0015",
                 "ADR-0016",
                 "ADR-0017",
+                "ADR-0018",
             ],
             [item["adr"]["id"] for item in first["relationships"]],
         )
@@ -98,6 +99,17 @@ class AdrTraceTests(unittest.TestCase):
                 for item in first["relationships"]
                 if item["adr"]["id"] == "ADR-0008"
             ),
+        )
+
+        vulnerability_risk = next(
+            item
+            for item in first["relationships"]
+            if item["adr"]["id"] == "ADR-0018"
+        )
+        self.assertEqual("accepted", vulnerability_risk["adr"]["status"])
+        self.assertIn(
+            "policy/vulnerability-risk-dispositions.json",
+            vulnerability_risk["affects"]["policies"],
         )
 
     def test_legacy_slug_keeps_existing_authority_path_valid(self) -> None:
