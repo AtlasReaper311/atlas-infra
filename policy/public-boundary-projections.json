@@ -30,5 +30,14 @@
       "repository": "AtlasReaper311/atlas-systems",
       "path": "lab/speculum/topology.js"
     }
+  ],
+  "approved_public_literals": [
+    {
+      "authority": "ADR-0017",
+      "json_pointer": "/provenance/producer_id",
+      "path": "data/twin-impact-projection.json",
+      "repository": "AtlasReaper311/atlas-api-public",
+      "value": "atlas-twin"
+    }
   ]
 }
