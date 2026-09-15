@@ -41,6 +41,7 @@ jobs:
           python3 -m py_compile scripts/github_conformance_scoreboard.py
           python3 -m py_compile scripts/chaos_harness.py
           python3 -m py_compile scripts/public_boundary_audit.py
+          python3 -m py_compile scripts/public_boundary_policy_audit.py
           python3 -m py_compile scripts/public_repository_classifications.py
           python3 -m py_compile scripts/publish_evidence.py
           python3 -m py_compile scripts/notify_assurance.py
@@ -108,7 +109,7 @@ jobs:
           GH_DIGEST_PAT: ${{ secrets.GH_DIGEST_PAT }}
         run: |
           set +e
-          python3 scripts/public_boundary_audit.py \
+          python3 scripts/public_boundary_policy_audit.py \
             --github-owner AtlasReaper311 \
             --projection-policy policy/public-boundary-projections.json \
             --token-env GH_DIGEST_PAT \
