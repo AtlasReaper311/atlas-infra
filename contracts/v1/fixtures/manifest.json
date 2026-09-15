@@ -132,6 +132,17 @@
       "path": "invalid/twin-impact-projection.private-leak.json",
       "valid": false,
       "expected_error": "not in current public classification"
+    },
+    {
+      "schema": "public-model-promotion-projection.schema.json",
+      "path": "valid/public-model-promotion-projection.json",
+      "valid": true
+    },
+    {
+      "schema": "public-model-promotion-projection.schema.json",
+      "path": "invalid/public-model-promotion-projection.unknown-property.json",
+      "valid": false,
+      "expected_error": "additional property"
     }
   ]
 }

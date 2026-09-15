@@ -24,6 +24,7 @@ EXPECTED_SCHEMAS = (
     "control-plane-summary.schema.json",
     "evidence-envelope.schema.json",
     "finding.schema.json",
+    "public-model-promotion-projection.schema.json",
     "release-evidence.schema.json",
     "release-reliability-correlation.schema.json",
     "reliability-objective.schema.json",
@@ -43,6 +44,7 @@ SENSITIVE_KEYS = {
 }
 SAFE_AGGREGATE_KEYS = {"secret_declaration", "secret_hygiene"}
 TWIN_PROJECTION_SCHEMA = "twin-impact-projection.schema.json"
+PUBLIC_MODEL_PROMOTION_SCHEMA = "public-model-promotion-projection.schema.json"
 TWIN_REQUIRED_LIMITATIONS = {
     "could-be-affected-only",
     "no-merge-approval",
@@ -432,6 +434,7 @@ def semantic_errors(
     fingerprint_rules: dict[str, Any],
     *,
     public_repositories: set[str] | None = None,
+    root: Path | None = None,
 ) -> list[str]:
     """Apply cross-field rules JSON Schema cannot express cleanly."""
     errors = _sensitive_key_errors(instance)
@@ -452,6 +455,16 @@ def semantic_errors(
 
     if schema_name == TWIN_PROJECTION_SCHEMA:
         errors.extend(_twin_projection_semantic_errors(instance, public_repositories))
+
+    if schema_name == PUBLIC_MODEL_PROMOTION_SCHEMA:
+        from model_promotion_public_projection import semantic_errors as public_errors
+
+        errors.extend(
+            public_errors(
+                instance,
+                root=root or Path(__file__).resolve().parents[1],
+            )
+        )
 
     if schema_name == "release-evidence.schema.json":
         started_at = instance.get("started_at")
@@ -578,6 +591,7 @@ def validate_repository(root: Path) -> dict[str, Any]:
     expected_rule_schemas = {
         "evidence-envelope.schema.json",
         "finding.schema.json",
+        "public-model-promotion-projection.schema.json",
         "remediation-proposal.schema.json",
         "twin-impact-projection.schema.json",
     }
@@ -636,6 +650,7 @@ def validate_repository(root: Path) -> dict[str, Any]:
                     instance,
                     fingerprint_rules,
                     public_repositories=public_repositories,
+                    root=root,
                 )
             )
         if expected_valid and instance_errors:
@@ -668,6 +683,7 @@ def validate_repository(root: Path) -> dict[str, Any]:
                         example,
                         fingerprint_rules,
                         public_repositories=public_repositories,
+                        root=root,
                     )
                 )
             if example_errors:

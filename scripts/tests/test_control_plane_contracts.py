@@ -30,9 +30,9 @@ class ControlPlaneContractTests(unittest.TestCase):
     def test_complete_repository_passes(self) -> None:
         report = contracts.validate_repository(ROOT)
         self.assertEqual([], report["errors"])
-        self.assertEqual(12, report["schemas_checked"])
-        self.assertEqual(12, report["positive_fixtures"])
-        self.assertEqual(12, report["negative_fixtures"])
+        self.assertEqual(13, report["schemas_checked"])
+        self.assertEqual(13, report["positive_fixtures"])
+        self.assertEqual(13, report["negative_fixtures"])
 
     def test_finding_fingerprint_is_order_independent(self) -> None:
         finding = self.fixture("valid/finding.json")

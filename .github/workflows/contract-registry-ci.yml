@@ -24,6 +24,8 @@ on:
       - "policy/public-cloudflare-topology.schema.json"
       - "policy/public-repository-classifications.json"
       - "policy/public-repository-classifications.schema.json"
+      - "policy/model-promotion-public-projection.json"
+      - "policy/model-promotion-public-projection.schema.json"
       - "policy/reliability/**"
       - "policy/repository-hygiene.json"
       - "policy/schemas/reliability-*.schema.json"
@@ -33,6 +35,7 @@ on:
       - "scripts/atlas_trace.py"
       - "scripts/contract_registry.py"
       - "scripts/control_plane_contracts.py"
+      - "scripts/model_promotion_public_projection.py"
       - "scripts/estate_snapshot.py"
       - "scripts/estate_drift.py"
       - "scripts/public_cloudflare_topology.py"
@@ -85,6 +88,8 @@ on:
       - "policy/public-cloudflare-topology.schema.json"
       - "policy/public-repository-classifications.json"
       - "policy/public-repository-classifications.schema.json"
+      - "policy/model-promotion-public-projection.json"
+      - "policy/model-promotion-public-projection.schema.json"
       - "policy/reliability/**"
       - "policy/repository-hygiene.json"
       - "policy/schemas/reliability-*.schema.json"
@@ -94,6 +99,7 @@ on:
       - "scripts/atlas_trace.py"
       - "scripts/contract_registry.py"
       - "scripts/control_plane_contracts.py"
+      - "scripts/model_promotion_public_projection.py"
       - "scripts/estate_snapshot.py"
       - "scripts/estate_drift.py"
       - "scripts/public_cloudflare_topology.py"
@@ -182,6 +188,7 @@ jobs:
           set -euo pipefail
           python3 scripts/wave3_contracts.py check --root .
           python3 scripts/adr_trace.py check --root .
+          python3 scripts/model_promotion_public_projection.py check --root .
 
       - name: Exercise retirement planner
         run: |
@@ -200,6 +207,7 @@ jobs:
             scripts/atlas_trace.py \
             scripts/contract_registry.py \
             scripts/control_plane_contracts.py \
+            scripts/model_promotion_public_projection.py \
             scripts/estate_snapshot.py \
             scripts/estate_drift.py \
             scripts/public_cloudflare_topology.py \

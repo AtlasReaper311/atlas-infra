@@ -30,6 +30,7 @@ jobs:
           python3 -m py_compile scripts/change_impact.py
           python3 -m py_compile scripts/contract_registry.py
           python3 -m py_compile scripts/control_plane_contracts.py
+          python3 -m py_compile scripts/model_promotion_public_projection.py
           python3 -m py_compile scripts/deploy_orchestrator.py
           python3 -m py_compile scripts/dependabot_rollout.py
           python3 -m py_compile scripts/detect_ecosystem.py
@@ -51,6 +52,7 @@ jobs:
           python3 -m py_compile scripts/validate_public_cloudflare_resources.py
           python3 -m unittest discover -s scripts/tests -v
           python3 scripts/validate_control_plane_contracts.py
+          python3 scripts/model_promotion_public_projection.py check --root .
           python3 scripts/public_repository_classifications.py --check
           python3 scripts/estate_snapshot.py --check
           python3 scripts/estate_drift.py --check
