@@ -74,7 +74,9 @@
       ],
       "notes": [
         "The eval case explicitly pins the llama3.1:8b AtlasModel fabrication regression.",
-        "The current GitHub source can locate the qwen2.5:32b promotion record; older local checkouts may not have the promotions directory."
+        "The current GitHub source can locate the qwen2.5:32b promotion record; older local checkouts may not have the promotions directory.",
+        "atlas-eval-harness cases/postmortem-diff-noise-distraction.toml and cases/postmortem-genuine-unknown-cause.toml were added 2026-09-14, proactive coverage rather than a regression pin. Not yet reflected in eval_case_paths here.",
+        "qwen3:14b was run against the full postmortem-drafting group on 2026-09-15 (run 20260915T055347.275443Z) as an informal fast-vs-promoted comparison. It passed 5/7. No formal promotion-prepare/promotion-approve cycle was run for it in this capability; the existing qwen2.5-32b record stands as the only formal promotion on file."
       ]
     },
     {
@@ -131,7 +133,8 @@
       "notes": [
         "Part 0 runtime evidence showed the preferred Home Assistant Assist pipeline using the Ramone memory proxy on port 8091.",
         "This is live interactive answer generation and is distinct from the lower-risk session-summarisation job.",
-        "Eval case paths are supplied by atlas-eval-harness PR #25; they are not accepted coverage until that PR lands."
+        "atlas-eval-harness PR #25 merged 2026-08-19; these three cases are accepted coverage as of that merge, not pending as this note previously said.",
+        "No baseline or promotion evidence has been prepared yet. This remains the actual next step."
       ]
     },
     {
@@ -139,8 +142,8 @@
       "title": "Ramone RAG generation (ollama-rag-kit)",
       "source": "AtlasReaper311/ollama-rag-kit",
       "risk": "Critical",
-      "action_needed": "No action",
-      "next_step": "Keep qwen3:14b under routine regression monitoring for ramone-rag-generation.",
+      "action_needed": "Confirm formal promotion evidence for qwen3.5-mtp",
+      "next_step": "qwen3.5-mtp is the live model, not qwen3:14b; confirmed against ollama-rag-kit/.env.example (LLM_MODEL=qwen3.5-mtp) on 2026-09-15. It passed all 3 accepted cases (absent-model-abstention, cited-grounded-answer, no-invented-identifiers) in atlas-eval-harness run 20260915T055347.275443Z. No formal promotion-prepare/promotion-approve cycle has been run for qwen3.5-mtp in this capability; the only record on file (qwen3-14b.json) is for the model this capability was deployed with before 2026-08-30. Either run the formal promotion cycle for qwen3.5-mtp using the 2026-09-15 run as reviewed evidence, or explicitly decide the verification run is sufficient without a full promotion record.",
       "live_model_sources": [
         {
           "repository": "ollama-rag-kit",
@@ -163,8 +166,9 @@
       ],
       "notes": [
         "This is the highest-risk row because it is live interactive RAG generation.",
-        "Part 0 runtime evidence confirmed the deployed container uses qwen3:14b.",
-        "atlas-eval-harness PR #25 adds the approved qwen3:14b promotion record for this capability."
+        "SUPERSEDED: 'Part 0 runtime evidence confirmed the deployed container uses qwen3:14b' was true as of the 2026-08-18 promotion but has been stale since the 2026-08-30 ollama-rag-kit consolidation onto the shared qwen3.5-mtp llama-server endpoint (LLM_PROVIDER=openai, OPENAI_MODEL=qwen3.5-mtp). This file was not re-synced against that change until 2026-09-15.",
+        "The live_model_sources regex (^LLM_MODEL=(\\S+)) was not the problem; LLM_MODEL=qwen3.5-mtp is present and correct in .env.example. The drift was this file not being re-run, not a broken detection pattern.",
+        "atlas-eval-harness PR #25 (2026-08-19) added the approved qwen3:14b promotion record for this capability. That record documents qwen3:14b's promotion accurately; it is no longer a description of what is deployed."
       ]
     },
     {
