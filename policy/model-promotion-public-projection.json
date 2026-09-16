@@ -12,7 +12,7 @@
     "session-summarisation",
     "synthetic-capability"
   ],
-  "allowed_model_identifiers": ["synthetic-model-1b", "synthetic-model-2b"],
+  "allowed_model_identifiers": ["qwen3.5-mtp", "synthetic-model-1b", "synthetic-model-2b"],
   "allowed_suite_versions": ["1.0.0"],
   "regression_vocabulary": {
     "schema_version": "atlas-control-plane/model-promotion-regression-vocabulary/v1",
