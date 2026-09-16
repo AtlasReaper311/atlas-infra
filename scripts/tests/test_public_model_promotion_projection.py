@@ -39,8 +39,23 @@ class PublicModelPromotionProjectionTests(unittest.TestCase):
         self.assertEqual([], self.validate(candidate))
 
     def test_policy_and_canonical_fixture_pass(self) -> None:
+        policy = projection.load_policy(ROOT)
+        self.assertEqual(
+            ["qwen3.5-mtp", "synthetic-model-1b", "synthetic-model-2b"],
+            policy["allowed_model_identifiers"],
+        )
+        self.assertFalse(policy["public_boundary"]["production_artifact_registered"])
+        self.assertEqual(
+            "deferred-until-artifact-exists",
+            policy["public_boundary"]["target_registration"],
+        )
         self.assertEqual([], projection.validate_policy(ROOT))
         self.assertEqual([], self.validate(self.candidate()))
+
+    def test_allowlisted_qwen_identity_is_contract_valid_without_registration(self) -> None:
+        candidate = self.candidate()
+        candidate["model"]["public_id"] = "qwen3.5-mtp"
+        self.assert_valid(candidate)
 
     def test_projection_fingerprint_sorts_set_like_arrays(self) -> None:
         candidate = self.candidate()
@@ -219,7 +234,7 @@ class PublicModelPromotionProjectionTests(unittest.TestCase):
     def test_capability_and_model_must_be_policy_allowlisted(self) -> None:
         candidate = self.candidate()
         candidate["capability"]["id"] = "unclassified-capability"
-        candidate["model"]["public_id"] = "127.0.0.1"
+        candidate["model"]["public_id"] = "arbitrary-model-name"
         self.refresh_fingerprint(candidate)
         errors = self.validate(candidate)
         self.assertTrue(any("capability is not in the public allowlist" in error for error in errors), errors)
