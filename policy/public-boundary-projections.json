@@ -29,6 +29,10 @@
     {
       "repository": "AtlasReaper311/atlas-systems",
       "path": "lab/speculum/topology.js"
+    },
+    {
+      "repository": "AtlasReaper311/atlas-systems",
+      "path": "systems/model-promotion/evidence/f80ade07d8025fa751f59f8e667fa1adb2905d194fa1f1c90fc316730a94b3c3.json"
     }
   ],
   "approved_public_literals": [
