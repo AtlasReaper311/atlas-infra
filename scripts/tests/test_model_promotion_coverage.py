@@ -121,31 +121,64 @@ class ModelPromotionCoverageTests(unittest.TestCase):
             model_promotion_coverage.action_for(capability, "Exempt - low risk"),
         )
 
-    def test_eval_case_without_promotion_is_not_promoted(self):
+    def test_current_rag_promotion_is_selected_and_history_is_preserved(self):
         config = self.load_config()
         capability = next(
             item for item in config["capabilities"] if item["id"] == "ramone-rag-generation"
         )
+        current_path = "promotions/records/ramone-rag-generation/qwen3.5-mtp.json"
+        historical_path = "promotions/records/ramone-rag-generation/qwen3-14b.json"
+        client = FakeClient(
+            {
+                ("atlas-eval-harness", current_path): json.dumps(
+                    {"model": {"name": "qwen3.5-mtp"}}
+                ),
+                ("atlas-eval-harness", historical_path): json.dumps(
+                    {"model": {"name": "qwen3:14b"}}
+                ),
+            }
+        )
+
+        promoted, evidence, missing = model_promotion_coverage.promotion_model(
+            client, config, capability
+        )
 
         self.assertEqual(
-            "Promotion record missing",
+            [current_path, historical_path],
+            capability["promotion_record_paths"],
+        )
+        self.assertEqual("qwen3.5-mtp", promoted)
+        self.assertIn(current_path, evidence)
+        self.assertEqual([], missing)
+        self.assertEqual(
+            "Promoted - matches live",
             model_promotion_coverage.coverage_status(
                 capability,
-                live_model="qwen3:14b",
+                live_model="qwen3.5-mtp",
                 eval_cases=3,
-                promoted_model="",
-                missing_promotions=["promotions/records/ramone-rag-generation/qwen3-14b.json"],
+                promoted_model=promoted,
+                missing_promotions=missing,
             ),
         )
         self.assertEqual(
-            "Create promotion record",
-            model_promotion_coverage.action_for(capability, "Promotion record missing"),
+            "No action",
+            model_promotion_coverage.action_for(capability, "Promoted - matches live"),
         )
         self.assertEqual(
-            "Todo",
+            "Done",
             model_promotion_coverage.status_for(
-                "Create promotion record", "Promotion record missing"
+                "No action", "Promoted - matches live"
             ),
+        )
+        self.assertTrue(
+            any(
+                "promotion:sha256:0154bdf989637065bf4d48f5d20f19b70916b51e10d6fd605595f9d0a08fe65b"
+                in note
+                for note in capability["notes"]
+            )
+        )
+        self.assertTrue(
+            any("qwen3:14b" in note and "not superseded" in note for note in capability["notes"])
         )
 
     def test_action_is_computed_from_coverage(self):

@@ -142,8 +142,8 @@
       "title": "Ramone RAG generation (ollama-rag-kit)",
       "source": "AtlasReaper311/ollama-rag-kit",
       "risk": "Critical",
-      "action_needed": "Confirm formal promotion evidence for qwen3.5-mtp",
-      "next_step": "qwen3.5-mtp is the live model, not qwen3:14b; confirmed against ollama-rag-kit/.env.example (LLM_MODEL=qwen3.5-mtp) on 2026-09-15. It passed all 3 accepted cases (absent-model-abstention, cited-grounded-answer, no-invented-identifiers) in atlas-eval-harness run 20260915T055347.275443Z. No formal promotion-prepare/promotion-approve cycle has been run for qwen3.5-mtp in this capability; the only record on file (qwen3-14b.json) is for the model this capability was deployed with before 2026-08-30. Either run the formal promotion cycle for qwen3.5-mtp using the 2026-09-15 run as reviewed evidence, or explicitly decide the verification run is sufficient without a full promotion record.",
+      "action_needed": "No action",
+      "next_step": "Monitor qwen3.5-mtp live-model and promotion-record alignment; revalidate when the documented model, accepted record, or evaluation evidence changes. Promotion approval does not itself prove deployment, runtime identity, routing, or live behaviour.",
       "live_model_sources": [
         {
           "repository": "ollama-rag-kit",
@@ -162,13 +162,15 @@
         "cases/ramone-rag-generation-no-invented-identifiers.toml"
       ],
       "promotion_record_paths": [
+        "promotions/records/ramone-rag-generation/qwen3.5-mtp.json",
         "promotions/records/ramone-rag-generation/qwen3-14b.json"
       ],
       "notes": [
         "This is the highest-risk row because it is live interactive RAG generation.",
-        "SUPERSEDED: 'Part 0 runtime evidence confirmed the deployed container uses qwen3:14b' was true as of the 2026-08-18 promotion but has been stale since the 2026-08-30 ollama-rag-kit consolidation onto the shared qwen3.5-mtp llama-server endpoint (LLM_PROVIDER=openai, OPENAI_MODEL=qwen3.5-mtp). This file was not re-synced against that change until 2026-09-15.",
-        "The live_model_sources regex (^LLM_MODEL=(\\S+)) was not the problem; LLM_MODEL=qwen3.5-mtp is present and correct in .env.example. The drift was this file not being re-run, not a broken detection pattern.",
-        "atlas-eval-harness PR #25 (2026-08-19) added the approved qwen3:14b promotion record for this capability. That record documents qwen3:14b's promotion accurately; it is no longer a description of what is deployed."
+        "Current ollama-rag-kit source documents qwen3.5-mtp as LLM_MODEL and OPENAI_MODEL in .env.example and as the llm_model and openai_model defaults in app/config.py. This is source evidence for the documented model and does not prove the running deployment identity.",
+        "atlas-eval-harness PR #48 merged at 5ff8072a895e09b79ea6627f016b3c8eff4847de accepted promotions/records/ramone-rag-generation/qwen3.5-mtp.json for promotion:sha256:0154bdf989637065bf4d48f5d20f19b70916b51e10d6fd605595f9d0a08fe65b; record SHA-256: sha256:a08b4fcfdf0a41efa1694b7f4d79a73f59ad8551195f148da6b579f97a470fd9.",
+        "The qwen3:14b promotion record remains preserved as historical evidence and is not superseded. It records the earlier accepted qwen3:14b promotion; it does not make qwen3:14b the current documented model.",
+        "Promotion approval is evidence only. It does not install a model, change routing, mutate a provider, restart a service, or prove deployment, runtime verification, or live behaviour."
       ]
     },
     {

@@ -127,15 +127,18 @@
       "repository": "AtlasReaper311/ollama-rag-kit",
       "classification": "interactive-live",
       "capability_id": "ramone-rag-generation",
-      "model": "qwen3:14b",
-      "model_source": "runtime",
-      "endpoint": "POST /ask and streaming answer -> Ollama /api/chat",
+      "model": "qwen3.5-mtp",
+      "model_source": "source",
+      "endpoint": "POST /ask and streaming answer -> OpenAI-compatible /v1/chat/completions",
       "runtime_evidence": [
-        "WSL Docker ollama-rag-kit-rag-api-1 LLM_MODEL=qwen3:14b",
-        "app/retriever.py and app/streaming.py call /api/chat"
+        "AtlasReaper311/ollama-rag-kit .env.example documents LLM_PROVIDER=openai, OPENAI_BASE_URL ending in /v1, and OPENAI_MODEL=qwen3.5-mtp as the current source default",
+        "AtlasReaper311/ollama-rag-kit app/config.py defaults llm_model=qwen3.5-mtp and openai_model=qwen3.5-mtp",
+        "app/retriever.py and app/streaming.py use the OpenAI-compatible /v1/chat/completions route when LLM_PROVIDER=openai; Ollama /api/chat remains an alternate provider path, not the current documented default"
       ],
       "notes": [
-        "Eval cases exist on atlas-eval-harness origin/main, but no promotion record was observed."
+        "Current committed source supports qwen3.5-mtp as the documented model; this inventory row does not prove the running container identity.",
+        "Formal qwen3.5-mtp promotion evidence is represented in model-promotion-coverage.json. The historical qwen3:14b promotion remains preserved there and is not superseded.",
+        "Promotion approval does not prove deployment, runtime verification, routing, or live behaviour."
       ]
     },
     {

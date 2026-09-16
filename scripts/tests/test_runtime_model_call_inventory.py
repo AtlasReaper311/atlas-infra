@@ -48,6 +48,28 @@ class RuntimeModelCallInventoryTests(unittest.TestCase):
         self.assertEqual("async-summary", summary["classification"])
         self.assertEqual("session-summarisation", summary["capability_id"])
 
+    def test_rag_call_site_uses_current_documented_model(self):
+        inventory = self.load_inventory()
+        coverage = self.load_coverage()
+        rag_call = next(item for item in inventory["call_sites"] if item["id"] == "ollama-rag-kit-ask")
+        rag_coverage = next(
+            item for item in coverage["capabilities"] if item["id"] == "ramone-rag-generation"
+        )
+
+        self.assertEqual("qwen3.5-mtp", rag_call["model"])
+        self.assertEqual("source", rag_call["model_source"])
+        self.assertIn(
+            "promotions/records/ramone-rag-generation/qwen3.5-mtp.json",
+            rag_coverage["promotion_record_paths"],
+        )
+        self.assertIn(
+            "promotions/records/ramone-rag-generation/qwen3-14b.json",
+            rag_coverage["promotion_record_paths"],
+        )
+        self.assertTrue(
+            any("does not prove the running container identity" in note for note in rag_call["notes"])
+        )
+
     def test_interactive_live_override_is_flagged(self):
         call_sites = [
             {
