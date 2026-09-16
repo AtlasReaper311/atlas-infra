@@ -6,7 +6,7 @@ sessions do not silently duplicate or reverse each other.
 
 Update or remove an entry as soon as its status changes.
 
-Last updated: 2026-08-19.
+Last updated: 2026-09-16.
 
 ## Active work
 
@@ -37,12 +37,9 @@ Last updated: 2026-08-19.
 - **Agent:** Claude Code on SPECULAR-CORE; Atlas approving model choice and rollout
 - **Status:** active
 - **Started:** 2026-08-18
-- **Last updated:** 2026-08-19
-- **Summary:** `ramone-rag-generation` was Critical risk with no eval coverage; the live `ollama-rag-kit` container was confirmed, via `docker inspect` on the actual running container rather than the committed default, to be running the banned `llama3.1:8b`. Eval cases and a scored three-model comparison merged through `atlas-eval-harness#23`. Atlas selected `qwen3:14b`: equal correctness to `qwen2.5:32b` (3/3 each; `llama3.1:8b` scored 2/3 and failed by confidently citing a fabricated answer), roughly 7.6x faster generation on this interactive path.
-- **Resume point:** Review and merge the pending `atlas-eval-harness` promotion
-  evidence for `qwen3:14b`, then draft the `ollama-rag-kit` config change
-  (`LLM_MODEL` to `qwen3:14b`) as its own PR. Live rollout to the running
-  service is a separate approved step after that.
+- **Last updated:** 2026-09-16
+- **Summary:** `ramone-rag-generation` remains Critical risk. Eval cases and the earlier qwen3:14b comparison merged through `atlas-eval-harness#23`. The owner-approved qwen3.5-mtp promotion then merged through `atlas-eval-harness#48` at `5ff8072a895e09b79ea6627f016b3c8eff4847de`, with the accepted record at `promotions/records/ramone-rag-generation/qwen3.5-mtp.json` and promotion ID `promotion:sha256:0154bdf989637065bf4d48f5d20f19b70916b51e10d6fd605595f9d0a08fe65b`. The historical qwen3:14b promotion remains valid evidence and is not superseded.
+- **Resume point:** Review and merge the bounded `atlas-infra` reconciliation change. Any `ollama-rag-kit` rollout or routing change remains a separate owner-approved runtime action; promotion approval does not prove deployment or live state.
 
 ## Queued work
 

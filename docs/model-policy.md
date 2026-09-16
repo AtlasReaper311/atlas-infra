@@ -20,10 +20,10 @@ did and did not fix.
 | Session summarisation | `ramone-memory` | `llama3.1:8b` | Fine for summarisation. Not evaluated or trusted for reasoning tasks — see banned list below. |
 | Session summary embedding | `ramone-memory` | `nomic-embed-text` | Shared embedding model across the estate; one pull serves `ramone-memory`, `atlas-corpus`, and `ollama-rag-kit`. |
 | Corpus document embedding | `atlas-corpus` | `nomic-embed-text` | Same shared embedding model. |
-| Ramone RAG generation | `ollama-rag-kit` | `qwen3:14b` (promoted 2026-08-18) | Evidence-sensitive: this generates Ramone's actual conversational answers. The live container was previously confirmed (via `docker inspect`, not the committed default) running the banned `llama3.1:8b`. `atlas-eval-harness#23` added the capability's first eval cases and scored `qwen3:14b`, `qwen2.5:32b`, and `llama3.1:8b`; the first two both passed 3/3, `llama3.1:8b` scored 2/3 and failed by confidently citing a fabricated answer. `qwen3:14b` was chosen for roughly 7.6x faster generation than `qwen2.5:32b` at equal correctness, on a path where Ramone has to speak the answer back. Confirm the `ollama-rag-kit` config change has actually been applied and rolled out before trusting this row; the eval case and the config change were tracked as separate PRs. |
+| Ramone RAG generation | `ollama-rag-kit` | `qwen3.5-mtp` (promoted 2026-09-16) | Evidence-sensitive: this generates Ramone's actual conversational answers. Current `ollama-rag-kit` source documents `qwen3.5-mtp` in `.env.example` and `app/config.py`. `atlas-eval-harness#48` merged the accepted record at `promotions/records/ramone-rag-generation/qwen3.5-mtp.json` with promotion ID `promotion:sha256:0154bdf989637065bf4d48f5d20f19b70916b51e10d6fd605595f9d0a08fe65b`. The historical `qwen3:14b` promotion remains valid evidence and is not superseded. This policy row records source and promotion evidence; it does not prove deployment or runtime identity. |
 | Incident postmortem drafting | `atlas-postmortem` | `qwen2.5:32b` | Evidence-sensitive reasoning task. Confirmed via `atlas-eval-harness` regression case after `llama3.1:8b` fabricated a non-existent `AtlasModel` class from a real diff. |
 | Daily digest synthesis | `atlas-daily-digest` | `llama3.1:8b` | Not evaluated. `atlas-infra/policy/model-promotion-coverage.json` tracks this as `daily-digest-synthesis` with action "Add eval case." Lower stakes than Ramone RAG generation or postmortem drafting since the digest is a once-a-day summary rather than an interactive or investigative surface, but it is the same banned model and the gap is real. |
-| `ollama-rag-kit` generation model | `ollama-rag-kit` | see "Ramone RAG generation" above | Superseded row; kept only so a stale link to this line doesn't resolve to nothing. |
+| `ollama-rag-kit` generation model | `ollama-rag-kit` | see "Ramone RAG generation" above | Historical pointer retained so a stale link to this line does not resolve to nothing. The earlier `qwen3:14b` promotion remains valid historical evidence and is not superseded. |
 
 ## Banned or restricted models
 
@@ -33,14 +33,17 @@ did and did not fix.
 
 ## Approved for evidence-sensitive reasoning
 
-`qwen3:14b` and `qwen2.5:32b` are the models currently cleared for factual
+`qwen3.5-mtp`, `qwen3:14b`, and `qwen2.5:32b` are models cleared for factual
 postmortem drafting, Ramone RAG generation, and other reasoning tasks where a
-wrong answer has real cost. Neither is a blanket endorsement —
+wrong answer has real cost. This is not a blanket endorsement —
 `atlas-eval-harness` is what actually proves suitability per capability, not
 model size, reputation, or a prior promotion on a different capability.
-`qwen3:14b` generates substantially faster than `qwen2.5:32b` in practice
+The historical `qwen3:14b` comparison found it generated substantially faster
+than `qwen2.5:32b` in practice
 (observed roughly 7.6x on the `ramone-rag-generation` eval run), which matters
-more on interactive paths than on batch ones like postmortem drafting.
+more on interactive paths than on batch ones like postmortem drafting. The
+accepted `qwen3.5-mtp` record is promotion evidence, not deployment or routing
+evidence.
 
 ## How promotion actually works
 
