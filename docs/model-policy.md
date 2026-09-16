@@ -33,9 +33,9 @@ did and did not fix.
 
 ## Approved for evidence-sensitive reasoning
 
-`qwen3.5-mtp`, `qwen3:14b`, and `qwen2.5:32b` are models cleared for factual
-postmortem drafting, Ramone RAG generation, and other reasoning tasks where a
-wrong answer has real cost. This is not a blanket endorsement —
+These models have accepted evidence for one or more evidence-sensitive
+capabilities. Approval remains capability-specific; a promotion for one
+capability does not approve the model for another.
 `atlas-eval-harness` is what actually proves suitability per capability, not
 model size, reputation, or a prior promotion on a different capability.
 The historical `qwen3:14b` comparison found it generated substantially faster

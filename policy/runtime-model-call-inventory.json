@@ -129,11 +129,11 @@
       "capability_id": "ramone-rag-generation",
       "model": "qwen3.5-mtp",
       "model_source": "source",
-      "endpoint": "POST /ask and streaming answer -> Ollama /api/chat",
+      "endpoint": "POST /ask and streaming answer -> OpenAI-compatible /v1/chat/completions",
       "runtime_evidence": [
-        "AtlasReaper311/ollama-rag-kit .env.example documents LLM_MODEL=qwen3.5-mtp, LLM_PROVIDER=openai, and OPENAI_MODEL=qwen3.5-mtp",
+        "AtlasReaper311/ollama-rag-kit .env.example documents LLM_PROVIDER=openai, OPENAI_BASE_URL ending in /v1, and OPENAI_MODEL=qwen3.5-mtp as the current source default",
         "AtlasReaper311/ollama-rag-kit app/config.py defaults llm_model=qwen3.5-mtp and openai_model=qwen3.5-mtp",
-        "app/retriever.py and app/streaming.py call /api/chat"
+        "app/retriever.py and app/streaming.py use the OpenAI-compatible /v1/chat/completions route when LLM_PROVIDER=openai; Ollama /api/chat remains an alternate provider path, not the current documented default"
       ],
       "notes": [
         "Current committed source supports qwen3.5-mtp as the documented model; this inventory row does not prove the running container identity.",
