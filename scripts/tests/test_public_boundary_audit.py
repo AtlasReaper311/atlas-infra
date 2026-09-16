@@ -306,7 +306,43 @@ class PublicBoundaryAuditTests(unittest.TestCase):
         targets = public_boundary_audit.load_projection_targets(path, "AtlasReaper311")
         coordinates = {(item["repository"], item["path"]) for item in targets}
 
-        self.assertEqual(8, len(coordinates))
+        self.assertEqual(13, len(coordinates))
+        self.assertEqual(len(targets), len(coordinates))
+        model_promotion_targets = {
+            (
+                "AtlasReaper311/atlas-systems",
+                "systems/model-promotion/evidence/3e1dbfba5a3c9c643791b91b608810651f42212a019962275895f25eba21bdf3.json",
+            ),
+            (
+                "AtlasReaper311/atlas-systems",
+                "systems/model-promotion/evidence/8b6ffc407bc02af7cc01596c99856dba03112c1345d2875feb587fa3c87503aa.json",
+            ),
+            (
+                "AtlasReaper311/atlas-systems",
+                "systems/model-promotion/evidence/9d8d70d7577eb4e307852ca5b552370d02754d5d27205097b1393277a61c074e.json",
+            ),
+            (
+                "AtlasReaper311/atlas-systems",
+                "systems/model-promotion/evidence/b049801c77b15a8efccf7a59bac0aaf41bae63f12bd4bb460bf5de662223053f.json",
+            ),
+            (
+                "AtlasReaper311/atlas-systems",
+                "systems/model-promotion/evidence/b92b3faa8d75a6869dbf72b0b9cf80c214cba272e23b3a12f859ed32c4deeba5.json",
+            ),
+            (
+                "AtlasReaper311/atlas-systems",
+                "systems/model-promotion/evidence/f80ade07d8025fa751f59f8e667fa1adb2905d194fa1f1c90fc316730a94b3c3.json",
+            ),
+        }
+        self.assertEqual(
+            model_promotion_targets,
+            {
+                coordinate
+                for coordinate in coordinates
+                if coordinate[0] == "AtlasReaper311/atlas-systems"
+                and coordinate[1].startswith("systems/model-promotion/evidence/")
+            },
+        )
         self.assertIn(
             ("AtlasReaper311/atlas-infra", "policy/estate-registry.json"),
             coordinates,
