@@ -18,10 +18,16 @@ from pathlib import Path
 from typing import Any
 from urllib.parse import urlsplit
 
-from model_promotion_public_projection_rules import (
-    POLICY_PATH as PUBLIC_MODEL_PROMOTION_POLICY_PATH,
-    semantic_errors as public_model_promotion_semantic_errors,
-)
+if __package__:
+    from .model_promotion_public_projection_rules import (
+        POLICY_PATH as PUBLIC_MODEL_PROMOTION_POLICY_PATH,
+        semantic_errors as public_model_promotion_semantic_errors,
+    )
+else:
+    from model_promotion_public_projection_rules import (
+        POLICY_PATH as PUBLIC_MODEL_PROMOTION_POLICY_PATH,
+        semantic_errors as public_model_promotion_semantic_errors,
+    )
 
 DRAFT_2020_12 = "https://json-schema.org/draft/2020-12/schema"
 EXPECTED_SCHEMAS = (

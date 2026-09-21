@@ -8,6 +8,7 @@ import base64
 import hashlib
 import json
 import os
+import re
 import sys
 import urllib.parse
 from pathlib import Path
@@ -68,6 +69,41 @@ BINARY_SUFFIXES = {
 
 class BoundaryAuditError(RuntimeError):
     """Describe a boundary-audit failure without exposing a protected identity."""
+
+
+_REPOSITORY_NAME_CHARACTERS = r"A-Za-z0-9._-"
+
+
+def _identity_pattern(identity: str) -> re.Pattern[str]:
+    """Build an exact repository-identity matcher with GitHub name boundaries.
+
+    Repository slugs may contain letters, digits, periods, underscores, and
+    hyphens.  Those characters therefore remain part of a slug boundary: a
+    protected ``service`` must not match ``service-public``.  A period is also
+    treated as sentence punctuation when it is not followed by another valid
+    repository-name character.  A standard ``.git`` suffix is accepted only
+    for a full owner/repository identity in a GitHub URL, where it is URL
+    syntax rather than part of the repository name.
+    """
+
+    escaped = re.escape(identity)
+    boundary = _REPOSITORY_NAME_CHARACTERS
+    following_boundary = rf"(?:[A-Za-z0-9_-]|\.(?:[{boundary}]))"
+    pattern = rf"(?<![{boundary}]){escaped}(?!{following_boundary})"
+    if "/" in identity:
+        owner, repository = identity.split("/", 1)
+        url_pattern = (
+            rf"(?<![{boundary}]){re.escape(owner)}/{re.escape(repository)}"
+            rf"\.git(?=$|[^A-Za-z0-9._-])"
+        )
+        pattern = rf"(?:{pattern}|{url_pattern})"
+    return re.compile(pattern, re.IGNORECASE)
+
+
+def _line_contains_identity(line: str, identity: str) -> bool:
+    """Return whether one line contains an exact protected identity."""
+
+    return _identity_pattern(identity).search(line) is not None
 
 
 def _finding_fingerprint(repository: str, path: str, line: int | None) -> str:
@@ -181,7 +217,7 @@ def audit_local_tree(
 
         files_checked += 1
         for line_number, line in enumerate(text.splitlines(), start=1):
-            if any(identity in line for identity in identities):
+            if any(_line_contains_identity(line, identity) for identity in identities):
                 findings.append(
                     _redacted_finding(
                         repository_label,
@@ -375,7 +411,7 @@ def audit_github_public_projections(
             continue
 
         for line_number, line in enumerate(text.splitlines(), start=1):
-            if any(identity in line for identity in identities):
+            if any(_line_contains_identity(line, identity) for identity in identities):
                 findings.append(
                     _redacted_finding(
                         repository,
