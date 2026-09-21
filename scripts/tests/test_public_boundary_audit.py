@@ -99,6 +99,48 @@ class PublicBoundaryAuditTests(unittest.TestCase):
         for identity in protected:
             self.assertNotIn(identity, serialized)
 
+    def test_exact_full_repository_identity_is_detected(self):
+        protected = "AtlasReaper311/private-example"
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "projection.json").write_text(
+                '{"repository":"AtlasReaper311/private-example"}\n',
+                encoding="utf-8",
+            )
+
+            report = public_boundary_audit.audit_local_tree(root, [protected])
+
+        self.assertEqual("failed", report["status"])
+        self.assertEqual(1, len(report["findings"]))
+
+    def test_repository_identity_in_github_url_is_detected(self):
+        protected = "AtlasReaper311/private-example"
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "links.md").write_text(
+                "See https://github.com/AtlasReaper311/private-example.git/tree/main.\n",
+                encoding="utf-8",
+            )
+
+            report = public_boundary_audit.audit_local_tree(root, [protected])
+
+        self.assertEqual("failed", report["status"])
+        self.assertEqual(1, len(report["findings"]))
+
+    def test_repository_slug_prefix_inside_longer_public_slug_is_ignored(self):
+        protected = "private-example"
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "inventory.json").write_text(
+                '{"repository":"private-example-public"}\n',
+                encoding="utf-8",
+            )
+
+            report = public_boundary_audit.audit_local_tree(root, [protected])
+
+        self.assertEqual("passed", report["status"])
+        self.assertEqual([], report["findings"])
+
     def test_local_scan_ignores_binary_and_explicit_exclusion(self):
         protected = "private-example"
         with tempfile.TemporaryDirectory() as directory:

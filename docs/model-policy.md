@@ -1,4 +1,4 @@
-# Atlas Systems — Model Policy
+# Atlas Systems - Model Policy
 
 Which Ollama model to use for which capability, and why. This is a derived
 convenience document. When it disagrees with `atlas-eval-harness` promotion
@@ -17,7 +17,7 @@ did and did not fix.
 | Capability | Repo | Model | Why |
 |---|---|---|---|
 | Corpus grounded Q&A (`/ask`) | `atlas-corpus` | Check `app/config.py` and the live `.env`, not this table | Has disagreed across the committed `.env.example`, the local `.env`, and this document simultaneously. `atlas-infra/policy/model-promotion-coverage.json` tracks this as `corpus-retrieval` and, as of the last check, explicitly flags "decide live/promoted mismatch" as unresolved. `_fallback_answer_from_hits()` returns grounded excerpts if synthesis times out, and, as of `atlas-corpus#33`, the service also degrades to BM25-only search with no synthesis at all if Ollama is unreachable rather than failing the request. |
-| Session summarisation | `ramone-memory` | `llama3.1:8b` | Fine for summarisation. Not evaluated or trusted for reasoning tasks — see banned list below. |
+| Session summarisation | `ramone-memory` | `llama3.1:8b` | Fine for summarisation. Not evaluated or trusted for reasoning tasks - see banned list below. |
 | Session summary embedding | `ramone-memory` | `nomic-embed-text` | Shared embedding model across the estate; one pull serves `ramone-memory`, `atlas-corpus`, and `ollama-rag-kit`. |
 | Corpus document embedding | `atlas-corpus` | `nomic-embed-text` | Same shared embedding model. |
 | Ramone RAG generation | `ollama-rag-kit` | `qwen3.5-mtp` (promoted 2026-09-16) | Evidence-sensitive: this generates Ramone's actual conversational answers. Current `ollama-rag-kit` source documents `qwen3.5-mtp` in `.env.example` and `app/config.py`. `atlas-eval-harness#48` merged the accepted record at `promotions/records/ramone-rag-generation/qwen3.5-mtp.json` with promotion ID `promotion:sha256:0154bdf989637065bf4d48f5d20f19b70916b51e10d6fd605595f9d0a08fe65b`. The historical `qwen3:14b` promotion remains valid evidence and is not superseded. This policy row records source and promotion evidence; it does not prove deployment or runtime identity. |
@@ -49,11 +49,11 @@ evidence.
 
 A model is not "promoted" by informal impression. `atlas-eval-harness` requires:
 
-1. `run` — call every candidate model against every case in `cases/`, deterministic (temperature 0, fixed seed) via `/api/generate`.
+1. `run` - call every candidate model against every case in `cases/`, deterministic (temperature 0, fixed seed) via `/api/generate`.
 2. Human review of the run's pass/fail matrix and specific failure evidence.
-3. `promotion-prepare` — build a candidate record from the reviewed run, binding capability, model, prompt fingerprint, and runtime-options fingerprint.
-4. `promotion-approve` — explicit human approval with `--confirm-reviewed-evidence`, only after reviewing the underlying run.
-5. `promotion-check` — validate the resulting record.
+3. `promotion-prepare` - build a candidate record from the reviewed run, binding capability, model, prompt fingerprint, and runtime-options fingerprint.
+4. `promotion-approve` - explicit human approval with `--confirm-reviewed-evidence`, only after reviewing the underlying run.
+5. `promotion-check` - validate the resulting record.
 
 The promotion record is evidence only. It does not pull or delete an Ollama
 model, change Open WebUI, change Home Assistant, restart a service, or alter
@@ -75,7 +75,7 @@ shape.
 
 Before wiring a new capability to a specific model:
 
-1. Check this table first — a capability with similar reasoning-sensitivity to an existing entry should default to the same model, not a fresh guess.
+1. Check this table first - a capability with similar reasoning-sensitivity to an existing entry should default to the same model, not a fresh guess.
 2. If the capability is evidence-sensitive (postmortems, root-cause claims, anything a person could act on if wrong), write an `atlas-eval-harness` case before shipping the default.
 3. Update this table once a model choice is either confirmed by an eval case or accepted as an informal default pending evaluation. Mark informal defaults as such rather than implying they were tested.
 4. Check `atlas-infra/policy/model-promotion-coverage.json` for the capability's current risk rating and required next action; it is kept closer to live evidence than this table is.

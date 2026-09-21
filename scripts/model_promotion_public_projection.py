@@ -15,10 +15,16 @@ import sys
 from pathlib import Path
 from typing import Any
 
-import control_plane_contracts as base
-from model_promotion_public_projection_rules import (
-    semantic_errors as public_semantic_errors,
-)
+if __package__:
+    from . import control_plane_contracts as base
+    from .model_promotion_public_projection_rules import (
+        semantic_errors as public_semantic_errors,
+    )
+else:
+    import control_plane_contracts as base
+    from model_promotion_public_projection_rules import (
+        semantic_errors as public_semantic_errors,
+    )
 
 
 SCHEMA_NAME = "public-model-promotion-projection.schema.json"
