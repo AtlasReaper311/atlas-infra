@@ -41,7 +41,7 @@ class PublicModelPromotionProjectionTests(unittest.TestCase):
     def test_policy_and_canonical_fixture_pass(self) -> None:
         policy = projection.load_policy(ROOT)
         self.assertEqual(
-            ["qwen3.5-mtp", "synthetic-model-1b", "synthetic-model-2b"],
+            ["qwen3.5-mtp", "qwen3:14b", "synthetic-model-1b", "synthetic-model-2b"],
             policy["allowed_model_identifiers"],
         )
         self.assertFalse(policy["public_boundary"]["production_artifact_registered"])
@@ -53,9 +53,18 @@ class PublicModelPromotionProjectionTests(unittest.TestCase):
         self.assertEqual([], self.validate(self.candidate()))
 
     def test_allowlisted_qwen_identity_is_contract_valid_without_registration(self) -> None:
-        candidate = self.candidate()
-        candidate["model"]["public_id"] = "qwen3.5-mtp"
-        self.assert_valid(candidate)
+        for model_id in ("qwen3.5-mtp", "qwen3:14b"):
+            with self.subTest(model_id=model_id):
+                candidate = self.candidate()
+                candidate["model"]["public_id"] = model_id
+                self.assert_valid(candidate)
+
+    def test_synthetic_model_ids_remain_contract_valid_for_fixtures(self) -> None:
+        for model_id in ("synthetic-model-1b", "synthetic-model-2b"):
+            with self.subTest(model_id=model_id):
+                candidate = self.candidate()
+                candidate["model"]["public_id"] = model_id
+                self.assert_valid(candidate)
 
     def test_projection_fingerprint_sorts_set_like_arrays(self) -> None:
         candidate = self.candidate()

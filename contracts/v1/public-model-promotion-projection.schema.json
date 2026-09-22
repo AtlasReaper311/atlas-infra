@@ -59,7 +59,7 @@
       "additionalProperties": false,
       "required": ["public_id"],
       "properties": {
-        "public_id": {"type": ["string", "null"], "pattern": "^[a-z0-9]+(?:[._-][a-z0-9]+)*$", "maxLength": 80}
+        "public_id": {"type": ["string", "null"], "pattern": "^[a-z0-9]+(?:[._:-][a-z0-9]+)*$", "maxLength": 80}
       }
     },
     "evaluation": {
@@ -168,7 +168,7 @@
       "properties": {
         "subject": {"const": "runtime-model-identity"},
         "state": {"enum": ["not-represented", "observed-match", "observed-mismatch", "unknown-not-observed"]},
-        "observed_model_id": {"type": ["string", "null"], "pattern": "^[a-z0-9]+(?:[._-][a-z0-9]+)*$", "maxLength": 80},
+        "observed_model_id": {"type": ["string", "null"], "pattern": "^[a-z0-9]+(?:[._:-][a-z0-9]+)*$", "maxLength": 80},
         "observed_at": {"type": ["string", "null"], "format": "date-time"}
       }
     },
