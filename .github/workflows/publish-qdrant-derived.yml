@@ -124,7 +124,9 @@ jobs:
           mkdir -p evidence
           docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v "${PWD}/evidence:/out" "${TRIVY_IMAGE}" image --scanners vuln,misconfig,license --format json --output /out/trivy.json "${IMAGE_REF}" >/dev/null
           docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v "${PWD}/evidence:/out" "${TRIVY_IMAGE}" image --scanners vuln,misconfig,license --format spdx-json --output /out/image.spdx.json "${IMAGE_REF}" >/dev/null
-          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock "${TRIVY_IMAGE}" image --scanners secret --format json --output /tmp/trivy-secret.json "${IMAGE_REF}" >/dev/null
+          SECRET_DIR="${RUNNER_TEMP}/trivy-secret"
+          mkdir -p "${SECRET_DIR}"
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v "${SECRET_DIR}:/out" "${TRIVY_IMAGE}" image --scanners secret --format json --output /out/trivy-secret.json "${IMAGE_REF}" >/dev/null
           python3 - <<'PY'
           import json
           import os
@@ -134,7 +136,9 @@ jobs:
               return result.get(key) or []
 
           scan = json.loads(pathlib.Path("evidence/trivy.json").read_text())
-          secret = json.loads(pathlib.Path("/tmp/trivy-secret.json").read_text())
+          secret_path = pathlib.Path(os.environ["RUNNER_TEMP"]) / "trivy-secret" / "trivy-secret.json"
+          secret = json.loads(secret_path.read_text())
+          secret_path.unlink(missing_ok=True)
           high_critical = []
           vuln_count = 0
           misconfig_count = 0
