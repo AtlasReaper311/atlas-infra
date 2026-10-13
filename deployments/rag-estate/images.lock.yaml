@@ -1,15 +1,23 @@
 schema_version: 1
-status: staged-not-deployable
+status: cutover-authorized-pending-live-verification
 notes:
   - Application image digests below are verified from successful exact-head GHCR publication runs.
-  - The Qdrant digest below is preserved from the disposable security evaluation and still requires current publication or local-image verification before deployment.
+  - The Qdrant image is the owner-approved private publication for this cutover.
+  - The documented Qdrant license inventory is owner-approved with no findings suppressed.
+  - Production migration remains incomplete until live cutover, acceptance, and rollback readiness are verified.
 images:
   qdrant:
-    candidate_name: chroma-eval-qdrant-distroless
+    repository: ghcr.io/atlasreaper311/qdrant-distroless
+    candidate_name: atlas-qdrant-server-only-derivative
     candidate_version: 1.19.2-derived
-    digest: sha256:c709afda290769ca6afdb178b5cc1792d605dfbd7b92930e17066d2c996bb1d7
-    evidence: U:/runtime-work/chroma-rag-evaluation-20261013-005912/qdrant-distroless-final2-scan.json
-    current_verification: required
+    digest: sha256:0cb5c788a9ccca33ad4c167b32ff83ff9eee7c0496273379889e4c78569c18c4
+    source_commit: 098f2f4eb822666e30c90bb4548d5eeb18dc4398
+    publication_run: https://github.com/AtlasReaper311/atlas-infra/actions/runs/38432930922
+    attestation: https://github.com/AtlasReaper311/atlas-infra/attestations/55504637
+    rekor: https://search.sigstore.dev?logIndex=3245297806
+    evidence: U:/runtime-work/qdrant-derived-evidence-098f2f4eb822666e30c90bb4548d5eeb18dc4398
+    current_verification: owner-approved-published
+    license_review: owner-approved-no-suppressions
   ramone-memory:
     repository: ghcr.io/atlasreaper311/ramone-memory
     digest: sha256:301e24befb2ed2993f9635fef22974c361a4ace85509ca2ca3fbccdc7c70733c
