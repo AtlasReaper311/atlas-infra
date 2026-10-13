@@ -7,6 +7,7 @@ WORKDIR /src
 COPY qdrant-healthcheck.go .
 RUN CGO_ENABLED=0 GO111MODULE=off GOOS=linux GOARCH=amd64 go build -trimpath -ldflags="-s -w" -o /out/healthcheck qdrant-healthcheck.go
 FROM gcr.io/distroless/cc-debian13:nonroot@sha256:e792ab3d241a468a4fd7519ddbbebe66b49b5f365771716ea688ad40b6c6f1c2
+
 WORKDIR /qdrant
 COPY --from=qdrant /qdrant/qdrant /qdrant/qdrant
 COPY --from=qdrant --chown=65532:65532 /qdrant/config /qdrant/config
@@ -19,6 +20,7 @@ COPY --from=qdrant /lib/x86_64-linux-gnu/liblzma.so.5 /lib/x86_64-linux-gnu/libl
 COPY --from=probe /bin/busybox /bin/busybox
 COPY --from=healthcheck /out/healthcheck /qdrant/healthcheck
 USER 65532:65532
+
 HEALTHCHECK --interval=10s --timeout=3s --start-period=10s --retries=5 \
     CMD ["/qdrant/healthcheck"]
 ENTRYPOINT ["/qdrant/qdrant"]
