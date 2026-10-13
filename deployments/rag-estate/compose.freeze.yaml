@@ -1,0 +1,10 @@
+services:
+  ramone-memory:
+    environment:
+      WRITE_FREEZE: "true"
+  atlas-corpus:
+    environment:
+      WRITE_FREEZE: "true"
+  ollama-rag-kit:
+    environment:
+      WRITE_FREEZE: "true"
