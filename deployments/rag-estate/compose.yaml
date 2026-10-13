@@ -1,0 +1,124 @@
+name: rag-estate
+
+services:
+  qdrant:
+    image: ${QDRANT_IMAGE_REF:?QDRANT_IMAGE_REF must be an immutable image@sha256 ref}
+    restart: unless-stopped
+    user: "1000:1000"
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    tmpfs:
+      - /tmp:size=64m,noexec,nosuid,nodev
+    env_file:
+      - path: ${RAG_SECRET_ROOT:?RAG_SECRET_ROOT must point to the protected secret directory}/qdrant.env
+        required: true
+    environment:
+      QDRANT__SERVICE__ENABLE_TLS: "true"
+      QDRANT__SERVICE__HOST: 0.0.0.0
+      QDRANT__TLS__CERT: /run/qdrant-tls/cert.pem
+      QDRANT__TLS__KEY: /run/qdrant-tls/key.pem
+      QDRANT__TELEMETRY_DISABLED: "true"
+    volumes:
+      - qdrant-data:/qdrant/storage
+      - type: bind
+        source: ${RAG_TLS_ROOT:?RAG_TLS_ROOT must point to the protected TLS directory}
+        target: /run/qdrant-tls
+        read_only: true
+    networks:
+      - rag-private
+    healthcheck:
+      test: ["CMD", "/qdrant/qdrant", "--version"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+
+  ramone-memory:
+    image: ${RAMONE_MEMORY_IMAGE_REF:?RAMONE_MEMORY_IMAGE_REF must be an immutable image@sha256 ref}
+    restart: unless-stopped
+    env_file:
+      - path: ${RAG_SECRET_ROOT:?RAG_SECRET_ROOT must point to the protected secret directory}/ramone-memory.env
+        required: true
+    environment:
+      VECTOR_BACKEND: qdrant
+      QDRANT_URL: https://qdrant:6333
+      QDRANT_VERIFY_TLS: "true"
+      QDRANT_CA_CERT: /run/qdrant-tls/ca.pem
+      WRITE_FREEZE: ${WRITE_FREEZE:?WRITE_FREEZE must be explicitly set}
+    volumes:
+      - type: bind
+        source: ${RAG_TLS_ROOT:?RAG_TLS_ROOT must point to the protected TLS directory}
+        target: /run/qdrant-tls
+        read_only: true
+    ports:
+      - "127.0.0.1:${RAMONE_MEMORY_HOST_PORT:-8091}:8091"
+    networks:
+      - rag-private
+    depends_on:
+      qdrant:
+        condition: service_healthy
+
+  atlas-corpus:
+    image: ${ATLAS_CORPUS_IMAGE_REF:?ATLAS_CORPUS_IMAGE_REF must be an immutable image@sha256 ref}
+    restart: unless-stopped
+    env_file:
+      - path: ${RAG_SECRET_ROOT:?RAG_SECRET_ROOT must point to the protected secret directory}/atlas-corpus.env
+        required: true
+    environment:
+      VECTOR_BACKEND: qdrant
+      QDRANT_URL: https://qdrant:6333
+      QDRANT_VERIFY_TLS: "true"
+      QDRANT_CA_CERT: /run/qdrant-tls/ca.pem
+      WRITE_FREEZE: ${WRITE_FREEZE:?WRITE_FREEZE must be explicitly set}
+    volumes:
+      - type: bind
+        source: ${RAG_TLS_ROOT:?RAG_TLS_ROOT must point to the protected TLS directory}
+        target: /run/qdrant-tls
+        read_only: true
+      - corpus-data:/srv/data
+    ports:
+      - "127.0.0.1:${ATLAS_CORPUS_HOST_PORT:-8092}:8092"
+    networks:
+      - rag-private
+    depends_on:
+      qdrant:
+        condition: service_healthy
+
+  ollama-rag-kit:
+    image: ${OLLAMA_RAG_KIT_IMAGE_REF:?OLLAMA_RAG_KIT_IMAGE_REF must be an immutable image@sha256 ref}
+    restart: unless-stopped
+    env_file:
+      - path: ${RAG_SECRET_ROOT:?RAG_SECRET_ROOT must point to the protected secret directory}/ollama-rag-kit.env
+        required: true
+    environment:
+      VECTOR_BACKEND: qdrant
+      QDRANT_URL: https://qdrant:6333
+      QDRANT_VERIFY_TLS: "true"
+      QDRANT_CA_CERT: /run/qdrant-tls/ca.pem
+      WRITE_FREEZE: ${WRITE_FREEZE:?WRITE_FREEZE must be explicitly set}
+    volumes:
+      - type: bind
+        source: ${RAG_TLS_ROOT:?RAG_TLS_ROOT must point to the protected TLS directory}
+        target: /run/qdrant-tls
+        read_only: true
+    ports:
+      - "127.0.0.1:${OLLAMA_RAG_KIT_HOST_PORT:-8093}:8000"
+    networks:
+      - rag-private
+    depends_on:
+      qdrant:
+        condition: service_healthy
+
+volumes:
+  qdrant-data:
+    name: rag-estate_qdrant-data
+  corpus-data:
+    name: rag-estate_corpus-data
+
+networks:
+  rag-private:
+    name: rag-estate_private
+    internal: true

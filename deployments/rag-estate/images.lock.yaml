@@ -1,0 +1,21 @@
+schema_version: 1
+status: staged-not-deployable
+notes:
+  - Application image digests are intentionally absent until fresh CI publication evidence supplies them.
+  - The Qdrant digest below is preserved from the disposable security evaluation and still requires current publication or local-image verification before deployment.
+images:
+  qdrant:
+    candidate_name: chroma-eval-qdrant-distroless
+    candidate_version: 1.19.2-derived
+    digest: sha256:c709afda290769ca6afdb178b5cc1792d605dfbd7b92930e17066d2c996bb1d7
+    evidence: L:/runtime-work/chroma-rag-evaluation-20261013-005912/qdrant-distroless-final2-scan.json
+    current_verification: required
+  ramone-memory:
+    digest: null
+    current_verification: required
+  atlas-corpus:
+    digest: null
+    current_verification: required
+  ollama-rag-kit:
+    digest: null
+    current_verification: required
