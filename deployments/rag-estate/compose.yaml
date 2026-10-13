@@ -4,7 +4,7 @@ services:
   qdrant:
     image: ${QDRANT_IMAGE_REF:?QDRANT_IMAGE_REF must be an immutable image@sha256 ref}
     restart: unless-stopped
-    user: "1000:1000"
+    user: "65532:65532"
     read_only: true
     cap_drop:
       - ALL
