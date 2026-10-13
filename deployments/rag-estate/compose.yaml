@@ -24,10 +24,7 @@ services:
     volumes:
       - qdrant-data:/qdrant/storage
       - qdrant-snapshots:/qdrant/snapshots
-      - type: bind
-        source: ${RAG_TLS_ROOT:?RAG_TLS_ROOT must point to the protected TLS directory}
-        target: /run/qdrant-tls
-        read_only: true
+      - qdrant-tls:/run/qdrant-tls:ro
     networks:
       - rag-private
     healthcheck:
@@ -50,10 +47,7 @@ services:
       QDRANT_CA_CERT: /run/qdrant-tls/ca.pem
       WRITE_FREEZE: ${WRITE_FREEZE:?WRITE_FREEZE must be explicitly set}
     volumes:
-      - type: bind
-        source: ${RAG_TLS_ROOT:?RAG_TLS_ROOT must point to the protected TLS directory}
-        target: /run/qdrant-tls
-        read_only: true
+      - qdrant-tls:/run/qdrant-tls:ro
     ports:
       - "127.0.0.1:${RAMONE_MEMORY_HOST_PORT:-8091}:8091"
     networks:
@@ -75,10 +69,7 @@ services:
       QDRANT_CA_CERT: /run/qdrant-tls/ca.pem
       WRITE_FREEZE: ${WRITE_FREEZE:?WRITE_FREEZE must be explicitly set}
     volumes:
-      - type: bind
-        source: ${RAG_TLS_ROOT:?RAG_TLS_ROOT must point to the protected TLS directory}
-        target: /run/qdrant-tls
-        read_only: true
+      - qdrant-tls:/run/qdrant-tls:ro
       - corpus-data:/srv/data
     ports:
       - "127.0.0.1:${ATLAS_CORPUS_HOST_PORT:-8092}:8092"
@@ -101,10 +92,7 @@ services:
       QDRANT_CA_CERT: /run/qdrant-tls/ca.pem
       WRITE_FREEZE: ${WRITE_FREEZE:?WRITE_FREEZE must be explicitly set}
     volumes:
-      - type: bind
-        source: ${RAG_TLS_ROOT:?RAG_TLS_ROOT must point to the protected TLS directory}
-        target: /run/qdrant-tls
-        read_only: true
+      - qdrant-tls:/run/qdrant-tls:ro
     ports:
       - "127.0.0.1:${OLLAMA_RAG_KIT_HOST_PORT:-8093}:8000"
     networks:
@@ -118,6 +106,8 @@ volumes:
     name: rag-estate_qdrant-data
   qdrant-snapshots:
     name: rag-estate_qdrant-snapshots
+  qdrant-tls:
+    name: rag-estate_qdrant-tls
   corpus-data:
     name: rag-estate_corpus-data
 
