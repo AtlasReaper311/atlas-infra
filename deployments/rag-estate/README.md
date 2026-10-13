@@ -6,8 +6,8 @@ only. It does not change the currently running Compose projects.
 
 The intended runtime directories are:
 
-- `L:\runtime-deployments\rag-estate` for checked-out, reviewed deployment files.
-- `L:\runtime-secrets\rag-estate` for local-only environment files and TLS material.
+- `U:\runtime-deployments\rag-estate` for checked-out, reviewed deployment files.
+- `U:\runtime-secrets\rag-estate` for local-only environment files and TLS material.
 
 Neither directory is created by this change. The first directory must be owned
 by the deployment owner. The second must be owner-only and must never be added
@@ -26,6 +26,12 @@ failure-capture writes fail with `503` and `write_frozen`.
 Migration tooling is not part of this Compose project and is disabled by
 default. Existing Chroma volumes remain outside this control plane and are
 retained for rollback until a separately approved acceptance decision.
+
+The U: TLS directory is the protected source of certificate material. Because
+the runtime uses non-root containers, the approved installation step must copy
+the three TLS files into the Docker-managed `rag-estate_qdrant-tls` volume and
+set readable-but-not-writable permissions before Compose starts. The Compose
+file mounts that volume read-only and never binds Windows TLS files directly.
 
 The current Qdrant candidate digest is recorded as evaluation evidence, not as
 proof of a current registry publication. Preflight must re-verify the image

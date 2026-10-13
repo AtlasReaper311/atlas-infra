@@ -5,8 +5,11 @@
 3. Confirm the protected secret directory exists and is not inside a Git worktree.
 4. Confirm the three application env files and `qdrant.env` exist. Report names
    only; never print values.
-5. Confirm the TLS directory contains the approved CA, certificate, and private
-   key with owner-only permissions. Do not create or rotate them in this run.
+5. Confirm `U:\runtime-secrets\rag-estate\tls` contains the approved CA,
+   certificate, and private key with restricted permissions. Confirm the
+   Docker-managed `rag-estate_qdrant-tls` volume is populated from that source
+   and contains only the expected filenames with non-root-readable,
+   non-writable permissions. Do not create or rotate credentials in this run.
 6. Confirm every image reference is `name@sha256:<64 hex characters>` and matches
    fresh publication evidence.
 7. Run `docker compose config --quiet` with the runtime env file and verify that
