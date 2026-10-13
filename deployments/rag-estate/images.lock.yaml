@@ -1,7 +1,7 @@
 schema_version: 1
 status: staged-not-deployable
 notes:
-  - Application image digests are intentionally absent until fresh CI publication evidence supplies them.
+  - Application image digests below are verified from successful exact-head GHCR publication runs.
   - The Qdrant digest below is preserved from the disposable security evaluation and still requires current publication or local-image verification before deployment.
 images:
   qdrant:
@@ -11,11 +11,20 @@ images:
     evidence: U:/runtime-work/chroma-rag-evaluation-20261013-005912/qdrant-distroless-final2-scan.json
     current_verification: required
   ramone-memory:
-    digest: null
-    current_verification: required
+    repository: ghcr.io/atlasreaper311/ramone-memory
+    digest: sha256:301e24befb2ed2993f9635fef22974c361a4ace85509ca2ca3fbccdc7c70733c
+    source_commit: 6f94f3d772a70318128ff3b1acafa21657fecbca
+    publication_run: https://github.com/AtlasReaper311/ramone-memory/actions/runs/38395301075
+    current_verification: ci-published
   atlas-corpus:
-    digest: null
-    current_verification: required
+    repository: ghcr.io/atlasreaper311/atlas-corpus
+    digest: sha256:a56a0baeb0b42947e8aa36ae47ecce8624df1b94d8d1020d0d11c462245c210c
+    source_commit: e4ad86d7d3679a643b4ee5e15a1636c5ae358d78
+    publication_run: https://github.com/AtlasReaper311/atlas-corpus/actions/runs/38395379718
+    current_verification: ci-published
   ollama-rag-kit:
-    digest: null
-    current_verification: required
+    repository: ghcr.io/atlasreaper311/ollama-rag-kit
+    digest: sha256:e7782de1da2582952466ea480f5da74fa185fa4b676df437f628043dbc1f46a7
+    source_commit: ba0932cb1f9421374c09517c45a1557d16130acd
+    publication_run: https://github.com/AtlasReaper311/ollama-rag-kit/actions/runs/38395450235
+    current_verification: ci-published
