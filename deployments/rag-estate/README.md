@@ -16,7 +16,17 @@ to Git, printed, or copied into chat.
 The steady-state file publishes only the application ports on loopback. Qdrant
 has no host port and lives on an internal Docker network. Each application must
 receive an immutable image reference, a Qdrant API key, a CA path, and its
-existing application secret through the protected local environment files.
+existing application secret through the protected local environment files. The
+Compose definition maps the protected `QDRANT__SERVICE__API_KEY` input to the
+applications' required `QDRANT_API_KEY` name at runtime. This keeps one key in
+the protected source and avoids placing or duplicating its value in source
+control.
+
+When invoking Compose, pass the protected Qdrant environment file as an
+interpolation input as well as the `RAG_SECRET_ROOT` runtime configuration, for
+example with `--env-file U:\runtime-secrets\rag-estate\qdrant.env`. Use
+`docker compose config --quiet` for validation so the resolved environment is
+never rendered into logs or diagnostics.
 
 `compose.freeze.yaml` is an explicit maintenance overlay. When applied, all
 three applications receive `WRITE_FREEZE=true`. Health, dependency checks, and

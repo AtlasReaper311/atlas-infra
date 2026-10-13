@@ -12,8 +12,14 @@
    non-writable permissions. Do not create or rotate credentials in this run.
 6. Confirm every image reference is `name@sha256:<64 hex characters>` and matches
    fresh publication evidence.
-7. Run `docker compose config --quiet` with the runtime env file and verify that
-   Qdrant has no host port and the private network is internal.
+7. Pass the protected `qdrant.env` file as a Compose interpolation input. This
+   provides the server key once; `compose.yaml` maps its
+   `QDRANT__SERVICE__API_KEY` name to the applications' required
+   `QDRANT_API_KEY` variable without adding a second secret file or a value to
+   source control. Run `docker compose config --quiet` with the runtime env
+   file and protected Qdrant env file, and verify that Qdrant has no host port
+   and the private network is internal. Never use rendered `docker compose
+   config` output in logs or diagnostics.
 8. Keep the existing Chroma volumes stopped or isolated only under a separately
    approved cutover procedure. Do not delete them.
 

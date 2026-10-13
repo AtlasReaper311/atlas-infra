@@ -38,6 +38,14 @@ def validate() -> list[str]:
             errors.append("Qdrant publishes a host port")
     if "WRITE_FREEZE" not in compose or 'WRITE_FREEZE: "true"' not in freeze:
         errors.append("write-freeze contract is incomplete")
+    required_client_key_mapping = (
+        "QDRANT_API_KEY: ${QDRANT__SERVICE__API_KEY:?"
+    )
+    if compose.count(required_client_key_mapping) != 3:
+        errors.append(
+            "all three applications must map the protected QDRANT__SERVICE__API_KEY "
+            "input to QDRANT_API_KEY"
+        )
     if "MIGRATION" in compose.upper():
         errors.append("migration controls must remain outside steady-state Compose")
     if SECRET_ASSIGNMENT.search(runtime_example):
