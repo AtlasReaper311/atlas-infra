@@ -1,0 +1,187 @@
+name: Publish Qdrant derived image
+
+on:
+  push:
+    branches:
+      - feat/atlas-infra-qdrant-provenance-publication
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: qdrant-derived-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  IMAGE_REPOSITORY: ghcr.io/atlasreaper311/qdrant-distroless
+  TRIVY_IMAGE: aquasec/trivy@sha256:af6acf9a6b85dfe389a1941505c0ce9efef52a4719635e1a962f022a3d855daa
+
+jobs:
+  build-publish-scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+      attestations: write
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@f548e57e544e1ff5a4c46bf1e1b8685f8e4a348a # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v3.11.1
+
+      - name: Validate reviewed build inputs
+        run: python3 scripts/validate_qdrant_derivative.py
+
+      - name: Log in to GHCR
+        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and publish immutable image
+        id: build
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+        with:
+          context: containers/qdrant
+          file: containers/qdrant/Dockerfile.qdrant-distroless
+          platforms: linux/amd64
+          push: true
+          tags: ${{ env.IMAGE_REPOSITORY }}:git-${{ github.sha }}
+          labels: |
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.version=1.19.2-derived
+            org.opencontainers.image.title=Atlas Qdrant server-only derivative
+          provenance: mode=max
+          sbom: true
+
+      - name: Verify immutable identity
+        id: identity
+        env:
+          BUILD_DIGEST: ${{ steps.build.outputs.digest }}
+        run: |
+          set -euo pipefail
+          if ! printf '%s' "${BUILD_DIGEST}" | grep -Eq '^sha256:[0-9a-f]{64}$'; then
+            echo "build output is not a full sha256 digest"
+            exit 1
+          fi
+          IMAGE_REF="${IMAGE_REPOSITORY}@${BUILD_DIGEST}"
+          mkdir -p evidence
+          docker pull "${IMAGE_REF}" >/dev/null
+          docker buildx imagetools inspect "${IMAGE_REF}" --raw > evidence/manifest.json
+          docker image inspect "${IMAGE_REF}" --format '{{json .}}' > evidence/image-inspect.json
+          python3 - "${BUILD_DIGEST}" <<'PY'
+          import json
+          import os
+          import pathlib
+          import sys
+
+          digest = sys.argv[1]
+          inspect = json.loads(pathlib.Path("evidence/image-inspect.json").read_text())
+          config = inspect.get("Config") or {}
+          labels = config.get("Labels") or {}
+          if inspect.get("Architecture") != "amd64" or inspect.get("Os") != "linux":
+              raise SystemExit("published image architecture is not linux/amd64")
+          if labels.get("org.opencontainers.image.revision") != os.environ["GITHUB_SHA"]:
+              raise SystemExit("source revision label does not match the workflow commit")
+          if labels.get("org.opencontainers.image.source") != f"https://github.com/{os.environ['GITHUB_REPOSITORY']}":
+              raise SystemExit("source repository label does not match the workflow repository")
+          if not digest.startswith("sha256:") or len(digest) != 71:
+              raise SystemExit("build output is not a full sha256 digest")
+          pathlib.Path("evidence/image-identity.txt").write_text(
+              f"repository={os.environ['IMAGE_REPOSITORY']}\n"
+              f"digest={digest}\n"
+              f"source_repository={os.environ['GITHUB_REPOSITORY']}\n"
+              f"source_commit={os.environ['GITHUB_SHA']}\n"
+              "platform=linux/amd64\n"
+              "provenance_attestation=build-push-action provenance mode=max\n"
+              "sbom_attestation=build-push-action sbom=true\n",
+              encoding="utf-8",
+          )
+          PY
+
+      - name: Attach build provenance
+        uses: actions/attest-build-provenance@9d57eef8c06cd9d6b433effeeb7a6a77b3ff94ad # main verified 2026-08-21
+        with:
+          subject-name: ${{ env.IMAGE_REPOSITORY }}
+          subject-digest: ${{ steps.build.outputs.digest }}
+          push-to-registry: true
+
+      - name: Scan exact published image
+        env:
+          BUILD_DIGEST: ${{ steps.build.outputs.digest }}
+        run: |
+          set -euo pipefail
+          IMAGE_REF="${IMAGE_REPOSITORY}@${BUILD_DIGEST}"
+          mkdir -p evidence
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v "${PWD}/evidence:/out" "${TRIVY_IMAGE}" image --scanners vuln,misconfig,license --format json --output /out/trivy.json "${IMAGE_REF}" >/dev/null
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v "${PWD}/evidence:/out" "${TRIVY_IMAGE}" image --scanners vuln,misconfig,license --format spdx-json --output /out/image.spdx.json "${IMAGE_REF}" >/dev/null
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock "${TRIVY_IMAGE}" image --scanners secret --format json --output /tmp/trivy-secret.json "${IMAGE_REF}" >/dev/null
+          python3 - <<'PY'
+          import json
+          import os
+          import pathlib
+
+          def items(result, key):
+              return result.get(key) or []
+
+          scan = json.loads(pathlib.Path("evidence/trivy.json").read_text())
+          secret = json.loads(pathlib.Path("/tmp/trivy-secret.json").read_text())
+          high_critical = []
+          vuln_count = 0
+          misconfig_count = 0
+          license_count = 0
+          for result in scan.get("Results") or []:
+              vulnerabilities = items(result, "Vulnerabilities")
+              misconfigs = items(result, "Misconfigurations")
+              licenses = items(result, "Licenses")
+              vuln_count += len(vulnerabilities)
+              misconfig_count += len(misconfigs)
+              license_count += len(licenses)
+              for item in vulnerabilities + misconfigs:
+                  if str(item.get("Severity", "")).upper() in {"HIGH", "CRITICAL"}:
+                      high_critical.append({
+                          "target": result.get("Target"),
+                          "id": item.get("VulnerabilityID") or item.get("ID"),
+                          "severity": item.get("Severity"),
+                      })
+          secret_count = sum(len(items(result, "Secrets")) for result in secret.get("Results") or [])
+          summary = {
+              "vulnerabilities": vuln_count,
+              "misconfigurations": misconfig_count,
+              "licenses": license_count,
+              "secrets": secret_count,
+              "high_or_critical_vulnerabilities_or_misconfigurations": high_critical,
+              "policy": "fail on HIGH or CRITICAL vulnerability/misconfiguration or any secret",
+          }
+          pathlib.Path("evidence/scan-summary.json").write_text(json.dumps(summary, indent=2) + "\n")
+          license_review = {
+              "scanner": os.environ.get("TRIVY_IMAGE", "pinned trivy image"),
+              "policy_repository": "AtlasReaper311/atlas-dep-audit",
+              "policy_commit": "0f1056afb6fc860759c7e73d0f6969e1ecc0844c",
+              "policy_fail_on": "critical",
+              "unknown_license_severity": "info",
+              "image_license_findings": license_count,
+              "disposition": "reported for owner license review; not converted into a vulnerability suppression",
+          }
+          pathlib.Path("evidence/license-review.json").write_text(json.dumps(license_review, indent=2) + "\n")
+          if high_critical or secret_count:
+              raise SystemExit("published image failed the vulnerability, misconfiguration, or secret gate")
+          PY
+
+      - name: Upload provenance and security evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: qdrant-derived-evidence-${{ github.sha }}
+          path: evidence/
+          if-no-files-found: error
+          retention-days: 30

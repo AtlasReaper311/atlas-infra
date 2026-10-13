@@ -1,0 +1,52 @@
+{
+  "schema": "atlas-qdrant-build-inputs/v1",
+  "image": {
+    "repository": "ghcr.io/atlasreaper311/qdrant-distroless",
+    "version": "1.19.2-derived",
+    "platform": "linux/amd64",
+    "visibility": "private-required"
+  },
+  "dockerfile": {
+    "path": "containers/qdrant/Dockerfile.qdrant-distroless",
+    "sha256_normalized_lf": "348a8b240c4a4d2ad6a5fbcf02e632fda5359c271642d9793e0bd9fc56c03fe2"
+  },
+  "healthcheck": {
+    "path": "containers/qdrant/qdrant-healthcheck.go",
+    "sha256_normalized_lf": "f83afb19c088ccf3feeb57b297c3078bbe00198c4d838ff001be04c0032735ec"
+  },
+  "base_images": [
+    {
+      "stage": "qdrant",
+      "reference": "qdrant/qdrant:v1.19.2@sha256:b7b0444c4c351c970b98e90a6f89c2ee4287c65b44e52b4cb503fa5b2aa927ad"
+    },
+    {
+      "stage": "probe",
+      "reference": "busybox:1.36@sha256:73aaf090f3d85aa34ee199857f03fa3a95c8ede2ffd4cc2cdb5b94e566b11662"
+    },
+    {
+      "stage": "healthcheck",
+      "reference": "golang:1.26-alpine@sha256:3082400e369fa24d5fc60bca20edab3f6d604e0c5a690ec66b295eff4dd87ade"
+    },
+    {
+      "stage": "runtime",
+      "reference": "gcr.io/distroless/cc-debian13:nonroot@sha256:e792ab3d241a468a4fd7519ddbbebe66b49b5f365771716ea688ad40b6c6f1c2"
+    }
+  ],
+  "scanner": {
+    "reference": "aquasec/trivy@sha256:af6acf9a6b85dfe389a1941505c0ce9efef52a4719635e1a962f022a3d855daa",
+    "version": "0.75.0"
+  },
+  "license_policy": {
+    "repository": "AtlasReaper311/atlas-dep-audit",
+    "commit": "0f1056afb6fc860759c7e73d0f6969e1ecc0844c",
+    "fail_on": "critical",
+    "unknown_license_severity": "info",
+    "scope_note": "The image scan records OS and application licenses separately from the source-only policy."
+  },
+  "publication": {
+    "tag_pattern": "git-<full-source-commit>",
+    "mutable_tag": false,
+    "build_provenance": true,
+    "sbom_attestation": true
+  }
+}
