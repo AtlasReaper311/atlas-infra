@@ -8,7 +8,7 @@ images:
     candidate_name: chroma-eval-qdrant-distroless
     candidate_version: 1.19.2-derived
     digest: sha256:c709afda290769ca6afdb178b5cc1792d605dfbd7b92930e17066d2c996bb1d7
-    evidence: L:/runtime-work/chroma-rag-evaluation-20261013-005912/qdrant-distroless-final2-scan.json
+    evidence: U:/runtime-work/chroma-rag-evaluation-20261013-005912/qdrant-distroless-final2-scan.json
     current_verification: required
   ramone-memory:
     digest: null
