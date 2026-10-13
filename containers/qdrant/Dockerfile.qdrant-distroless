@@ -19,8 +19,8 @@ COPY --from=qdrant /lib/x86_64-linux-gnu/libunwind.so.8 /lib/x86_64-linux-gnu/li
 COPY --from=qdrant /lib/x86_64-linux-gnu/liblzma.so.5 /lib/x86_64-linux-gnu/liblzma.so.5
 COPY --from=probe /bin/busybox /bin/busybox
 COPY --from=healthcheck /out/healthcheck /qdrant/healthcheck
-USER 65532:65532
 
+USER 65532:65532
 HEALTHCHECK --interval=10s --timeout=3s --start-period=10s --retries=5 \
     CMD ["/qdrant/healthcheck"]
 ENTRYPOINT ["/qdrant/qdrant"]
