@@ -93,11 +93,11 @@ Keep attention narrow. Inspect only repositories relevant to the current task.
 ### Local AI and knowledge
 
 - `atlas-corpus`: estate knowledge service with type-aware chunking plus vector plus BM25 retrieval fused via Reciprocal Rank Fusion. ADRs are indexed. Check `app/config.py` and the live `.env` for the current `/ask` answer model rather than assuming; it has disagreed with this document in the past.
-- `ramone-memory`: Ollama-compatible memory proxy on `8091`, ChromaDB-backed. Home Assistant must point at the memory-backed conversation entity, not merely have it configured.
+- `ramone-memory`: Ollama-compatible memory proxy on `8091`; current source uses Qdrant and keeps Chroma only for migration compatibility. Verify the live backend on SPECULAR-CORE rather than inferring it from this source map. Home Assistant must point at the memory-backed conversation entity, not merely have it configured.
 - `atlas-eval-harness` (private): grounded evaluation harness with a Wave 3 promotion evidence workflow. Model promotion is an explicit two-step `promotion-prepare` then `promotion-approve` process bound to prompt and options fingerprints.
 - `atlas-postmortem` (private): local Python tool that polls `atlas-blackbox` on a 10-minute timer, drafts postmortems with `qwen2.5:32b`, writes them to a local directory frontmatter-stamped `DRAFT - NEEDS HUMAN REVIEW`, and never commits, pushes, publishes, or notifies.
 - `ollama-rag-kit`: containerised runtime Ramone RAG service with a `ramone_sessions` short-term memory collection. Check the live container's environment for the current generation model rather than assuming from `.env.example`.
-- `atlas-kit-python-rag`: starter template only. Not a runtime service; distinct from `atlas-corpus` and `ollama-rag-kit`.
+- `atlas-kit-python-rag`: starter template only, not a runtime service; distinct from `atlas-corpus` and `ollama-rag-kit`. Its current template defaults to Chroma and leaves `chromadb` unpinned, so do not treat it as a production fallback or deploy it without a separate dependency/backend review.
 
 ### Observability and alerting
 
