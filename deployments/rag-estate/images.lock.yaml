@@ -26,9 +26,9 @@ images:
     current_verification: ci-published
   atlas-corpus:
     repository: ghcr.io/atlasreaper311/atlas-corpus
-    digest: sha256:a56a0baeb0b42947e8aa36ae47ecce8624df1b94d8d1020d0d11c462245c210c
-    source_commit: e4ad86d7d3679a643b4ee5e15a1636c5ae358d78
-    publication_run: https://github.com/AtlasReaper311/atlas-corpus/actions/runs/38395379718
+    digest: sha256:491f732aa0f5bea9820e448251aa4c79cdeaf0a39c44543b26e470f26e156077
+    source_commit: ffb406fbf1e85db509c195211f286f1e0b422d6d
+    publication_run: https://github.com/AtlasReaper311/atlas-corpus/actions/runs/39517065146
     current_verification: ci-published
   ollama-rag-kit:
     repository: ghcr.io/atlasreaper311/ollama-rag-kit
